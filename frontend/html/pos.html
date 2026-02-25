@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Well Served - Point of Sale</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    primary: "#005a32",
+                    "pos-primary": "#319795",
+                    secondary: "#d62828",
+                    accent: "#8b5a2b",
+                    "background-light": "#f1f5f9",
+                    "background-dark": "#0f172a",
+                    "surface-light": "#FFFFFF",
+                    "surface-dark": "#1F2937",
+                    "text-light": "#1F2937",
+                    "text-dark": "#F9FAFB",
+                    "subtext-light": "#6B7280",
+                    "subtext-dark": "#9CA3AF",
+                    "border-light": "#E5E7EB",
+                    "border-dark": "#374151",
+                },
+                fontFamily: { display: ["Inter", "sans-serif"] },
+            },
+        },
+    };
+</script>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .drag-region { -webkit-app-region: drag; }
+    .no-drag     { -webkit-app-region: no-drag; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .dark ::-webkit-scrollbar-thumb { background: #334155; }
+    .pos-primary-color { color: #319795; }
+    .pos-primary-bg { background-color: #319795; }
+    .pos-primary-border { border-color: #319795; }
+    .pos-primary-ring:focus { --tw-ring-color: #319795; }
+</style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
+
+<!-- Title Bar -->
+<header id="title-bar" class="drag-region fixed top-0 left-0 w-full h-8 bg-white flex justify-between items-stretch z-40 border-b border-gray-200 select-none">
+    <div class="flex items-center pl-4 gap-2 text-gray-600">
+        <span class="text-xs font-semibold">IHMS Pharmacy</span>
+    </div>
+    <div class="no-drag flex items-center relative z-50">
+        <button id="min-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200">
+            <span class="material-icons-outlined text-sm text-gray-600">remove</span>
+        </button>
+        <button id="max-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200">
+            <span class="material-icons-outlined text-sm text-gray-600">crop_square</span>
+        </button>
+        <button id="close-btn" class="h-full w-12 flex justify-center items-center hover:bg-red-500 hover:text-white transition-colors duration-200 group">
+            <span class="material-icons-outlined text-sm text-gray-600 group-hover:text-white">close</span>
+        </button>
+    </div>
+</header>
+
+<div class="flex h-screen pt-8">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-border-light dark:border-border-dark flex-shrink-0">
+        <div class="h-16 flex items-center px-6 border-b border-border-light dark:border-border-dark">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm">
+                    <img src="images/wellserved.png" alt="Well Served Logo" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h1 class="font-bold text-primary dark:text-green-400 leading-tight">Well Served</h1>
+                    <p class="text-[10px] uppercase tracking-wider text-accent dark:text-amber-600 font-semibold">Since 1994</p>
+                </div>
+            </div>
+        </div>
+        <nav class="flex-1 px-4 py-6 space-y-2">
+            <div class="px-2 text-sm font-semibold text-subtext-light dark:text-subtext-dark mb-2">Pharmacy</div>
+            <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="dashboard.html">
+                <span class="material-icons mr-3">dashboard</span> Dashboard
+            </a>
+            <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="inventory.html">
+                <span class="material-icons mr-3">inventory_2</span> Inventory
+            </a>
+            <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="patient_records.html">
+                <span class="material-icons mr-3">folder_shared</span> Patient Records
+            </a>
+             <a class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold" href="pos.html">
+                <span class="material-icons mr-3">shopping_cart</span> Counter Dispensing
+            </a>
+            <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="supplier.html">
+                <span class="material-icons mr-3">local_shipping</span> Suppliers
+            </a>
+            <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="billing.html">
+                <span class="material-icons mr-3">point_of_sale</span> Sales &amp; Billing
+            </a>
+           
+           
+        </nav>
+        <div class="p-4 border-t border-border-light dark:border-border-dark">
+            <button onclick="logoutUser()"
+                class="flex items-center w-full px-4 py-2 gap-3 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors">
+                <span class="material-icons text-red-500">logout</span> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+
+        <!-- Top Header -->
+        <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
+            <div class="flex items-center gap-3">
+                <span class="material-icons text-primary">shopping_cart</span>
+                <div>
+                    <h2 class="font-bold text-text-light dark:text-text-dark leading-tight">New Transaction</h2>
+                    <p class="text-xs text-subtext-light dark:text-subtext-dark">Select items and proceed to payment</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <!-- System Status -->
+                <div class="flex items-center gap-2 bg-white dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 text-xs">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="font-medium text-slate-600 dark:text-slate-300 uppercase tracking-wider">System Online</span>
+                </div>
+                <!-- Cashier Info -->
+                <div class="flex items-center gap-2 text-xs">
+                    <span class="text-subtext-light dark:text-subtext-dark">Cashier:</span>
+                    <span class="font-semibold">Jane Doe</span>
+                </div>
+                <!-- Date -->
+                <span class="text-xs font-medium text-subtext-light dark:text-subtext-dark" id="currentDate"></span>
+                <!-- Dark Mode Toggle -->
+                <button onclick="toggleDarkMode()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                    <span class="material-icons text-subtext-light dark:text-subtext-dark" style="font-size:20px;">dark_mode</span>
+                </button>
+                <!-- Avatar -->
+                <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm">PH</div>
+            </div>
+        </header>
+
+        <!-- POS Content -->
+        <div class="flex-1 overflow-hidden">
+            <div class="h-full max-w-[1600px] mx-auto p-6">
+                <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
+
+                    <!-- Left: Product Grid -->
+                    <div class="lg:col-span-8 flex flex-col gap-4 overflow-hidden">
+
+                        <!-- Search & Filter Bar -->
+                        <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                            <div class="relative mb-4">
+                                <span class="material-icons-round absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+                                <input id="searchInput" oninput="filterProducts()"
+                                    class="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border-none rounded-xl focus:ring-2 focus:ring-teal-500 text-sm transition-all shadow-inner"
+                                    placeholder="Search medicine by name, category, or generic name..."
+                                    type="text"/>
+                            </div>
+                            <div class="flex gap-2 overflow-x-auto pb-1">
+                                <button onclick="setCategory(this,'all')" class="category-btn px-5 py-2 rounded-full bg-teal-600 text-white text-sm font-medium shadow-md whitespace-nowrap" data-cat="all">All</button>
+                                <button onclick="setCategory(this,'Antibiotics')" class="category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap" data-cat="Antibiotics">Antibiotics</button>
+                                <button onclick="setCategory(this,'Pain Relief')" class="category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap" data-cat="Pain Relief">Pain Relief</button>
+                                <button onclick="setCategory(this,'Antihistamine')" class="category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap" data-cat="Antihistamine">Antihistamine</button>
+                                <button onclick="setCategory(this,'Gastrointestinal')" class="category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap" data-cat="Gastrointestinal">Gastrointestinal</button>
+                                <button onclick="setCategory(this,'Diabetes')" class="category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap" data-cat="Diabetes">Diabetes</button>
+                                <button onclick="setCategory(this,'Cardiovascular')" class="category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap" data-cat="Cardiovascular">Cardiovascular</button>
+                            </div>
+                        </div>
+
+                        <!-- Product Cards -->
+                        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 overflow-y-auto pr-1 flex-1">
+                            <!-- Rendered by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Right: Order Panel -->
+                    <div class="lg:col-span-4 flex flex-col overflow-hidden">
+                        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl flex flex-col overflow-hidden h-full">
+
+                            <!-- Order Header -->
+                            <div class="p-5 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-icons-round text-teal-600">shopping_basket</span>
+                                    <h2 class="text-lg font-bold">Current Order</h2>
+                                </div>
+                                <span id="cartCount" class="px-3 py-1 bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 text-xs font-bold rounded-full">0 Items</span>
+                            </div>
+
+                            <!-- Order Items -->
+                            <div id="cartItems" class="flex-1 overflow-y-auto p-5 space-y-3">
+                                <div class="flex flex-col items-center justify-center h-32 text-slate-400 text-sm gap-2">
+                                    <span class="material-icons-round text-4xl">shopping_basket</span>
+                                    <p>No items added yet</p>
+                                </div>
+                            </div>
+
+                            <!-- Order Summary & Payment -->
+                            <div class="p-5 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700 space-y-4">
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-500">Subtotal</span>
+                                        <span id="subtotal" class="font-semibold">₱0.00</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-500">Tax (0%)</span>
+                                        <span class="font-semibold">₱0.00</span>
+                                    </div>
+                                    <div class="flex justify-between items-center pt-2 mt-2 border-t border-slate-200 dark:border-slate-700">
+                                        <span class="text-base font-bold">Total Amount</span>
+                                        <span id="totalAmount" class="text-2xl font-black text-teal-600">₱0.00</span>
+                                    </div>
+                                </div>
+
+                                <!-- Payment Method -->
+                                <div class="grid grid-cols-3 gap-2">
+                                    <button onclick="setPayment(this,'cash')" class="payment-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-teal-600 bg-teal-50 dark:bg-teal-900/20 text-teal-600 transition-all" data-method="cash">
+                                        <span class="material-icons-round mb-1">payments</span>
+                                        <span class="text-[10px] font-bold">Cash</span>
+                                    </button>
+                                    <button onclick="setPayment(this,'card')" class="payment-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-transparent bg-white dark:bg-slate-800 text-slate-400 hover:border-slate-200 dark:hover:border-slate-600 transition-all" data-method="card">
+                                        <span class="material-icons-round mb-1">credit_card</span>
+                                        <span class="text-[10px] font-bold">Card</span>
+                                    </button>
+                                    <button onclick="setPayment(this,'ewallet')" class="payment-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-transparent bg-white dark:bg-slate-800 text-slate-400 hover:border-slate-200 dark:hover:border-slate-600 transition-all" data-method="ewallet">
+                                        <span class="material-icons-round mb-1">account_balance_wallet</span>
+                                        <span class="text-[10px] font-bold">E-Wallet</span>
+                                    </button>
+                                </div>
+
+                                <div class="space-y-3">
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₱</span>
+                                        <input id="amountReceived" oninput="calcChange()" type="number"
+                                            class="w-full pl-8 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-teal-500 focus:border-teal-500 text-sm font-semibold"
+                                            placeholder="Enter Amount Received"/>
+                                    </div>
+                                    <div class="flex justify-between items-center text-xs font-medium px-1">
+                                        <span class="text-slate-500">Change Due:</span>
+                                        <span id="changeDue" class="text-teal-600 font-bold">₱0.00</span>
+                                    </div>
+                                    <button onclick="processPayment()"
+                                        class="w-full py-4 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-teal-500/20 transition-all active:scale-[0.98] transform flex items-center justify-center gap-2">
+                                        <span id="payBtnText">Pay ₱0.00</span>
+                                        <span class="material-icons-round">arrow_forward</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </main>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ── DATA ──
+const products = [
+    { id: 1, name: 'Amoxicillin 500mg',  category: 'Antibiotics',      price: 12.50, stock: 45,  catColor: 'blue',   lowStock: false },
+    { id: 2, name: 'Paracetamol 500mg',  category: 'Pain Relief',      price:  5.00, stock: 120, catColor: 'purple', lowStock: false },
+    { id: 3, name: 'Ibuprofen 400mg',    category: 'Pain Relief',      price:  8.75, stock: 15,  catColor: 'purple', lowStock: true  },
+    { id: 4, name: 'Cetirizine 10mg',    category: 'Antihistamine',    price: 15.20, stock: 60,  catColor: 'indigo', lowStock: false },
+    { id: 5, name: 'Omeprazole 20mg',    category: 'Gastrointestinal', price:  9.30, stock: 85,  catColor: 'emerald',lowStock: false },
+    { id: 6, name: 'Metformin 500mg',    category: 'Diabetes',         price:  6.45, stock: 200, catColor: 'rose',   lowStock: false },
+    { id: 7, name: 'Amlodipine 5mg',     category: 'Cardiovascular',   price: 18.00, stock: 30,  catColor: 'sky',    lowStock: false },
+    { id: 8, name: 'Losartan 50mg',      category: 'Cardiovascular',   price: 22.50, stock: 8,   catColor: 'sky',    lowStock: true  },
+    { id: 9, name: 'Loratadine 10mg',    category: 'Antihistamine',    price:  7.80, stock: 55,  catColor: 'indigo', lowStock: false },
+];
+
+const catColors = {
+    blue:   { bg: 'bg-blue-50 dark:bg-blue-900/30',     text: 'text-blue-600 dark:text-blue-400' },
+    purple: { bg: 'bg-purple-50 dark:bg-purple-900/30', text: 'text-purple-600 dark:text-purple-400' },
+    indigo: { bg: 'bg-indigo-50 dark:bg-indigo-900/30', text: 'text-indigo-600 dark:text-indigo-400' },
+    emerald:{ bg: 'bg-emerald-50 dark:bg-emerald-900/30',text: 'text-emerald-600 dark:text-emerald-400' },
+    rose:   { bg: 'bg-rose-50 dark:bg-rose-900/30',     text: 'text-rose-600 dark:text-rose-400' },
+    sky:    { bg: 'bg-sky-50 dark:bg-sky-900/30',       text: 'text-sky-600 dark:text-sky-400' },
+};
+
+let cart         = {};
+let activeCategory = 'all';
+let activePayment  = 'cash';
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+    renderProducts();
+    updateDate();
+});
+
+function updateDate() {
+    const el = document.getElementById('currentDate');
+    if (el) el.textContent = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+}
+
+// ── PRODUCTS ──
+function renderProducts() {
+    const grid  = document.getElementById('productGrid');
+    const query = (document.getElementById('searchInput')?.value || '').toLowerCase();
+    const list  = products.filter(p => {
+        const matchCat  = activeCategory === 'all' || p.category === activeCategory;
+        const matchSearch = p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query);
+        return matchCat && matchSearch;
+    });
+
+    if (!list.length) {
+        grid.innerHTML = `<div class="col-span-3 flex flex-col items-center justify-center h-40 text-slate-400 gap-2">
+            <span class="material-icons-round text-4xl">search_off</span>
+            <p class="text-sm">No medicines found</p>
+        </div>`;
+        return;
+    }
+
+    grid.innerHTML = list.map(p => {
+        const cc = catColors[p.catColor] || catColors.blue;
+        const inCart = cart[p.id]?.qty || 0;
+        return `
+        <div class="group bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-teal-500 dark:hover:border-teal-500 transition-all shadow-sm hover:shadow-md">
+            <div class="flex justify-between items-start mb-4">
+                <span class="px-2.5 py-1 ${cc.bg} ${cc.text} text-[10px] font-bold uppercase tracking-wider rounded">${p.category}</span>
+                ${p.lowStock ? `<span class="px-2 py-0.5 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-500 text-[10px] font-bold rounded">Low Stock</span>` : ''}
+            </div>
+            <h3 class="text-base font-bold mb-1">${p.name}</h3>
+            <p class="text-xs text-slate-400 mb-5">Stock: ${p.stock} units</p>
+            <div class="flex items-center justify-between">
+                <span class="text-xl font-bold text-slate-800 dark:text-slate-100">₱${p.price.toFixed(2)}</span>
+                <div class="flex items-center gap-2">
+                    ${inCart > 0 ? `
+                    <div class="flex items-center gap-1">
+                        <button onclick="updateQty(${p.id},-1)" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 flex items-center justify-center hover:bg-red-100 hover:text-red-500 transition-all text-lg font-bold leading-none">−</button>
+                        <span class="w-6 text-center text-sm font-bold">${inCart}</span>
+                        <button onclick="updateQty(${p.id},1)" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 flex items-center justify-center hover:bg-teal-100 hover:text-teal-600 transition-all text-lg font-bold leading-none">+</button>
+                    </div>` : `
+                    <button onclick="addToCart(${p.id})" class="w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-900 text-teal-600 border border-slate-100 dark:border-slate-700 flex items-center justify-center hover:bg-teal-600 hover:text-white transition-all transform active:scale-95">
+                        <span class="material-icons-round">add</span>
+                    </button>`}
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function setCategory(btn, cat) {
+    activeCategory = cat;
+    document.querySelectorAll('.category-btn').forEach(b => {
+        b.className = 'category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap';
+    });
+    btn.className = 'category-btn px-5 py-2 rounded-full bg-teal-600 text-white text-sm font-medium shadow-md whitespace-nowrap';
+    renderProducts();
+}
+
+function filterProducts() { renderProducts(); }
+
+// ── CART ──
+function addToCart(id) {
+    const p = products.find(x => x.id === id);
+    if (!p) return;
+    if (!cart[id]) cart[id] = { product: p, qty: 0 };
+    if (cart[id].qty >= p.stock) { alert('Cannot exceed available stock!'); return; }
+    cart[id].qty++;
+    updateUI();
+}
+
+function updateQty(id, delta) {
+    if (!cart[id]) return;
+    cart[id].qty += delta;
+    if (cart[id].qty <= 0) delete cart[id];
+    updateUI();
+}
+
+function removeFromCart(id) {
+    delete cart[id];
+    updateUI();
+}
+
+function updateUI() {
+    renderProducts();
+    renderCart();
+    updateTotals();
+}
+
+function renderCart() {
+    const container = document.getElementById('cartItems');
+    const items     = Object.values(cart);
+
+    if (!items.length) {
+        container.innerHTML = `<div class="flex flex-col items-center justify-center h-32 text-slate-400 text-sm gap-2">
+            <span class="material-icons-round text-4xl">shopping_basket</span>
+            <p>No items added yet</p>
+        </div>`;
+        document.getElementById('cartCount').textContent = '0 Items';
+        return;
+    }
+
+    const total = items.reduce((s, i) => s + i.qty, 0);
+    document.getElementById('cartCount').textContent = `${total} Item${total !== 1 ? 's' : ''}`;
+
+    container.innerHTML = items.map(({ product: p, qty }) => `
+        <div class="flex justify-between items-start group py-2 border-b border-slate-100 dark:border-slate-700 last:border-0">
+            <div class="flex gap-3">
+                <div class="w-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 flex items-center justify-center font-bold text-xs text-teal-600">${qty}x</div>
+                <div>
+                    <h4 class="text-sm font-semibold">${p.name}</h4>
+                    <p class="text-[10px] text-slate-400">₱${p.price.toFixed(2)} / unit</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="text-sm font-bold">₱${(p.price * qty).toFixed(2)}</p>
+                <button onclick="removeFromCart(${p.id})" class="text-[10px] text-rose-500 font-medium opacity-0 group-hover:opacity-100 transition-opacity">Remove</button>
+            </div>
+        </div>`).join('');
+}
+
+function updateTotals() {
+    const subtotal = Object.values(cart).reduce((s, i) => s + i.product.price * i.qty, 0);
+    document.getElementById('subtotal').textContent     = `₱${subtotal.toFixed(2)}`;
+    document.getElementById('totalAmount').textContent  = `₱${subtotal.toFixed(2)}`;
+    document.getElementById('payBtnText').textContent   = `Pay ₱${subtotal.toFixed(2)}`;
+    calcChange();
+}
+
+function calcChange() {
+    const subtotal  = Object.values(cart).reduce((s, i) => s + i.product.price * i.qty, 0);
+    const received  = parseFloat(document.getElementById('amountReceived').value) || 0;
+    const change    = Math.max(0, received - subtotal);
+    document.getElementById('changeDue').textContent = `₱${change.toFixed(2)}`;
+}
+
+// ── PAYMENT ──
+function setPayment(btn, method) {
+    activePayment = method;
+    document.querySelectorAll('.payment-btn').forEach(b => {
+        b.className = 'payment-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-transparent bg-white dark:bg-slate-800 text-slate-400 hover:border-slate-200 dark:hover:border-slate-600 transition-all';
+    });
+    btn.className = 'payment-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-teal-600 bg-teal-50 dark:bg-teal-900/20 text-teal-600 transition-all';
+}
+
+function processPayment() {
+    const items = Object.values(cart);
+    if (!items.length) { Swal.fire({ icon: 'warning', title: 'Empty Cart', text: 'Please add items to proceed.' }); return; }
+
+    const subtotal = items.reduce((s, i) => s + i.product.price * i.qty, 0);
+    const received = parseFloat(document.getElementById('amountReceived').value) || 0;
+
+    if (activePayment === 'cash' && received < subtotal) {
+        Swal.fire({ icon: 'error', title: 'Insufficient Amount', text: `Please enter at least ₱${subtotal.toFixed(2)}.` });
+        return;
+    }
+
+    const change = Math.max(0, received - subtotal);
+    Swal.fire({
+        icon: 'success',
+        title: 'Payment Successful!',
+        html: `<p class="text-lg font-bold text-teal-600">Total: ₱${subtotal.toFixed(2)}</p>
+               ${activePayment === 'cash' ? `<p class="text-sm text-gray-500 mt-1">Change: ₱${change.toFixed(2)}</p>` : ''}
+               <p class="text-xs text-gray-400 mt-2">Payment via ${activePayment.charAt(0).toUpperCase() + activePayment.slice(1)}</p>`,
+        confirmButtonColor: '#005a32',
+        confirmButtonText: 'New Transaction'
+    }).then(() => {
+        cart = {};
+        document.getElementById('amountReceived').value = '';
+        updateUI();
+    });
+}
+
+// ── UTILS ──
+function toggleDarkMode() {
+    document.documentElement.classList.toggle('dark');
+}
+
+function logoutUser() {
+    Swal.fire({
+        title: 'Logout?', icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#005a32',
+        confirmButtonText: 'Yes, logout'
+    }).then(r => {
+        if (r.isConfirmed) {
+            sessionStorage.removeItem('userInfo');
+            sessionStorage.removeItem('token');
+            window.location.href = 'login.html';
+        }
+    });
+}
+</script>
+<script src="../js/windowcontrollerbtn.js"></script>
+</body>
+</html>

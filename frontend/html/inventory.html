@@ -89,6 +89,21 @@ thead tr {
         input:checked + .toggle-slider { background-color: #005a32; }
         input:checked + .toggle-slider:before { transform: translateX(20px); }
 
+        /* ── MODULE TABS (NEW) ── */
+        .module-tab-bar { display: flex; border-bottom: 2px solid #e5e7eb; background: white; }
+        .dark .module-tab-bar { border-color: #374151; background: #1f2937; }
+        .module-tab-btn { display: flex; align-items: center; gap: 8px; padding: 12px 24px; font-size: 14px; font-weight: 600; color: #6b7280; cursor: pointer; border: none; background: none; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s ease; }
+        .module-tab-btn:hover { color: #005a32; background: rgba(0,90,50,0.04); }
+        .module-tab-btn.active { color: #005a32; border-bottom-color: #005a32; }
+        .dark .module-tab-btn { color: #9ca3af; }
+        .dark .module-tab-btn:hover { color: #22c55e; }
+        .dark .module-tab-btn.active { color: #22c55e; border-bottom-color: #22c55e; }
+        .module-tab-btn .material-icons { font-size: 18px; }
+        .supplies-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 420px; color: #9ca3af; gap: 14px; }
+        .supplies-placeholder .material-icons { font-size: 72px; opacity: 0.3; }
+        .supplies-placeholder h2 { font-size: 22px; font-weight: 700; opacity: 0.45; margin: 0; }
+        .supplies-placeholder p { font-size: 14px; opacity: 0.35; margin: 0; }
+
         /* ── FANCY NOTIFICATION DROPDOWN ── */
         @keyframes badge-pop { from { transform: scale(0); } to { transform: scale(1); } }
         #notificationBadge { animation: badge-pop 0.3s cubic-bezier(.34,1.56,.64,1); }
@@ -197,6 +212,9 @@ thead tr {
                 <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="dashboard.html"><span class="material-icons mr-3">dashboard</span> Dashboard</a>
                 <a class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold" href="inventory.html"><span class="material-icons mr-3">inventory_2</span> Inventory</a>
                 <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="patient_records.html"><span class="material-icons mr-3">folder_shared</span> Patient Records</a>
+                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="pos.html">
+                <span class="material-icons mr-3">shopping_cart</span> Counter Dispensing
+            </a>
                 <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="supplier.html"><span class="material-icons mr-3">local_shipping</span> Suppliers</a>
                 <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="billing.html"><span class="material-icons mr-3">point_of_sale</span> Sales &amp; Billing</a>
             </nav>
@@ -257,7 +275,28 @@ thead tr {
                 </div>
             </header>
 
-            <div class="flex-1 p-8 overflow-y-auto">
+            <!-- ═══════════════════════════════════════════════════════
+                 CHANGE 1 of 2 (HTML): replaced <div class="flex-1 p-8 overflow-y-auto">
+                 with a tab bar + two panels. All original content is inside
+                 #modulePanelInventory unchanged.
+                 ═══════════════════════════════════════════════════════ -->
+            <div class="flex-1 flex flex-col overflow-hidden">
+
+                <!-- Module tab bar -->
+                <div class="module-tab-bar px-6">
+                    <button id="moduleTabInventory" class="module-tab-btn active" onclick="switchModuleTab('inventory')">
+                        <span class="material-icons">inventory_2</span>
+                        Inventory
+                    </button>
+                    <button id="moduleTabSupplies" class="module-tab-btn" onclick="switchModuleTab('supplies')">
+                        <span class="material-icons">medical_services</span>
+                        Supplies
+                    </button>
+                </div>
+
+                <!-- Inventory panel — original content, p-8 moved here -->
+                <div id="modulePanelInventory" class="flex-1 p-8 overflow-y-auto">
+
                 <div class="flex justify-between items-center mb-6">
                     <div>
                         <h1 class="text-3xl font-bold text-text-light dark:text-text-dark">Inventory Management</h1>
@@ -398,12 +437,40 @@ thead tr {
                         <p id="expiringCount" class="text-3xl font-bold text-secondary dark:text-red-400 mt-2">0</p>
                     </div>
                 </div>
-            </div>
+
+                </div><!-- end #modulePanelInventory -->
+
+                <!-- Supplies panel (blank) -->
+                <div id="modulePanelSupplies" class="flex-1 p-8 overflow-y-auto hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h1 class="text-3xl font-bold text-text-light dark:text-text-dark">Supplies</h1>
+                            <p class="text-subtext-light dark:text-subtext-dark mt-1">Manage non-medicine supplies and consumables</p>
+                        </div>
+                    </div>
+                    <div class="bg-surface-light dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800">
+                        <div class="supplies-placeholder">
+                            <span class="material-icons">medical_services</span>
+                            <h2>Supplies Module</h2>
+                            <p>This section is under construction — check back soon.</p>
+                        </div>
+                    </div>
+                </div><!-- end #modulePanelSupplies -->
+
+            </div><!-- end flex-1 flex flex-col overflow-hidden -->
         </main>
     </div>
 
 <script>
 const API_BASE_URL = 'http://localhost:5001';
+
+// ── CHANGE 2 of 2 (JS): module tab switcher — only new code added ──
+function switchModuleTab(module) {
+    document.getElementById('moduleTabInventory').classList.toggle('active', module === 'inventory');
+    document.getElementById('moduleTabSupplies').classList.toggle('active', module === 'supplies');
+    document.getElementById('modulePanelInventory').classList.toggle('hidden', module !== 'inventory');
+    document.getElementById('modulePanelSupplies').classList.toggle('hidden', module !== 'supplies');
+}
 
 class InventoryManager {
     constructor() {
