@@ -39,22 +39,19 @@
         };
     </script>
     <style>
-
-       thead th {
-    position: sticky;
-    top: 0;
-    background: transparent !important;
-    z-index: 10;
-}
-
-thead tr {
-    background: linear-gradient(to right, rgba(0,90,50,0.2), rgba(255,255,255,0.5), rgba(214,40,40,0.2));
-    z-index: 10;
-}
-
-.dark thead tr {
-    background: linear-gradient(to right, rgba(0,90,50,0.3), rgba(15,23,42,0.8), rgba(214,40,40,0.3));
-}
+        thead th {
+            position: sticky;
+            top: 0;
+            background: transparent !important;
+            z-index: 10;
+        }
+        thead tr {
+            background: linear-gradient(to right, rgba(0,90,50,0.2), rgba(255,255,255,0.5), rgba(214,40,40,0.2));
+            z-index: 10;
+        }
+        .dark thead tr {
+            background: linear-gradient(to right, rgba(0,90,50,0.3), rgba(15,23,42,0.8), rgba(214,40,40,0.3));
+        }
 
         body { font-family: 'Inter', sans-serif; }
         .drag-region { -webkit-app-region: drag; }
@@ -72,37 +69,106 @@ thead tr {
         .table-container { max-height: 600px; overflow-y: auto; position: relative; }
         thead th { position: sticky; top: 0; background-color: white; z-index: 10; }
         .dark thead th { background-color: #1f2937; }
-        /* ── SETTINGS (dark mode toggle only) ── */
-        .settings-dropdown { display: none; position: absolute; top: 100%; right: 0; width: 320px; background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); z-index: 1000; margin-top: 0.5rem; }
-        .dark .settings-dropdown { background: #1f2937; border-color: #374151; }
-        .settings-section { padding: 1rem; border-bottom: 1px solid #f3f4f6; }
-        .dark .settings-section { border-bottom-color: #374151; }
-        .settings-section:last-child { border-bottom: none; }
-        .settings-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
-        .settings-item:last-child { margin-bottom: 0; }
-        .settings-label { flex: 1; font-size: 0.875rem; font-weight: 500; }
-        .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
-        .toggle-switch input { opacity: 0; width: 0; height: 0; }
-        .toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #d1d5db; transition: .4s; border-radius: 24px; }
-        .dark .toggle-slider { background-color: #4b5563; }
-        .toggle-slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .toggle-slider { background-color: #005a32; }
-        input:checked + .toggle-slider:before { transform: translateX(20px); }
 
-        /* ── MODULE TABS (NEW) ── */
-        .module-tab-bar { display: flex; border-bottom: 2px solid #e5e7eb; background: white; }
-        .dark .module-tab-bar { border-color: #374151; background: #1f2937; }
-        .module-tab-btn { display: flex; align-items: center; gap: 8px; padding: 12px 24px; font-size: 14px; font-weight: 600; color: #6b7280; cursor: pointer; border: none; background: none; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s ease; }
-        .module-tab-btn:hover { color: #005a32; background: rgba(0,90,50,0.04); }
-        .module-tab-btn.active { color: #005a32; border-bottom-color: #005a32; }
-        .dark .module-tab-btn { color: #9ca3af; }
-        .dark .module-tab-btn:hover { color: #22c55e; }
-        .dark .module-tab-btn.active { color: #22c55e; border-bottom-color: #22c55e; }
-        .module-tab-btn .material-icons { font-size: 18px; }
-        .supplies-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 420px; color: #9ca3af; gap: 14px; }
-        .supplies-placeholder .material-icons { font-size: 72px; opacity: 0.3; }
-        .supplies-placeholder h2 { font-size: 22px; font-weight: 700; opacity: 0.45; margin: 0; }
-        .supplies-placeholder p { font-size: 14px; opacity: 0.35; margin: 0; }
+        /* ── MODULE TABS — full width, green + red ── */
+        .module-tab-bar {
+            display: flex;
+            align-items: stretch;
+            background: linear-gradient(to bottom, #ffffff 0%, #f8fafc 100%);
+            border-bottom: 2px solid #e5e7eb;
+            position: relative;
+        }
+        .dark .module-tab-bar {
+            background: linear-gradient(to bottom, #1f2937 0%, #111827 100%);
+            border-color: #374151;
+        }
+
+        .module-tab-btn {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            height: 54px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            color: #9ca3af;
+            cursor: pointer;
+            border: none;
+            background: none;
+            outline: none;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: color 0.2s ease, background 0.2s ease;
+            white-space: nowrap;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .module-tab-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: transparent;
+            transition: background 0.2s ease;
+        }
+
+        .module-tab-btn + .module-tab-btn {
+            border-left: 1px solid #e5e7eb;
+        }
+        .dark .module-tab-btn + .module-tab-btn {
+            border-color: #374151;
+        }
+
+        .module-tab-btn .material-icons {
+            font-size: 18px;
+            transition: transform 0.2s ease;
+            position: relative;
+            z-index: 1;
+        }
+        .module-tab-btn:hover .material-icons { transform: translateY(-1px); }
+
+        .module-tab-btn span.tab-label {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* INVENTORY — green */
+        #moduleTabInventory:hover { color: #005a32; }
+        #moduleTabInventory:hover::before { background: rgba(0,90,50,0.04); }
+        #moduleTabInventory.active { color: #005a32; border-bottom-color: #005a32; }
+        #moduleTabInventory.active::before {
+            background: linear-gradient(180deg, rgba(0,90,50,0.08) 0%, rgba(0,90,50,0.02) 100%);
+        }
+        #moduleTabInventory.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; left: 16px; right: 16px;
+            height: 3px;
+            background: linear-gradient(to right, #005a32, #22c55e);
+            border-radius: 3px 3px 0 0;
+            box-shadow: 0 -2px 8px rgba(0,90,50,0.3);
+        }
+        #moduleTabInventory.active .material-icons { color: #005a32; }
+
+        /* SUPPLIES — red */
+        #moduleTabSupplies:hover { color: #b91c1c; }
+        #moduleTabSupplies:hover::before { background: rgba(185,28,28,0.04); }
+        #moduleTabSupplies.active { color: #b91c1c; border-bottom-color: #b91c1c; }
+        #moduleTabSupplies.active::before {
+            background: linear-gradient(180deg, rgba(185,28,28,0.08) 0%, rgba(185,28,28,0.02) 100%);
+        }
+        #moduleTabSupplies.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; left: 16px; right: 16px;
+            height: 3px;
+            background: linear-gradient(to right, #b91c1c, #f87171);
+            border-radius: 3px 3px 0 0;
+            box-shadow: 0 -2px 8px rgba(185,28,28,0.3);
+        }
+        #moduleTabSupplies.active .material-icons { color: #b91c1c; }
 
         /* ── FANCY NOTIFICATION DROPDOWN ── */
         @keyframes badge-pop { from { transform: scale(0); } to { transform: scale(1); } }
@@ -197,9 +263,7 @@ thead tr {
             <div class="h-16 flex items-center px-6 border-b border-border-light dark:border-border-dark">
                 <div class="flex items-center gap-3">
                      <div class="w-12 h-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm">
-                        <img src="images/wellserved.png" 
-                        alt="Well Served Logo" 
-                        class="w-full h-full object-cover">
+                        <img src="images/wellserved.png" alt="Well Served Logo" class="w-full h-full object-cover">
                     </div>
                     <div>
                         <h1 class="font-bold text-primary dark:text-green-400 leading-tight">Well Served</h1>
@@ -212,35 +276,25 @@ thead tr {
                 <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="dashboard.html"><span class="material-icons mr-3">dashboard</span> Dashboard</a>
                 <a class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold" href="inventory.html"><span class="material-icons mr-3">inventory_2</span> Inventory</a>
                 <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="patient_records.html"><span class="material-icons mr-3">folder_shared</span> Patient Records</a>
-                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="pos.html">
-                <span class="material-icons mr-3">shopping_cart</span> Counter Dispensing
-            </a>
-                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="supplier.html"><span class="material-icons mr-3">local_shipping</span> Suppliers</a>
+                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="pos.html"><span class="material-icons mr-3">shopping_cart</span> Counter Dispensing</a>
+              
                 <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="billing.html"><span class="material-icons mr-3">point_of_sale</span> Sales &amp; Billing</a>
             </nav>
-        <div class="p-4 border-t border-border-light dark:border-border-dark">
-            <button onclick="logoutUser()" 
-                class="flex items-center w-full px-4 py-2 gap-3 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors">
-                <span class="material-icons text-red-500">logout</span> Logout
-            </button>
-        </div>
-    </aside>
+            <div class="p-4 border-t border-border-light dark:border-border-dark">
+                <button onclick="logoutUser()" class="flex items-center w-full px-4 py-2 gap-3 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors">
+                    <span class="material-icons text-red-500">logout</span> Logout
+                </button>
+            </div>
         </aside>
 
         <main class="flex-1 flex flex-col">
             <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
-                <div class="flex items-center gap-2">
-                  
-                </div>
+                <div class="flex items-center gap-2"></div>
                 <div class="flex items-center gap-4">
-                    <!-- Fancy Notification Bell -->
                     <div class="relative">
-                        <button id="notificationBtn"
-                            class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <button id="notificationBtn" class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                             <span class="material-icons text-2xl">notifications</span>
-                            <span id="notificationBadge"
-                                class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold"
-                                style="display:none;">0</span>
+                            <span id="notificationBadge" class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold" style="display:none;">0</span>
                         </button>
                         <div id="notificationDropdown" class="notif-dropdown">
                             <div class="notif-header">
@@ -269,209 +323,654 @@ thead tr {
                             </div>
                         </div>
                     </div>
-                    <!-- Profile then Logout -->
                     <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">PH</div>
-                   
                 </div>
             </header>
 
-            <!-- ═══════════════════════════════════════════════════════
-                 CHANGE 1 of 2 (HTML): replaced <div class="flex-1 p-8 overflow-y-auto">
-                 with a tab bar + two panels. All original content is inside
-                 #modulePanelInventory unchanged.
-                 ═══════════════════════════════════════════════════════ -->
             <div class="flex-1 flex flex-col overflow-hidden">
 
-                <!-- Module tab bar -->
-                <div class="module-tab-bar px-6">
+                <!-- Module tab bar — full width, green + red -->
+                <div class="module-tab-bar">
                     <button id="moduleTabInventory" class="module-tab-btn active" onclick="switchModuleTab('inventory')">
                         <span class="material-icons">inventory_2</span>
-                        Inventory
+                        <span class="tab-label">Medicine</span>
                     </button>
                     <button id="moduleTabSupplies" class="module-tab-btn" onclick="switchModuleTab('supplies')">
                         <span class="material-icons">medical_services</span>
-                        Supplies
+                        <span class="tab-label">Supplies</span>
                     </button>
                 </div>
 
-                <!-- Inventory panel — original content, p-8 moved here -->
+                <!-- Inventory Panel -->
                 <div id="modulePanelInventory" class="flex-1 p-8 overflow-y-auto">
 
-                <div class="flex justify-between items-center mb-6">
-                    <div>
-                        <h1 class="text-3xl font-bold text-text-light dark:text-text-dark">Inventory Management</h1>
-                        <p class="text-subtext-light dark:text-subtext-dark mt-1">Manage medicine stock and track expiries</p>
-                    </div>
-                </div>
-
-                <div class="flex mb-6 bg-surface-light dark:bg-surface-dark rounded-lg p-1 w-fit border border-slate-200 dark:border-slate-700">
-                    <button id="summaryTab" class="tab-btn active" onclick="switchTab('summary')">Total Inventory</button>
-                    <button id="batchTab" class="tab-btn" onclick="switchTab('batch')">Batch Details (FEFO)</button>
-                    <button id="archiveTab" class="tab-btn" onclick="switchTab('archive')">Archive</button>
-                </div>
-
-                <div id="alertsSection" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                    <div class="bg-[rgba(0,90,50,0.1)] dark:bg-[rgba(0,90,50,0.2)] border-l-4 border-[rgb(0,90,50)] p-6 rounded-lg">
-                        <div class="flex items-start gap-4">
-                            <span class="material-icons text-[rgb(0,90,50)] mt-1">warning_amber</span>
-                            <div>
-                                <h3 class="font-semibold text-[rgb(0,90,50)] text-lg">Low Stock &amp; Out-of-Stock Alerts</h3>
-                                <ul id="lowStockList" class="list-disc list-inside mt-2 space-y-1 text-text-light dark:text-text-dark text-sm"></ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-secondary/10 dark:bg-secondary/20 border-l-4 border-secondary p-6 rounded-lg">
-                        <div class="flex items-start gap-4">
-                            <span class="material-icons text-secondary mt-1">event_busy</span>
-                            <div>
-                                <h3 class="font-semibold text-secondary text-lg">Expiry &amp; Expired Alerts</h3>
-                                <ul id="expiryList" class="list-disc list-inside mt-2 space-y-1 text-text-light dark:text-text-dark text-sm"></ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="summarySection" class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
-                    <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
-                        <h2 class="text-xl font-semibold text-text-light dark:text-text-dark">Total Medicine Inventory</h2>
-                        <div class="flex items-center gap-4">
-                            <input id="summarySearch" onkeyup="searchSummary()" class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Search medicines..." type="text"/>
-                            <select id="summaryStatusFilter" onchange="filterSummaryByStatus()" class="border border-border-light dark:border-border-dark rounded-lg px-4 py-2 bg-background-light dark:bg-background-dark">
-                                <option value="">All Status</option>
-                                <option value="In Stock">In Stock</option>
-                                <option value="Low Stock">Low Stock</option>
-                                <option value="Out of Stock">Out of Stock</option>
-                            </select>
-                            <button onclick="exportSummaryData()" class="border border-primary px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/10 transition-colors text-primary"><span class="material-icons">download</span> Export</button>
-                        </div>
-                    </div>
-                    <div class="table-container">
-                        <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
-                            <thead class="text-xs text-text-light dark:text-text-dark uppercase tracking-wider">
-    <tr style="background: linear-gradient(to right, rgba(0,90,50,0.2), rgba(255,255,255,0.5), rgba(214,40,40,0.2));">
-        <th class="px-6 py-4 font-medium">Medicine Name</th>
-                                    <th class="px-6 py-4 font-medium">Total Batches</th>
-                                    <th class="px-6 py-4 font-medium">Total Quantity</th>
-                                    <th class="px-6 py-4 font-medium">Earliest Expiry</th>
-                                    <th class="px-6 py-4 font-medium">Avg Price</th>
-                                    <th class="px-6 py-4 font-medium">Total Value</th>
-                                    <th class="px-6 py-4 font-medium">Status</th>
-                                    <th class="px-6 py-4 font-medium">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="summaryTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div id="batchSection" class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 hidden">
-                    <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                    <div class="flex justify-between items-center mb-6">
                         <div>
-                            <h2 class="text-xl font-semibold text-text-light dark:text-text-dark">Batch Details (FEFO)</h2>
-                            <p class="text-xs text-primary mt-1">Sorted by Expiry Date (Dispense First)</p>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <input id="batchSearch" onkeyup="searchBatch()" class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Search batches..." type="text"/>
-                            <button onclick="exportBatchData()" class="border border-primary px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/10 transition-colors text-primary"><span class="material-icons">download</span> Export</button>
+                            <h1 class="text-3xl font-bold text-text-light dark:text-text-dark">Medicine Inventory</h1>
+                            <p class="text-subtext-light dark:text-subtext-dark mt-1">Manage medicine stock and track expiries</p>
                         </div>
                     </div>
-                    <div class="table-container">
-                        <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
-                           <thead class="text-xs text-text-light dark:text-text-dark uppercase tracking-wider">
-    <tr style="background: linear-gradient(to right, rgba(0,90,50,0.2), rgba(255,255,255,0.5), rgba(214,40,40,0.2));">
-                                <tr>
-                                    <th class="px-6 py-4 font-medium">Dispense Order</th>
-                                    <th class="px-6 py-4 font-medium">Medicine Name</th>
-                                    <th class="px-6 py-4 font-medium">Batch No.</th>
-                                    <th class="px-6 py-4 font-medium">Quantity</th>
-                                    <th class="px-6 py-4 font-medium">Expiry Date</th>
-                                    <th class="px-6 py-4 font-medium">Days Until Expiry</th>
-                                    <th class="px-6 py-4 font-medium">Price</th>
-                                    <th class="px-6 py-4 font-medium">Supplier</th>
-                                    <th class="px-6 py-4 font-medium">Status</th>
-                                    <th class="px-6 py-4 font-medium">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="batchTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
 
-                <div id="archiveSection" class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 hidden">
-                    <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
-                        <h2 class="text-xl font-semibold text-text-light dark:text-text-dark">Archived Medicines</h2>
-                        <input id="archiveSearch" onkeyup="searchArchive()" class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Search archive..." type="text"/>
+                    <div class="flex mb-6 bg-surface-light dark:bg-surface-dark rounded-lg p-1 w-fit border border-slate-200 dark:border-slate-700">
+                        <button id="summaryTab" class="tab-btn active" onclick="switchTab('summary')">Total Inventory</button>
+                        <button id="batchTab" class="tab-btn" onclick="switchTab('batch')">Batch Details (FEFO)</button>
+                        <button id="archiveTab" class="tab-btn" onclick="switchTab('archive')">Archive</button>
                     </div>
-                    <div class="table-container">
-                        <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
-                           <thead class="text-xs text-text-light dark:text-text-dark uppercase tracking-wider">
-    <tr style="background: linear-gradient(to right, rgba(0,90,50,0.2), rgba(255,255,255,0.5), rgba(214,40,40,0.2));">
-                                <tr>
-                                    <th class="px-6 py-4 font-medium">Medicine Name</th>
-                                    <th class="px-6 py-4 font-medium">Batch Number</th>
-                                    <th class="px-6 py-4 font-medium">Quantity</th>
-                                    <th class="px-6 py-4 font-medium">Expiry Date</th>
-                                    <th class="px-6 py-4 font-medium">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="archiveTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
-                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
-                        <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium">Total Items</p>
-                        <p id="totalItems" class="text-3xl font-bold text-text-light dark:text-text-dark mt-2">0</p>
+                    <div id="alertsSection" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-[rgba(0,90,50,0.1)] dark:bg-[rgba(0,90,50,0.2)] border-l-4 border-[rgb(0,90,50)] p-6 rounded-lg">
+                            <div class="flex items-start gap-4">
+                                <span class="material-icons text-[rgb(0,90,50)] mt-1">warning_amber</span>
+                                <div>
+                                    <h3 class="font-semibold text-[rgb(0,90,50)] text-lg">Low Stock &amp; Out-of-Stock Alerts</h3>
+                                    <ul id="lowStockList" class="list-disc list-inside mt-2 space-y-1 text-text-light dark:text-text-dark text-sm"></ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-secondary/10 dark:bg-secondary/20 border-l-4 border-secondary p-6 rounded-lg">
+                            <div class="flex items-start gap-4">
+                                <span class="material-icons text-secondary mt-1">event_busy</span>
+                                <div>
+                                    <h3 class="font-semibold text-secondary text-lg">Expiry &amp; Expired Alerts</h3>
+                                    <ul id="expiryList" class="list-disc list-inside mt-2 space-y-1 text-text-light dark:text-text-dark text-sm"></ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
-                        <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium">Total Value</p>
-                        <p id="totalValue" class="text-3xl font-bold text-text-light dark:text-text-dark mt-2">&#8369;0.00</p>
+
+                    <div id="summarySection" class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+                        <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                            <h2 class="text-xl font-semibold text-text-light dark:text-text-dark">Total Medicine Inventory</h2>
+                            <div class="flex items-center gap-4">
+                                <input id="summarySearch" onkeyup="searchSummary()" class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Search medicines..." type="text"/>
+                                <select id="summaryStatusFilter" onchange="filterSummaryByStatus()" class="border border-border-light dark:border-border-dark rounded-lg px-4 py-2 bg-background-light dark:bg-background-dark">
+                                    <option value="">All Status</option>
+                                    <option value="In Stock">In Stock</option>
+                                    <option value="Low Stock">Low Stock</option>
+                                    <option value="Out of Stock">Out of Stock</option>
+                                </select>
+                                <button onclick="exportSummaryData()" class="border border-primary px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/10 transition-colors text-primary"><span class="material-icons">download</span> Export</button>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+                                <thead class="text-xs text-text-light dark:text-text-dark uppercase tracking-wider">
+                                    <tr style="background: linear-gradient(to right, rgba(0,90,50,0.2), rgba(255,255,255,0.5), rgba(214,40,40,0.2));">
+                                        <th class="px-6 py-4 font-medium">Medicine Name</th>
+                                        <th class="px-6 py-4 font-medium">Total Batches</th>
+                                        <th class="px-6 py-4 font-medium">Total Quantity</th>
+                                        <th class="px-6 py-4 font-medium">Earliest Expiry</th>
+                                        <th class="px-6 py-4 font-medium">Avg Price</th>
+                                        <th class="px-6 py-4 font-medium">Total Value</th>
+                                        <th class="px-6 py-4 font-medium">Status</th>
+                                        <th class="px-6 py-4 font-medium">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="summaryTableBody"></tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
-                        <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium">Low Stock Items</p>
-                        <p id="lowStockCount" class="text-3xl font-bold text-accent dark:text-amber-400 mt-2">0</p>
+
+                    <div id="batchSection" class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 hidden">
+                        <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                            <div>
+                                <h2 class="text-xl font-semibold text-text-light dark:text-text-dark">Batch Details (FEFO)</h2>
+                                <p class="text-xs text-primary mt-1">Sorted by Expiry Date (Dispense First)</p>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <input id="batchSearch" onkeyup="searchBatch()" class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Search batches..." type="text"/>
+                                <button onclick="exportBatchData()" class="border border-primary px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/10 transition-colors text-primary"><span class="material-icons">download</span> Export</button>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+                                <thead class="text-xs text-text-light dark:text-text-dark uppercase tracking-wider">
+                                    <tr style="background: linear-gradient(to right, rgba(0,90,50,0.2), rgba(255,255,255,0.5), rgba(214,40,40,0.2));">
+                                        <th class="px-6 py-4 font-medium">Dispense Order</th>
+                                        <th class="px-6 py-4 font-medium">Medicine Name</th>
+                                        <th class="px-6 py-4 font-medium">Batch No.</th>
+                                        <th class="px-6 py-4 font-medium">Quantity</th>
+                                        <th class="px-6 py-4 font-medium">Expiry Date</th>
+                                        <th class="px-6 py-4 font-medium">Days Until Expiry</th>
+                                        <th class="px-6 py-4 font-medium">Price</th>
+                                        <th class="px-6 py-4 font-medium">Supplier</th>
+                                        <th class="px-6 py-4 font-medium">Status</th>
+                                        <th class="px-6 py-4 font-medium">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="batchTableBody"></tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
-                        <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium">Expiring Soon</p>
-                        <p id="expiringCount" class="text-3xl font-bold text-secondary dark:text-red-400 mt-2">0</p>
+
+                    <div id="archiveSection" class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 hidden">
+                        <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                            <h2 class="text-xl font-semibold text-text-light dark:text-text-dark">Archived Medicines</h2>
+                            <input id="archiveSearch" onkeyup="searchArchive()" class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Search archive..." type="text"/>
+                        </div>
+                        <div class="table-container">
+                            <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+                                <thead class="text-xs text-text-light dark:text-text-dark uppercase tracking-wider">
+                                    <tr style="background: linear-gradient(to right, rgba(0,90,50,0.2), rgba(255,255,255,0.5), rgba(214,40,40,0.2));">
+                                        <th class="px-6 py-4 font-medium">Medicine Name</th>
+                                        <th class="px-6 py-4 font-medium">Batch Number</th>
+                                        <th class="px-6 py-4 font-medium">Quantity</th>
+                                        <th class="px-6 py-4 font-medium">Expiry Date</th>
+                                        <th class="px-6 py-4 font-medium">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="archiveTableBody"></tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+                            <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium">Total Items</p>
+                            <p id="totalItems" class="text-3xl font-bold text-text-light dark:text-text-dark mt-2">0</p>
+                        </div>
+                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+                            <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium">Total Value</p>
+                            <p id="totalValue" class="text-3xl font-bold text-text-light dark:text-text-dark mt-2">&#8369;0.00</p>
+                        </div>
+                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+                            <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium">Low Stock Items</p>
+                            <p id="lowStockCount" class="text-3xl font-bold text-accent dark:text-amber-400 mt-2">0</p>
+                        </div>
+                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+                            <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium">Expiring Soon</p>
+                            <p id="expiringCount" class="text-3xl font-bold text-secondary dark:text-red-400 mt-2">0</p>
+                        </div>
+                    </div>
 
                 </div><!-- end #modulePanelInventory -->
 
-                <!-- Supplies panel (blank) -->
+                <!-- Supplies Panel -->
                 <div id="modulePanelSupplies" class="flex-1 p-8 overflow-y-auto hidden">
+
                     <div class="flex justify-between items-center mb-6">
                         <div>
-                            <h1 class="text-3xl font-bold text-text-light dark:text-text-dark">Supplies</h1>
-                            <p class="text-subtext-light dark:text-subtext-dark mt-1">Manage non-medicine supplies and consumables</p>
+                            <h1 class="text-3xl font-bold text-text-light dark:text-text-dark">Supplies Inventory</h1>
+                            <p class="text-subtext-light dark:text-subtext-dark mt-1">monitor and manage pharmaceutical stock levels</p>
                         </div>
                     </div>
-                    <div class="bg-surface-light dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800">
-                        <div class="supplies-placeholder">
-                            <span class="material-icons">medical_services</span>
-                            <h2>Supplies Module</h2>
-                            <p>This section is under construction — check back soon.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-primary shadow-sm">
+        <div class="flex items-start justify-between">
+            <div>
+                <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide">Total Medicines</p>
+                <p id="suppliesTotalCount" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
+                <div class="flex items-center mt-2 text-sm text-subtext-light dark:text-subtext-dark">
+                    <span class="material-icons text-base">inventory_2</span>
+                    <span class="ml-1">All tracked items</span>
+                </div>
+            </div>
+            <div class="p-3 bg-primary/10 rounded-lg">
+                <span class="material-icons text-primary" style="font-size:28px;">medical_services</span>
+            </div>
+        </div>
+    </div>
+    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-success shadow-sm">
+        <div class="flex items-start justify-between">
+            <div>
+                <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide">In Stock</p>
+                <p id="suppliesInStockCount" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
+                <div class="flex items-center mt-2 text-sm text-success">
+                    <span class="material-icons text-base">check_circle</span>
+                    <span class="ml-1">Adequately stocked</span>
+                </div>
+            </div>
+            <div class="p-3 bg-success/10 rounded-lg">
+                <span class="material-icons text-success" style="font-size:28px;">verified</span>
+            </div>
+        </div>
+    </div>
+    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-warning shadow-sm">
+        <div class="flex items-start justify-between">
+            <div>
+                <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide">Low Stock Alerts</p>
+                <p id="suppliesLowStockCount" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
+                <div class="flex items-center mt-2 text-sm text-warning">
+                    <span class="material-icons text-base">warning</span>
+                    <span class="ml-1">Reorder soon</span>
+                </div>
+            </div>
+            <div class="p-3 bg-warning/10 rounded-lg">
+                <span class="material-icons text-warning" style="font-size:28px;">inventory</span>
+            </div>
+        </div>
+    </div>
+    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-danger shadow-sm">
+        <div class="flex items-start justify-between">
+            <div>
+                <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide">Out of Stock</p>
+                <p id="suppliesOutOfStockCount" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
+                <div class="flex items-center mt-2 text-sm text-danger">
+                    <span class="material-icons text-base">error_outline</span>
+                    <span class="ml-1">Immediate action needed</span>
+                </div>
+            </div>
+            <div class="p-3 bg-danger/10 rounded-lg">
+                <span class="material-icons text-danger" style="font-size:28px;">remove_shopping_cart</span>
+            </div>
+        </div>
+    </div>
+</div>
+                    <div class="bg-surface-light dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-800">
+                        <div class="flex flex-col md:flex-row justify-between items-center p-6 gap-4 border-b border-slate-200 dark:border-slate-800">
+                            <h2 class="text-lg font-semibold text-text-light dark:text-text-dark">Medicine Back Stock List</h2>
+                            <div class="flex gap-3 w-full md:w-auto">
+                                <input id="suppliesSearch" onkeyup="searchSupplies()" type="text" placeholder="Search medicines..."
+                                    class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-primary" />
+                                <select id="suppliesStatusFilter" onchange="filterSuppliesByStatus()" class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm">
+                                    <option value="">All Status</option>
+                                    <option value="In Stock">In Stock</option>
+                                    <option value="Low Stock">Low Stock</option>
+                                    <option value="Out of Stock">Out of Stock</option>
+                                </select>
+                                <button onclick="openAddSupplyModal()" class="px-4 py-2 rounded-xl bg-primary text-white text-sm font-medium hover:opacity-90 transition flex items-center gap-2">
+                                    <span class="material-icons text-lg">add</span>
+                                    Add Medicine
+                                </button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="text-xs text-text-light dark:text-text-dark uppercase tracking-wider">
+    <tr style="background: linear-gradient(to right, rgba(0,90,50,0.2), rgba(255,255,255,0.5), rgba(214,40,40,0.2));">
+        <th class="px-6 py-4 font-medium">Medicine Name</th>
+        <th class="px-6 py-4 font-medium">Category</th>
+        <th class="px-6 py-4 font-medium text-center">Quantity in Stock</th>
+        <th class="px-6 py-4 font-medium text-center">Reorder Level</th>
+        <th class="px-6 py-4 font-medium text-center">Status</th>
+        <th class="px-6 py-4 font-medium text-center">Actions</th>
+    </tr>
+</thead>
+                                <tbody id="suppliesTableBody"></tbody>
+                            </table>
                         </div>
                     </div>
+
                 </div><!-- end #modulePanelSupplies -->
 
-            </div><!-- end flex-1 flex flex-col overflow-hidden -->
+            </div>
         </main>
     </div>
 
 <script>
 const API_BASE_URL = 'http://localhost:5001';
 
-// ── CHANGE 2 of 2 (JS): module tab switcher — only new code added ──
+// ══════════════════════════════════════════════════════════
+// SUPPLIES MANAGER
+// ══════════════════════════════════════════════════════════
+class SuppliesManager {
+    constructor() {
+        this.supplies = [
+            { id: 1, name: 'Amoxicillin 500mg', category: 'Antibiotics', quantity: 245, reorderLevel: 50, unitCost: 15.50 },
+            { id: 2, name: 'Ibuprofen 200mg', category: 'Pain Relief', quantity: 12, reorderLevel: 25, unitCost: 8.00 },
+            { id: 3, name: 'Cetirizine 10mg', category: 'Antihistamine', quantity: 0, reorderLevel: 30, unitCost: 5.50 },
+            { id: 4, name: 'Omeprazole 20mg', category: 'Gastrointestinal', quantity: 180, reorderLevel: 40, unitCost: 12.00 },
+            { id: 5, name: 'Metformin 500mg', category: 'Diabetes', quantity: 95, reorderLevel: 60, unitCost: 10.00 },
+            { id: 6, name: 'Amlodipine 5mg', category: 'Cardiovascular', quantity: 220, reorderLevel: 50, unitCost: 14.00 },
+            { id: 7, name: 'Paracetamol 500mg', category: 'Pain Relief', quantity: 15, reorderLevel: 100, unitCost: 3.50 },
+            { id: 8, name: 'Losartan 50mg', category: 'Cardiovascular', quantity: 140, reorderLevel: 45, unitCost: 18.00 }
+        ];
+        this.nextId = 9;
+    }
+
+    getAll() { return this.supplies; }
+    getById(id) { return this.supplies.find(s => s.id === id); }
+
+    add(supply) {
+        supply.id = this.nextId++;
+        this.supplies.push(supply);
+        this.renderSupplies();
+        this.updateSuppliesStats();
+    }
+
+    update(id, updates) {
+        const index = this.supplies.findIndex(s => s.id === id);
+        if (index !== -1) {
+            this.supplies[index] = { ...this.supplies[index], ...updates };
+            this.renderSupplies();
+            this.updateSuppliesStats();
+        }
+    }
+
+    restock(id, quantity) {
+        const supply = this.getById(id);
+        if (supply) {
+            supply.quantity += quantity;
+            this.renderSupplies();
+            this.updateSuppliesStats();
+        }
+    }
+
+    delete(id) {
+        this.supplies = this.supplies.filter(s => s.id !== id);
+        this.renderSupplies();
+        this.updateSuppliesStats();
+    }
+
+    getStatus(quantity, reorderLevel) {
+        if (quantity === 0) return 'Out of Stock';
+        if (quantity <= reorderLevel) return 'Low Stock';
+        return 'In Stock';
+    }
+
+    renderSupplies() {
+        const tbody = document.getElementById('suppliesTableBody');
+        const search = document.getElementById('suppliesSearch')?.value.toLowerCase() || '';
+        const statusFilter = document.getElementById('suppliesStatusFilter')?.value || '';
+
+        let filtered = this.supplies.filter(item => {
+            const matchesSearch = item.name.toLowerCase().includes(search) || item.category.toLowerCase().includes(search);
+            const status = this.getStatus(item.quantity, item.reorderLevel);
+            const matchesStatus = !statusFilter || status === statusFilter;
+            return matchesSearch && matchesStatus;
+        });
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-500">No supplies found matching your criteria.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = filtered.map(item => {
+            const status = this.getStatus(item.quantity, item.reorderLevel);
+            let statusBg = '', statusText = '';
+            if (status === 'In Stock') { statusBg = 'bg-green-100 dark:bg-green-900/30'; statusText = 'text-green-700 dark:text-green-400'; }
+            else if (status === 'Low Stock') { statusBg = 'bg-yellow-100 dark:bg-yellow-900/30'; statusText = 'text-yellow-700 dark:text-yellow-400'; }
+            else { statusBg = 'bg-red-100 dark:bg-red-900/30'; statusText = 'text-red-700 dark:text-red-400'; }
+
+            return `
+                <tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                    <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${item.name}</td>
+                    <td class="px-6 py-4 text-gray-600 dark:text-gray-400">${item.category}</td>
+                    <td class="px-6 py-4 text-center font-semibold text-text-light dark:text-text-dark">${item.quantity} units</td>
+                    <td class="px-6 py-4 text-center text-gray-600 dark:text-gray-400">${item.reorderLevel} units</td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="px-3 py-1 text-xs font-semibold rounded-full ${statusBg} ${statusText}">${status}</span>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <div class="flex items-center justify-center gap-3">
+                            <button onclick="openRestockModal(${item.id})" class="text-primary hover:text-primary/80 font-medium text-sm flex items-center gap-1" title="Restock">
+                                <span class="material-icons text-lg">add_shopping_cart</span> Restock
+                            </button>
+                            <button onclick="openUpdateSupplyModal(${item.id})" class="text-accent hover:text-accent/80 font-medium text-sm flex items-center gap-1" title="Update">
+                                <span class="material-icons text-lg">edit</span> Update
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
+        }).join('');
+    }
+
+    updateSuppliesStats() {
+        const total = this.supplies.length;
+        const inStock = this.supplies.filter(s => this.getStatus(s.quantity, s.reorderLevel) === 'In Stock').length;
+        const lowStock = this.supplies.filter(s => this.getStatus(s.quantity, s.reorderLevel) === 'Low Stock').length;
+        const outOfStock = this.supplies.filter(s => this.getStatus(s.quantity, s.reorderLevel) === 'Out of Stock').length;
+        document.getElementById('suppliesTotalCount').textContent = total;
+        document.getElementById('suppliesInStockCount').textContent = inStock;
+        document.getElementById('suppliesLowStockCount').textContent = lowStock;
+        document.getElementById('suppliesOutOfStockCount').textContent = outOfStock;
+    }
+}
+
+let suppliesManager;
+
+function initializeSupplies() {
+    if (!suppliesManager) {
+        suppliesManager = new SuppliesManager();
+        window.suppliesManager = suppliesManager;
+    }
+    suppliesManager.renderSupplies();
+    suppliesManager.updateSuppliesStats();
+}
+
+function searchSupplies() { if (suppliesManager) suppliesManager.renderSupplies(); }
+function filterSuppliesByStatus() { if (suppliesManager) suppliesManager.renderSupplies(); }
+
+// ══════════════════════════════════════════════════════════
+// RESTOCK MODAL
+// ══════════════════════════════════════════════════════════
+async function openRestockModal(supplyId) {
+    const supply = suppliesManager.getById(supplyId);
+    if (!supply) return;
+
+    const { value: formValues } = await Swal.fire({
+        title: `Restock ${supply.name}`,
+        html: `
+            <div class="text-left space-y-4">
+                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
+                    <p class="text-sm text-blue-800 dark:text-blue-300">
+                        <strong>Current Stock:</strong> ${supply.quantity} units<br>
+                        <strong>Reorder Level:</strong> ${supply.reorderLevel} units<br>
+                        <strong>Status:</strong> ${suppliesManager.getStatus(supply.quantity, supply.reorderLevel)}
+                    </p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Quantity Purchased *</label>
+                    <input type="number" id="restockQuantity" class="swal2-input" placeholder="Enter quantity" min="1" value="10" style="margin: 0; width: 100%;">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unit Cost (₱) *</label>
+                    <input type="number" id="restockUnitCost" class="swal2-input" placeholder="Enter unit cost" step="0.01" min="0" value="${supply.unitCost || 0}" style="margin: 0; width: 100%;">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Supplier</label>
+                    <input type="text" id="restockSupplier" class="swal2-input" placeholder="Enter supplier name" style="margin: 0; width: 100%;">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Purchase Date *</label>
+                    <input type="date" id="restockDate" class="swal2-input" value="${new Date().toISOString().split('T')[0]}" style="margin: 0; width: 100%;">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Notes</label>
+                    <textarea id="restockNotes" class="swal2-textarea" placeholder="Additional notes..." style="margin: 0; width: 100%;"></textarea>
+                </div>
+            </div>`,
+        focusConfirm: false,
+        showCancelButton: true,
+        confirmButtonText: 'Restock',
+        confirmButtonColor: '#005a32',
+        cancelButtonText: 'Cancel',
+        width: '600px',
+        preConfirm: () => {
+            const quantity = parseInt(document.getElementById('restockQuantity').value);
+            const unitCost = parseFloat(document.getElementById('restockUnitCost').value);
+            const supplier = document.getElementById('restockSupplier').value;
+            const date = document.getElementById('restockDate').value;
+            const notes = document.getElementById('restockNotes').value;
+            if (!quantity || quantity <= 0) { Swal.showValidationMessage('Please enter a valid quantity'); return false; }
+            if (!unitCost || unitCost < 0) { Swal.showValidationMessage('Please enter a valid unit cost'); return false; }
+            if (!date) { Swal.showValidationMessage('Please select a purchase date'); return false; }
+            return { quantity, unitCost, supplier, date, notes };
+        }
+    });
+
+    if (formValues) {
+        suppliesManager.restock(supplyId, formValues.quantity);
+        if (formValues.unitCost !== supply.unitCost) suppliesManager.update(supplyId, { unitCost: formValues.unitCost });
+        const totalCost = (formValues.quantity * formValues.unitCost).toFixed(2);
+        const newQuantity = supply.quantity;
+        await Swal.fire({
+            icon: 'success',
+            title: 'Restocked Successfully!',
+            html: `
+                <div class="text-left">
+                    <p><strong>Medicine:</strong> ${supply.name}</p>
+                    <p><strong>Quantity Added:</strong> ${formValues.quantity} units</p>
+                    <p><strong>New Total:</strong> ${newQuantity} units</p>
+                    <p><strong>Total Cost:</strong> ₱${totalCost}</p>
+                    ${formValues.supplier ? `<p><strong>Supplier:</strong> ${formValues.supplier}</p>` : ''}
+                </div>`,
+            confirmButtonColor: '#005a32'
+        });
+        console.log('Restock data to send to API:', { supplyId, ...formValues, totalCost: formValues.quantity * formValues.unitCost });
+    }
+}
+
+// ══════════════════════════════════════════════════════════
+// UPDATE SUPPLY MODAL
+// ══════════════════════════════════════════════════════════
+async function openUpdateSupplyModal(supplyId) {
+    const supply = suppliesManager.getById(supplyId);
+    if (!supply) return;
+
+    const categories = ['Antibiotics', 'Pain Relief', 'Antihistamine', 'Gastrointestinal', 'Diabetes', 'Cardiovascular'];
+    const categoryOptions = categories.map(cat => `<option value="${cat}" ${cat === supply.category ? 'selected' : ''}>${cat}</option>`).join('');
+
+    const { value: formValues } = await Swal.fire({
+        title: `Update ${supply.name}`,
+        html: `
+            <div class="text-left space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Medicine Name *</label>
+                    <input type="text" id="updateName" class="swal2-input" value="${supply.name}" style="margin: 0; width: 100%;">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category *</label>
+                    <select id="updateCategory" class="swal2-input" style="margin: 0; width: 100%;">${categoryOptions}</select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Quantity in Stock *</label>
+                    <input type="number" id="updateQuantity" class="swal2-input" value="${supply.quantity}" min="0" style="margin: 0; width: 100%;">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Reorder Level *</label>
+                    <input type="number" id="updateReorderLevel" class="swal2-input" value="${supply.reorderLevel}" min="0" style="margin: 0; width: 100%;">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unit Cost (₱) *</label>
+                    <input type="number" id="updateUnitCost" class="swal2-input" value="${supply.unitCost || 0}" step="0.01" min="0" style="margin: 0; width: 100%;">
+                </div>
+            </div>`,
+        focusConfirm: false,
+        showCancelButton: true,
+        confirmButtonText: 'Update',
+        confirmButtonColor: '#005a32',
+        cancelButtonText: 'Cancel',
+        showDenyButton: true,
+        denyButtonText: 'Delete',
+        denyButtonColor: '#d62828',
+        width: '600px',
+        preConfirm: () => {
+            const name = document.getElementById('updateName').value.trim();
+            const category = document.getElementById('updateCategory').value;
+            const quantity = parseInt(document.getElementById('updateQuantity').value);
+            const reorderLevel = parseInt(document.getElementById('updateReorderLevel').value);
+            const unitCost = parseFloat(document.getElementById('updateUnitCost').value);
+            if (!name) { Swal.showValidationMessage('Please enter a medicine name'); return false; }
+            if (quantity < 0) { Swal.showValidationMessage('Quantity cannot be negative'); return false; }
+            if (reorderLevel < 0) { Swal.showValidationMessage('Reorder level cannot be negative'); return false; }
+            if (unitCost < 0) { Swal.showValidationMessage('Unit cost cannot be negative'); return false; }
+            return { name, category, quantity, reorderLevel, unitCost };
+        }
+    }).then((result) => {
+        if (result.isDenied) return { action: 'delete' };
+        if (result.isConfirmed) return { action: 'update', value: result.value };
+        return null;
+    });
+
+    if (formValues?.action === 'delete') {
+        const confirmDelete = await Swal.fire({
+            title: 'Delete Supply?',
+            text: `This will permanently delete ${supply.name} from supplies.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d62828',
+            confirmButtonText: 'Yes, delete it',
+            cancelButtonText: 'Cancel'
+        });
+        if (confirmDelete.isConfirmed) {
+            suppliesManager.delete(supplyId);
+            Swal.fire({ icon: 'success', title: 'Deleted!', text: `${supply.name} has been removed from supplies.`, confirmButtonColor: '#005a32' });
+        }
+    } else if (formValues?.action === 'update' && formValues.value) {
+        suppliesManager.update(supplyId, formValues.value);
+        Swal.fire({ icon: 'success', title: 'Updated!', text: `${formValues.value.name} has been updated successfully.`, confirmButtonColor: '#005a32' });
+    }
+}
+
+// ══════════════════════════════════════════════════════════
+// ADD SUPPLY MODAL
+// ══════════════════════════════════════════════════════════
+async function openAddSupplyModal() {
+    const categories = ['Antibiotics', 'Pain Relief', 'Antihistamine', 'Gastrointestinal', 'Diabetes', 'Cardiovascular'];
+    const categoryOptions = categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+
+    const { value: formValues } = await Swal.fire({
+        title: 'Add New Medicine to Supplies',
+        html: `
+            <div class="text-left space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Medicine Name *</label>
+                    <input type="text" id="addName" class="swal2-input" placeholder="e.g., Aspirin 100mg" style="margin: 0; width: 100%;">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category *</label>
+                    <select id="addCategory" class="swal2-input" style="margin: 0; width: 100%;">
+                        <option value="">-- Select Category --</option>
+                        ${categoryOptions}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Initial Quantity *</label>
+                    <input type="number" id="addQuantity" class="swal2-input" placeholder="0" min="0" value="0" style="margin: 0; width: 100%;">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Reorder Level *</label>
+                    <input type="number" id="addReorderLevel" class="swal2-input" placeholder="e.g., 50" min="1" value="50" style="margin: 0; width: 100%;">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unit Cost (₱) *</label>
+                    <input type="number" id="addUnitCost" class="swal2-input" placeholder="0.00" step="0.01" min="0" value="0" style="margin: 0; width: 100%;">
+                </div>
+            </div>`,
+        focusConfirm: false,
+        showCancelButton: true,
+        confirmButtonText: 'Add Medicine',
+        confirmButtonColor: '#005a32',
+        cancelButtonText: 'Cancel',
+        width: '600px',
+        preConfirm: () => {
+            const name = document.getElementById('addName').value.trim();
+            const category = document.getElementById('addCategory').value;
+            const quantity = parseInt(document.getElementById('addQuantity').value);
+            const reorderLevel = parseInt(document.getElementById('addReorderLevel').value);
+            const unitCost = parseFloat(document.getElementById('addUnitCost').value);
+            if (!name) { Swal.showValidationMessage('Please enter a medicine name'); return false; }
+            if (!category) { Swal.showValidationMessage('Please select a category'); return false; }
+            if (quantity < 0) { Swal.showValidationMessage('Quantity cannot be negative'); return false; }
+            if (reorderLevel <= 0) { Swal.showValidationMessage('Reorder level must be greater than 0'); return false; }
+            if (unitCost < 0) { Swal.showValidationMessage('Unit cost cannot be negative'); return false; }
+            return { name, category, quantity, reorderLevel, unitCost };
+        }
+    });
+
+    if (formValues) {
+        suppliesManager.add(formValues);
+        Swal.fire({ icon: 'success', title: 'Added!', text: `${formValues.name} has been added to supplies.`, confirmButtonColor: '#005a32' });
+        console.log('New supply to send to API:', formValues);
+    }
+}
+
+// ══════════════════════════════════════════════════════════
+// MODULE TAB SWITCHER
+// ══════════════════════════════════════════════════════════
 function switchModuleTab(module) {
     document.getElementById('moduleTabInventory').classList.toggle('active', module === 'inventory');
     document.getElementById('moduleTabSupplies').classList.toggle('active', module === 'supplies');
     document.getElementById('modulePanelInventory').classList.toggle('hidden', module !== 'inventory');
     document.getElementById('modulePanelSupplies').classList.toggle('hidden', module !== 'supplies');
+    if (module === 'supplies') initializeSupplies();
 }
 
+// ══════════════════════════════════════════════════════════
+// INVENTORY MANAGER
+// ══════════════════════════════════════════════════════════
 class InventoryManager {
     constructor() {
         this.liveInventory = [];
@@ -490,12 +989,6 @@ class InventoryManager {
     loadDarkModePreference() {
         const isDarkMode = sessionStorage.getItem('darkMode') === 'true';
         document.documentElement.classList.toggle('dark', isDarkMode);
-        const toggle = document.getElementById('darkModeToggle');
-        if (toggle) toggle.checked = isDarkMode;
-    }
-
-    saveDarkModePreference(isDarkMode) {
-        sessionStorage.setItem('darkMode', isDarkMode);
     }
 
     getToken() {
@@ -503,10 +996,8 @@ class InventoryManager {
         if (directToken) return directToken;
         const userInfoString = sessionStorage.getItem('userInfo');
         if (userInfoString) {
-            try {
-                const userInfo = JSON.parse(userInfoString);
-                return userInfo.token || userInfo.access_token;
-            } catch (e) { console.error("Error parsing userInfo", e); }
+            try { const userInfo = JSON.parse(userInfoString); return userInfo.token || userInfo.access_token; }
+            catch (e) { console.error("Error parsing userInfo", e); }
         }
         return null;
     }
@@ -520,12 +1011,6 @@ class InventoryManager {
                     window.location.href = 'login.html';
                 }
             });
-    }
-
-    confirmBackToHMS(event) {
-        event.preventDefault();
-        Swal.fire({ title: "Leave Inventory?", text: "Return to Integrated Healthcare Management System?", icon: "question", showCancelButton: true, confirmButtonColor: "#005a32", confirmButtonText: "Yes, go back" })
-            .then((result) => { if (result.isConfirmed) window.location.href = 'index.html'; });
     }
 
     async apiCall(endpoint, method = 'GET', body = null) {
@@ -551,83 +1036,36 @@ class InventoryManager {
             this.archivedInventory = allItems.filter(item => item.status === 'Archived');
             this.renderTables();
             this.updateDashboardStats();
-
-            // ✅ If redirected here from a notification, auto-navigate to the right tab + medicine
-            const redirect = sessionStorage.getItem('notifRedirect');
-            if (redirect) {
-                sessionStorage.removeItem('notifRedirect');
-                try {
-                    const { tab, medicine } = JSON.parse(redirect);
-                    if (tab === 'batch') {
-                        // Go to Batch Details, filter by medicine name
-                        this.viewBatchDetails(medicine);
-                    } else if (tab === 'summary') {
-                        // Go to Summary tab, filter by medicine name
-                        this.switchTab('summary');
-                        const summarySearch = document.getElementById('summarySearch');
-                        if (summarySearch) {
-                            summarySearch.value = medicine;
-                            this.renderSummary();
-                        }
-                    }
-                } catch(e) { console.warn('notifRedirect parse error', e); }
-            }
         }
     }
 
     async archiveBatch(id) {
-        // Guard: catch missing or undefined IDs before making any API call
-        if (!id || id === 'undefined' || id === 'null') {
-            Swal.fire('Error', 'Could not find Batch ID. Your API may return "id" instead of "_id" — check the console.', 'error');
-            console.error('[archiveBatch] Received invalid ID:', id);
-            return;
-        }
-        const result = await Swal.fire({
-            title: 'Archive Batch?',
-            text: 'This will move the batch to archive.',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#005a32',
-            confirmButtonText: 'Yes, archive it'
-        });
+        if (!id || id === 'undefined' || id === 'null') { Swal.fire('Error', 'Could not find Batch ID.', 'error'); return; }
+        const result = await Swal.fire({ title: 'Archive Batch?', text: 'This will move the batch to archive.', icon: 'question', showCancelButton: true, confirmButtonColor: '#005a32', confirmButtonText: 'Yes, archive it' });
         if (result.isConfirmed) {
             const res = await this.apiCall(`/api/medicines/${id}`, 'PUT', { status: 'Archived' });
-            if (res) {
-                Swal.fire('Archived', 'Batch moved to archive.', 'success');
-                this.fetchInventory();
-            } else {
-                Swal.fire('Failed', 'Archive request failed. Check the Network tab in DevTools for details.', 'error');
-            }
+            if (res) { Swal.fire('Archived', 'Batch moved to archive.', 'success'); this.fetchInventory(); }
         }
     }
 
     async restoreBatch(id) {
-        const result = await Swal.fire({ title: 'Restore Batch?', text: 'This will move the batch back to active inventory', icon: 'question', showCancelButton: true, confirmButtonColor: '#005a32', confirmButtonText: 'Yes, restore it' });
+        const result = await Swal.fire({ title: 'Restore Batch?', icon: 'question', showCancelButton: true, confirmButtonColor: '#005a32', confirmButtonText: 'Yes, restore it' });
         if (result.isConfirmed) { await this.apiCall(`/api/medicines/${id}`, 'PUT', { status: 'In Stock' }); Swal.fire('Restored', 'Batch moved back to active inventory.', 'success'); this.fetchInventory(); }
     }
 
     async deleteBatch(id) {
         Swal.fire({ title: "Delete Permanently?", text: "This cannot be undone!", icon: "warning", showCancelButton: true, confirmButtonColor: "#d62828", confirmButtonText: "Yes, delete it" })
             .then(async (result) => {
-                if (result.isConfirmed) {
-                    await this.apiCall(`/api/medicines/${id}`, 'DELETE');
-                    Swal.fire('Deleted', 'Record has been removed.', 'success');
-                    this.fetchInventory();
-                }
+                if (result.isConfirmed) { await this.apiCall(`/api/medicines/${id}`, 'DELETE'); Swal.fire('Deleted', 'Record has been removed.', 'success'); this.fetchInventory(); }
             });
     }
 
-    renderTables() {
-        this.renderSummary();
-        this.renderBatches();
-        this.renderArchive();
-    }
+    renderTables() { this.renderSummary(); this.renderBatches(); this.renderArchive(); }
 
     _getName(item) {
         if (item.medicine && typeof item.medicine === 'object' && item.medicine.name) return item.medicine.name;
         if (item.name) return item.name;
         if (item.medicineName) return item.medicineName;
-        if (item.medicine) return "Unlinked Item";
         return "Unknown Medicine";
     }
 
@@ -651,37 +1089,22 @@ class InventoryManager {
             const qty = parseInt(item.quantity || 0);
             const expiry = item.expiryDate || new Date();
             const isExpired = new Date(expiry) < new Date();
-
-            if (!summary[name]) {
-                summary[name] = { name, batchCount: 0, totalQty: 0, totalValue: 0, earliestExpiry: expiry, minStock: item.minStockLevel || 10 };
-            }
+            if (!summary[name]) summary[name] = { name, batchCount: 0, totalQty: 0, totalValue: 0, earliestExpiry: expiry, minStock: item.minStockLevel || 10 };
             summary[name].batchCount++;
-            // ✅ Only count non-expired stock as usable quantity
-            if (!isExpired) {
-                summary[name].totalQty += qty;
-                summary[name].totalValue += (qty * price);
-            }
+            if (!isExpired) { summary[name].totalQty += qty; summary[name].totalValue += (qty * price); }
             if (new Date(expiry) < new Date(summary[name].earliestExpiry)) summary[name].earliestExpiry = expiry;
         });
 
         let summaryArray = Object.values(summary);
         if (search) summaryArray = summaryArray.filter(item => item.name.toLowerCase().includes(search));
-
-        if (summaryArray.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-gray-500">No active inventory found.</td></tr>`;
-            return;
-        }
+        if (summaryArray.length === 0) { tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-gray-500">No active inventory found.</td></tr>`; return; }
 
         summaryArray.forEach(item => {
-            let status = 'In Stock';
-            let statusClass = 'in-stock';
+            let status = 'In Stock', statusClass = 'in-stock';
             if (item.totalQty === 0) { status = 'Out of Stock'; statusClass = 'out-of-stock'; }
             else if (item.totalQty <= item.minStock) { status = 'Low Stock'; statusClass = 'low-stock'; }
-
             if (statusFilter && status !== statusFilter) return;
-
             const avgPrice = item.totalQty > 0 ? (item.totalValue / item.totalQty) : 0;
-
             tbody.innerHTML += `
                 <tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
                     <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${item.name}</td>
@@ -700,21 +1123,10 @@ class InventoryManager {
         const tbody = document.getElementById('batchTableBody');
         const search = document.getElementById('batchSearch').value.toLowerCase();
         tbody.innerHTML = '';
-
         let batches = [...this.liveInventory];
         batches.sort((a, b) => new Date(a.expiryDate) - new Date(b.expiryDate));
-
-        if (search) {
-            batches = batches.filter(item => {
-                const name = this._getName(item);
-                return name.toLowerCase().includes(search) || (item.batchNumber || '').toLowerCase().includes(search);
-            });
-        }
-
-        if (batches.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-gray-500">No active batches found.</td></tr>`;
-            return;
-        }
+        if (search) batches = batches.filter(item => { const name = this._getName(item); return name.toLowerCase().includes(search) || (item.batchNumber || '').toLowerCase().includes(search); });
+        if (batches.length === 0) { tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-gray-500">No active batches found.</td></tr>`; return; }
 
         batches.forEach((item, index) => {
             const name = this._getName(item);
@@ -722,21 +1134,15 @@ class InventoryManager {
             const expiry = new Date(item.expiryDate);
             const today = new Date();
             const daysLeft = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
-
-            let dateClass = 'text-success';
-            let dayText = `${daysLeft} days`;
-            let statusLabel = '<span class="status in-stock">Active</span>';
-
+            let dateClass = 'text-success', dayText = `${daysLeft} days`, statusLabel = '<span class="status in-stock">Active</span>';
             if (daysLeft < 0) { dateClass = 'text-secondary font-bold'; dayText = 'EXPIRED'; statusLabel = '<span class="status out-of-stock">Expired</span>'; }
             else if (daysLeft < 30) { dateClass = 'text-accent font-bold'; }
-
             const dispenseOrder = index + 1;
             const isPriority = dispenseOrder <= 3;
-
             tbody.innerHTML += `
                 <tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
                     <td class="px-6 py-4"><div class="flex items-center gap-2">
-                        <span class="inline-flex items-center justify-center w-6 h-6 rounded-full ${isPriority ? 'bg-secondary/20 text-secondary' : 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400'} text-xs font-bold">${dispenseOrder}</span>
+                        <span class="inline-flex items-center justify-center w-6 h-6 rounded-full ${isPriority ? 'bg-secondary/20 text-secondary' : 'bg-gray-200 text-gray-600'} text-xs font-bold">${dispenseOrder}</span>
                         ${isPriority ? '<span class="material-icons text-xs text-secondary" title="Expiring Soonest">priority_high</span>' : ''}
                     </div></td>
                     <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${name}</td>
@@ -756,17 +1162,9 @@ class InventoryManager {
         const tbody = document.getElementById('archiveTableBody');
         const search = document.getElementById('archiveSearch').value.toLowerCase();
         tbody.innerHTML = '';
-
         let archives = [...this.archivedInventory];
-        if (search) {
-            archives = archives.filter(item => this._getName(item).toLowerCase().includes(search));
-        }
-
-        if (archives.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-500">Archive is empty.</td></tr>`;
-            return;
-        }
-
+        if (search) archives = archives.filter(item => this._getName(item).toLowerCase().includes(search));
+        if (archives.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-500">Archive is empty.</td></tr>`; return; }
         archives.forEach(item => {
             const name = this._getName(item);
             tbody.innerHTML += `
@@ -787,100 +1185,51 @@ class InventoryManager {
         const today = new Date();
         const thirtyDays = new Date();
         thirtyDays.setDate(thirtyDays.getDate() + 30);
-
-        // ✅ Exclude expired batches from total value (expired stock has no usable value)
         const totalVal = this.liveInventory.reduce((acc, item) => {
             if (new Date(item.expiryDate) < today) return acc;
             let price = item.sellingPrice || item.price || (item.medicine ? item.medicine.price : 0);
             return acc + (item.quantity * parseFloat(price || 0));
         }, 0);
-
-        // ✅ Exclude expired batches from low stock count
-        const lowStock = this.liveInventory.filter(item => {
-            const isExpired = new Date(item.expiryDate) < today;
-            return !isExpired && item.quantity <= (item.minStockLevel || 10) && item.quantity > 0;
-        }).length;
-
-        // Expiring soon (within 30 days, not yet expired, has stock)
-        const expiring = this.liveInventory.filter(item => {
-            const d = new Date(item.expiryDate);
-            return d > today && d <= thirtyDays && parseInt(item.quantity || 0) > 0;
-        }).length;
-
-        // Already expired but still have physical stock on shelf
-        const expiredWithStock = this.liveInventory.filter(item =>
-            new Date(item.expiryDate) < today && parseInt(item.quantity || 0) > 0
-        ).length;
-
+        const lowStock = this.liveInventory.filter(item => { const isExpired = new Date(item.expiryDate) < today; return !isExpired && item.quantity <= (item.minStockLevel || 10) && item.quantity > 0; }).length;
+        const expiring = this.liveInventory.filter(item => { const d = new Date(item.expiryDate); return d > today && d <= thirtyDays && parseInt(item.quantity || 0) > 0; }).length;
+        const expiredWithStock = this.liveInventory.filter(item => new Date(item.expiryDate) < today && parseInt(item.quantity || 0) > 0).length;
         document.getElementById('totalItems').textContent = this.liveInventory.length;
-        document.getElementById('totalValue').textContent = `&#8369;${totalVal.toFixed(2)}`;
+        // ✅ FIXED — use innerHTML, or just use the ₱ character directly
+// ✅ AFTER
+document.getElementById('totalValue').textContent = `₱${totalVal.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         document.getElementById('lowStockCount').textContent = lowStock;
-        // Counter shows both expiring-soon AND already-expired-with-stock
         document.getElementById('expiringCount').textContent = expiring + expiredWithStock;
-
         this.updateAlertLists();
     }
 
-    // ✅ FIXED: Aggregates usable (non-expired) stock per medicine before alerting.
-    //           Expired batches are excluded from stock totals but shown in expiry alerts.
     updateAlertLists() {
         const lowStockList = document.getElementById('lowStockList');
         const expiryList = document.getElementById('expiryList');
         lowStockList.innerHTML = '';
         expiryList.innerHTML = '';
-
-        let hasLowStock = false;
-        let hasExpiry = false;
+        let hasLowStock = false, hasExpiry = false;
         const today = new Date();
-
-        // Step 1: Aggregate USABLE (non-expired) qty per medicine across all batches
         const medicineTotals = {};
         this.liveInventory.forEach(item => {
             const name = this._getName(item);
             const qty = parseInt(item.quantity || 0);
             const minStock = item.minStockLevel || 10;
             const isExpired = new Date(item.expiryDate) < today;
-
-            if (!medicineTotals[name]) {
-                medicineTotals[name] = { usableQty: 0, minStock };
-            }
-            // ✅ Only add non-expired stock to usable total
-            if (!isExpired) {
-                medicineTotals[name].usableQty += qty;
-            }
+            if (!medicineTotals[name]) medicineTotals[name] = { usableQty: 0, minStock };
+            if (!isExpired) medicineTotals[name].usableQty += qty;
         });
-
-        // Step 2: Alert based on USABLE stock only (expired stock doesn't count as available)
         Object.entries(medicineTotals).forEach(([name, data]) => {
-            if (data.usableQty === 0) {
-                hasLowStock = true;
-                lowStockList.innerHTML += `<li class="text-sm py-1 text-red-500 dark:text-red-400">${name} &mdash; Out of Stock</li>`;
-            } else if (data.usableQty <= data.minStock) {
-                hasLowStock = true;
-                lowStockList.innerHTML += `<li class="text-sm py-1 text-accent dark:text-amber-400">${name} (${data.usableQty} left &mdash; Low Stock)</li>`;
-            }
+            if (data.usableQty === 0) { hasLowStock = true; lowStockList.innerHTML += `<li class="text-sm py-1 text-red-500 dark:text-red-400">${name} &mdash; Out of Stock</li>`; }
+            else if (data.usableQty <= data.minStock) { hasLowStock = true; lowStockList.innerHTML += `<li class="text-sm py-1 text-accent dark:text-amber-400">${name} (${data.usableQty} left &mdash; Low Stock)</li>`; }
         });
-
-        // Step 3: Expiry alerts — show BOTH expiring-soon AND already-expired batches that still have stock
-        // Expired batches with stock need urgent attention: they must be pulled from the shelf!
         this.liveInventory.forEach(item => {
             const name = this._getName(item);
             const qty = parseInt(item.quantity || 0);
-            if (qty <= 0) return; // skip empty batches
-
+            if (qty <= 0) return;
             const daysLeft = Math.ceil((new Date(item.expiryDate) - today) / (1000 * 60 * 60 * 24));
-
-            if (daysLeft < 0) {
-                // Already expired with stock — urgent!
-                hasExpiry = true;
-                expiryList.innerHTML += `<li class="text-sm py-1 font-semibold text-red-600 dark:text-red-400">&#9888; EXPIRED &mdash; ${name} Batch ${item.batchNumber || 'N/A'} (${qty} units must be removed!)</li>`;
-            } else if (daysLeft <= 30) {
-                // Expiring within 30 days
-                hasExpiry = true;
-                expiryList.innerHTML += `<li class="text-sm py-1 text-secondary dark:text-red-400">${name} &mdash; Batch ${item.batchNumber || 'N/A'} (${daysLeft} days left)</li>`;
-            }
+            if (daysLeft < 0) { hasExpiry = true; expiryList.innerHTML += `<li class="text-sm py-1 font-semibold text-red-600 dark:text-red-400">&#9888; EXPIRED &mdash; ${name} Batch ${item.batchNumber || 'N/A'}</li>`; }
+            else if (daysLeft <= 30) { hasExpiry = true; expiryList.innerHTML += `<li class="text-sm py-1 text-secondary dark:text-red-400">${name} &mdash; Batch ${item.batchNumber || 'N/A'} (${daysLeft} days left)</li>`; }
         });
-
         if (!hasLowStock) lowStockList.innerHTML = '<li class="text-gray-500 italic">Stock levels are healthy.</li>';
         if (!hasExpiry) expiryList.innerHTML = '<li class="text-gray-500 italic">No immediate expiries.</li>';
     }
@@ -896,11 +1245,9 @@ class InventoryManager {
         document.getElementById('summaryTab').classList.toggle('active', tabName === 'summary');
         document.getElementById('batchTab').classList.toggle('active', tabName === 'batch');
         document.getElementById('archiveTab').classList.toggle('active', tabName === 'archive');
-
         document.getElementById('summarySection').classList.add('hidden');
         document.getElementById('batchSection').classList.add('hidden');
         document.getElementById('archiveSection').classList.add('hidden');
-
         if (tabName === 'summary') { document.getElementById('summarySection').classList.remove('hidden'); this.renderSummary(); }
         else if (tabName === 'batch') { document.getElementById('batchSection').classList.remove('hidden'); document.getElementById('batchSearch').value = ''; this.renderBatches(); }
         else if (tabName === 'archive') { document.getElementById('archiveSection').classList.remove('hidden'); this.renderArchive(); }
@@ -911,259 +1258,144 @@ class InventoryManager {
         return new Date(dateString).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' });
     }
 
-    toggleSettings() {
-        const dropdown = document.getElementById('settingsDropdown');
-        if (dropdown) dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-    }
-
-    // Notification bell is now handled by the standalone fancy notif system below
-
-    toggleDarkMode() {
-        const isDarkMode = document.getElementById('darkModeToggle').checked;
-        document.documentElement.classList.toggle('dark', isDarkMode);
-        this.saveDarkModePreference(isDarkMode);
-    }
-
-    exportSummaryData() {
-        Swal.fire({ title: 'Export Summary', text: 'Downloading inventory summary as CSV...', icon: 'success', timer: 2000, showConfirmButton: false });
-    }
-
-    exportBatchData() {
-        Swal.fire({ title: 'Export Batches', text: 'Downloading batch details as CSV...', icon: 'success', timer: 2000, showConfirmButton: false });
-    }
+    exportSummaryData() { Swal.fire({ title: 'Export Summary', text: 'Downloading inventory summary as CSV...', icon: 'success', timer: 2000, showConfirmButton: false }); }
+    exportBatchData() { Swal.fire({ title: 'Export Batches', text: 'Downloading batch details as CSV...', icon: 'success', timer: 2000, showConfirmButton: false }); }
 }
 
 let inventoryManager;
 document.addEventListener('DOMContentLoaded', () => {
     inventoryManager = new InventoryManager();
     window.inventoryManager = inventoryManager;
-
     window.logoutUser = () => inventoryManager.logoutUser();
-    window.confirmBackToHMS = (e) => inventoryManager.confirmBackToHMS(e);
-    window.toggleSettings = () => inventoryManager.toggleSettings();
-    // Notification bell handled by standalone fancy notif system
-    window.toggleDarkMode = () => inventoryManager.toggleDarkMode();
-
     window.switchTab = (t) => inventoryManager.switchTab(t);
     window.searchSummary = () => inventoryManager.renderSummary();
     window.filterSummaryByStatus = () => inventoryManager.renderSummary();
     window.exportSummaryData = () => inventoryManager.exportSummaryData();
-
     window.searchBatch = () => inventoryManager.renderBatches();
     window.exportBatchData = () => inventoryManager.exportBatchData();
-
     window.searchArchive = () => inventoryManager.renderArchive();
     window.viewBatchDetails = (name) => inventoryManager.viewBatchDetails(name);
-
-    document.addEventListener('click', function(e) {
-        const settingsBtn = document.querySelector('button[onclick="toggleSettings()"]');
-        const settingsDropdown = document.getElementById('settingsDropdown');
-        const notifBtn = document.querySelector('button[onclick="toggleNotifications()"]');
-        const notifDropdown = document.getElementById('notificationDropdown');
-
-        if (settingsBtn && !settingsBtn.contains(e.target) && settingsDropdown && !settingsDropdown.contains(e.target)) settingsDropdown.style.display = 'none';
-        if (notifBtn && !notifBtn.contains(e.target) && notifDropdown && !notifDropdown.contains(e.target)) notifDropdown.style.display = 'none';
-    });
 });
 
-    // ══════════════════════════════════════════════════════════
-    // FANCY NOTIFICATION BELL — live from /api/inventory
-    // ══════════════════════════════════════════════════════════
-    let notifData         = [];
-    let activeNotifFilter = 'all';
+// ══════════════════════════════════════════════════════════
+// NOTIFICATION SYSTEM
+// ══════════════════════════════════════════════════════════
+let notifData = [];
+let activeNotifFilter = 'all';
 
-    function generateAlertsFromInventory(inventory) {
-        const alerts     = [];
-        const today      = new Date();
-        const thirtyDays = new Date();
-        thirtyDays.setDate(today.getDate() + 30);
+function generateAlertsFromInventory(inventory) {
+    const alerts = [];
+    const today = new Date();
+    const thirtyDays = new Date();
+    thirtyDays.setDate(today.getDate() + 30);
 
-        inventory.forEach((item, idx) => {
-            const medName = item.medicine?.name || item.name || 'Unknown Medicine';
-
-            if (item.expiryDate) {
-                const expiry = new Date(item.expiryDate);
-                if (expiry < today) {
-                    alerts.push({
-                        id: `exp-${item._id || idx}`, type: 'expiry', unread: true,
-                        medicineName: medName,
-                        title: 'Medicine Expired',
-                        desc:  `${medName} expired on ${expiry.toLocaleDateString('en-PH')}.`,
-                        time:  'Needs immediate attention',
-                        actionLabel: 'View Batch', actionClass: 'btn-expiry',
-                        icon: 'event_busy', iconClass: 'icon-expiry'
-                    });
-                } else if (expiry <= thirtyDays) {
-                    const d = Math.ceil((expiry - today) / 864e5);
-                    alerts.push({
-                        id: `exp-${item._id || idx}`, type: 'expiry', unread: true,
-                        medicineName: medName,
-                        title: 'Expiring Soon',
-                        desc:  `${medName} expires in ${d} day${d === 1 ? '' : 's'}.`,
-                        time:  `${d} days left`,
-                        actionLabel: 'View Batch', actionClass: 'btn-expiry',
-                        icon: 'schedule', iconClass: 'icon-expiry'
-                    });
-                }
-            }
-
-            const qty      = parseInt(item.quantity || 0);
-            const minStock = parseInt(item.minStockLevel || 10);
-            const isExpired = new Date(item.expiryDate) < today;
-
-            if (!isExpired && qty === 0) {
-                alerts.push({
-                    id: `stk-${item._id || idx}`, type: 'critical', unread: true,
-                    medicineName: medName,
-                    title: 'Critical: Out of Stock',
-                    desc:  `${medName} is completely out of stock.`,
-                    time:  'Immediate action required',
-                    actionLabel: 'View in Inventory', actionClass: 'btn-critical',
-                    icon: 'warning', iconClass: 'icon-critical'
-                });
-            } else if (!isExpired && qty <= minStock) {
-                alerts.push({
-                    id: `stk-${item._id || idx}`, type: 'shortage', unread: true,
-                    medicineName: medName,
-                    title: 'Low Stock Alert',
-                    desc:  `${medName} — only ${qty} unit${qty === 1 ? '' : 's'} remaining (min: ${minStock}).`,
-                    time:  'Reorder soon',
-                    actionLabel: 'View in Inventory', actionClass: 'btn-shortage',
-                    icon: 'inventory_2', iconClass: 'icon-shortage'
-                });
-            }
-        });
-
-        const order = { critical: 0, expiry: 1, shortage: 2 };
-        alerts.sort((a, b) => (order[a.type] ?? 9) - (order[b.type] ?? 9));
-        return alerts;
-    }
-
-    function renderNotifications() {
-        const list     = document.getElementById('notifList');
-        const filtered = activeNotifFilter === 'all'
-            ? notifData
-            : notifData.filter(n => n.type === activeNotifFilter);
-
-        if (!filtered.length) {
-            const msg = activeNotifFilter === 'all' ? 'All clear — no alerts right now!' : 'No notifications in this category.';
-            list.innerHTML = '<div class="notif-empty"><span class="material-icons">notifications_none</span><p>' + msg + '</p></div>';
-            updateNotifBadge();
-            return;
-        }
-
-        list.innerHTML = filtered.map(n => `
-            <div class="notif-item ${n.type} ${n.unread ? 'unread' : ''}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
-                <div class="notif-icon-wrap ${n.iconClass}"><span class="material-icons">${n.icon}</span></div>
-                <div class="notif-body">
-                    <div class="notif-title">${n.title}</div>
-                    <div class="notif-desc">${n.desc}</div>
-                    <div class="notif-time">${n.time}</div>
-                    <div class="notif-action">
-                        <button class="notif-action-btn ${n.actionClass}" onclick="handleNotifAction(event,'${n.id}')">${n.actionLabel}</button>
-                    </div>
-                </div>
-                ${n.unread ? '<div class="unread-dot"></div>' : ''}
-            </div>`).join('');
-
-        updateNotifBadge();
-    }
-
-    function updateNotifBadge() {
-        const count = notifData.filter(n => n.unread).length;
-        const badge = document.getElementById('notificationBadge');
-        const pill  = document.getElementById('unreadPill');
-        if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none'; }
-        if (pill)  pill.textContent = count > 0 ? `${count} new` : 'All clear';
-    }
-
-    function markNotifRead(id) {
-        const n = notifData.find(n => n.id === id);
-        if (n) { n.unread = false; renderNotifications(); }
-    }
-
-    function markAllRead() {
-        notifData.forEach(n => n.unread = false);
-        renderNotifications();
-    }
-
-    function handleNotifAction(event, id) {
-        event.stopPropagation();
-        markNotifRead(id);
-
-        const n = notifData.find(n => n.id === id);
-        if (!n) return;
-
-        // Close the dropdown
-        document.getElementById('notificationDropdown').classList.remove('open');
-
-        if (n.type === 'expiry') {
-            // Go to Batch Details tab and filter by this medicine
-            inventoryManager.viewBatchDetails(n.medicineName);
-        } else if (n.type === 'critical' || n.type === 'shortage') {
-            // Go to Summary tab and filter by this medicine
-            inventoryManager.switchTab('summary');
-            const summarySearch = document.getElementById('summarySearch');
-            if (summarySearch) {
-                summarySearch.value = n.medicineName;
-                inventoryManager.renderSummary();
+    inventory.forEach((item, idx) => {
+        const medName = item.medicine?.name || item.name || 'Unknown Medicine';
+        if (item.expiryDate) {
+            const expiry = new Date(item.expiryDate);
+            if (expiry < today) {
+                alerts.push({ id: `exp-${item._id || idx}`, type: 'expiry', unread: true, medicineName: medName, title: 'Medicine Expired', desc: `${medName} expired on ${expiry.toLocaleDateString('en-PH')}.`, time: 'Needs immediate attention', actionLabel: 'View Batch', actionClass: 'btn-expiry', icon: 'event_busy', iconClass: 'icon-expiry' });
+            } else if (expiry <= thirtyDays) {
+                const d = Math.ceil((expiry - today) / 864e5);
+                alerts.push({ id: `exp-${item._id || idx}`, type: 'expiry', unread: true, medicineName: medName, title: 'Expiring Soon', desc: `${medName} expires in ${d} day${d === 1 ? '' : 's'}.`, time: `${d} days left`, actionLabel: 'View Batch', actionClass: 'btn-expiry', icon: 'schedule', iconClass: 'icon-expiry' });
             }
         }
-    }
-
-    function filterNotifTab(btn, filter) {
-        document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        activeNotifFilter = filter;
-        renderNotifications();
-    }
-
-    async function refreshNotifications() {
-        const token = inventoryManager ? inventoryManager.getToken() : null;
-        if (!token) return;
-        try {
-            const res = await fetch(`${API_BASE_URL}/api/inventory`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const raw       = await res.json();
-            const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
-            const previouslyRead = new Set(notifData.filter(n => !n.unread).map(n => n.id));
-            notifData = generateAlertsFromInventory(inventory).slice(0, 15);
-            notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
-            renderNotifications();
-        } catch (e) {
-            console.warn('Notification fetch failed:', e);
-            if (!notifData.length) {
-                const list = document.getElementById('notifList');
-                if (list) list.innerHTML = `<div class="notif-empty"><span class="material-icons">cloud_off</span><p>Could not load alerts.</p></div>`;
-            }
+        const qty = parseInt(item.quantity || 0);
+        const minStock = parseInt(item.minStockLevel || 10);
+        const isExpired = new Date(item.expiryDate) < today;
+        if (!isExpired && qty === 0) {
+            alerts.push({ id: `stk-${item._id || idx}`, type: 'critical', unread: true, medicineName: medName, title: 'Critical: Out of Stock', desc: `${medName} is completely out of stock.`, time: 'Immediate action required', actionLabel: 'View in Inventory', actionClass: 'btn-critical', icon: 'warning', iconClass: 'icon-critical' });
+        } else if (!isExpired && qty <= minStock) {
+            alerts.push({ id: `stk-${item._id || idx}`, type: 'shortage', unread: true, medicineName: medName, title: 'Low Stock Alert', desc: `${medName} — only ${qty} unit${qty === 1 ? '' : 's'} remaining (min: ${minStock}).`, time: 'Reorder soon', actionLabel: 'View in Inventory', actionClass: 'btn-shortage', icon: 'inventory_2', iconClass: 'icon-shortage' });
         }
-    }
-
-    // Wire up notification bell after DOM is ready
-    document.addEventListener('DOMContentLoaded', function() {
-        const btn      = document.getElementById('notificationBtn');
-        const dropdown = document.getElementById('notificationDropdown');
-        if (!btn || !dropdown) return;
-
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            dropdown.classList.toggle('open');
-            if (dropdown.classList.contains('open')) refreshNotifications();
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!dropdown.contains(e.target) && e.target !== btn) dropdown.classList.remove('open');
-        });
-
-        dropdown.addEventListener('click', e => e.stopPropagation());
-
-        // Initial load after inventory data is fetched
-        setTimeout(refreshNotifications, 1200);
-        setInterval(refreshNotifications, 60000);
     });
-    // ══ END FANCY NOTIFICATION SYSTEM ══
+
+    const order = { critical: 0, expiry: 1, shortage: 2 };
+    alerts.sort((a, b) => (order[a.type] ?? 9) - (order[b.type] ?? 9));
+    return alerts;
+}
+
+function renderNotifications() {
+    const list = document.getElementById('notifList');
+    const filtered = activeNotifFilter === 'all' ? notifData : notifData.filter(n => n.type === activeNotifFilter);
+    if (!filtered.length) {
+        const msg = activeNotifFilter === 'all' ? 'All clear — no alerts right now!' : 'No notifications in this category.';
+        list.innerHTML = '<div class="notif-empty"><span class="material-icons">notifications_none</span><p>' + msg + '</p></div>';
+        updateNotifBadge(); return;
+    }
+    list.innerHTML = filtered.map(n => `
+        <div class="notif-item ${n.type} ${n.unread ? 'unread' : ''}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
+            <div class="notif-icon-wrap ${n.iconClass}"><span class="material-icons">${n.icon}</span></div>
+            <div class="notif-body">
+                <div class="notif-title">${n.title}</div>
+                <div class="notif-desc">${n.desc}</div>
+                <div class="notif-time">${n.time}</div>
+                <div class="notif-action">
+                    <button class="notif-action-btn ${n.actionClass}" onclick="handleNotifAction(event,'${n.id}')">${n.actionLabel}</button>
+                </div>
+            </div>
+            ${n.unread ? '<div class="unread-dot"></div>' : ''}
+        </div>`).join('');
+    updateNotifBadge();
+}
+
+function updateNotifBadge() {
+    const count = notifData.filter(n => n.unread).length;
+    const badge = document.getElementById('notificationBadge');
+    const pill = document.getElementById('unreadPill');
+    if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none'; }
+    if (pill) pill.textContent = count > 0 ? `${count} new` : 'All clear';
+}
+
+function markNotifRead(id) { const n = notifData.find(n => n.id === id); if (n) { n.unread = false; renderNotifications(); } }
+function markAllRead() { notifData.forEach(n => n.unread = false); renderNotifications(); }
+
+function handleNotifAction(event, id) {
+    event.stopPropagation();
+    markNotifRead(id);
+    const n = notifData.find(n => n.id === id);
+    if (!n) return;
+    document.getElementById('notificationDropdown').classList.remove('open');
+    if (n.type === 'expiry') { inventoryManager.viewBatchDetails(n.medicineName); }
+    else if (n.type === 'critical' || n.type === 'shortage') {
+        inventoryManager.switchTab('summary');
+        const summarySearch = document.getElementById('summarySearch');
+        if (summarySearch) { summarySearch.value = n.medicineName; inventoryManager.renderSummary(); }
+    }
+}
+
+function filterNotifTab(btn, filter) {
+    document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeNotifFilter = filter;
+    renderNotifications();
+}
+
+async function refreshNotifications() {
+    const token = inventoryManager ? inventoryManager.getToken() : null;
+    if (!token) return;
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/inventory`, { headers: { 'Authorization': `Bearer ${token}` } });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const raw = await res.json();
+        const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
+        const previouslyRead = new Set(notifData.filter(n => !n.unread).map(n => n.id));
+        notifData = generateAlertsFromInventory(inventory).slice(0, 15);
+        notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
+        renderNotifications();
+    } catch (e) { console.warn('Notification fetch failed:', e); }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const btn = document.getElementById('notificationBtn');
+    const dropdown = document.getElementById('notificationDropdown');
+    if (!btn || !dropdown) return;
+    btn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('open'); if (dropdown.classList.contains('open')) refreshNotifications(); });
+    document.addEventListener('click', (e) => { if (!dropdown.contains(e.target) && e.target !== btn) dropdown.classList.remove('open'); });
+    dropdown.addEventListener('click', e => e.stopPropagation());
+    setTimeout(refreshNotifications, 1200);
+    setInterval(refreshNotifications, 60000);
+});
 </script>
 <script src="../js/windowcontrollerbtn.js"></script>
 </body>
