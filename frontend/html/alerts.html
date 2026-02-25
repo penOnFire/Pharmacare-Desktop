@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Pharmacy Alerts - Real-time Monitoring</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.5;} }
+        @keyframes slideDown { from{transform:translateY(-100%);opacity:0;} to{transform:translateY(0);opacity:1;} }
+        .pulse{animation:pulse 2s cubic-bezier(0.4,0,0.6,1) infinite;}
+        .slide-down{animation:slideDown 0.3s ease-out;}
+        .priority-high{border-left:4px solid #ef4444;}
+        .priority-medium{border-left:4px solid #f97316;}
+        .priority-low{border-left:4px solid #eab308;}
+        .modal-backdrop{backdrop-filter:blur(4px);background-color:rgba(0,0,0,0.5);}
+        
+        .search-results {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        
+        .dark .search-results {
+            background: #1f2937;
+            border-color: #374151;
+        }
+        
+        .search-result-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .dark .search-result-item {
+            border-bottom-color: #374151;
+        }
+        
+        .search-result-item:hover {
+            background-color: #f9fafb;
+        }
+        
+        .dark .search-result-item:hover {
+            background-color: #374151;
+        }
+        
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .search-result-category {
+            font-size: 0.75rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .dark .search-result-category {
+            color: #9ca3af;
+        }
+        
+        .search-result-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        
+        .search-result-description {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .dark .search-result-description {
+            color: #9ca3af;
+        }
+        
+        .search-highlight {
+            background-color: #fef3c7;
+            padding: 0.125rem 0.25rem;
+            border-radius: 0.25rem;
+        }
+        
+        .dark .search-highlight {
+            background-color: #92400e;
+            color: #fef3c7;
+        }
+
+        .settings-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 320px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            z-index: 1000;
+            margin-top: 0.5rem;
+        }
+        
+        .dark .settings-dropdown {
+            background: #1f2937;
+            border-color: #374151;
+        }
+        
+        .settings-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid #f3f4f6;
+            transition: background-color 0.2s;
+        }
+        
+        .dark .settings-item {
+            border-bottom-color: #374151;
+        }
+        
+        .settings-item:hover {
+            background-color: #f9fafb;
+        }
+        
+        .dark .settings-item:hover {
+            background-color: #374151;
+        }
+        
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+        
+        .settings-section {
+            padding: 0.75rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .dark .settings-section {
+            color: #9ca3af;
+            border-bottom-color: #374151;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+            margin-left: auto;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #d1d5db;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: #007A7A;
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+        
+        .dark .toggle-slider {
+            background-color: #4b5563;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode:"class",
+            theme:{extend:{colors:{primary:"#007A7A","background-light":"#F0F7F7","background-dark":"#0A1919","surface-light":"#FFFFFF","surface-dark":"#112222","text-light":"#0D1A1A","text-dark":"#E0F2F2","subtext-light":"#4D6969","subtext-dark":"#80B3B3"},fontFamily:{sans:['Inter','sans-serif']},borderRadius:{lg:'0.75rem',xl:'1rem','2xl':'1.5rem'}}}
+        };
+
+        const PharmacySettings = {
+            current: {
+                darkMode: false,
+                desktopNotifications: true,
+                autoRefresh: true,
+                lowStockThreshold: 5,
+                expiryDays: 30,
+                language: 'en',
+                dateFormat: 'MM/DD/YYYY',
+                timeFormat: '12h',
+                itemsPerPage: 25,
+                soundEnabled: true,
+                theme: 'default'
+            },
+
+            init() {
+                this.loadSettings();
+                this.applySettings();
+                this.setupEventListeners();
+            },
+
+            loadSettings() {
+                const saved = sessionStorage.getItem('pharmacyGlobalSettings');
+                if (saved) {
+                    this.current = { ...this.current, ...JSON.parse(saved) };
+                }
+            },
+
+            saveSettings() {
+                sessionStorage.setItem('pharmacyGlobalSettings', JSON.stringify(this.current));
+                this.applySettings();
+                this.dispatchSettingsChange();
+            },
+
+            applySettings() {
+                if (this.current.darkMode) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+
+                if (this.current.autoRefresh && typeof startAutoRefresh === 'function') {
+                    startAutoRefresh();
+                } else if (typeof clearInterval === 'function' && window.autoRefreshInterval) {
+                    clearInterval(window.autoRefreshInterval);
+                }
+
+                document.documentElement.style.setProperty('--primary-color', this.current.theme === 'default' ? '#007A7A' : '#4f46e5');
+            },
+
+            updateSetting(key, value) {
+                this.current[key] = value;
+                this.saveSettings();
+            },
+
+            dispatchSettingsChange() {
+                window.dispatchEvent(new CustomEvent('pharmacySettingsChanged', {
+                    detail: { settings: this.current }
+                }));
+            },
+
+            setupEventListeners() {
+                window.addEventListener('pharmacySettingsChanged', (event) => {
+                    this.current = event.detail.settings;
+                    this.applySettings();
+                });
+            },
+
+            exportSettings() {
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.current, null, 2));
+                const downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute("href", dataStr);
+                downloadAnchorNode.setAttribute("download", "pharmacy_settings.json");
+                document.body.appendChild(downloadAnchorNode);
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+            },
+
+            importSettings(file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const imported = JSON.parse(e.target.result);
+                        this.current = { ...this.current, ...imported };
+                        this.saveSettings();
+                        Swal.fire('Success', 'Settings imported successfully!', 'success');
+                    } catch (error) {
+                        Swal.fire('Error', 'Invalid settings file', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            },
+
+            resetToDefaults() {
+                Swal.fire({
+                    title: 'Reset Settings?',
+                    text: 'This will restore all settings to their default values.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#007A7A',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Reset',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.current = {
+                            darkMode: false,
+                            desktopNotifications: true,
+                            autoRefresh: true,
+                            lowStockThreshold: 5,
+                            expiryDays: 30,
+                            language: 'en',
+                            dateFormat: 'MM/DD/YYYY',
+                            timeFormat: '12h',
+                            itemsPerPage: 25,
+                            soundEnabled: true,
+                            theme: 'default'
+                        };
+                        this.saveSettings();
+                        Swal.fire('Reset Complete', 'All settings have been reset to defaults.', 'success');
+                    }
+                });
+            }
+        };
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-sans text-text-light dark:text-text-dark">
+<div class="flex h-screen">
+    <aside class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-primary/20 dark:border-primary/30">
+        <div class="h-16 flex items-center px-6 border-b border-primary/20 dark:border-primary/30">
+            <a class="flex items-center gap-2 text-primary font-bold text-xl" href="#">
+                <span class="material-icons text-3xl">local_pharmacy</span><span>PharmaCare</span>
+            </a>
+        </div>
+        <nav class="flex-1 p-4 space-y-2">
+            <h3 class="px-4 py-2 text-xs font-semibold text-subtext-light dark:text-subtext-dark uppercase tracking-wider">Navigation</h3>
+            <a class="flex items-center gap-3 px-4 py-2 text-text-light dark:text-text-dark hover:bg-primary/5 dark:hover:bg-primary/20 rounded-lg" href="dashboard.html"><span class="material-icons">dashboard</span> Dashboard</a>
+            <a class="flex items-center gap-3 px-4 py-2 text-text-light dark:text-text-dark hover:bg-primary/5 dark:hover:bg-primary/20 rounded-lg" href="inventory.html"><span class="material-icons">inventory_2</span> Inventory</a>
+                        <a class="flex items-center gap-3 px-4 py-2 text-text-light dark:text-text-dark hover:bg-primary/5 dark:hover:bg-primary/20 rounded-lg" href="patient_records.html"><span class="material-icons">folder_shared</span> Patient Records</a>
+ <a class="flex items-center gap-3 px-4 py-2 text-text-light dark:text-text-dark hover:bg-primary/5 dark:hover:bg-primary/20 rounded-lg" href="supplier.html"><span class="material-icons">local_shipping</span> Suppliers</a>
+            <a class="flex items-center gap-3 px-4 py-2 text-text-light dark:text-text-dark hover:bg-primary/5 dark:hover:bg-primary/20 rounded-lg" href="billing.html"><span class="material-icons">point_of_sale</span> Sales & Billing</a>
+            <a class="flex items-center gap-3 px-4 py-2 text-primary bg-primary/10 rounded-lg font-semibold" href="alerts.html">
+                <span class="material-icons">notifications</span> Alerts
+                <span id="navAlertCount" class="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full ml-auto">0</span>
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-primary/20 dark:border-primary/30">
+            
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col">
+        <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-primary/20 dark:border-primary/30">
+            <div class="flex items-center gap-2">
+               
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="toggleAutoRefresh()" class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-primary/20 dark:border-primary/30 hover:bg-primary/5 dark:hover:bg-primary/20">
+                    <span id="autoRefreshIcon" class="material-icons text-green-500">sync</span>
+                    <span id="autoRefreshText" class="text-sm">Auto-refresh ON</span>
+                </button>
+                <button onclick="refreshAlerts()" class="text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark"><span class="material-icons">refresh</span></button>
+                <div class="relative">
+                    <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-subtext-light dark:text-subtext-dark">search</span>
+                    <input 
+                        id="searchInput"
+                        class="bg-background-light dark:bg-background-dark border border-primary/20 dark:border-primary/40 rounded-lg pl-10 pr-4 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-primary text-text-light dark:text-text-dark" 
+                        placeholder="Search alerts, medicines..." 
+                        type="text"
+                        oninput="handleSearchInput()"
+                    />
+                    <div id="searchResults" class="search-results"></div>
+                </div>
+                
+                <button onclick="showNotifications()" class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark">
+                    <span class="material-icons">notifications</span>
+                    <span id="notificationBadge" class="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-red-500"></span>
+                </button>
+
+                <div class="relative">
+                    <button onclick="toggleSettings()" class="text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark">
+                        <span class="material-icons">settings</span>
+                    </button>
+                    <div id="settingsDropdown" class="settings-dropdown">
+                        <div class="settings-section">Appearance</div>
+                        
+                        <div class="settings-item">
+                            <span class="material-icons text-primary">dark_mode</span>
+                            <span class="flex-1">Dark Mode</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="darkModeToggle" onchange="PharmacySettings.updateSetting('darkMode', this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="settings-item" onclick="showThemeSettings()">
+                            <span class="material-icons text-primary">palette</span>
+                            <span class="flex-1">Theme Color</span>
+                            <span class="text-subtext-light dark:text-subtext-dark text-sm" id="currentTheme">Default</span>
+                            <span class="material-icons text-subtext-light dark:text-subtext-dark text-sm">chevron_right</span>
+                        </div>
+
+                        <div class="settings-section">Notifications</div>
+                        
+                        <div class="settings-item">
+                            <span class="material-icons text-primary">notifications</span>
+                            <span class="flex-1">Desktop Notifications</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="notificationsToggle" onchange="PharmacySettings.updateSetting('desktopNotifications', this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <span class="material-icons text-primary">volume_up</span>
+                            <span class="flex-1">Sound Alerts</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="soundToggle" onchange="PharmacySettings.updateSetting('soundEnabled', this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="settings-section">System Behavior</div>
+                        
+                        <div class="settings-item">
+                            <span class="material-icons text-primary">auto_awesome</span>
+                            <span class="flex-1">Auto-refresh</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="autoRefreshToggle" onchange="PharmacySettings.updateSetting('autoRefresh', this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="settings-item" onclick="showItemsPerPageSettings()">
+                            <span class="material-icons text-primary">list</span>
+                            <span class="flex-1">Items Per Page</span>
+                            <span class="text-subtext-light dark:text-subtext-dark text-sm" id="currentItemsPerPage">25</span>
+                            <span class="material-icons text-subtext-light dark:text-subtext-dark text-sm">chevron_right</span>
+                        </div>
+
+                        <div class="settings-section">Pharmacy Settings</div>
+                        
+                        <div class="settings-item" onclick="showThresholdSettings()">
+                            <span class="material-icons text-primary">inventory_2</span>
+                            <span class="flex-1">Low Stock Threshold</span>
+                            <span class="text-subtext-light dark:text-subtext-dark text-sm" id="currentThreshold">5 units</span>
+                            <span class="material-icons text-subtext-light dark:text-subtext-dark text-sm">chevron_right</span>
+                        </div>
+                        
+                        <div class="settings-item" onclick="showExpirySettings()">
+                            <span class="material-icons text-primary">calendar_today</span>
+                            <span class="flex-1">Expiry Warning Days</span>
+                            <span class="text-subtext-light dark:text-subtext-dark text-sm" id="currentExpiryDays">30 days</span>
+                            <span class="material-icons text-subtext-light dark:text-subtext-dark text-sm">chevron_right</span>
+                        </div>
+
+                        <div class="settings-section">Data Management</div>
+                        
+                        <div class="settings-item" onclick="exportSettings()">
+                            <span class="material-icons text-primary">download</span>
+                            <span class="flex-1">Export Settings</span>
+                            <span class="material-icons text-subtext-light dark:text-subtext-dark text-sm">chevron_right</span>
+                        </div>
+                        
+                        <div class="settings-item" onclick="importSettings()">
+                            <span class="material-icons text-primary">upload</span>
+                            <span class="flex-1">Import Settings</span>
+                            <span class="material-icons text-subtext-light dark:text-subtext-dark text-sm">chevron_right</span>
+                        </div>
+                        
+                        <div class="settings-item" onclick="PharmacySettings.resetToDefaults()">
+                            <span class="material-icons text-primary">restart_alt</span>
+                            <span class="flex-1">Reset to Defaults</span>
+                            <span class="material-icons text-subtext-light dark:text-subtext-dark text-sm">chevron_right</span>
+                        </div>
+                    </div>
+                </div>
+                
+            
+                
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">SB</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-text-light dark:text-text-dark">Medication Alerts</h2>
+                    <p class="text-subtext-light dark:text-subtext-dark mt-1">Real-time monitoring of inventory issues and critical notifications</p>
+                    <div class="flex items-center gap-2 mt-2 text-sm text-subtext-light dark:text-subtext-dark">
+                        <span class="material-icons text-sm">access_time</span>
+                        <span>Last updated: <span id="lastUpdated">Just now</span></span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+                    <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/50 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-sm font-semibold text-red-800 dark:text-red-300">Critical</h3>
+                            <span class="material-icons text-red-500">report</span>
+                        </div>
+                        <p id="criticalCount" class="text-3xl font-bold text-red-900 dark:text-red-200 mt-2">0</p>
+                        <p class="text-xs text-red-600 dark:text-red-400">Immediate action</p>
+                    </div>
+                    <div class="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-900/50 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-sm font-semibold text-orange-800 dark:text-orange-300">Expiring</h3>
+                            <span class="material-icons text-orange-500">schedule</span>
+                        </div>
+                        <p id="expiringCount" class="text-3xl font-bold text-orange-900 dark:text-orange-200 mt-2">0</p>
+                        <p class="text-xs text-orange-600 dark:text-orange-400">Within 30 days</p>
+                    </div>
+                    <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-900/50 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-sm font-semibold text-yellow-800 dark:text-yellow-300">Low Stock</h3>
+                            <span class="material-icons text-yellow-500">inventory</span>
+                        </div>
+                        <p id="lowStockCount" class="text-3xl font-bold text-yellow-900 dark:text-yellow-200 mt-2">0</p>
+                        <p class="text-xs text-yellow-600 dark:text-yellow-400">Reorder needed</p>
+                    </div>
+                    <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-900/50 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-sm font-semibold text-green-800 dark:text-green-300">Out of Stock</h3>
+                            <span class="material-icons text-green-500">warning</span>
+                        </div>
+                        <p id="outOfStockCount" class="text-3xl font-bold text-green-900 dark:text-green-200 mt-2">0</p>
+                        <p class="text-xs text-green-600 dark:text-green-400">Restock immediately</p>
+                    </div>
+                    <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-900/50 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-sm font-semibold text-blue-800 dark:text-blue-300">Total Alerts</h3>
+                            <span class="material-icons text-blue-500">notifications</span>
+                        </div>
+                        <p id="totalCount" class="text-3xl font-bold text-blue-900 dark:text-blue-200 mt-2">0</p>
+                        <p class="text-xs text-blue-600 dark:text-blue-400">All alerts</p>
+                    </div>
+                </div>
+
+                <div id="alertsContainer" class="space-y-4">
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="alertModal" class="hidden fixed inset-0 z-50 flex items-center justify-center">
+        <div class="modal-backdrop absolute inset-0"></div>
+        <div class="bg-surface-light dark:bg-surface-dark rounded-lg shadow-lg max-w-lg w-full p-6 relative z-10">
+            <button onclick="closeAlertDetails()" class="absolute top-2 right-2 text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark">
+                <span class="material-icons">close</span>
+            </button>
+            <h3 id="modalTitle" class="text-xl font-semibold mb-2 text-text-light dark:text-text-dark"></h3>
+            <p id="modalMessage" class="text-subtext-light dark:text-subtext-dark mb-4"></p>
+            <div id="modalDetails" class="text-sm space-y-1 mb-4 text-text-light dark:text-text-dark"></div>
+            <div class="flex justify-end gap-2">
+                <button onclick="resolveAlert()" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">Resolve</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        PharmacySettings.init();
+
+        function toggleSettings() {
+            const dropdown = document.getElementById('settingsDropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+            updateSettingsDisplay();
+        }
+
+        function updateSettingsDisplay() {
+            document.getElementById('darkModeToggle').checked = PharmacySettings.current.darkMode;
+            document.getElementById('notificationsToggle').checked = PharmacySettings.current.desktopNotifications;
+            document.getElementById('soundToggle').checked = PharmacySettings.current.soundEnabled;
+            document.getElementById('autoRefreshToggle').checked = PharmacySettings.current.autoRefresh;
+            document.getElementById('currentThreshold').textContent = PharmacySettings.current.lowStockThreshold + ' units';
+            document.getElementById('currentExpiryDays').textContent = PharmacySettings.current.expiryDays + ' days';
+            document.getElementById('currentItemsPerPage').textContent = PharmacySettings.current.itemsPerPage;
+            document.getElementById('currentTheme').textContent = PharmacySettings.current.theme === 'default' ? 'Default' : 'Premium';
+        }
+
+        document.addEventListener('click', function(event) {
+            const settingsBtn = document.querySelector('button[onclick="toggleSettings()"]');
+            const dropdown = document.getElementById('settingsDropdown');
+            if (!settingsBtn.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        function showThresholdSettings() {
+            Swal.fire({
+                title: 'Low Stock Threshold',
+                html: `<div class="text-left">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Set low stock threshold (units):</label>
+                    <input type="number" id="thresholdInput" value="${PharmacySettings.current.lowStockThreshold}" min="1" max="100" class="w-full p-2 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>`,
+                showCancelButton: true,
+                confirmButtonText: 'Save',
+                cancelButtonText: 'Cancel',
+                preConfirm: () => {
+                    const value = parseInt(document.getElementById('thresholdInput').value);
+                    if (value < 1 || value > 100) {
+                        Swal.showValidationMessage('Please enter a value between 1 and 100');
+                    }
+                    return value;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    PharmacySettings.updateSetting('lowStockThreshold', result.value);
+                    Swal.fire('Success', `Low stock threshold set to ${result.value} units`, 'success');
+                }
+            });
+        }
+
+        function showExpirySettings() {
+            Swal.fire({
+                title: 'Expiry Warning Days',
+                html: `<div class="text-left">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Set expiry warning period (days):</label>
+                    <input type="number" id="expiryInput" value="${PharmacySettings.current.expiryDays}" min="1" max="365" class="w-full p-2 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>`,
+                showCancelButton: true,
+                confirmButtonText: 'Save',
+                cancelButtonText: 'Cancel',
+                preConfirm: () => {
+                    const value = parseInt(document.getElementById('expiryInput').value);
+                    if (value < 1 || value > 365) {
+                        Swal.showValidationMessage('Please enter a value between 1 and 365');
+                    }
+                    return value;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    PharmacySettings.updateSetting('expiryDays', result.value);
+                    Swal.fire('Success', `Expiry warnings will show ${result.value} days before expiration`, 'success');
+                }
+            });
+        }
+
+        function showItemsPerPageSettings() {
+            Swal.fire({
+                title: 'Items Per Page',
+                html: `<div class="text-left">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Set number of items per page:</label>
+                    <select id="itemsPerPageInput" class="w-full p-2 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="10" ${PharmacySettings.current.itemsPerPage === 10 ? 'selected' : ''}>10 items</option>
+                        <option value="25" ${PharmacySettings.current.itemsPerPage === 25 ? 'selected' : ''}>25 items</option>
+                        <option value="50" ${PharmacySettings.current.itemsPerPage === 50 ? 'selected' : ''}>50 items</option>
+                        <option value="100" ${PharmacySettings.current.itemsPerPage === 100 ? 'selected' : ''}>100 items</option>
+                    </select>
+                </div>`,
+                showCancelButton: true,
+                confirmButtonText: 'Save',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const value = parseInt(document.getElementById('itemsPerPageInput').value);
+                    PharmacySettings.updateSetting('itemsPerPage', value);
+                    Swal.fire('Success', `Items per page set to ${value}`, 'success');
+                }
+            });
+        }
+
+        function showThemeSettings() {
+            Swal.fire({
+                title: 'Theme Color',
+                html: `<div class="text-left">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select theme:</label>
+                    <select id="themeInput" class="w-full p-2 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="default" ${PharmacySettings.current.theme === 'default' ? 'selected' : ''}>Default Teal</option>
+                        <option value="premium" ${PharmacySettings.current.theme === 'premium' ? 'selected' : ''}>Premium Indigo</option>
+                    </select>
+                </div>`,
+                showCancelButton: true,
+                confirmButtonText: 'Save',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const value = document.getElementById('themeInput').value;
+                    PharmacySettings.updateSetting('theme', value);
+                    Swal.fire('Success', `Theme updated to ${value}`, 'success');
+                }
+            });
+        }
+
+        function exportSettings() {
+            PharmacySettings.exportSettings();
+            Swal.fire('Success', 'Settings exported successfully!', 'success');
+        }
+
+        function importSettings() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (e) => {
+                PharmacySettings.importSettings(e.target.files[0]);
+            };
+            input.click();
+        }
+
+        function showNotifications() {
+            Swal.fire({
+                title: 'Notifications',
+                html: `<div class="text-left max-h-60 overflow-y-auto">
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Recent system notifications</p>
+                    <div class="space-y-2">
+                        <div class="p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                            <p class="text-sm font-medium text-yellow-800 dark:text-yellow-300">Low Stock Alert</p>
+                            <p class="text-xs text-yellow-600 dark:text-yellow-400">Ibuprofen has only 3 units remaining</p>
+                        </div>
+                        <div class="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+                            <p class="text-sm font-medium text-red-800 dark:text-red-300">Out of Stock</p>
+                            <p class="text-xs text-red-600 dark:text-red-400">Paracetamol is out of stock</p>
+                        </div>
+                    </div>
+                </div>`,
+                showConfirmButton: false,
+                showCloseButton: true,
+                width: 400
+            });
+        }
+
+        let alerts = [];
+        let resolvedAlerts = [];
+        let selectedAlertId = null;
+        let autoRefresh = true;
+        let autoRefreshInterval;
+
+        const inventoryData = {
+            getInventory: () => [
+                {id:1,name:'Paracetamol',quantity:0,batch:'B123',expiry:'2025-10-10',supplier:'PharmaInc',price:50},
+                {id:2,name:'Ibuprofen',quantity:3,batch:'B124',expiry:'2025-10-15',supplier:'HealthCorp',price:70},
+                {id:3,name:'Amoxicillin',quantity:10,batch:'B125',expiry:'2025-12-01',supplier:'MedSupply',price:120}
+            ]
+        };
+
+        function saveAlerts() {
+            sessionStorage.setItem('pharmacyAlerts', JSON.stringify(alerts));
+            sessionStorage.setItem('resolvedAlerts', JSON.stringify(resolvedAlerts));
+        }
+
+        function loadAlerts() {
+            const storedAlerts = sessionStorage.getItem('pharmacyAlerts');
+            const storedResolved = sessionStorage.getItem('resolvedAlerts');
+            if(storedAlerts) alerts = JSON.parse(storedAlerts);
+            if(storedResolved) resolvedAlerts = JSON.parse(storedResolved);
+            if(!storedAlerts) generateAlerts();
+        }
+
+        function generateAlerts() {
+            const inventory = inventoryData.getInventory();
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            inventory.forEach(item=>{
+                if(item.quantity===0){
+                    alerts.push({id:`out-${item.id}`,type:'out-of-stock',priority:'high',title:'Out of Stock',message:`${item.name} is out of stock`,details:{medicine:item.name,batch:item.batch,lastSupplier:item.supplier,lastPrice:item.price},timestamp:new Date(),itemId:item.id});
+                }else if(item.quantity<=PharmacySettings.current.lowStockThreshold){
+                    alerts.push({id:`low-${item.id}`,type:'low-stock',priority:'medium',title:'Low Stock Warning',message:`${item.name} has only ${item.quantity} units remaining`,details:{medicine:item.name,batch:item.batch,currentStock:item.quantity,threshold:PharmacySettings.current.lowStockThreshold,supplier:item.supplier},timestamp:new Date(),itemId:item.id});
+                }
+                const expiryDate = new Date(item.expiry);
+                const daysUntilExpiry = Math.ceil((expiryDate-today)/(1000*60*60*24));
+                if(daysUntilExpiry<=0){
+                    alerts.push({id:`exp-${item.id}`,type:'expired',priority:'critical',title:'Medicine Expired',message:`${item.name} has expired and must be removed immediately`,details:{medicine:item.name,batch:item.batch,expiryDate:item.expiry,daysOverdue:Math.abs(daysUntilExpiry),quantity:item.quantity},timestamp:new Date(),itemId:item.id});
+                }else if(daysUntilExpiry<=PharmacySettings.current.expiryDays){
+                    const priority = daysUntilExpiry<=7?'high':'medium';
+                    alerts.push({id:`exp-${item.id}`,type:'expiring',priority:priority,title:'Expiry Warning',message:`${item.name} expires in ${daysUntilExpiry} days`,details:{medicine:item.name,batch:item.batch,expiryDate:item.expiry,daysRemaining:daysUntilExpiry,quantity:item.quantity},timestamp:new Date(),itemId:item.id});
+                }
+            });
+            saveAlerts();
+        }
+
+        function renderAlerts() {
+            const container = document.getElementById('alertsContainer');
+            container.innerHTML='';
+            alerts.forEach(alert=>{
+                const div=document.createElement('div');
+                div.className=`p-4 rounded-lg border cursor-pointer hover:bg-primary/5 dark:hover:bg-primary/20 slide-down priority-${alert.priority} bg-surface-light dark:bg-surface-dark border-primary/20 dark:border-primary/30`;
+                div.innerHTML=`<div class="flex justify-between items-center"><div><h4 class="font-semibold text-text-light dark:text-text-dark">${alert.title}</h4><p class="text-subtext-light dark:text-subtext-dark text-sm">${alert.message}</p></div><span class="material-icons text-subtext-light dark:text-subtext-dark">chevron_right</span></div>`;
+                div.onclick=()=>showAlertDetails(alert.id);
+                container.appendChild(div);
+            });
+            updateStatistics();
+        }
+
+        function updateStatistics() {
+            const counts = {critical:0,expiring:0,low:0,out:0};
+            alerts.forEach(a=>{
+                if(a.priority==='critical') counts.critical++;
+                else if(a.type==='expiring') counts.expiring++;
+                else if(a.type==='low-stock') counts.low++;
+                else if(a.type==='out-of-stock') counts.out++;
+            });
+            document.getElementById('criticalCount').innerText=counts.critical;
+            document.getElementById('expiringCount').innerText=counts.expiring;
+            document.getElementById('lowStockCount').innerText=counts.low;
+            document.getElementById('outOfStockCount').innerText=counts.out;
+            document.getElementById('totalCount').innerText=alerts.length;
+            document.getElementById('navAlertCount').innerText=alerts.length;
+            document.getElementById('notificationBadge').innerText=alerts.length > 0 ? alerts.length : '';
+        }
+
+        function showAlertDetails(id) {
+            selectedAlertId=id;
+            const alert = alerts.find(a=>a.id===id);
+            if(!alert) return;
+            document.getElementById('modalTitle').innerText=alert.title;
+            document.getElementById('modalMessage').innerText=alert.message;
+            const detailsDiv=document.getElementById('modalDetails');
+            detailsDiv.innerHTML='';
+            for(const key in alert.details){
+                const p=document.createElement('p');
+                p.innerHTML=`<strong>${key}:</strong> ${alert.details[key]}`;
+                detailsDiv.appendChild(p);
+            }
+            document.getElementById('alertModal').classList.remove('hidden');
+        }
+
+        function closeAlertDetails() {
+            document.getElementById('alertModal').classList.add('hidden');
+        }
+
+        function resolveAlert() {
+            if(!selectedAlertId) return;
+            const index=alerts.findIndex(a=>a.id===selectedAlertId);
+            if(index!==-1){
+                resolvedAlerts.push(alerts[index]);
+                alerts.splice(index,1);
+                saveAlerts();
+                renderAlerts();
+            }
+            closeAlertDetails();
+        }
+
+        function refreshAlerts(){
+            alerts=[];
+            generateAlerts();
+            renderAlerts();
+            document.getElementById('lastUpdated').innerText='Just now';
+        }
+
+        function toggleAutoRefresh(){
+            autoRefresh=!autoRefresh;
+            const icon=document.getElementById('autoRefreshIcon');
+            const text=document.getElementById('autoRefreshText');
+            if(autoRefresh){
+                startAutoRefresh();
+                icon.classList.add('text-green-500');
+                text.innerText='Auto-refresh ON';
+            }else{
+                clearInterval(autoRefreshInterval);
+                icon.classList.remove('text-green-500');
+                text.innerText='Auto-refresh OFF';
+            }
+        }
+
+        function startAutoRefresh(){
+            if(autoRefreshInterval) clearInterval(autoRefreshInterval);
+            autoRefreshInterval=setInterval(()=>{
+                refreshAlerts();
+            },60000);
+        }
+
+        function updateLastUpdatedTime(){
+            const last=document.getElementById('lastUpdated');
+            const now=new Date();
+            last.innerText=now.toLocaleTimeString();
+        }
+
+        window.onload=function(){
+            loadAlerts();
+            renderAlerts();
+            updateLastUpdatedTime();
+            if (PharmacySettings.current.autoRefresh) {
+                startAutoRefresh();
+            }
+            setInterval(updateLastUpdatedTime,60000);
+        }
+
+        function confirmBackToHMS(event) {
+            event.preventDefault();
+            Swal.fire({
+                title: "Return to IHMS?",
+                text: "Are you sure you want to return to the Integrated Healthcare Management System?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#007A7A",
+                cancelButtonColor: "#6b7280",
+                confirmButtonText: "Yes, return to IHMS",
+                cancelButtonText: "Cancel"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "../hms_main.html";
+                }
+            });
+        }
+
+        function logoutUser() {
+            Swal.fire({
+                title: "Logout Confirmation",
+                text: "Are you sure you want to log out?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#007A7A",
+                cancelButtonColor: "#6B7280",
+                confirmButtonText: "Yes, log out",
+                cancelButtonText: "Cancel"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "login.html";
+                }
+            });
+        }
+
+        document.getElementById("logoutBtn").addEventListener("click", logoutUser);
+    </script>
+</div>
+</body>
+</html>

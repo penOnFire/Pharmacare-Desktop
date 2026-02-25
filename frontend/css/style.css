@@ -1,0 +1,11 @@
+/* Allow dragging the window */
+.drag-region {
+    -webkit-app-region: drag;
+}
+
+/* Important: Buttons must NOT be draggable, or they won't click */
+.no-drag {
+    -webkit-app-region: no-drag;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera 

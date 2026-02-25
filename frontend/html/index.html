@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>IHMS Subsystem Showcase</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/styles.css"/>
+<link rel="stylesheet" href="../css/scrollbar.css"/>
+<style type="text/tailwindcss">
+  :root {
+      --primary-color: #4A9488;
+      --background-light: #F7FAFC;
+      --background-dark: #1A202C;
+      --text-light: #4A5568;
+      --text-dark: #CBD5E0;
+      --card-light: #FFFFFF;
+      --card-dark: #2D3748;
+      --border-light: #E2E8F0;
+      --border-dark: #4A5568;
+  }
+  body {
+      font-family: 'Poppins', sans-serif;
+  }
+  /* Allow dragging the window */
+.drag-region {
+    -webkit-app-region: drag;
+}
+
+/* Important: Buttons must NOT be draggable, or they won't click */
+.no-drag {
+    -webkit-app-region: no-drag;
+}
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+
+</style>
+</head>
+<body class="bg-[var(--background-light)] text-[var(--text-light)] dark:text-[var(--text-dark)]">
+
+<!--Titlebar-->
+<header id="title-bar" class="drag-region fixed top-0 left-0 w-full h-8 bg-white flex justify-between items-stretch z-50 border-b border-gray-200 select-none">
+    
+    <div class="flex items-center pl-4 gap-2 text-gray-600">
+        <span class="material-icons-outlined text-sm">local_pharmacy</span>
+        <span class="text-xs font-semibold">IHMS Pharmacy</span>
+    </div>
+
+    <div class="no-drag flex items-center">
+        <button id="min-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 focus:outline-none transition-colors duration-200">
+            <span class="material-icons-outlined text-sm text-gray-600">remove</span>
+        </button>
+        
+        <button id="max-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 focus:outline-none transition-colors duration-200">
+            <span class="material-icons-outlined text-sm text-gray-600">crop_square</span>
+        </button>
+        
+        <button id="close-btn" class="h-full w-12 flex justify-center items-center hover:bg-red-500 hover:text-white focus:outline-none transition-colors duration-200 group">
+            <span class="material-icons-outlined text-sm text-gray-600 group-hover:text-white">close</span>
+        </button>
+    </div>
+</header>
+
+<div class="h-8"></div>
+
+<!-- ✅ Navbar -->
+<nav class="bg-white shadow-md">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-20">
+      <div class="flex items-center">
+        <span class="material-icons-outlined text-3xl text-[var(--primary-color)] mr-2">local_hospital</span>
+        <span class="text-2xl font-bold text-gray-800">IHMS</span>
+      </div>
+      <div class="hidden md:flex space-x-8">
+        <a href="#pharmacy" class="text-gray-700 hover:text-[var(--primary-color)] font-medium transition">Pharmacy</a>
+        <a href="#emr" class="text-gray-700 hover:text-[var(--primary-color)] font-medium transition">EMR</a>
+        <a href="#billing" class="text-gray-700 hover:text-[var(--primary-color)] font-medium transition">Billing</a>
+      </div>
+      <div class="flex items-center">
+        
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ✅ Main Content -->
+<div class="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] p-6">
+  <div class="mb-12 text-center">
+    <div class="inline-block bg-[var(--primary-color)]/10 p-4 rounded-full mb-4">
+      <span class="material-icons-outlined text-4xl text-[var(--primary-color)]">apps</span>
+    </div>
+    <h1 class="text-4xl font-bold text-gray-800">Integrated Healthcare Management System</h1>
+    <p class="text-[var(--text-light)] mt-2">Explore our integrated subsystems</p>
+  </div>
+
+  <!-- ✅ Cards -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full max-w-7xl">
+    
+    <!-- Pharmacy -->
+    <div id="pharmacy" class="bg-[var(--card-light)] p-8 rounded-xl shadow-lg flex flex-col items-center text-center transform hover:scale-105 hover:shadow-2xl transition duration-300">
+      <div class="p-5 rounded-full bg-[var(--primary-color)]/10 mb-6">
+        <span class="material-symbols-outlined text-5xl text-[var(--primary-color)]">science</span>
+      </div>
+      <h2 class="text-2xl font-bold text-gray-800 mb-3">Pharmacy</h2>
+      <p class="text-base text-[var(--text-light)] mb-6 flex-grow">
+        Manage prescriptions, inventory, and dispensing of medications efficiently and safely.
+      </p>
+     <a href="../html/login.html" class="w-full">
+  <button class="w-full bg-[var(--primary-color)] hover:bg-[var(--primary-color)]/90 text-white font-bold py-3 px-4 rounded-lg transition duration-300 ease-in-out">
+    Access Pharmacy
+  </button>
+</a>
+
+    </div>
+    
+    <!-- EMR -->
+    <div id="emr" class="bg-[var(--card-light)] p-8 rounded-xl shadow-lg flex flex-col items-center text-center transform hover:scale-105 hover:shadow-2xl transition duration-300">
+      <div class="p-5 rounded-full bg-[var(--primary-color)]/10 mb-6">
+        <span class="material-symbols-outlined text-5xl text-[var(--primary-color)]">cardiology</span>
+      </div>
+      <h2 class="text-2xl font-bold text-gray-800 mb-3">Electronic Medical Records</h2>
+      <p class="text-base text-[var(--text-light)] mb-6 flex-grow">
+        Securely access and manage patient health information and medical histories.
+      </p>
+      <button class="w-full bg-[var(--primary-color)] hover:bg-[var(--primary-color)]/90 text-white font-bold py-3 px-4 rounded-lg transition duration-300 ease-in-out">
+        Access EMR
+      </button>
+    </div>
+
+    <!-- Billing -->
+    <div id="billing" class="bg-[var(--card-light)] p-8 rounded-xl shadow-lg flex flex-col items-center text-center transform hover:scale-105 hover:shadow-2xl transition duration-300">
+      <div class="p-5 rounded-full bg-[var(--primary-color)]/10 mb-6">
+        <span class="material-symbols-outlined text-5xl text-[var(--primary-color)]">payments</span>
+      </div>
+      <h2 class="text-2xl font-bold text-gray-800 mb-3">Billing</h2>
+      <p class="text-base text-[var(--text-light)] mb-6 flex-grow">
+        Streamline patient billing, insurance claims, and financial reporting processes.
+      </p>
+      <button class="w-full bg-[var(--primary-color)] hover:bg-[var(--primary-color)]/90 text-white font-bold py-3 px-4 rounded-lg transition duration-300 ease-in-out">
+        Access Billing
+      </button>
+    </div>
+  </div>
+
+  <p class="text-center text-sm text-[var(--text-light)] mt-12">
+    © 2025 Integrated Healthcare Management System. All rights reserved.
+  </p>
+</div>
+
+<!-- ✅ Pharmacy Login Modal -->
+<div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white rounded-lg shadow-2xl w-full max-w-5xl h-[90vh] overflow-y-auto relative">
+    <button onclick="closeLoginModal()" class="absolute top-3 right-3 text-gray-600 hover:text-gray-900 text-2xl">&times;</button>
+    <iframe id="loginFrame" src="" class="w-full h-full border-0 rounded-lg"></iframe>
+  </div>
+</div>
+
+<script>
+  function openLoginModal() {
+    const modal = document.getElementById('loginModal');
+    const frame = document.getElementById('loginFrame');
+    frame.src = "../pharmacy/login.html"; // ✅ Path to your login page
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function closeLoginModal() {
+    const modal = document.getElementById('loginModal');
+    const frame = document.getElementById('loginFrame');
+    frame.src = ""; // clear src when closed
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  window.onclick = function(event) {
+    const modal = document.getElementById('loginModal');
+    if (event.target === modal) closeLoginModal();
+  }
+</script>
+<script src="../js/windowcontrollerbtn.js"></script>
+</body>
+</html>

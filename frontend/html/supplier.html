@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Well Served - Suppliers</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/> 
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script type="text/javascript">
+    (function(){
+      emailjs.init({
+        publicKey: "qNq97XFzwHnYzOYyf",
+      });
+    })();
+  </script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#005a32",
+            secondary: "#d62828",
+            accent: "#8b5a2b",
+            "background-light": "#f1f5f9",
+            "background-dark": "#0f172a",
+            "surface-light": "#FFFFFF",
+            "surface-dark": "#1F2937",
+            "text-light": "#1F2937",
+            "text-dark": "#F9FAFB",
+            "subtext-light": "#6B7280",
+            "subtext-dark": "#9CA3AF",
+            "border-light": "#E5E7EB",
+            "border-dark": "#374151",
+            "success": "#22C55E",
+            "warning": "#F59E0B",
+            "danger": "#EF4444"
+          },
+          fontFamily: { display: ["Inter", "sans-serif"] },
+          borderRadius: { DEFAULT: "0.5rem" },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+
+    .drag-region { -webkit-app-region: drag; }
+    .no-drag { -webkit-app-region: no-drag; }
+
+    /* ── FANCY NOTIFICATION DROPDOWN ── */
+    @keyframes badge-pop { from { transform: scale(0); } to { transform: scale(1); } }
+    #notificationBadge { animation: badge-pop 0.3s cubic-bezier(.34,1.56,.64,1); }
+
+    .notif-dropdown {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        width: 370px;
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.06);
+        border: 1px solid #e5e7eb;
+        z-index: 1000;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(-8px) scale(0.97);
+        pointer-events: none;
+        transition: opacity 0.22s ease, transform 0.22s cubic-bezier(.34,1.56,.64,1);
+        transform-origin: top right;
+    }
+    .dark .notif-dropdown { background: #1F2937; border-color: #374151; }
+    .notif-dropdown.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
+
+    .notif-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 14px; border-bottom: 1px solid #f0f0f0; }
+    .dark .notif-header { border-color: #374151; }
+    .notif-header h3 { font-size: 15px; font-weight: 700; color: #111827; }
+    .dark .notif-header h3 { color: #F9FAFB; }
+    .notif-header-meta { display: flex; align-items: center; gap: 10px; }
+    .unread-count-pill { background: #005a32; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+    .mark-all-btn { font-size: 11px; color: #005a32; font-weight: 600; background: none; border: none; cursor: pointer; padding: 2px 4px; border-radius: 4px; transition: background 0.15s; }
+    .mark-all-btn:hover { background: #f0fdf4; }
+
+    .notif-tabs { display: flex; gap: 4px; padding: 10px 14px; background: #fafafa; border-bottom: 1px solid #f0f0f0; }
+    .dark .notif-tabs { background: #111827; border-color: #374151; }
+    .notif-tab-btn { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 99px; border: 1px solid transparent; cursor: pointer; background: none; color: #6b7280; transition: all 0.15s; }
+    .notif-tab-btn.active { background: #005a32; color: #fff; border-color: #005a32; }
+    .notif-tab-btn:not(.active):hover { background: #f3f4f6; border-color: #e5e7eb; color: #374151; }
+
+    .notif-list { max-height: 360px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #e5e7eb transparent; }
+    .notif-list::-webkit-scrollbar { width: 4px; }
+    .notif-list::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 2px; }
+
+    .notif-item { display: flex; gap: 12px; align-items: flex-start; padding: 13px 16px; border-bottom: 1px solid #f5f5f5; cursor: pointer; position: relative; transition: background 0.15s; }
+    .dark .notif-item { border-color: #374151; }
+    .notif-item:last-child { border-bottom: none; }
+    .notif-item:hover { background: #f9fafb; }
+    .dark .notif-item:hover { background: #111827; }
+    .notif-item.unread { background: #ffffff; }
+    .dark .notif-item.unread { background: #1F2937; }
+    .notif-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 0 2px 2px 0; }
+    .notif-item.critical::before { background: #EF4444; }
+    .notif-item.expiry::before   { background: #8b5a2b; }
+    .notif-item.shortage::before { background: #358E83; }
+
+    .notif-icon-wrap { flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .notif-icon-wrap .material-icons { font-size: 20px; }
+    .icon-critical { background: #fef2f2; } .icon-critical .material-icons { color: #EF4444; }
+    .icon-expiry   { background: #fdf6ec; } .icon-expiry   .material-icons { color: #8b5a2b; }
+    .icon-shortage { background: #f0fdfa; } .icon-shortage .material-icons { color: #358E83; }
+
+    .notif-body { flex: 1; min-width: 0; }
+    .notif-title { font-size: 13px; font-weight: 600; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .dark .notif-title { color: #F9FAFB; }
+    .notif-desc  { font-size: 12px; color: #6b7280; margin-top: 2px; line-height: 1.4; }
+    .notif-time  { font-size: 10px; color: #9ca3af; margin-top: 6px; }
+    .notif-action { margin-top: 8px; }
+    .notif-action-btn { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 6px; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 0.04em; transition: opacity 0.15s, transform 0.1s; }
+    .notif-action-btn:active { transform: scale(0.96); }
+    .notif-action-btn:hover  { opacity: 0.88; }
+    .btn-critical { background: #EF4444; color: #fff; }
+    .btn-expiry   { background: #8b5a2b; color: #fff; }
+    .btn-shortage { background: #005a32; color: #fff; }
+
+    .unread-dot { flex-shrink: 0; width: 7px; height: 7px; border-radius: 50%; background: #005a32; margin-top: 5px; }
+    .notif-empty { padding: 40px 20px; text-align: center; color: #9ca3af; }
+    .notif-empty .material-icons { font-size: 40px; margin-bottom: 8px; display: block; }
+    .notif-empty p { font-size: 13px; }
+    .notif-footer { border-top: 1px solid #f0f0f0; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; }
+    .dark .notif-footer { border-color: #374151; }
+    .view-all-link { font-size: 12px; font-weight: 600; color: #005a32; text-decoration: none; display: flex; align-items: center; gap: 4px; }
+    .view-all-link:hover { text-decoration: underline; }
+    .view-all-link .material-icons { font-size: 14px; }
+    /* ── END NOTIFICATION STYLES ── */
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal.active { display: flex; }
+    .modal-content { max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; }
+    .toast {
+      position: fixed;
+      top: 20px; right: 20px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 500;
+      z-index: 1001;
+      transform: translateX(150%);
+      transition: transform 0.3s ease;
+    }
+    .toast.show { transform: translateX(0); }
+    .toast.success { background-color: #22C55E; }
+    .toast.error   { background-color: #EF4444; }
+    .toast.info    { background-color: #005a32; }
+    
+    .supplier-table tbody tr { height: 72px; }
+    .supplier-table tbody td { vertical-align: middle; padding-top: 1rem; padding-bottom: 1rem; }
+    .orders-table tbody tr { height: 72px; }
+    .orders-table tbody td { vertical-align: middle; padding-top: 1rem; padding-bottom: 1rem; }
+    
+    .loading-spinner {
+      border: 3px solid #f3f3f2;
+      border-top: 3px solid #005a32;
+      border-radius: 50%;
+      width: 30px; height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+    
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    
+    .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in { animation: fadeIn 0.3s ease-out; }
+    
+    .medicine-dropdown { position: relative; }
+    .medicine-dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: white;
+      min-width: 300px; max-height: 300px; overflow-y: auto;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1002;
+      border-radius: 8px;
+      padding: 8px 0;
+      top: 100%; left: 0; right: 0;
+    }
+    .dark .medicine-dropdown-content { background-color: #1F2937; color: #F9FAFB; }
+    .medicine-dropdown-content.active { display: block; }
+    
+    .medicine-option { padding: 10px 16px; cursor: pointer; transition: background-color 0.2s; display: flex; justify-content: space-between; align-items: center; }
+    .medicine-option:hover { background-color: #f1f1f1; }
+    .dark .medicine-option:hover { background-color: #374151; }
+    
+    .stock-high   { background-color: #DCFCE7; color: #166534; }
+    .stock-medium { background-color: #FEF9C3; color: #854D0E; }
+    .stock-low    { background-color: #FEE2E2; color: #991B1B; }
+    
+    .supplier-dropdown { position: relative; }
+    .supplier-dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: white;
+      min-width: 100%; max-height: 300px; overflow-y: auto;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1002;
+      border-radius: 8px;
+      padding: 8px 0;
+      top: 100%; left: 0; right: 0;
+    }
+    .dark .supplier-dropdown-content { background-color: #1F2937; color: #F9FAFB; }
+    .supplier-dropdown-content.active { display: block; }
+    
+    .supplier-option { padding: 10px 16px; cursor: pointer; transition: background-color 0.2s; }
+    .supplier-option:hover { background-color: #f1f1f1; }
+    .dark .supplier-option:hover { background-color: #374151; }
+
+    .low-stock-badge { background-color: #FEE2E2; color: #991B1B; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+    
+    .tab-button { padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+    .tab-button.active { background-color: #005a32; color: white; }
+    
+    .blocklist-badge { background-color: #EF4444; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 500; }
+    .failed-delivery-badge { background-color: #F59E0B; color: white; padding: 2px 6px; border-radius: 10px; font-size: 9px; font-weight: 500; }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+
+  <!--Title Bar-->
+  <div id="title-bar" class="drag-region fixed top-0 left-0 w-full h-8 bg-white flex justify-between items-stretch z-40 border-b border-gray-200 select-none">
+    <div class="flex items-center pl-4 gap-2 text-gray-600">
+        <span class="text-xs font-semibold">IHMS Pharmacy</span>
+    </div>
+    <div class="no-drag flex items-center relative z-50"> 
+        <button id="min-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200">
+            <span class="material-icons-outlined text-sm text-gray-600">remove</span>
+        </button>
+        <button id="max-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200">
+            <span class="material-icons-outlined text-sm text-gray-600">crop_square</span>
+        </button>
+        <button id="close-btn" class="h-full w-12 flex justify-center items-center hover:bg-red-500 hover:text-white transition-colors duration-200 group">
+            <span class="material-icons-outlined text-sm text-gray-600 group-hover:text-white">close</span>
+        </button>
+    </div>
+  </div>
+
+  <div class="flex h-screen pt-8">
+    <!-- Sidebar with Well Served branding -->
+    <aside class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-border-light dark:border-border-dark">
+        <div class="h-16 flex items-center px-6 border-b border-border-light dark:border-border-dark">
+            <div class="flex items-center gap-3">
+                 <div class="w-12 h-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm">
+                        <img src="images/wellserved.png" 
+                        alt="Well Served Logo" 
+                        class="w-full h-full object-cover">
+                    </div>
+                <div>
+                    <h1 class="font-bold text-primary dark:text-green-400 leading-tight">Well Served</h1>
+                    <p class="text-[10px] uppercase tracking-wider text-accent dark:text-amber-600 font-semibold">Since 1994</p>
+                </div>
+            </div>
+        </div>
+      <nav class="flex-1 px-4 py-6 space-y-2">
+        <div class="px-2 text-sm font-semibold text-subtext-light dark:text-subtext-dark">Pharmacy</div>
+        <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="dashboard.html">
+          <span class="material-icons mr-3">dashboard</span> Dashboard
+        </a>
+        <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="inventory.html">
+          <span class="material-icons mr-3">inventory_2</span> Inventory
+        </a>
+        <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="patient_records.html">
+          <span class="material-icons mr-3">folder_shared</span> Patient Records
+        </a>
+        <a class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold" href="supplier.html">
+          <span class="material-icons mr-3">local_shipping</span> Suppliers
+        </a>
+        <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="billing.html">
+          <span class="material-icons mr-3">point_of_sale</span> Sales &amp; Billing
+        </a>
+      </nav>
+        <div class="p-4 border-t border-border-light dark:border-border-dark">
+            <button onclick="logoutUser()" 
+                class="flex items-center w-full px-4 py-2 gap-3 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors">
+                <span class="material-icons text-red-500">logout</span> Logout
+            </button>
+        </div>
+    </aside>
+    </aside>
+
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <!-- ── HEADER (matches dashboard/inventory) ── -->
+      <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
+        <div class="flex items-center gap-2">
+          
+        </div>
+        <div class="flex items-center gap-4">
+          <!-- Fancy Notification Bell -->
+          <div class="relative">
+            <button id="notificationBtn"
+                class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <span class="material-icons text-2xl">notifications</span>
+                <span id="notificationBadge"
+                    class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold"
+                    style="display:none;">0</span>
+            </button>
+            <div id="notificationDropdown" class="notif-dropdown">
+                <div class="notif-header">
+                    <h3>Notifications</h3>
+                    <div class="notif-header-meta">
+                        <span class="unread-count-pill" id="unreadPill">Loading...</span>
+                        <button class="mark-all-btn" onclick="markAllRead()">Mark all read</button>
+                    </div>
+                </div>
+                <div class="notif-tabs">
+                    <button class="notif-tab-btn active" onclick="filterNotifTab(this,'all')">All</button>
+                    <button class="notif-tab-btn" onclick="filterNotifTab(this,'critical')">Critical</button>
+                    <button class="notif-tab-btn" onclick="filterNotifTab(this,'expiry')">Expiry</button>
+                    <button class="notif-tab-btn" onclick="filterNotifTab(this,'shortage')">Stock</button>
+                </div>
+                <div class="notif-list" id="notifList">
+                    <div style="padding:30px 20px;text-align:center;color:#9ca3af;">
+                        <span class="material-icons" style="font-size:32px;display:block;margin:0 auto 8px;">hourglass_empty</span>
+                        <p style="font-size:12px;">Loading alerts...</p>
+                    </div>
+                </div>
+                <div class="notif-footer">
+                    <a href="inventory.html" class="view-all-link">
+                        View inventory <span class="material-icons">arrow_forward</span>
+                    </a>
+                </div>
+            </div>
+          </div>
+          <!-- Profile avatar -->
+          <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">PH</div>
+          <!-- Logout button -->
+         
+        </div>
+      </header>
+
+      <main class="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto">
+        <div class="max-w-full mx-auto">
+          <h1 class="text-2xl md:text-3xl font-bold text-text-light dark:text-text-dark">Supplier Management</h1>
+          <p class="mt-1 text-sm md:text-base text-subtext-light dark:text-subtext-dark">Manage suppliers and track medicine orders</p>
+
+          <!-- Low Stock Alert Banner -->
+          <div id="lowStockAlert" class="mt-6 bg-warning/10 border border-warning/30 rounded-xl p-4 hidden">
+            <div class="flex items-start gap-3">
+              <span class="material-icons text-warning text-2xl">warning</span>
+              <div class="flex-1">
+                <h3 class="font-semibold text-text-light dark:text-text-dark">Low Stock Medicines</h3>
+                <p class="text-sm text-subtext-light dark:text-subtext-dark mt-1">The following medicines are running low on stock. Click to order:</p>
+                <div id="lowStockList" class="mt-3 space-y-2"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stats Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mt-6 md:mt-8">
+            <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1">ACTIVE SUPPLIERS</p>
+                  <p id="activeSuppliers" class="text-4xl font-bold text-text-light dark:text-text-dark">8</p>
+                </div>
+                <div class="p-3 bg-success/10 rounded-lg">
+                  <span class="material-icons text-success" style="font-size: 28px;">store</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1">PENDING ORDERS</p>
+                  <p id="pendingOrders" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
+                </div>
+                <div class="p-3 bg-warning/10 rounded-lg">
+                  <span class="material-icons text-warning" style="font-size: 28px;">shopping_cart</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1">DELIVERED ORDERS</p>
+                  <p id="deliveredOrders" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
+                </div>
+                <div class="p-3 bg-primary/10 rounded-lg">
+                  <span class="material-icons text-primary" style="font-size: 28px;">check_circle</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1">BLOCKED SUPPLIERS</p>
+                  <p id="blockedSuppliers" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
+                </div>
+                <div class="p-3 bg-secondary/10 rounded-lg">
+                  <span class="material-icons text-secondary" style="font-size: 28px;">block</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Orders History -->
+          <div class="mt-6 md:mt-10 bg-surface-light dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800">
+            <div class="p-4 md:p-6 border-b border-border-light dark:border-border-dark">
+              <h2 class="text-lg md:text-xl font-semibold text-text-light dark:text-text-dark">Orders History</h2>
+              <p class="text-xs md:text-sm text-subtext-light dark:text-subtext-dark mt-1">Track and manage all medicine orders from suppliers.</p>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left min-w-[1000px] orders-table">
+                <thead class="bg-gradient-to-r from-primary/20 via-background-light to-secondary/20 dark:from-primary/30 dark:via-background-dark dark:to-secondary/30 text-xs text-text-light dark:text-text-dark uppercase">
+                  <tr>
+                    <th class="px-4 md:px-6 py-3 font-bold" scope="col">Order ID</th>
+                    <th class="px-4 md:px-6 py-3 font-semibold" scope="col">Medicine</th>
+                    <th class="px-4 md:px-6 py-3 font-semibold" scope="col">Quantity</th>
+                    <th class="px-4 md:px-6 py-3 font-semibold" scope="col">Price / Total Value</th>
+                    <th class="px-4 md:px-6 py-3 font-semibold" scope="col">Supplier</th>
+                    <th class="px-4 md:px-6 py-3 font-semibold" scope="col">Expected Delivery</th>
+                    <th class="px-4 md:px-6 py-3 font-semibold" scope="col">Status</th>
+                    <th class="px-4 md:px-6 py-3 text-center font-semibold" scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="ordersTableBody" class="divide-y divide-border-light dark:divide-border-dark">
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Active Supplier Directory -->
+          <div id="activeSuppliersSection" class="mt-6 md:mt-10 bg-surface-light dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800">
+            <div class="p-4 md:p-6 border-b border-border-light dark:border-border-dark flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div>
+                <h2 class="text-lg md:text-xl font-semibold text-text-light dark:text-text-dark">Active Supplier Directory</h2>
+                <p class="text-xs md:text-sm text-subtext-light dark:text-subtext-dark mt-1">View suppliers and place medicine orders.</p>
+              </div>
+              <div class="flex flex-col md:flex-row items-stretch md:items-center gap-3 w-full md:w-auto">
+                <div class="relative w-full md:w-48 lg:w-64">
+                  <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-subtext-light dark:text-subtext-dark">search</span>
+                  <input id="supplierSearch" class="w-full pl-10 pr-4 py-2 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors" placeholder="Search suppliers..." type="text"/>
+                </div>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left min-w-[800px] supplier-table">
+                <thead class="bg-gradient-to-r from-primary/20 via-background-light to-secondary/20 dark:from-primary/30 dark:via-background-dark dark:to-secondary/30 text-xs text-text-light dark:text-text-dark uppercase">
+                  <tr>
+                    <th class="px-4 md:px-6 py-3" scope="col">Supplier Name</th>
+                    <th class="px-4 md:px-6 py-3" scope="col">Contact Person</th>
+                    <th class="px-4 md:px-6 py-3" scope="col">Email / Phone</th>
+                    <th class="px-4 md:px-6 py-3" scope="col">Reliability Rating</th>
+                    <th class="px-4 md:px-6 py-3" scope="col">Failed Deliveries</th>
+                    <th class="px-4 md:px-6 py-3" scope="col">Last Delivery</th>
+                  </tr>
+                </thead>
+                <tbody id="supplierTableBody" class="divide-y divide-border-light dark:divide-border-dark">
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Blocklist Section -->
+          <div id="blocklistSection" class="mt-6 md:mt-10 bg-surface-light dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 hidden">
+            <div class="p-4 md:p-6 border-b border-border-light dark:border-border-dark">
+              <h2 class="text-lg md:text-xl font-semibold text-text-light dark:text-text-dark">Blocked Suppliers</h2>
+              <p class="text-xs md:text-sm text-subtext-light dark:text-subtext-dark mt-1">Suppliers with 3 or more failed deliveries are automatically blocked.</p>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left min-w-[800px] supplier-table">
+                <thead class="bg-background-light dark:bg-background-dark text-xs text-subtext-light dark:text-subtext-dark uppercase">
+                  <tr>
+                    <th class="px-4 md:px-6 py-3" scope="col">Supplier Name</th>
+                    <th class="px-4 md:px-6 py-3" scope="col">Contact Person</th>
+                    <th class="px-4 md:px-6 py-3" scope="col">Email / Phone</th>
+                    <th class="px-4 md:px-6 py-3" scope="col">Failed Deliveries</th>
+                    <th class="px-4 md:px-6 py-3" scope="col">Last Delivery</th>
+                    <th class="px-4 md:px-6 py-3" scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="blocklistTableBody" class="divide-y divide-border-light dark:divide-border-dark">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div id="toastContainer"></div>
+
+  <!-- Order Medicine Modal -->
+  <div id="orderModal" class="modal">
+    <div class="modal-content bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg p-4 md:p-6">
+      <div class="flex justify-between items-center mb-4 md:mb-6">
+        <h3 class="text-lg md:text-xl font-semibold text-text-light dark:text-text-dark">Order Medicine</h3>
+        <button id="closeOrderModalBtn" class="text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <form id="orderForm" class="space-y-4">
+        <div>
+          <label for="orderSupplier" class="block text-sm font-medium text-subtext-light dark:text-subtext-dark mb-1">Select Supplier</label>
+          <select id="orderSupplier" class="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors" required>
+            <option value="">Select a supplier</option>
+          </select>
+        </div>
+        
+        <div class="medicine-dropdown">
+          <label for="medicineName" class="block text-sm font-medium text-subtext-light dark:text-subtext-dark mb-1">Medicine Name</label>
+          <div class="relative">
+            <input type="text" id="medicineName" class="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors" placeholder="Search or select medicine" required>
+            <span class="material-icons absolute right-3 top-1/2 -translate-y-1/2 text-subtext-light dark:text-subtext-dark cursor-pointer" id="medicineDropdownToggle">arrow_drop_down</span>
+          </div>
+          <div id="medicineDropdown" class="medicine-dropdown-content">
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="quantity" class="block text-sm font-medium text-subtext-light dark:text-subtext-dark mb-1">Quantity</label>
+            <input type="number" id="quantity" min="1" class="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors" required>
+          </div>
+          <div>
+            <label for="unitPrice" class="block text-sm font-medium text-subtext-light dark:text-subtext-dark mb-1">Unit Price (₱)</label>
+            <input type="number" id="unitPrice" min="0" step="0.01" class="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors" required>
+          </div>
+        </div>
+        <div>
+          <label for="totalPrice" class="block text-sm font-medium text-subtext-light dark:text-subtext-dark mb-1">Total Price (₱)</label>
+          <input type="text" id="totalPrice" class="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors" readonly>
+        </div>
+        <div>
+          <label for="deliveryDate" class="block text-sm font-medium text-subtext-light dark:text-subtext-dark mb-1">Expected Delivery Date</label>
+          <input type="date" id="deliveryDate" class="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors" required>
+        </div>
+        <div class="flex justify-end gap-3 pt-4">
+          <button type="button" id="cancelOrderBtn" class="px-4 py-2 text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark transition-colors">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg transition-colors">Place Order</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delivery Confirmation Modal -->
+  <div id="deliveryModal" class="modal">
+    <div class="modal-content bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg p-4 md:p-6 max-w-md">
+      <div class="flex justify-between items-center mb-4 md:mb-6">
+        <h3 class="text-lg md:text-xl font-semibold text-text-light dark:text-text-dark">Confirm Delivery Received</h3>
+        <button id="closeDeliveryModalBtn" class="text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <div class="space-y-4">
+        <p class="text-subtext-light dark:text-subtext-dark">Are you sure you want to mark this order as delivered?</p>
+        
+        <div class="bg-background-light dark:bg-background-dark p-4 rounded-lg border border-border-light dark:border-border-dark">
+          <div class="font-medium text-text-light dark:text-text-dark" id="deliveryMedicineName">Medicine Name</div>
+          <div class="text-sm text-subtext-light dark:text-subtext-dark mt-2">
+            <div>Order ID: <span id="deliveryOrderId">ORD001</span></div>
+            <div>Quantity: <span id="deliveryQuantity">100 units</span></div>
+            <div>Supplier: <span id="deliverySupplier">Supplier Name</span></div>
+          </div>
+        </div>
+        
+        <p class="text-sm text-subtext-light dark:text-subtext-dark">This will automatically add <span id="deliveryQuantityText">100</span> units to your inventory.</p>
+        
+        <div class="flex justify-end gap-3 pt-4">
+          <button type="button" id="cancelDeliveryBtn" class="px-4 py-2 text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark transition-colors">Cancel</button>
+          <button type="button" id="confirmDeliveryBtn" class="px-4 py-2 bg-success hover:bg-success/90 text-white font-semibold rounded-lg transition-colors">Confirm Delivery</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Revise Order Modal -->
+  <div id="reviseModal" class="modal">
+    <div class="modal-content bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg p-4 md:p-6">
+      <div class="flex justify-between items-center mb-4 md:mb-6">
+        <h3 class="text-lg md:text-xl font-semibold text-text-light dark:text-text-dark">Revise Order</h3>
+        <button id="closeReviseModalBtn" class="text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      
+      <div class="bg-background-light dark:bg-background-dark p-4 rounded-lg border border-border-light dark:border-border-dark mb-6">
+        <h4 class="text-lg font-semibold text-text-light dark:text-text-dark mb-2">Order Details</h4>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div>
+            <div class="text-subtext-light dark:text-subtext-dark">Supplier</div>
+            <div class="font-medium text-text-light dark:text-text-dark" id="reviseSupplier">Global Supplies Inc.</div>
+          </div>
+          <div>
+            <div class="text-subtext-light dark:text-subtext-dark">Order Date</div>
+            <div class="font-medium text-text-light dark:text-text-dark" id="reviseOrderDate">Oct 15, 2023</div>
+          </div>
+          <div>
+            <div class="text-subtext-light dark:text-subtext-dark">Delivery Date</div>
+            <div class="font-medium text-text-light dark:text-text-dark" id="reviseDeliveryDate">Oct 22, 2023</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mb-6">
+        <h4 class="text-md font-semibold text-text-light dark:text-text-dark mb-2">Confirmation Date</h4>
+        <div class="text-text-light dark:text-text-dark" id="reviseConfirmationDate">October 23, 2023</div>
+      </div>
+      
+      <hr class="border-border-light dark:border-border-dark mb-6">
+      
+      <div class="mb-6">
+        <h4 class="text-md font-semibold text-text-light dark:text-text-dark mb-4">Order Items</h4>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left">
+            <thead class="bg-background-light dark:bg-background-dark text-xs text-subtext-light dark:text-subtext-dark uppercase">
+              <tr>
+                <th class="px-4 py-3" scope="col">Product</th>
+                <th class="px-4 py-3" scope="col">Expected Qty</th>
+                <th class="px-4 py-3" scope="col">Received Qty</th>
+                <th class="px-4 py-3" scope="col">Discrepancy</th>
+              </tr>
+            </thead>
+            <tbody id="reviseItemsTableBody" class="divide-y divide-border-light dark:divide-border-dark">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <h4 class="text-md font-semibold text-text-light dark:text-text-dark mb-2">Supplier Contact Information</h4>
+        <div class="bg-background-light dark:bg-background-dark p-4 rounded-lg border border-border-light dark:border-border-dark">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div>
+              <div class="text-subtext-light dark:text-subtext-dark">Contact Person</div>
+              <div class="font-medium text-text-light dark:text-text-dark" id="reviseContactPerson">John Anderson</div>
+            </div>
+            <div>
+              <div class="text-subtext-light dark:text-subtext-dark">Email</div>
+              <div class="font-medium text-text-light dark:text-text-dark" id="reviseSupplierEmail">orders@medcorp.com</div>
+            </div>
+            <div>
+              <div class="text-subtext-light dark:text-subtext-dark">Phone</div>
+              <div class="font-medium text-text-light dark:text-text-dark" id="reviseSupplierPhone">+1 (555) 123-4567</div>
+            </div>
+            <div>
+              <div class="text-subtext-light dark:text-subtext-dark">Address</div>
+              <div class="font-medium text-text-light dark:text-text-dark" id="reviseSupplierAddress">123 Medical Ave, Health City</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mb-6">
+        <h4 class="text-md font-semibold text-text-light dark:text-text-dark mb-2">Notes / Comments</h4>
+        <textarea 
+          id="reviseNotes" 
+          class="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors" 
+          rows="3" 
+          placeholder="e.g., Box was damaged, two mice missing, one extra monitor delivered by mistake..."
+        ></textarea>
+      </div>
+      
+      <div class="flex justify-end gap-3 pt-4">
+        <button type="button" id="cancelReviseBtn" class="px-4 py-2 text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark transition-colors">Cancel</button>
+        <button type="button" id="confirmReviseBtn" class="px-4 py-2 bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg transition-colors">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-lg shadow-lg flex flex-col items-center">
+      <div class="loading-spinner mb-4"></div>
+      <p class="text-text-light dark:text-text-dark">Processing...</p>
+    </div>
+  </div>
+
+<script>
+const API_BASE_URL = 'http://localhost:5001'; 
+
+// ══════════════════════════════════════════════════════════
+// FANCY NOTIFICATION BELL — live from /api/inventory
+// ══════════════════════════════════════════════════════════
+let notifData         = [];
+let activeNotifFilter = 'all';
+
+function getNotifToken() {
+    const direct = sessionStorage.getItem('token');
+    if (direct) return direct;
+    const userInfo = sessionStorage.getItem('userInfo');
+    if (userInfo) {
+        try { return JSON.parse(userInfo).token || null; } catch(e) {}
+    }
+    return null;
+}
+
+function generateAlertsFromInventory(inventory) {
+    const alerts     = [];
+    const today      = new Date();
+    const thirtyDays = new Date();
+    thirtyDays.setDate(today.getDate() + 30);
+
+    inventory.forEach((item, idx) => {
+        const medName = item.medicine?.name || item.name || 'Unknown Medicine';
+
+        if (item.expiryDate) {
+            const expiry = new Date(item.expiryDate);
+            if (expiry < today) {
+                alerts.push({
+                    id: `exp-${item._id || idx}`, type: 'expiry', unread: true,
+                    medicineName: medName,
+                    title: 'Medicine Expired',
+                    desc:  `${medName} expired on ${expiry.toLocaleDateString('en-PH')}.`,
+                    time:  'Needs immediate attention',
+                    actionLabel: 'View Inventory', actionClass: 'btn-expiry',
+                    icon: 'event_busy', iconClass: 'icon-expiry'
+                });
+            } else if (expiry <= thirtyDays) {
+                const d = Math.ceil((expiry - today) / 864e5);
+                alerts.push({
+                    id: `exp-${item._id || idx}`, type: 'expiry', unread: true,
+                    medicineName: medName,
+                    title: 'Expiring Soon',
+                    desc:  `${medName} expires in ${d} day${d === 1 ? '' : 's'}.`,
+                    time:  `${d} days left`,
+                    actionLabel: 'View Inventory', actionClass: 'btn-expiry',
+                    icon: 'schedule', iconClass: 'icon-expiry'
+                });
+            }
+        }
+
+        const qty      = parseInt(item.quantity || 0);
+        const minStock = parseInt(item.minStockLevel || 10);
+        const isExpired = new Date(item.expiryDate) < today;
+
+        if (!isExpired && qty === 0) {
+            alerts.push({
+                id: `stk-${item._id || idx}`, type: 'critical', unread: true,
+                medicineName: medName,
+                title: 'Critical: Out of Stock',
+                desc:  `${medName} is completely out of stock.`,
+                time:  'Immediate action required',
+                actionLabel: 'View Inventory', actionClass: 'btn-critical',
+                icon: 'warning', iconClass: 'icon-critical'
+            });
+        } else if (!isExpired && qty <= minStock) {
+            alerts.push({
+                id: `stk-${item._id || idx}`, type: 'shortage', unread: true,
+                medicineName: medName,
+                title: 'Low Stock Alert',
+                desc:  `${medName} — only ${qty} unit${qty === 1 ? '' : 's'} remaining (min: ${minStock}).`,
+                time:  'Reorder soon',
+                actionLabel: 'View Inventory', actionClass: 'btn-shortage',
+                icon: 'inventory_2', iconClass: 'icon-shortage'
+            });
+        }
+    });
+
+    const order = { critical: 0, expiry: 1, shortage: 2 };
+    alerts.sort((a, b) => (order[a.type] ?? 9) - (order[b.type] ?? 9));
+    return alerts;
+}
+
+function renderNotifications() {
+    const list     = document.getElementById('notifList');
+    const filtered = activeNotifFilter === 'all'
+        ? notifData
+        : notifData.filter(n => n.type === activeNotifFilter);
+
+    if (!filtered.length) {
+        const msg = activeNotifFilter === 'all' ? 'All clear — no alerts right now!' : 'No notifications in this category.';
+        list.innerHTML = '<div class="notif-empty"><span class="material-icons">notifications_none</span><p>' + msg + '</p></div>';
+        updateNotifBadge();
+        return;
+    }
+
+    list.innerHTML = filtered.map(n => `
+        <div class="notif-item ${n.type} ${n.unread ? 'unread' : ''}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
+            <div class="notif-icon-wrap ${n.iconClass}"><span class="material-icons">${n.icon}</span></div>
+            <div class="notif-body">
+                <div class="notif-title">${n.title}</div>
+                <div class="notif-desc">${n.desc}</div>
+                <div class="notif-time">${n.time}</div>
+                <div class="notif-action">
+                    <button class="notif-action-btn ${n.actionClass}" onclick="handleNotifAction(event,'${n.id}')">${n.actionLabel}</button>
+                </div>
+            </div>
+            ${n.unread ? '<div class="unread-dot"></div>' : ''}
+        </div>`).join('');
+
+    updateNotifBadge();
+}
+
+function updateNotifBadge() {
+    const count = notifData.filter(n => n.unread).length;
+    const badge = document.getElementById('notificationBadge');
+    const pill  = document.getElementById('unreadPill');
+    if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none'; }
+    if (pill)  pill.textContent = count > 0 ? `${count} new` : 'All clear';
+}
+
+function markNotifRead(id) {
+    const n = notifData.find(n => n.id === id);
+    if (n) { n.unread = false; renderNotifications(); }
+}
+
+function markAllRead() {
+    notifData.forEach(n => n.unread = false);
+    renderNotifications();
+}
+
+function handleNotifAction(event, id) {
+    event.stopPropagation();
+    markNotifRead(id);
+    window.location.href = 'inventory.html';
+}
+
+function filterNotifTab(btn, filter) {
+    document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeNotifFilter = filter;
+    renderNotifications();
+}
+
+async function refreshNotifications() {
+    const token = getNotifToken();
+    if (!token) return;
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/inventory`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const raw       = await res.json();
+        const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
+        const previouslyRead = new Set(notifData.filter(n => !n.unread).map(n => n.id));
+        notifData = generateAlertsFromInventory(inventory).slice(0, 15);
+        notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
+        renderNotifications();
+    } catch (e) {
+        console.warn('Notification fetch failed:', e);
+        if (!notifData.length) {
+            const list = document.getElementById('notifList');
+            if (list) list.innerHTML = `<div class="notif-empty"><span class="material-icons">cloud_off</span><p>Could not load alerts.</p></div>`;
+        }
+    }
+}
+// ══ END FANCY NOTIFICATION SYSTEM ══
+
+class SupplierManager {
+    constructor() {
+        this.suppliers = [];
+        this.orders = [];
+        this.init();
+    }
+
+    async init() {
+        console.log("Supplier Manager Initialized");
+        
+        if (this.getToken()) {
+            await this.fetchSuppliers();
+            await this.fetchOrders();
+        } else {
+            console.warn("No auth token found.");
+        }
+        
+        this.renderSuppliers();
+        this.renderOrders();
+        this.updateStats();
+        this.populateSupplierDropdown();
+    }
+
+    getToken() {
+        const directToken = sessionStorage.getItem('token');
+        if (directToken) return directToken;
+        const userInfoString = sessionStorage.getItem('userInfo');
+        if (userInfoString) {
+            try {
+                return JSON.parse(userInfoString).token || JSON.parse(userInfoString).access_token;
+            } catch (e) { console.error(e); }
+        }
+        return null;
+    }
+
+    logoutUser() {
+        sessionStorage.removeItem('userInfo');
+        sessionStorage.removeItem('token');
+        window.location.href = 'login.html';
+    }
+
+    async apiCall(endpoint, method = 'GET', body = null) {
+        const token = this.getToken();
+        const options = {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        };
+        if (body) options.body = JSON.stringify(body);
+
+        try {
+            const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || 'API Error');
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return null;
+        }
+    }
+
+    async fetchSuppliers() {
+        const data = await this.apiCall('/api/suppliers');
+        if (data) {
+            this.suppliers = Array.isArray(data) ? data : (data.suppliers || []);
+        }
+    }
+
+    async fetchOrders() {
+        const data = await this.apiCall('/api/orders');
+        if (data) {
+            this.orders = Array.isArray(data) ? data : (data.orders || []);
+        }
+    }
+
+    renderSuppliers() {
+        const tbody = document.getElementById('supplierTableBody');
+        const searchInput = document.getElementById('supplierSearch');
+        
+        const search = searchInput ? searchInput.value.toLowerCase() : '';
+        
+        tbody.innerHTML = '';
+
+        const activeSuppliers = this.suppliers.filter(s => {
+            const name = (s.name || "").toLowerCase();
+            const contact = (s.contactPerson || "").toLowerCase();
+            const email = (s.email || "").toLowerCase();
+            
+            return !s.isBlocked && (
+                name.includes(search) || 
+                contact.includes(search) ||
+                email.includes(search)
+            );
+        });
+
+        if (activeSuppliers.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-subtext-light dark:text-subtext-dark">No active suppliers found.</td></tr>`;
+            return;
+        }
+
+        activeSuppliers.forEach(s => {
+            const stars = this.renderStars(s.reliabilityRating || 5);
+            const failedCount = s.failedDeliveries || 0;
+            const failedClass = failedCount >= 2 ? 'text-secondary font-bold' : 'text-subtext-light dark:text-subtext-dark';
+
+            tbody.innerHTML += `
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                    <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">
+                        ${s.name || "Unknown Name"}
+                    </td>
+                    <td class="px-6 py-4 text-subtext-light dark:text-subtext-dark">${s.contactPerson || "N/A"}</td>
+                    <td class="px-6 py-4 text-subtext-light dark:text-subtext-dark">
+                        <div class="text-xs">${s.email || "No Email"}</div>
+                        <div class="text-xs">${s.phone || "No Phone"}</div>
+                    </td>
+                    <td class="px-6 py-4 text-warning flex gap-1">${stars}</td>
+                    <td class="px-6 py-4 text-center ${failedClass}">${failedCount}</td>
+                    <td class="px-6 py-4 text-subtext-light dark:text-subtext-dark">${this.formatDate(s.updatedAt)}</td>
+                </tr>
+            `;
+        });
+        
+        this.populateSupplierDropdown();
+    }
+
+    renderOrders() {
+        const tbody = document.getElementById('ordersTableBody');
+        tbody.innerHTML = '';
+
+        if (this.orders.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-subtext-light dark:text-subtext-dark">No order history found.</td></tr>`;
+            return;
+        }
+
+        const sortedOrders = [...this.orders].sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date));
+
+        sortedOrders.forEach(order => {
+            let statusClass = 'bg-warning/10 text-warning';
+            if (order.status === 'Delivered') statusClass = 'bg-success/10 text-success';
+
+            const supplierName = order.supplier ? order.supplier.name : (order.supplierName || "Unknown");
+
+            tbody.innerHTML += `
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                    <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${(order._id || 'ORD').substring(0,8).toUpperCase()}</td>
+                    <td class="px-6 py-4 text-text-light dark:text-text-dark">${order.medicineName || "Medicine"}</td>
+                    <td class="px-6 py-4 text-text-light dark:text-text-dark">${order.quantity}</td>
+                    <td class="px-6 py-4 text-text-light dark:text-text-dark">₱${(order.totalPrice || 0).toLocaleString()}</td>
+                    <td class="px-6 py-4 text-text-light dark:text-text-dark">${supplierName}</td>
+                    <td class="px-6 py-4 text-subtext-light dark:text-subtext-dark">${this.formatDate(order.expectedDelivery)}</td>
+                    <td class="px-6 py-4"><span class="px-2 py-1 rounded text-xs font-bold ${statusClass}">${(order.status || 'Pending').toUpperCase()}</span></td>
+                    <td class="px-6 py-4 text-center">
+                        ${order.status === 'Pending' ? `
+                            <button onclick="supplierManager.updateOrderStatus('${order._id}', 'Delivered')" class="text-success hover:underline text-xs mr-2">Receive</button>
+                        ` : '-'}
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    async placeOrder(formData) {
+        const supplierSelect = document.getElementById('orderSupplier');
+        const supplierName = supplierSelect.options[supplierSelect.selectedIndex].text;
+        
+        const orderData = {
+            supplier: formData.get('orderSupplier'),
+            supplierName: supplierName,
+            medicineName: document.getElementById('medicineName').value,
+            quantity: parseInt(document.getElementById('quantity').value),
+            unitPrice: parseFloat(document.getElementById('unitPrice').value),
+            totalPrice: parseFloat(document.getElementById('totalPrice').value),
+            expectedDelivery: document.getElementById('deliveryDate').value,
+            status: 'Pending'
+        };
+
+        const result = await this.apiCall('/api/orders', 'POST', orderData);
+        if(result) {
+            Swal.fire('Success', 'Order placed successfully!', 'success');
+            this.fetchOrders();
+            document.getElementById('orderModal').classList.remove('active');
+        }
+    }
+
+    async updateOrderStatus(orderId, newStatus) {
+        const result = await this.apiCall(`/api/orders/${orderId}`, 'PUT', { status: newStatus });
+        if(result) {
+            Swal.fire('Updated', `Order marked as ${newStatus}`, 'success');
+            this.fetchOrders();
+        }
+    }
+
+    populateSupplierDropdown() {
+        const select = document.getElementById('orderSupplier');
+        if(!select) return;
+        select.innerHTML = '<option value="">Select a Supplier</option>';
+        this.suppliers.forEach(s => {
+            select.innerHTML += `<option value="${s._id}">${s.name}</option>`;
+        });
+    }
+
+    renderStars(rating) {
+        return '<span class="material-icons text-xs">star</span>'.repeat(5);
+    }
+    
+    formatDate(dateStr) {
+        if(!dateStr) return '-';
+        return new Date(dateStr).toLocaleDateString();
+    }
+    
+    updateStats() {
+        document.getElementById('activeSuppliers').textContent = this.suppliers.length;
+        document.getElementById('pendingOrders').textContent = this.orders.filter(o => o.status === 'Pending').length;
+        document.getElementById('deliveredOrders').textContent = this.orders.filter(o => o.status === 'Delivered').length;
+    }
+    
+    handleSupplierSearch() { this.renderSuppliers(); }
+    openOrderModal() { document.getElementById('orderModal').classList.add('active'); }
+    closeOrderModal() { document.getElementById('orderModal').classList.remove('active'); }
+}
+
+let supplierManager;
+
+function confirmBackToHMS(event) {
+    event.preventDefault();
+    Swal.fire({
+        title: "Leave Supplier Management?",
+        text: "Return to Integrated Healthcare Management System?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#005a32",
+        confirmButtonText: "Yes, go back"
+    }).then((result) => {
+        if (result.isConfirmed) window.location.href = 'index.html';
+    });
+}
+
+function logoutUser() {
+    Swal.fire({
+        title: "Logout?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#005a32",
+        confirmButtonText: "Yes, logout"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            supplierManager.logoutUser();
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    supplierManager = new SupplierManager();
+    window.supplierManager = supplierManager;
+    
+    // Dark mode
+    const isDarkMode = sessionStorage.getItem('darkMode') === 'true';
+    document.documentElement.classList.toggle('dark', isDarkMode);
+
+    // Wire up fancy notification bell
+    const btn      = document.getElementById('notificationBtn');
+    const dropdown = document.getElementById('notificationDropdown');
+    if (btn && dropdown) {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('open');
+            if (dropdown.classList.contains('open')) refreshNotifications();
+        });
+        document.addEventListener('click', (e) => {
+            if (!dropdown.contains(e.target) && e.target !== btn) dropdown.classList.remove('open');
+        });
+        dropdown.addEventListener('click', e => e.stopPropagation());
+        setTimeout(refreshNotifications, 1000);
+        setInterval(refreshNotifications, 60000);
+    }
+    
+    const form = document.getElementById('orderForm');
+    if(form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            formData.append('orderSupplier', document.getElementById('orderSupplier').value);
+            supplierManager.placeOrder(formData);
+        });
+    }
+    
+    const qty = document.getElementById('quantity');
+    const price = document.getElementById('unitPrice');
+    const total = document.getElementById('totalPrice');
+    const calc = () => { total.value = ((parseFloat(qty.value)||0) * (parseFloat(price.value)||0)).toFixed(2); };
+    if(qty && price) { 
+        qty.addEventListener('input', calc); 
+        price.addEventListener('input', calc); 
+    }
+
+    const closeOrderBtn = document.getElementById('closeOrderModalBtn');
+    const cancelOrderBtn = document.getElementById('cancelOrderBtn');
+    if(closeOrderBtn) closeOrderBtn.addEventListener('click', () => supplierManager.closeOrderModal());
+    if(cancelOrderBtn) cancelOrderBtn.addEventListener('click', () => supplierManager.closeOrderModal());
+
+    const supplierSearch = document.getElementById('supplierSearch');
+    if(supplierSearch) supplierSearch.addEventListener('input', () => supplierManager.handleSupplierSearch());
+});
+</script>
+<script src="../js/windowcontrollerbtn.js"></script>
+
+</body>
+</html>

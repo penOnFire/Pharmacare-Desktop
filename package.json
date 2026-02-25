@@ -1,0 +1,15 @@
+{
+  "name": "pharmacy-desktop",
+  "version": "1.0.0",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "concurrently \"npm run backend\" \"npm run electron\"",
+    "electron": "electron .",
+    "backend": "cd backend/pharmacydb && node index.js",
+    "migrate": "cd backend/pharmacydb && node migrateStatus.js"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "electron": "^40.6.1"
+  }
+}

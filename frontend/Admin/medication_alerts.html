@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>PharmaCare - Medication Alerts</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                       primary: "#14532d",
+                        "background-light": "#f1f5f9",
+                        "background-dark": "#111827",
+                        "surface-light": "#FFFFFF",
+                        "surface-dark": "#1F2937",
+                        "text-light": "#1F2937",
+                        "text-dark": "#F9FAFB",
+                        "subtext-light": "#6B7280",
+                        "subtext-dark": "#9CA3AF",
+                        "border-light": "#E5E7EB",
+                        "border-dark": "#374151",
+                        "success": "#22C55E",
+                        "warning": "#F59E0B",
+                        "danger": "#EF4444"
+                    },
+                    fontFamily: { display: ["Inter", "sans-serif"] },
+                    borderRadius: { DEFAULT: "0.5rem" },
+                },
+            },
+        };
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+
+        .drag-region { -webkit-app-region: drag; }
+        .no-drag     { -webkit-app-region: no-drag; }
+
+        .hidden { display: none !important; }
+
+        .alert-card { border-left: 4px solid; }
+        .alert-critical { border-left-color: #EF4444; }
+        .alert-expiry { border-left-color: #F59E0B; }
+        .alert-shortage { border-left-color: #358E83; }
+        .alert-resolved { border-left-color: #6B7280; background: #f8fafc; }
+
+        .notification-dropdown {
+            display: none; position: absolute; top: 100%; right: 0;
+            width: 380px; background: white; border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 1000;
+            border: 1px solid #e5e7eb;
+        }
+        .notification-dropdown.show { display: block; }
+        .notification-item { padding: 12px 16px; border-bottom: 1px solid #f3f4f6; cursor: pointer; }
+        .notification-item:hover { background-color: #f9fafb; }
+        .notification-item:last-child { border-bottom: none; }
+
+        .toast {
+            position: fixed; top: 20px; right: 20px;
+            padding: 12px 20px; border-radius: 8px; color: white;
+            z-index: 10000; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex; align-items: center; gap: 8px;
+            transform: translateX(150%); transition: transform 0.3s ease;
+        }
+        .toast.show { transform: translateX(0); }
+        .toast-success { background-color: #22C55E; }
+        .toast-error { background-color: #EF4444; }
+        .toast-info { background-color: #3B82F6; }
+
+        .resolve-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* ── SIDEBAR LOGOUT BUTTON (matching inventory_admin.html) ── */
+        .sidebar-logout-btn {
+            display: flex; align-items: center; gap: 10px;
+            width: 100%; padding: 10px 16px; border: none;
+            background: none; cursor: pointer; border-radius: 8px;
+            color: #d62828; font-size: 14px; font-weight: 600;
+            transition: background 0.15s; text-align: left;
+        }
+        .sidebar-logout-btn:hover { background: #fef2f2; }
+        .sidebar-logout-btn .material-icons { font-size: 20px; color: #d62828; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
+
+    <!-- ── TITLE BAR ── -->
+    <div id="title-bar" class="drag-region fixed top-0 left-0 w-full h-8 bg-white flex justify-between items-stretch z-40 border-b border-gray-200 select-none">
+        <div class="flex items-center pl-4 gap-2 text-gray-600">
+            <span class="text-xs font-semibold">IHMS Pharmacy</span>
+        </div>
+        <div class="no-drag flex items-center relative z-50">
+            <button id="min-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200">
+                <span class="material-icons-outlined text-sm text-gray-600">remove</span>
+            </button>
+            <button id="max-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200">
+                <span class="material-icons-outlined text-sm text-gray-600" id="maxIcon">crop_square</span>
+            </button>
+            <button id="close-btn" class="h-full w-12 flex justify-center items-center hover:bg-red-500 transition-colors duration-200 group">
+                <span class="material-icons-outlined text-sm text-gray-600 group-hover:text-white">close</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="flex h-screen pt-8">
+
+        <!-- ── SIDEBAR ── -->
+        <aside class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-primary/20 dark:border-primary/30">
+
+            <!-- Logo -->
+           <div class="h-16 flex items-center gap-3 px-4 border-b border-border-light dark:border-border-dark">
+
+    <img
+      src="images/wellserved.png"
+      alt="Well Served Logo"
+      class="w-12 h-12 rounded-full object-cover border border-slate-100 dark:border-slate-700 shadow-sm"
+    />
+    <div>
+        <h1 class="font-bold text-primary dark:text-green-400 leading-tight">
+            Well Served
+        </h1>
+        <p class="text-[10px] uppercase tracking-wider text-accent dark:text-amber-600 font-semibold">
+            Since 1994
+        </p>
+    </div>
+</div>
+
+            <!-- Nav Links -->
+            <nav class="flex-1 px-4 py-6 space-y-2">
+                <div class="px-2 text-sm font-semibold text-subtext-light dark:text-subtext-dark">Admin Panel</div>
+
+                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md" href="dashboard_admin.html">
+                    <span class="material-icons mr-3">dashboard</span> Dashboard
+                </a>
+                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md" href="inventory_admin.html">
+                    <span class="material-icons mr-3">inventory_2</span> Inventory
+                </a>
+                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md" href="sales-reports.html">
+                    <span class="material-icons mr-3">analytics</span> Sales Reports
+                </a>
+                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md" href="patient_records.html">
+                    <span class="material-icons mr-3">medical_services</span> Patient Records
+                </a>
+                <a class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold" href="medication_alerts.html">
+                    <span class="material-icons mr-3">notifications</span> Medication Alerts
+                </a>
+                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md" href="user_management.html">
+                    <span class="material-icons mr-3">group</span> User Management
+                </a>
+            </nav>
+
+            <!-- ── LOGOUT at bottom of sidebar ── -->
+            <div class="px-4 pb-6 border-t border-primary/20 dark:border-primary/30 pt-4">
+                <button onclick="logoutUser()" class="sidebar-logout-btn">
+                    <span class="material-icons">logout</span>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- ── RIGHT COLUMN ── -->
+        <main class="flex-1 flex flex-col">
+
+            <!-- ── APP HEADER (no logout here) ── -->
+            <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-primary/20 dark:border-primary/30">
+                <div class="flex items-center gap-2">
+                    
+                </div>
+                <div class="flex items-center gap-4">
+
+                    <!-- Search -->
+                    <div class="relative">
+                        <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-subtext-light dark:text-subtext-dark">search</span>
+                        <input id="searchInput" class="bg-background-light dark:bg-background-dark border border-primary/20 dark:border-primary/40 rounded-lg pl-10 pr-4 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-primary text-text-light dark:text-text-dark" placeholder="Search alerts..." type="text"/>
+                    </div>
+
+                    <!-- Notification Bell -->
+                    <div class="relative">
+                        <button id="notificationBtn" class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <span class="material-icons">notifications</span>
+                            <span id="notificationBadge" class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">4</span>
+                        </button>
+                        <div id="notificationDropdown" class="notification-dropdown dark:bg-surface-dark dark:border-border-dark">
+                            <div class="p-4 border-b border-border-light dark:border-border-dark">
+                                <h3 class="font-semibold text-text-light dark:text-text-dark">Notifications</h3>
+                            </div>
+                            <div class="max-h-80 overflow-y-auto">
+                                <div class="notification-item">
+                                    <div class="flex items-start gap-3">
+                                        <span class="material-icons text-danger text-lg mt-0.5">warning</span>
+                                        <div>
+                                            <p class="text-sm font-medium text-text-light dark:text-text-dark">Critical drug recall</p>
+                                            <p class="text-xs text-subtext-light dark:text-subtext-dark">Ibuprofen 400mg has been recalled</p>
+                                            <p class="text-xs text-subtext-light dark:text-subtext-dark mt-1">2 hours ago</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="notification-item">
+                                    <div class="flex items-start gap-3">
+                                        <span class="material-icons text-warning text-lg mt-0.5">schedule</span>
+                                        <div>
+                                            <p class="text-sm font-medium text-text-light dark:text-text-dark">Medicine expiring soon</p>
+                                            <p class="text-xs text-subtext-light dark:text-subtext-dark">Paracetamol 500mg expires in 5 days</p>
+                                            <p class="text-xs text-subtext-light dark:text-subtext-dark mt-1">4 hours ago</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="notification-item">
+                                    <div class="flex items-start gap-3">
+                                        <span class="material-icons text-primary text-lg mt-0.5">inventory_2</span>
+                                        <div>
+                                            <p class="text-sm font-medium text-text-light dark:text-text-dark">Low stock alert</p>
+                                            <p class="text-xs text-subtext-light dark:text-subtext-dark">Amoxicillin 250mg is critically low</p>
+                                            <p class="text-xs text-subtext-light dark:text-subtext-dark mt-1">6 hours ago</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="notification-item">
+                                    <div class="flex items-start gap-3">
+                                        <span class="material-icons text-primary text-lg mt-0.5">inventory_2</span>
+                                        <div>
+                                            <p class="text-sm font-medium text-text-light dark:text-text-dark">Out of stock</p>
+                                            <p class="text-xs text-subtext-light dark:text-subtext-dark">Aspirin 100mg is out of stock</p>
+                                            <p class="text-xs text-subtext-light dark:text-subtext-dark mt-1">Yesterday</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3 border-t border-border-light dark:border-border-dark text-center">
+                                <a href="#" class="text-sm text-primary font-medium">View all notifications</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Avatar -->
+                    <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">DB</div>
+                </div>
+            </header>
+
+            <!-- ── PAGE BODY ── -->
+            <main class="flex-1 overflow-y-auto p-8 bg-background-light dark:bg-background-dark">
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h2 class="text-3xl font-bold text-text-light dark:text-text-dark">Medication Alerts</h2>
+                        <p class="text-subtext-light dark:text-subtext-dark mt-1">Monitor critical notifications for expiry, shortages, and recalls</p>
+                    </div>
+                    <button id="resolveAllBtn" class="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors shadow-md">
+                        <span class="material-icons">check_circle</span>
+                        Resolve All Critical
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-border-light dark:border-border-dark border-t-4 border-t-red-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-subtext-light dark:text-subtext-dark">Active Alerts</p>
+                                <p id="activeAlertsCount" class="text-3xl font-bold text-text-light dark:text-text-dark">4</p>
+                                <p id="criticalAlertsCount" class="text-sm text-danger font-semibold">1 Critical</p>
+                            </div>
+                            <span class="material-icons text-red-500 text-3xl">warning</span>
+                        </div>
+                    </div>
+                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-border-light dark:border-border-dark border-t-4 border-t-orange-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-subtext-light dark:text-subtext-dark">Drug Recalls</p>
+                                <p id="recallAlertsCount" class="text-3xl font-bold text-text-light dark:text-text-dark">1</p>
+                                <p class="text-sm text-subtext-light dark:text-subtext-dark">Critical actions required</p>
+                            </div>
+                            <span class="material-icons text-orange-500 text-3xl">assignment_late</span>
+                        </div>
+                    </div>
+                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-border-light dark:border-border-dark border-t-4 border-t-amber-600">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-subtext-light dark:text-subtext-dark">Expiring Soon</p>
+                                <p id="expiryAlertsCount" class="text-3xl font-bold text-text-light dark:text-text-dark">1</p>
+                                <p class="text-sm text-subtext-light dark:text-subtext-dark">Next 30 days</p>
+                            </div>
+                            <span class="material-icons text-amber-600 text-3xl">schedule</span>
+                        </div>
+                    </div>
+                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-border-light dark:border-border-dark border-t-4 border-t-yellow-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-subtext-light dark:text-subtext-dark">Stock Shortages</p>
+                                <p id="shortageAlertsCount" class="text-3xl font-bold text-text-light dark:text-text-dark">2</p>
+                                <p class="text-sm text-subtext-light dark:text-subtext-dark">Low & out of stock</p>
+                            </div>
+                           <span class="material-icons text-yellow-500 text-3xl">inventory_2</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-border-light dark:border-border-dark">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-subtext-light dark:text-subtext-dark">Resolved Today</p>
+                                    <p id="resolvedTodayCount" class="text-3xl font-bold text-text-light dark:text-text-dark">0</p>
+                                    <p class="text-sm text-subtext-light dark:text-subtext-dark">Actions completed</p>
+                                </div>
+                                <span class="material-icons text-success text-3xl">check_circle</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-border-light dark:border-border-dark">
+                            <h3 class="text-lg font-semibold text-text-light dark:text-text-dark mb-4">All Alerts</h3>
+                            <div class="space-y-2">
+                                <button class="filter-btn w-full text-left px-4 py-3 bg-primary text-white rounded-lg font-medium" data-filter="all">Active</button>
+                                <button class="filter-btn w-full text-left px-4 py-3 text-subtext-light dark:text-subtext-dark rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700" data-filter="recalls">Recalls</button>
+                                <button class="filter-btn w-full text-left px-4 py-3 text-subtext-light dark:text-subtext-dark rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700" data-filter="expiry">Expiry</button>
+                                <button class="filter-btn w-full text-left px-4 py-3 text-subtext-light dark:text-subtext-dark rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700" data-filter="shortages">Shortages</button>
+                                <button class="filter-btn w-full text-left px-4 py-3 text-subtext-light dark:text-subtext-dark rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700" data-filter="resolved">Resolved</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="alertsContainer" class="lg:col-span-2 space-y-4"></div>
+                </div>
+            </main>
+        </main>
+    </div>
+
+    <div id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // --- TAILWIND CONFIG ---
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#14532d",
+                        "background-light": "#F9FAFB",
+                        "background-dark": "#111827",
+                        "surface-light": "#FFFFFF",
+                        "surface-dark": "#1F2937",
+                        "text-light": "#1F2937",
+                        "text-dark": "#F9FAFB",
+                        "subtext-light": "#6B7280",
+                        "subtext-dark": "#9CA3AF",
+                        "border-light": "#E5E7EB",
+                        "border-dark": "#374151",
+                        "success": "#22C55E",
+                        "warning": "#F59E0B",
+                        "danger": "#EF4444"
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                },
+            },
+        };
+
+        // ── GLOBAL FUNCTIONS ──
+        function confirmBackToHMS(e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Return to IHMS?',
+                text: 'Return to Integrated Healthcare Management System?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#14532d',
+                confirmButtonText: 'Yes, go back'
+            }).then(r => {
+                if(r.isConfirmed) window.location.href = '../../html/index.html';
+            });
+        }
+
+    function logoutUser() {
+    Swal.fire({
+        title: "Logout?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#005a32",
+        confirmButtonText: "Yes, logout"
+    }).then(r => {
+        if (r.isConfirmed) {
+            sessionStorage.removeItem('userInfo');
+            sessionStorage.removeItem('token');
+            window.location.href = '../html/login.html'; // ✅ fixed
+        }
+    });
+}
+        // --- ALERT MANAGER CLASS ---
+        class MedicationAlertsManager {
+            constructor() {
+                this.alertsData = [];
+                this.currentFilter = 'all';
+                this.resolvedToday = parseInt(sessionStorage.getItem('resolvedToday') || '0');
+                this.resolvedIds = JSON.parse(sessionStorage.getItem('resolvedAlertIds') || '[]');
+                this.init();
+            }
+
+            async init() {
+                this.setupEventListeners();
+                if (this.getToken()) {
+                    await this.generateAlertsFromBackend();
+                }
+                this.updateStats();
+                if(sessionStorage.getItem('darkMode') === 'true') {
+                    document.documentElement.classList.add('dark');
+                }
+            }
+
+            getToken() {
+                const userInfoString = sessionStorage.getItem('userInfo');
+                if (!userInfoString) { this.handleLogout("Session expired."); return null; }
+                try { return JSON.parse(userInfoString).token; }
+                catch (e) { this.handleLogout("Invalid session."); return null; }
+            }
+
+            handleLogout(msg) {
+                if(msg) Swal.fire('Error', msg, 'error');
+                sessionStorage.removeItem('userInfo');
+                setTimeout(() => window.location.href = '../../html/login.html', 1500);
+            }
+
+            async apiCall(url) {
+                const token = this.getToken();
+                if (!token) return null;
+                try {
+                    const response = await fetch(`http://localhost:5001${url}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (!response.ok) {
+                        if (response.status === 401) this.handleLogout("Session expired");
+                        throw new Error("Failed to fetch data");
+                    }
+                    return await response.json();
+                } catch (error) {
+                    console.error("API Error:", error);
+                    return null;
+                }
+            }
+
+            async generateAlertsFromBackend() {
+                const inventory = await this.apiCall('/api/inventory');
+                if (!inventory) return;
+
+                this.alertsData = [];
+                const today = new Date();
+                const thirtyDays = new Date();
+                thirtyDays.setDate(today.getDate() + 30);
+
+                inventory.forEach((item) => {
+                    const medName = item.medicine ? (item.medicine.name || 'Unknown') : 'Unknown';
+                    const batch = item.batchNumber || 'N/A';
+                    const alertId = item._id;
+
+                    if (item.expiryDate) {
+                        const expiry = new Date(item.expiryDate);
+                        if (expiry < today) {
+                            this.addAlert(alertId + '_exp', 'expiry', 'critical', 'Medicine Expired', medName, batch, `Expired on ${expiry.toLocaleDateString()}`, 'Dispose immediately');
+                        } else if (expiry < thirtyDays) {
+                            const daysLeft = Math.ceil((expiry - today)/(1000*60*60*24));
+                            this.addAlert(alertId + '_soon', 'expiry', 'high', 'Expiring Soon', medName, batch, `Expires in ${daysLeft} days`, 'Prioritize sale');
+                        }
+                    }
+
+                    if (item.quantity === 0) {
+                        this.addAlert(alertId + '_out', 'shortage', 'medium', 'Out of Stock', medName, batch, 'Stock is empty', 'Reorder immediately');
+                    } else if (item.quantity <= item.minStockLevel) {
+                        this.addAlert(alertId + '_low', 'shortage', 'medium', 'Low Stock', medName, batch, `Only ${item.quantity} units remaining`, 'Reorder soon');
+                    }
+                });
+
+                this.renderAlerts();
+                this.updateStats();
+            }
+
+            addAlert(id, type, severity, title, medicine, batch, description, action) {
+                const status = this.resolvedIds.includes(id) ? 'resolved' : 'active';
+                this.alertsData.push({ id, type, severity, title, medicine, batch, description, timestamp: new Date().toISOString(), action, status });
+            }
+
+            showResolveConfirmation(alertId) {
+                const alert = this.alertsData.find(a => a.id === alertId);
+                if (!alert) return;
+                Swal.fire({
+                    title: 'Resolve Alert?',
+                    text: `Mark "${alert.title}" for ${alert.medicine} as resolved?`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#358E83',
+                    confirmButtonText: 'Yes, Resolve'
+                }).then((result) => { if (result.isConfirmed) this.resolveAlert(alertId); });
+            }
+
+            resolveAlert(alertId) {
+                const alert = this.alertsData.find(a => a.id === alertId);
+                if (alert) {
+                    alert.status = 'resolved';
+                    alert.resolvedAt = new Date().toISOString();
+                    this.resolvedIds.push(alertId);
+                    sessionStorage.setItem('resolvedAlertIds', JSON.stringify(this.resolvedIds));
+                    this.resolvedToday++;
+                    sessionStorage.setItem('resolvedToday', this.resolvedToday.toString());
+                    this.renderAlerts();
+                    this.updateStats();
+                    const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true });
+                    Toast.fire({ icon: 'success', title: 'Alert marked as resolved' });
+                }
+            }
+
+            resolveAllCritical() {
+                const criticals = this.alertsData.filter(a => a.severity === 'critical' && a.status === 'active');
+                if(criticals.length === 0) { Swal.fire('Info', 'No active critical alerts.', 'info'); return; }
+                Swal.fire({
+                    title: 'Resolve All Critical?',
+                    text: `Mark ${criticals.length} critical alerts as resolved?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#EF4444',
+                    confirmButtonText: 'Yes, Resolve All'
+                }).then((result) => { if (result.isConfirmed) criticals.forEach(a => this.resolveAlert(a.id)); });
+            }
+
+            applyFilter(filter) {
+                this.currentFilter = filter;
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    if (btn.dataset.filter === filter) {
+                        btn.classList.add('bg-primary', 'text-white');
+                        btn.classList.remove('text-subtext-light', 'dark:text-subtext-dark', 'hover:bg-gray-50');
+                    } else {
+                        btn.classList.remove('bg-primary', 'text-white');
+                        btn.classList.add('text-subtext-light', 'dark:text-subtext-dark', 'hover:bg-gray-50');
+                    }
+                });
+                this.renderAlerts();
+            }
+
+            handleSearch(e) {
+                this.renderAlerts(e.target.value.toLowerCase());
+            }
+
+            renderAlerts(searchTerm = '') {
+                const container = document.getElementById('alertsContainer');
+                if (!container) return;
+
+                let filtered = this.alertsData;
+                if (this.currentFilter !== 'all') {
+                    if (this.currentFilter === 'resolved') filtered = filtered.filter(a => a.status === 'resolved');
+                    else if (this.currentFilter === 'recalls') filtered = filtered.filter(a => a.type === 'recall');
+                    else filtered = filtered.filter(a => a.type === this.currentFilter && a.status === 'active');
+                } else {
+                    filtered = filtered.filter(a => a.status === 'active');
+                }
+
+                if (searchTerm) {
+                    filtered = filtered.filter(a =>
+                        a.medicine.toLowerCase().includes(searchTerm) ||
+                        a.title.toLowerCase().includes(searchTerm)
+                    );
+                }
+
+                if (filtered.length === 0) {
+                    container.innerHTML = '<div class="text-center text-gray-500 p-8">No alerts found.</div>';
+                    return;
+                }
+
+                container.innerHTML = filtered.map(alert => {
+                    const isResolved = alert.status === 'resolved';
+                    const severityColor = this.getSeverityColor(alert.severity);
+                    const icon = this.getIcon(alert.type);
+                    return `
+                    <div class="alert-card bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-border-light dark:border-border-dark mb-4 shadow-sm relative overflow-hidden" data-id="${alert.id}" style="border-left: 4px solid ${isResolved ? '#6B7280' : severityColor}">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <h3 class="font-bold text-lg text-text-light dark:text-text-dark ${isResolved ? 'line-through opacity-60' : ''}">${alert.title}</h3>
+                                    <span class="px-2 py-0.5 rounded text-xs font-bold uppercase text-white" style="background-color: ${isResolved ? '#6B7280' : severityColor}">
+                                        ${isResolved ? 'RESOLVED' : alert.severity}
+                                    </span>
+                                </div>
+                                <p class="text-sm text-text-light dark:text-text-dark font-medium">${alert.medicine} <span class="text-xs text-subtext-light">(${alert.batch})</span></p>
+                                <p class="text-sm text-subtext-light dark:text-subtext-dark mt-1">${alert.description}</p>
+                                <div class="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                                    <span class="text-xs font-mono text-gray-500">Action: ${alert.action}</span>
+                                    ${!isResolved ?
+                                        `<button class="resolve-btn text-xs bg-primary text-white px-3 py-1 rounded hover:bg-green-900 transition-colors">Mark Resolved</button>` :
+                                        `<span class="text-xs text-green-500 font-bold flex items-center gap-1"><span class="material-icons text-xs">check</span> Done</span>`
+                                    }
+                                </div>
+                            </div>
+                            <div class="ml-4 p-2 rounded-full bg-gray-100 dark:bg-gray-700">
+                                <span class="material-icons" style="color: ${severityColor}">${icon}</span>
+                            </div>
+                        </div>
+                    </div>`;
+                }).join('');
+
+                container.querySelectorAll('.resolve-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = e.target.closest('.alert-card').dataset.id;
+                        this.showResolveConfirmation(id);
+                    });
+                });
+            }
+
+            updateStats() {
+                const active = this.alertsData.filter(a => a.status === 'active');
+                document.getElementById('activeAlertsCount').textContent = active.length;
+                document.getElementById('criticalAlertsCount').textContent = `${active.filter(a => a.severity === 'critical').length} Critical`;
+                document.getElementById('recallAlertsCount').textContent = active.filter(a => a.type === 'recall').length;
+                document.getElementById('expiryAlertsCount').textContent = active.filter(a => a.type === 'expiry').length;
+                document.getElementById('shortageAlertsCount').textContent = active.filter(a => a.type === 'shortage').length;
+                document.getElementById('resolvedTodayCount').textContent = this.resolvedToday;
+                const badge = document.getElementById('notificationBadge');
+                if(badge) { badge.textContent = active.length; badge.style.display = active.length > 0 ? 'flex' : 'none'; }
+            }
+
+            getSeverityColor(severity) {
+                if (severity === 'critical') return '#EF4444';
+                if (severity === 'high') return '#F59E0B';
+                return '#358E83';
+            }
+            getIcon(type) {
+                if (type === 'expiry') return 'event_busy';
+                if (type === 'shortage') return 'inventory_2';
+                return 'warning';
+            }
+
+            setupEventListeners() {
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.applyFilter(e.target.dataset.filter));
+                });
+                const search = document.getElementById('searchInput');
+                if(search) search.addEventListener('input', (e) => this.handleSearch(e));
+                const resolveAll = document.getElementById('resolveAllBtn');
+                if(resolveAll) resolveAll.addEventListener('click', () => this.resolveAllCritical());
+
+                const notifBtn = document.getElementById('notificationBtn');
+                const dropdown = document.getElementById('notificationDropdown');
+                if(notifBtn && dropdown) {
+                    notifBtn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('show'); });
+                    document.addEventListener('click', () => dropdown.classList.remove('show'));
+                }
+            }
+        }
+
+        // --- INITIALIZE ---
+        let alertsManager;
+        document.addEventListener('DOMContentLoaded', () => {
+            alertsManager = new MedicationAlertsManager();
+        });
+    </script>
+
+    <script src="../js/windowcontrollerbtn.js"></script>
+</body>
+</html>
