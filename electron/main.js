@@ -11,7 +11,7 @@ function createWindow() {
     width: 1200,
     height: 800,
     frame: false,
-    con: path.join(__dirname, "../frontend/html/images/wellserved.png"),
+    icon: path.join(__dirname, "../frontend/html/images/wellserved.png"),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -58,3 +58,4 @@ ipcMain.on("check-maximized", (event) => {
     event.reply("is-restored");
   }
 });
+
