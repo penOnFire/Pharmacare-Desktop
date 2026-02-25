@@ -88,6 +88,58 @@
         }
         .sidebar-logout-btn:hover { background: #fef2f2; }
         .sidebar-logout-btn .material-icons { font-size: 20px; color: #d62828; }
+
+        /* ── MODULE TABS ── */
+        .module-tab-bar {
+            display: flex; align-items: stretch;
+            background: linear-gradient(to bottom, #ffffff 0%, #f8fafc 100%);
+            border-bottom: 2px solid #e5e7eb; position: relative; flex-shrink: 0;
+        }
+        .dark .module-tab-bar {
+            background: linear-gradient(to bottom, #1e293b 0%, #0f172a 100%);
+            border-color: #334155;
+        }
+        .module-tab-btn {
+            flex: 1; position: relative; display: flex; align-items: center;
+            justify-content: center; gap: 10px; height: 54px; font-size: 13px;
+            font-weight: 600; letter-spacing: 0.02em; color: #9ca3af; cursor: pointer;
+            border: none; background: none; outline: none;
+            border-bottom: 3px solid transparent; margin-bottom: -2px;
+            transition: color 0.2s ease, background 0.2s ease;
+            white-space: nowrap; font-family: 'Inter', sans-serif;
+        }
+        .module-tab-btn::before { content: ''; position: absolute; inset: 0; background: transparent; transition: background 0.2s ease; }
+        .module-tab-btn + .module-tab-btn { border-left: 1px solid #e5e7eb; }
+        .dark .module-tab-btn + .module-tab-btn { border-color: #334155; }
+        .module-tab-btn .material-icons { font-size: 18px; transition: transform 0.2s ease; position: relative; z-index: 1; }
+        .module-tab-btn:hover .material-icons { transform: translateY(-1px); }
+        .module-tab-btn span.tab-label { position: relative; z-index: 1; }
+
+        /* Medicine tab — green */
+        #moduleTabInventory:hover { color: #1a5f3e; }
+        #moduleTabInventory:hover::before { background: rgba(26,95,62,0.04); }
+        #moduleTabInventory.active { color: #1a5f3e; border-bottom-color: #1a5f3e; }
+        #moduleTabInventory.active::before { background: linear-gradient(180deg, rgba(26,95,62,0.08) 0%, rgba(26,95,62,0.02) 100%); }
+        #moduleTabInventory.active::after { content: ''; position: absolute; bottom: -2px; left: 16px; right: 16px; height: 3px; background: linear-gradient(to right, #1a5f3e, #22c55e); border-radius: 3px 3px 0 0; box-shadow: 0 -2px 8px rgba(26,95,62,0.3); }
+        #moduleTabInventory.active .material-icons { color: #1a5f3e; }
+
+        /* Supplies tab — red */
+        #moduleTabSupplies:hover { color: #b91c1c; }
+        #moduleTabSupplies:hover::before { background: rgba(185,28,28,0.04); }
+        #moduleTabSupplies.active { color: #b91c1c; border-bottom-color: #b91c1c; }
+        #moduleTabSupplies.active::before { background: linear-gradient(180deg, rgba(185,28,28,0.08) 0%, rgba(185,28,28,0.02) 100%); }
+        #moduleTabSupplies.active::after { content: ''; position: absolute; bottom: -2px; left: 16px; right: 16px; height: 3px; background: linear-gradient(to right, #b91c1c, #f87171); border-radius: 3px 3px 0 0; box-shadow: 0 -2px 8px rgba(185,28,28,0.3); }
+        #moduleTabSupplies.active .material-icons { color: #b91c1c; }
+
+        /* ── READ-ONLY BANNER (supplies only) ── */
+        .readonly-banner {
+            display: flex; align-items: center; gap: 8px;
+            background: linear-gradient(to right, rgba(26,95,62,0.07), rgba(214,40,40,0.05));
+            border: 1px solid rgba(26,95,62,0.15); border-radius: 8px;
+            padding: 10px 16px; margin-bottom: 20px;
+            font-size: 13px; color: #64748b;
+        }
+        .readonly-banner .material-icons { color: #1a5f3e; font-size: 18px; }
     </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
@@ -114,24 +166,14 @@
 
         <!-- ── SIDEBAR ── -->
         <aside class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-border-light dark:border-border-dark flex-shrink-0">
-            <!-- Logo -->
-           <div class="h-16 flex items-center gap-3 px-4 border-b border-border-light dark:border-border-dark">
-
-    <img
-      src="images/wellserved.png"
-      alt="Well Served Logo"
-      class="w-12 h-12 rounded-full object-cover border border-slate-100 dark:border-slate-700 shadow-sm"
-    />
-    <div>
-        <h1 class="font-bold text-primary dark:text-green-400 leading-tight">
-            Well Served
-        </h1>
-        <p class="text-[10px] uppercase tracking-wider text-accent dark:text-amber-600 font-semibold">
-            Since 1994
-        </p>
-    </div>
-</div>
-            <!-- Nav Links -->
+            <div class="h-16 flex items-center gap-3 px-4 border-b border-border-light dark:border-border-dark">
+                <img src="images/wellserved.png" alt="Well Served Logo"
+                    class="w-12 h-12 rounded-full object-cover border border-slate-100 dark:border-slate-700 shadow-sm"/>
+                <div>
+                    <h1 class="font-bold text-primary dark:text-green-400 leading-tight">Well Served</h1>
+                    <p class="text-[10px] uppercase tracking-wider text-accent dark:text-amber-600 font-semibold">Since 1994</p>
+                </div>
+            </div>
             <nav class="flex-1 px-4 py-6 space-y-2">
                 <div class="px-2 text-sm font-semibold text-subtext-light dark:text-subtext-dark whitespace-nowrap">Admin Panel</div>
                 <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="dashboard_admin.html">
@@ -143,18 +185,10 @@
                 <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="sales-reports.html">
                     <span class="material-icons mr-3">analytics</span> Sales Reports
                 </a>
-                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="patient_records.html">
-                    <span class="material-icons mr-3">medical_services</span> Patient Records
-                </a>
-                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="medication_alerts.html">
-                    <span class="material-icons mr-3">notifications</span> Medication Alerts
-                </a>
                 <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="user_management.html">
                     <span class="material-icons mr-3">group</span> User Management
                 </a>
             </nav>
-
-            <!-- ── LOGOUT at bottom of sidebar ── -->
             <div class="px-4 pb-6 border-t border-border-light dark:border-border-dark pt-4">
                 <button onclick="logoutUser()" class="sidebar-logout-btn">
                     <span class="material-icons">logout</span>
@@ -166,143 +200,272 @@
         <!-- ── RIGHT COLUMN ── -->
         <div class="flex-1 flex flex-col overflow-hidden">
 
-            <!-- ── APP HEADER (no logout here) ── -->
+            <!-- ── HEADER ── -->
             <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
-                <div class="flex items-center gap-2">
-                   
-                </div>
-
+                <div class="flex items-center gap-2"></div>
                 <div class="flex items-center gap-4">
-                    <!-- Notification Bell -->
                     <div class="relative">
                         <button id="notificationBtn" class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
                             <span class="material-icons text-2xl">notifications</span>
                             <span id="notificationBadge" class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">4</span>
                         </button>
                         <div id="notificationDropdown" class="notification-dropdown dark:bg-surface-dark dark:border-border-dark">
-    <div class="p-4 border-b border-border-light dark:border-border-dark">
-        <h3 class="font-semibold text-text-light dark:text-text-dark">Notifications</h3>
-    </div>
-    <div class="max-h-80 overflow-y-auto" id="notifContentArea">
-        <div class="notification-item text-center text-subtext-light">
-            <p class="text-sm">Loading alerts...</p>
-        </div>
-    </div>
-    <div class="p-3 border-t border-border-light dark:border-border-dark text-center">
-        <a href="medication_alerts.html" class="text-sm text-primary font-medium hover:underline">View all notifications</a>
-    </div>
-</div>
+                            <div class="p-4 border-b border-border-light dark:border-border-dark">
+                                <h3 class="font-semibold text-text-light dark:text-text-dark">Notifications</h3>
+                            </div>
+                            <div class="max-h-80 overflow-y-auto" id="notifContentArea">
+                                <div class="notification-item text-center text-subtext-light">
+                                    <p class="text-sm">Loading alerts...</p>
+                                </div>
+                            </div>
+                            <div class="p-3 border-t border-border-light dark:border-border-dark text-center">
+                                <a href="medication_alerts.html" class="text-sm text-primary font-medium hover:underline">View all notifications</a>
+                            </div>
+                        </div>
                     </div>
-                    <!-- Profile Avatar -->
                     <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">AD</div>
                 </div>
             </header>
 
+            <!-- ── MODULE TAB BAR ── -->
+            <div class="module-tab-bar">
+                <button id="moduleTabInventory" class="module-tab-btn active" onclick="switchModuleTab('inventory')">
+                    <span class="material-icons">inventory_2</span>
+                    <span class="tab-label">Medicine</span>
+                </button>
+                <button id="moduleTabSupplies" class="module-tab-btn" onclick="switchModuleTab('supplies')">
+                    <span class="material-icons">medical_services</span>
+                    <span class="tab-label">Supplies</span>
+                </button>
+            </div>
+
             <!-- ── SCROLLABLE PAGE BODY ── -->
-            <main class="flex-1 overflow-y-auto p-8 bg-background-light dark:bg-background-dark">
-                <div class="flex items-center justify-between mb-8">
-                    <div>
-                        <h2 class="text-3xl font-bold text-text-light dark:text-text-dark">Inventory Management</h2>
-                        <p class="text-subtext-light dark:text-subtext-dark mt-1">Manage medicine stock, track expiries and supplier information</p>
+            <main class="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark">
+
+                <!-- ══════════════════════════════════════════
+                     MEDICINE PANEL — IDENTICAL TO ORIGINAL
+                ══════════════════════════════════════════ -->
+                <div id="modulePanelInventory" class="p-8">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h2 class="text-3xl font-bold text-text-light dark:text-text-dark">Inventory Management</h2>
+                            <p class="text-subtext-light dark:text-subtext-dark mt-1">Manage medicine stock, track expiries and supplier information</p>
+                        </div>
+                        <button id="addMedicineBtn" class="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors shadow-md">
+                            <span class="material-icons">add</span> Add Medicine
+                        </button>
                     </div>
-                    <button id="addMedicineBtn" class="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors shadow-md">
-                        <span class="material-icons">add</span> Add Medicine
-                    </button>
-                </div>
 
-                <!-- Tabs -->
-                <div class="flex mb-6 bg-surface-light dark:bg-surface-dark rounded-lg p-1 w-fit border border-border-light dark:border-border-dark">
-                    <button id="inventoryTab" class="tab-btn active">Active Inventory</button>
-                    <button id="archiveTab" class="tab-btn">Archive</button>
-                </div>
+                    <!-- Tabs -->
+                    <div class="flex mb-6 bg-surface-light dark:bg-surface-dark rounded-lg p-1 w-fit border border-border-light dark:border-border-dark">
+                        <button id="inventoryTab" class="tab-btn active">Active Inventory</button>
+                        <button id="archiveTab" class="tab-btn">Archive</button>
+                    </div>
 
-                <!-- Alerts Section -->
-                <div id="alertsSection" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                    <div class="bg-[rgba(26,95,62,0.1)] dark:bg-[rgba(26,95,62,0.2)] border-l-4 border-[rgb(26,95,62)] p-6 rounded-lg">
-                        <div class="flex items-start gap-4">
-                            <span class="material-icons text-[rgb(26,95,62)] mt-1">warning_amber</span>
-                            <div>
-                                <h3 class="font-semibold text-[rgb(26,95,62)] text-lg">Low Stock & Out-of-Stock Alerts</h3>
-                                <ul id="lowStockAlerts" class="list-disc list-inside mt-2 space-y-1 text-text-light dark:text-text-dark text-sm"></ul>
+                    <!-- Alerts Section -->
+                    <div id="alertsSection" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-[rgba(26,95,62,0.1)] dark:bg-[rgba(26,95,62,0.2)] border-l-4 border-[rgb(26,95,62)] p-6 rounded-lg">
+                            <div class="flex items-start gap-4">
+                                <span class="material-icons text-[rgb(26,95,62)] mt-1">warning_amber</span>
+                                <div>
+                                    <h3 class="font-semibold text-[rgb(26,95,62)] text-lg">Low Stock & Out-of-Stock Alerts</h3>
+                                    <ul id="lowStockAlerts" class="list-disc list-inside mt-2 space-y-1 text-text-light dark:text-text-dark text-sm"></ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-secondary/10 dark:bg-secondary/20 border-l-4 border-secondary p-6 rounded-lg">
+                            <div class="flex items-start gap-4">
+                                <span class="material-icons text-secondary mt-1">event_busy</span>
+                                <div>
+                                    <h3 class="font-semibold text-secondary text-lg">Expiry Alerts (Next 30 Days)</h3>
+                                    <ul id="expiryAlerts" class="list-disc list-inside mt-2 space-y-1 text-text-light dark:text-text-dark text-sm"></ul>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="bg-secondary/10 dark:bg-secondary/20 border-l-4 border-secondary p-6 rounded-lg">
-                        <div class="flex items-start gap-4">
-                            <span class="material-icons text-secondary mt-1">event_busy</span>
-                            <div>
-                                <h3 class="font-semibold text-secondary text-lg">Expiry Alerts (Next 30 Days)</h3>
-                                <ul id="expiryAlerts" class="list-disc list-inside mt-2 space-y-1 text-text-light dark:text-text-dark text-sm"></ul>
+
+                    <!-- Inventory Table -->
+                    <div id="inventorySection" class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm overflow-hidden border border-border-light dark:border-border-dark">
+                        <div class="p-6 border-b border-border-light dark:border-border-dark flex items-center justify-between">
+                            <div class="relative w-full max-w-sm">
+                                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-subtext-light dark:text-subtext-dark">search</span>
+                                <input id="tableSearchInput" class="w-full pl-10 pr-4 py-2 rounded-lg bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Search medicines..." type="text"/>
+                            </div>
+                            <button id="filterBtn" class="border border-border-light dark:border-border-dark px-4 py-2 rounded-lg flex items-center gap-2 text-subtext-light dark:text-subtext-dark hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                <span class="material-icons" style="font-size:20px;">filter_list</span> Filter
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                               <thead class="text-xs uppercase tracking-wider" style="background: linear-gradient(to right, #dcfce7, #fee2e2); color: #1a5f3e;">
+                                    <tr>
+                                        <th class="px-6 py-4 font-semibold">Medicine Name</th>
+                                        <th class="px-6 py-4 font-semibold">Batch Number</th>
+                                        <th class="px-6 py-4 font-semibold">Quantity</th>
+                                        <th class="px-6 py-4 font-semibold">Expiry Date</th>
+                                        <th class="px-6 py-4 font-semibold">Supplier</th>
+                                        <th class="px-6 py-4 font-semibold">Price</th>
+                                        <th class="px-6 py-4 font-semibold">Status</th>
+                                        <th class="px-6 py-4 font-semibold text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inventoryTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Archive Table -->
+                    <div id="archiveSection" class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm overflow-hidden hidden border border-border-light dark:border-border-dark">
+                        <div class="p-6 border-b border-border-light dark:border-border-dark flex items-center justify-between">
+                            <div class="relative w-full max-w-sm">
+                                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-subtext-light dark:text-subtext-dark">search</span>
+                                <input id="archiveSearchInput" class="w-full pl-10 pr-4 py-2 rounded-lg bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Search archived medicines..." type="text"/>
+                            </div>
+                            <button id="clearArchiveBtn" class="action-btn delete-btn">
+                                <span class="material-icons" style="font-size:20px;">delete_sweep</span> Clear Archive
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left min-w-[900px]">
+                               <thead class="text-xs uppercase tracking-wider" style="background: linear-gradient(to right, #dcfce7, #fee2e2); color: #1a5f3e;">
+                                    <tr>
+                                        <th class="px-6 py-4 font-semibold min-w-[160px]">Medicine Name</th>
+                                        <th class="px-6 py-4 font-semibold min-w-[140px]">Batch Number</th>
+                                        <th class="px-6 py-4 font-semibold min-w-[90px]">Quantity</th>
+                                        <th class="px-6 py-4 font-semibold min-w-[110px]">Expiry Date</th>
+                                        <th class="px-6 py-4 font-semibold min-w-[110px]">Supplier</th>
+                                        <th class="px-6 py-4 font-semibold min-w-[90px]">Price</th>
+                                        <th class="px-6 py-4 font-semibold min-w-[100px]">Status</th>
+                                        <th class="px-6 py-4 font-semibold min-w-[160px] text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="archiveTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div><!-- end #modulePanelInventory -->
+
+                <!-- ══════════════════════════════════════════
+                     SUPPLIES PANEL — READ ONLY for admin
+                ══════════════════════════════════════════ -->
+                <div id="modulePanelSupplies" class="p-8 hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-3xl font-bold text-text-light dark:text-text-dark">Supplies Inventory</h2>
+                            <p class="text-subtext-light dark:text-subtext-dark mt-1">Monitor and view pharmaceutical back-stock levels</p>
+                        </div>
+                        <!-- No Add button — admin is view only -->
+                    </div>
+
+                    <!-- Read-only notice -->
+                    <div class="readonly-banner">
+                        <span class="material-icons">visibility</span>
+                        <span>You are viewing this in <strong>read-only mode</strong>. Changes to supplies can only be made by pharmacists.</span>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-primary shadow-sm">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide">Total Medicines</p>
+                                    <p id="suppliesTotalCount" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
+                                    <div class="flex items-center mt-2 text-sm text-subtext-light dark:text-subtext-dark">
+                                        <span class="material-icons text-base">inventory_2</span>
+                                        <span class="ml-1">All tracked items</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-primary/10 rounded-lg">
+                                    <span class="material-icons text-primary" style="font-size:28px;">medical_services</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-success shadow-sm">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide">In Stock</p>
+                                    <p id="suppliesInStockCount" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
+                                    <div class="flex items-center mt-2 text-sm text-success">
+                                        <span class="material-icons text-base">check_circle</span>
+                                        <span class="ml-1">Adequately stocked</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-success/10 rounded-lg">
+                                    <span class="material-icons text-success" style="font-size:28px;">verified</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-warning shadow-sm">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide">Low Stock Alerts</p>
+                                    <p id="suppliesLowStockCount" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
+                                    <div class="flex items-center mt-2 text-sm text-warning">
+                                        <span class="material-icons text-base">warning</span>
+                                        <span class="ml-1">Reorder soon</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-warning/10 rounded-lg">
+                                    <span class="material-icons text-warning" style="font-size:28px;">inventory</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-danger shadow-sm">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide">Out of Stock</p>
+                                    <p id="suppliesOutOfStockCount" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
+                                    <div class="flex items-center mt-2 text-sm text-danger">
+                                        <span class="material-icons text-base">error_outline</span>
+                                        <span class="ml-1">Immediate action needed</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-danger/10 rounded-lg">
+                                    <span class="material-icons text-danger" style="font-size:28px;">remove_shopping_cart</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Inventory Table -->
-                <div id="inventorySection" class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm overflow-hidden border border-border-light dark:border-border-dark">
-                    <div class="p-6 border-b border-border-light dark:border-border-dark flex items-center justify-between">
-                        <div class="relative w-full max-w-sm">
-                            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-subtext-light dark:text-subtext-dark">search</span>
-                            <input id="tableSearchInput" class="w-full pl-10 pr-4 py-2 rounded-lg bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Search medicines..." type="text"/>
+                    <!-- Supplies Table -->
+                    <div class="bg-surface-light dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-800">
+                        <div class="flex flex-col md:flex-row justify-between items-center p-6 gap-4 border-b border-slate-200 dark:border-slate-800">
+                            <h3 class="text-lg font-semibold text-text-light dark:text-text-dark">Medicine Back Stock List</h3>
+                            <div class="flex gap-3 w-full md:w-auto">
+                                <input id="suppliesSearch" oninput="renderSuppliesTable()" type="text" placeholder="Search medicines..."
+                                    class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-primary"/>
+                                <select id="suppliesStatusFilter" onchange="renderSuppliesTable()" class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm">
+                                    <option value="">All Status</option>
+                                    <option value="In Stock">In Stock</option>
+                                    <option value="Low Stock">Low Stock</option>
+                                    <option value="Out of Stock">Out of Stock</option>
+                                </select>
+                                <!-- No Add Medicine button — admin view only -->
+                            </div>
                         </div>
-                        <button id="filterBtn" class="border border-border-light dark:border-border-dark px-4 py-2 rounded-lg flex items-center gap-2 text-subtext-light dark:text-subtext-dark hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                            <span class="material-icons" style="font-size:20px;">filter_list</span> Filter
-                        </button>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="text-xs uppercase tracking-wider" style="background: linear-gradient(to right, #dcfce7, #fee2e2); color: #1a5f3e;">
+                                    <tr>
+                                        <th class="px-6 py-4 font-semibold">Medicine Name</th>
+                                        <th class="px-6 py-4 font-semibold">Category</th>
+                                        <th class="px-6 py-4 font-semibold text-center">Quantity in Stock</th>
+                                        <th class="px-6 py-4 font-semibold text-center">Reorder Level</th>
+                                        <th class="px-6 py-4 font-semibold text-center">Status</th>
+                                        <!-- No Actions column — admin view only -->
+                                    </tr>
+                                </thead>
+                                <tbody id="suppliesTableBody"></tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left">
-                           <thead class="text-xs uppercase tracking-wider" style="background: linear-gradient(to right, #dcfce7, #fee2e2); color: #1a5f3e;">
-                                <tr>
-                                    <th class="px-6 py-4 font-semibold">Medicine Name</th>
-                                    <th class="px-6 py-4 font-semibold">Batch Number</th>
-                                    <th class="px-6 py-4 font-semibold">Quantity</th>
-                                    <th class="px-6 py-4 font-semibold">Expiry Date</th>
-                                    <th class="px-6 py-4 font-semibold">Supplier</th>
-                                    <th class="px-6 py-4 font-semibold">Price</th>
-                                    <th class="px-6 py-4 font-semibold">Status</th>
-                                    <th class="px-6 py-4 font-semibold text-center">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="inventoryTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
+                </div><!-- end #modulePanelSupplies -->
 
-                <!-- Archive Table -->
-                <div id="archiveSection" class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm overflow-hidden hidden border border-border-light dark:border-border-dark">
-                    <div class="p-6 border-b border-border-light dark:border-border-dark flex items-center justify-between">
-                        <div class="relative w-full max-w-sm">
-                            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-subtext-light dark:text-subtext-dark">search</span>
-                            <input id="archiveSearchInput" class="w-full pl-10 pr-4 py-2 rounded-lg bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Search archived medicines..." type="text"/>
-                        </div>
-                        <button id="clearArchiveBtn" class="action-btn delete-btn">
-                            <span class="material-icons" style="font-size:20px;">delete_sweep</span> Clear Archive
-                        </button>
-                    </div>
-                    <div class="overflow-x-auto">
-    <table class="w-full text-sm text-left min-w-[900px]">
-       <thead class="text-xs uppercase tracking-wider" style="background: linear-gradient(to right, #dcfce7, #fee2e2); color: #1a5f3e;">
-    <tr>
-        <th class="px-6 py-4 font-semibold min-w-[160px]">Medicine Name</th>
-        <th class="px-6 py-4 font-semibold min-w-[140px]">Batch Number</th>
-        <th class="px-6 py-4 font-semibold min-w-[90px]">Quantity</th>
-        <th class="px-6 py-4 font-semibold min-w-[110px]">Expiry Date</th>
-        <th class="px-6 py-4 font-semibold min-w-[110px]">Supplier</th>
-        <th class="px-6 py-4 font-semibold min-w-[90px]">Price</th>
-        <th class="px-6 py-4 font-semibold min-w-[100px]">Status</th>
-        <th class="px-6 py-4 font-semibold min-w-[160px] text-center">Actions</th>
-    </tr>
-</thead>
-                            <tbody id="archiveTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
             </main>
-
         </div><!-- end right column -->
     </div>
 
-    <!-- Add/Edit Medicine Modal -->
+    <!-- ── ADD/EDIT MEDICINE MODAL ── -->
     <div id="medicineModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
         <div class="bg-surface-light dark:bg-surface-dark rounded-xl p-6 max-w-md w-full border border-border-light dark:border-border-dark max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between mb-4">
@@ -359,7 +522,7 @@
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
+    <!-- ── DELETE CONFIRMATION MODAL ── -->
     <div id="deleteModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
         <div class="bg-surface-light dark:bg-surface-dark rounded-xl p-6 max-w-md w-full border border-border-light dark:border-border-dark">
             <div class="flex items-center justify-center mb-4">
@@ -374,7 +537,7 @@
         </div>
     </div>
 
-    <!-- Filter Modal -->
+    <!-- ── FILTER MODAL ── -->
     <div id="filterModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
         <div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg w-full max-w-sm mx-4 border border-border-light dark:border-border-dark">
             <div class="p-6 border-b border-border-light dark:border-border-dark flex justify-between items-center">
@@ -420,37 +583,28 @@
             .then(r => { if (r.isConfirmed) { sessionStorage.clear(); window.location.href = '../html/login.html'; } });
         });
 
-        // ── BACK TO IHMS ──
-        function confirmBackToHMS(event) {
-            event.preventDefault();
-            Swal.fire({ title:'Leave Inventory?', text:'Return to Integrated Healthcare Management System?', icon:'question', showCancelButton:true, confirmButtonColor:'#1a5f3e', confirmButtonText:'Yes, go back' })
-            .then(r => { if (r.isConfirmed) window.location.href = '../html/index.html'; });
-        }
-
-        // ── LOGOUT (sidebar bottom) ──
+        // ── AUTH ──
         function logoutUser() {
-            Swal.fire({
-                title: "Logout?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#1a5f3e",
-                confirmButtonText: "Yes, logout"
-            }).then(r => {
-                if (r.isConfirmed) {
-                    sessionStorage.removeItem('userInfo');
-                    sessionStorage.removeItem('token');
-                    window.location.href = '../html/login.html';
-                }
-            });
+            Swal.fire({ title: "Logout?", icon: "warning", showCancelButton: true, confirmButtonColor: "#1a5f3e", confirmButtonText: "Yes, logout" })
+            .then(r => { if (r.isConfirmed) { sessionStorage.removeItem('userInfo'); sessionStorage.removeItem('token'); window.location.href = '../html/login.html'; } });
         }
-
-        // ── HELPER ──
         function getToken() {
             const userInfo = sessionStorage.getItem('userInfo');
             return userInfo ? JSON.parse(userInfo).token : null;
         }
 
-        // ── INVENTORY MANAGER ──
+        // ── MODULE TAB SWITCHER ──
+        function switchModuleTab(module) {
+            document.getElementById('moduleTabInventory').classList.toggle('active', module === 'inventory');
+            document.getElementById('moduleTabSupplies').classList.toggle('active', module === 'supplies');
+            document.getElementById('modulePanelInventory').classList.toggle('hidden', module !== 'inventory');
+            document.getElementById('modulePanelSupplies').classList.toggle('hidden', module !== 'supplies');
+            if (module === 'supplies') renderSuppliesTable();
+        }
+
+        // ════════════════════════════════════════════════════
+        // MEDICINE INVENTORY MANAGER — unchanged from original
+        // ════════════════════════════════════════════════════
         class EnhancedInventoryManager {
             constructor() {
                 this.inventoryData = [];
@@ -595,7 +749,7 @@
                         <td class="px-6 py-4 text-subtext-light dark:text-subtext-dark">${item.quantity}</td>
                         <td class="px-6 py-4 text-subtext-light dark:text-subtext-dark">${this.formatDate(item.expiryDate)}</td>
                         <td class="px-6 py-4 text-subtext-light dark:text-subtext-dark">${supplierName}</td>
-                        <td class="px-6 py-4 text-subtext-light dark:text-subtext-dark">₱${item.sellingPrice.toFixed(2)}</td>
+                        <td class="px-6 py-4 text-subtext-light dark:text-subtext-dark">&#8369;${item.sellingPrice.toFixed(2)}</td>
                         <td class="px-6 py-4"><span class="px-3 py-1 text-xs font-medium rounded-full ${this.getStatusClass(item, statusText)}">${statusText}</span></td>
                         <td class="px-6 py-4"><div class="flex items-center justify-center gap-2">
                             <button class="action-btn edit-btn" onclick="inventoryManager.openMedicineModal('${item._id}')"><span class="material-icons text-sm">edit</span> Edit</button>
@@ -619,7 +773,7 @@
                         <td class="px-6 py-4 text-subtext-light dark:text-subtext-dark">${item.quantity}</td>
                         <td class="px-6 py-4 text-subtext-light dark:text-subtext-dark">${this.formatDate(item.expiryDate)}</td>
                         <td class="px-6 py-4 text-subtext-light dark:text-subtext-dark">${supplierName}</td>
-                        <td class="px-6 py-4 text-subtext-light dark:text-subtext-dark">₱${item.sellingPrice.toFixed(2)}</td>
+                        <td class="px-6 py-4 text-subtext-light dark:text-subtext-dark">&#8369;${item.sellingPrice.toFixed(2)}</td>
                         <td class="px-6 py-4 text-subtext-light dark:text-subtext-dark">${this.formatDate(item.updatedAt)}</td>
                         <td class="px-6 py-4"><div class="flex items-center justify-center gap-2">
                             <button class="action-btn restore-btn" onclick="inventoryManager.openConfirmationModal('restore','${item._id}')"><span class="material-icons text-sm">restore</span> Restore</button>
@@ -819,6 +973,61 @@
             setTimeout(updateNotificationBadge, 1000);
             setInterval(updateNotificationBadge, 30000);
         });
+
+        // ════════════════════════════════════════════════════
+        // SUPPLIES — READ ONLY (admin cannot add/edit/restock)
+        // ════════════════════════════════════════════════════
+        const suppliesData = [
+            { id: 1, name: 'Amoxicillin 500mg',  category: 'Antibiotics',      quantity: 245, reorderLevel: 50  },
+            { id: 2, name: 'Ibuprofen 200mg',     category: 'Pain Relief',      quantity: 12,  reorderLevel: 25  },
+            { id: 3, name: 'Cetirizine 10mg',     category: 'Antihistamine',    quantity: 0,   reorderLevel: 30  },
+            { id: 4, name: 'Omeprazole 20mg',     category: 'Gastrointestinal', quantity: 180, reorderLevel: 40  },
+            { id: 5, name: 'Metformin 500mg',     category: 'Diabetes',         quantity: 95,  reorderLevel: 60  },
+            { id: 6, name: 'Amlodipine 5mg',      category: 'Cardiovascular',   quantity: 220, reorderLevel: 50  },
+            { id: 7, name: 'Paracetamol 500mg',   category: 'Pain Relief',      quantity: 15,  reorderLevel: 100 },
+            { id: 8, name: 'Losartan 50mg',       category: 'Cardiovascular',   quantity: 140, reorderLevel: 45  },
+        ];
+
+        function getSupplyStatus(qty, reorder) {
+            if (qty === 0)       return { text: 'Out of Stock', bg: 'bg-red-100 dark:bg-red-900/30',       color: 'text-red-700 dark:text-red-400' };
+            if (qty <= reorder)  return { text: 'Low Stock',    bg: 'bg-yellow-100 dark:bg-yellow-900/30', color: 'text-yellow-700 dark:text-yellow-400' };
+            return               { text: 'In Stock',     bg: 'bg-green-100 dark:bg-green-900/30',  color: 'text-green-700 dark:text-green-400' };
+        }
+
+        function renderSuppliesTable() {
+            const tbody        = document.getElementById('suppliesTableBody');
+            const search       = (document.getElementById('suppliesSearch')?.value || '').toLowerCase();
+            const statusFilter = document.getElementById('suppliesStatusFilter')?.value || '';
+            const filtered = suppliesData.filter(item => {
+                const matchSearch = item.name.toLowerCase().includes(search) || item.category.toLowerCase().includes(search);
+                const matchStatus = !statusFilter || getSupplyStatus(item.quantity, item.reorderLevel).text === statusFilter;
+                return matchSearch && matchStatus;
+            });
+            if (!filtered.length) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-subtext-light">No supplies found matching your criteria.</td></tr>`;
+                updateSuppliesStats(); return;
+            }
+            tbody.innerHTML = filtered.map(item => {
+                const s = getSupplyStatus(item.quantity, item.reorderLevel);
+                return `<tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                    <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${item.name}</td>
+                    <td class="px-6 py-4 text-subtext-light dark:text-subtext-dark">${item.category}</td>
+                    <td class="px-6 py-4 text-center font-semibold text-text-light dark:text-text-dark">${item.quantity.toLocaleString('en-PH')} units</td>
+                    <td class="px-6 py-4 text-center text-subtext-light dark:text-subtext-dark">${item.reorderLevel} units</td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="px-3 py-1 text-xs font-semibold rounded-full ${s.bg} ${s.color}">${s.text}</span>
+                    </td>
+                </tr>`;
+            }).join('');
+            updateSuppliesStats();
+        }
+
+        function updateSuppliesStats() {
+            document.getElementById('suppliesTotalCount').textContent     = suppliesData.length;
+            document.getElementById('suppliesInStockCount').textContent   = suppliesData.filter(s => getSupplyStatus(s.quantity, s.reorderLevel).text === 'In Stock').length;
+            document.getElementById('suppliesLowStockCount').textContent  = suppliesData.filter(s => getSupplyStatus(s.quantity, s.reorderLevel).text === 'Low Stock').length;
+            document.getElementById('suppliesOutOfStockCount').textContent = suppliesData.filter(s => getSupplyStatus(s.quantity, s.reorderLevel).text === 'Out of Stock').length;
+        }
     </script>
 
     <script src="../js/windowcontrollerbtn.js"></script>

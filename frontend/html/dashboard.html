@@ -173,9 +173,7 @@
             <div class="h-16 flex items-center px-6 border-b border-border-light dark:border-border-dark">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm">
-                        <img src="images/wellserved.png" 
-                        alt="Well Served Logo" 
-                        class="w-full h-full object-cover">
+                        <img src="images/wellserved.png" alt="Well Served Logo" class="w-full h-full object-cover">
                     </div>
                     <div>
                         <h1 class="font-bold text-primary dark:text-green-400 leading-tight">Well Served</h1>
@@ -195,29 +193,23 @@
                     <span class="material-icons mr-3">folder_shared</span> Patient Records
                 </a>
                 <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="pos.html">
-                <span class="material-icons mr-3">shopping_cart</span> Counter Dispensing
-            </a>
-                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="supplier.html">
-                    <span class="material-icons mr-3">local_shipping</span> Suppliers
+                    <span class="material-icons mr-3">shopping_cart</span> Counter Dispensing
                 </a>
                 <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="billing.html">
                     <span class="material-icons mr-3">point_of_sale</span> Sales &amp; Billing
                 </a>
             </nav>
-        <div class="p-4 border-t border-border-light dark:border-border-dark">
-            <button onclick="logoutUser()" 
-                class="flex items-center w-full px-4 py-2 gap-3 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors">
-                <span class="material-icons text-red-500">logout</span> Logout
-            </button>
-        </div>
-    </aside>
+            <div class="p-4 border-t border-border-light dark:border-border-dark">
+                <button onclick="logoutUser()" 
+                    class="flex items-center w-full px-4 py-2 gap-3 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors">
+                    <span class="material-icons text-red-500">logout</span> Logout
+                </button>
+            </div>
         </aside>
         
         <main class="flex-1 flex flex-col">
             <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
-                <div class="flex items-center gap-2">
-                    
-                </div>
+                <div class="flex items-center gap-2"></div>
                 <div class="flex items-center gap-4">
 
                     <!-- Notification Bell -->
@@ -259,7 +251,6 @@
                     </div>
 
                     <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">PH</div>
-                    
                 </div>
             </header>
             
@@ -277,8 +268,7 @@
                 
                 <!-- Stats Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl 
-            border-t-4 border-success">
+                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-success">
                         <div class="flex items-start justify-between">
                             <div>
                                 <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1">TOTAL INVENTORY</p>
@@ -293,9 +283,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl 
-            border-t-4 border-danger shadow-md">
 
+                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-danger shadow-md">
                         <div class="flex items-start justify-between">
                             <div>
                                 <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1">OUT-OF-STOCK</p>
@@ -310,9 +299,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl 
-            border-t-4 border-accent shadow-md">
 
+                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-accent shadow-md">
                         <div class="flex items-start justify-between">
                             <div>
                                 <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1">EXPIRING SOON</p>
@@ -327,13 +315,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl 
-            border-t-4 border-success">
 
+                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-success">
                         <div class="flex items-start justify-between">
                             <div>
                                 <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1">TODAY'S REVENUE</p>
-                                <p id="dailySales" class="text-4xl font-bold text-text-light dark:text-text-dark">&#8369;3,428</p>
+                                <p id="dailySales" class="text-4xl font-bold text-text-light dark:text-text-dark">₱3,428</p>
                                 <div class="flex items-center mt-2 text-sm text-success">
                                     <span class="material-icons text-base">trending_up</span>
                                     <span class="ml-1" id="salesChange">+7.0% from yesterday</span>
@@ -348,6 +335,8 @@
                 
                 <!-- Charts Section -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8" id="chartsSection">
+
+                    <!-- Daily Sales Trend -->
                     <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
                         <div class="flex items-center gap-3 mb-4">
                             <span class="material-icons text-primary">ssid_chart</span>
@@ -357,6 +346,8 @@
                             <canvas id="salesTrendChart"></canvas>
                         </div>
                     </div>
+
+                    <!-- Stock Distribution -->
                     <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
                         <div class="flex items-center gap-3 mb-4">
                             <span class="material-icons text-primary">bar_chart</span>
@@ -366,21 +357,29 @@
                             <canvas id="stockDistributionChart"></canvas>
                         </div>
                     </div>
+
+                    <!-- ✅ REPLACED: Top Selling Medicines (was Supplier Contribution pie chart) -->
                     <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="material-icons text-primary">pie_chart</span>
-                            <h3 class="font-semibold text-text-light dark:text-text-dark">Supplier Contribution</h3>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <span class="material-icons text-primary">emoji_events</span>
+                                <h3 class="font-semibold text-text-light dark:text-text-dark">Top Selling Medicines</h3>
+                            </div>
+                            <span class="text-xs text-subtext-light dark:text-subtext-dark bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">This Month</span>
                         </div>
                         <div class="chart-container">
-                            <canvas id="supplierChart"></canvas>
+                            <canvas id="topSellingChart"></canvas>
                         </div>
                     </div>
+
                 </div>
                 
                 <!-- Module Summary Reports -->
                 <div class="mb-6">
                     <h2 class="text-2xl font-bold text-text-light dark:text-text-dark mb-4">Module Summary Reports</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                        <!-- Inventory Summary -->
                         <div class="module-summary bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center gap-3">
@@ -392,12 +391,26 @@
                                 </button>
                             </div>
                             <div class="space-y-3">
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Total Items:</span><span id="inventoryTotal" class="font-semibold">835</span></div>
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Low Stock:</span><span id="inventoryLowStock" class="font-semibold text-accent">25 items</span></div>
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Expiring Soon:</span><span id="inventoryExpiring" class="font-semibold text-secondary">49 items</span></div>
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark text-xs">Last Updated:</span><span id="inventoryUpdated" class="text-xs text-subtext-light dark:text-subtext-dark">Just now</span></div>
+                                <div class="flex justify-between">
+                                    <span class="text-subtext-light dark:text-subtext-dark">Total Items:</span>
+                                    <span id="inventoryTotal" class="font-semibold">835</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-subtext-light dark:text-subtext-dark">Low Stock:</span>
+                                    <span id="inventoryLowStock" class="font-semibold text-accent">25 items</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-subtext-light dark:text-subtext-dark">Expiring Soon:</span>
+                                    <span id="inventoryExpiring" class="font-semibold text-secondary">49 items</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-subtext-light dark:text-subtext-dark text-xs">Last Updated:</span>
+                                    <span id="inventoryUpdated" class="text-xs text-subtext-light dark:text-subtext-dark">Just now</span>
+                                </div>
                             </div>
                         </div>
+
+                        <!-- Prescriptions Summary -->
                         <div class="module-summary bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center gap-3">
@@ -409,12 +422,26 @@
                                 </button>
                             </div>
                             <div class="space-y-3">
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Today's Total:</span><span id="prescriptionsToday" class="font-semibold">18</span></div>
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Pending Review:</span><span id="prescriptionsPending" class="font-semibold text-accent">5</span></div>
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Ready for Pickup:</span><span id="prescriptionsReady" class="font-semibold text-primary">12</span></div>
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark text-xs">Last Updated:</span><span id="prescriptionsUpdated" class="text-xs text-subtext-light dark:text-subtext-dark">Just now</span></div>
+                                <div class="flex justify-between">
+                                    <span class="text-subtext-light dark:text-subtext-dark">Today's Total:</span>
+                                    <span id="prescriptionsToday" class="font-semibold">18</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-subtext-light dark:text-subtext-dark">Pending Review:</span>
+                                    <span id="prescriptionsPending" class="font-semibold text-accent">5</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-subtext-light dark:text-subtext-dark">Ready for Pickup:</span>
+                                    <span id="prescriptionsReady" class="font-semibold text-primary">12</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-subtext-light dark:text-subtext-dark text-xs">Last Updated:</span>
+                                    <span id="prescriptionsUpdated" class="text-xs text-subtext-light dark:text-subtext-dark">Just now</span>
+                                </div>
                             </div>
                         </div>
+
+                        <!-- Sales Summary -->
                         <div class="module-summary bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center gap-3">
@@ -426,12 +453,25 @@
                                 </button>
                             </div>
                             <div class="space-y-3">
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Today's Revenue:</span><span id="salesRevenue" class="font-semibold">&#8369;3,428</span></div>
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Transactions:</span><span id="salesTransactions" class="font-semibold">42</span></div>
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Avg. Transaction:</span><span id="salesAverage" class="font-semibold">&#8369;82</span></div>
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark text-xs">Last Updated:</span><span id="salesUpdated" class="text-xs text-subtext-light dark:text-subtext-dark">Just now</span></div>
+                                <div class="flex justify-between">
+                                    <span class="text-subtext-light dark:text-subtext-dark">Today's Revenue:</span>
+                                    <span id="salesRevenue" class="font-semibold">₱3,428</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-subtext-light dark:text-subtext-dark">Transactions:</span>
+                                    <span id="salesTransactions" class="font-semibold">42</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-subtext-light dark:text-subtext-dark">Avg. Transaction:</span>
+                                    <span id="salesAverage" class="font-semibold">₱82</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-subtext-light dark:text-subtext-dark text-xs">Last Updated:</span>
+                                    <span id="salesUpdated" class="text-xs text-subtext-light dark:text-subtext-dark">Just now</span>
+                                </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -444,7 +484,15 @@
     let autoRefreshInterval;
     let salesChartInstance    = null;
     let stockChartInstance    = null;
-    let supplierChartInstance = null;
+    let topSellingChartInstance = null; // ✅ renamed from supplierChartInstance
+
+    // ── HELPERS ──
+    function formatPeso(value) {
+        return '₱' + Number(value).toLocaleString('en-PH', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
 
     // ── AUTH ──
     function getToken() {
@@ -584,12 +632,8 @@
     function handleNotifAction(event, id) {
         event.stopPropagation();
         markNotifRead(id);
-
         const n = notifData.find(n => n.id === id);
         if (!n) return;
-
-        // Pass redirect info to inventory.html via sessionStorage so it can
-        // auto-switch to the right tab and pre-filter the right medicine
         if (n.type === 'expiry') {
             sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'batch', medicine: n.medicineName }));
         } else if (n.type === 'critical' || n.type === 'shortage') {
@@ -656,6 +700,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         loadDarkModePreference();
         initializeCharts();
+        loadLiveData();        // ✅ fetch real sales data for top selling chart
         initializeSummaryData();
         startAutoRefresh();
     });
@@ -663,10 +708,6 @@
     function loadDarkModePreference() {
         const isDarkMode = sessionStorage.getItem('darkMode') === 'true';
         document.documentElement.classList.toggle('dark', isDarkMode);
-    }
-
-    function saveDarkModePreference(isDarkMode) {
-        sessionStorage.setItem('darkMode', isDarkMode);
     }
 
     function initializeSummaryData() {
@@ -677,70 +718,233 @@
         document.getElementById('lastUpdateTime').textContent       = now;
     }
 
-    function initializeCharts() {
+    // ── LIVE DATA: fetch sales and build top selling chart ──
+    async function loadLiveData() {
+        const token = getToken();
+        if (!token) return;
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/sales`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const sales = await res.json();
+
+            // Aggregate units sold per medicine name
+            const totals = {};
+            sales.forEach(sale => {
+                if (!sale.items) return;
+                sale.items.forEach(item => {
+                    // Resolve medicine name the same way billing.html does
+                    let name = item.name;
+                    if ((!name || name === 'Unknown') && item.medicine && item.medicine.name) {
+                        name = item.medicine.name;
+                    }
+                    name = name || 'Unknown Medicine';
+                    totals[name] = (totals[name] || 0) + (parseInt(item.quantity) || 0);
+                });
+            });
+
+            // Sort descending, take top 7
+            const sorted = Object.entries(totals)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 7);
+
+            const labels = sorted.map(e => e[0]);
+            const data   = sorted.map(e => e[1]);
+
+            updateTopSellingChart(labels, data);
+
+            // Also update Today's Revenue stat card from real data
+            const today = new Date().toDateString();
+            const todayRevenue = sales
+                .filter(s => new Date(s.date || s.createdAt).toDateString() === today && s.paymentStatus === 'Paid')
+                .reduce((acc, s) => acc + (s.totalAmount || 0), 0);
+
+            document.getElementById('dailySales').textContent  = formatPeso(todayRevenue);
+            document.getElementById('salesRevenue').textContent = formatPeso(todayRevenue);
+
+            const totalTransactions = sales.length;
+            const avgTransaction    = totalTransactions > 0
+                ? sales.reduce((acc, s) => acc + (s.totalAmount || 0), 0) / totalTransactions
+                : 0;
+
+            document.getElementById('salesTransactions').textContent = totalTransactions.toLocaleString('en-PH');
+            document.getElementById('salesAverage').textContent      = formatPeso(avgTransaction);
+
+        } catch (e) {
+            console.warn('Live sales data fetch failed:', e);
+            // Chart keeps its placeholder data if fetch fails
+        }
+    }
+
+    function updateTopSellingChart(labels, data) {
         const isDark    = document.documentElement.classList.contains('dark');
-        const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+        const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.07)';
         const textColor = isDark ? '#F9FAFB' : '#1F2937';
 
+        if (topSellingChartInstance) {
+            // Just update data without rebuilding the whole chart
+            topSellingChartInstance.data.labels   = labels;
+            topSellingChartInstance.data.datasets[0].data = data;
+            topSellingChartInstance.update();
+            return;
+        }
+
+        // Shouldn't reach here normally since initializeCharts runs first,
+        // but just in case call initializeCharts again
+        initializeCharts();
+        if (topSellingChartInstance) {
+            topSellingChartInstance.data.labels   = labels;
+            topSellingChartInstance.data.datasets[0].data = data;
+            topSellingChartInstance.update();
+        }
+    }
+
+    function initializeCharts() {
+        const isDark    = document.documentElement.classList.contains('dark');
+        const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.07)';
+        const textColor = isDark ? '#F9FAFB' : '#1F2937';
+
+        // ── Daily Sales Trend ──
         const salesCtx = document.getElementById('salesTrendChart').getContext('2d');
         if (salesChartInstance) salesChartInstance.destroy();
         salesChartInstance = new Chart(salesCtx, {
             type: 'line',
             data: {
                 labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
-                datasets: [{ label: 'Daily Sales (&#8369;)', data: [2450,2847,3100,2750,3200,2950,3428],
-                    borderColor: '#005a32', backgroundColor: 'rgba(0,90,50,0.1)',
-                    borderWidth: 2, fill: true, tension: 0.4 }]
+                datasets: [{
+                    label: 'Daily Sales (₱)',
+                    data: [2450, 2847, 3100, 2750, 3200, 2950, 3428],
+                    borderColor: '#005a32',
+                    backgroundColor: 'rgba(0,90,50,0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
             },
             options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => `&#8369;${c.parsed.y.toLocaleString()}` } } },
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: c => formatPeso(c.parsed.y)
+                        }
+                    }
+                },
                 scales: {
-                    y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor, callback: v => '&#8369;'+v.toLocaleString() } },
-                    x: { grid: { color: gridColor }, ticks: { color: textColor } }
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: gridColor },
+                        ticks: {
+                            color: textColor,
+                            callback: v => '₱' + Number(v).toLocaleString('en-PH')
+                        }
+                    },
+                    x: {
+                        grid: { color: gridColor },
+                        ticks: { color: textColor }
+                    }
                 }
             }
         });
 
+        // ── Stock Distribution ──
         const stockCtx = document.getElementById('stockDistributionChart').getContext('2d');
         if (stockChartInstance) stockChartInstance.destroy();
         stockChartInstance = new Chart(stockCtx, {
             type: 'bar',
             data: {
                 labels: ['Analgesics','Antibiotics','Diabetes','Cardiovascular','Gastro'],
-                datasets: [{ label: 'Stock Count', data: [450,75,120,90,200],
-                    backgroundColor: ['#005a32','#d62828','#8b5a2b','#22C55E','#8B5CF6'], borderWidth: 0 }]
+                datasets: [{
+                    label: 'Stock Count',
+                    data: [450, 75, 120, 90, 200],
+                    backgroundColor: ['#005a32','#d62828','#8b5a2b','#22C55E','#8B5CF6'],
+                    borderWidth: 0,
+                    borderRadius: 4
+                }]
             },
             options: {
-                responsive: true, maintainAspectRatio: false,
+                responsive: true,
+                maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: {
-                    y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor } },
-                    x: { grid: { display: false }, ticks: { color: textColor } }
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: gridColor },
+                        ticks: {
+                            color: textColor,
+                            callback: v => Number(v).toLocaleString('en-PH')
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: textColor }
+                    }
                 }
             }
         });
 
-        const supplierCtx = document.getElementById('supplierChart').getContext('2d');
-        if (supplierChartInstance) supplierChartInstance.destroy();
-        supplierChartInstance = new Chart(supplierCtx, {
-            type: 'pie',
+        // ── ✅ Top Selling Medicines (horizontal bar) ──
+        // Placeholder data — gets replaced by loadLiveData() once API responds
+        const topSellingCtx = document.getElementById('topSellingChart').getContext('2d');
+        if (topSellingChartInstance) topSellingChartInstance.destroy();
+        topSellingChartInstance = new Chart(topSellingCtx, {
+            type: 'bar',
             data: {
-                labels: ['MediCorp','PharmaPlus','HealthSupplies','MediDirect','Others'],
-                datasets: [{ data: [35,25,20,15,5],
-                    backgroundColor: ['#005a32','#d62828','#8b5a2b','#22C55E','#8B5CF6'],
-                    borderWidth: 2, borderColor: isDark ? '#1F2937' : '#FFFFFF' }]
+                labels: ['Paracetamol','Amoxicillin','Ibuprofen','Metformin','Amlodipine','Losartan','Cetirizine'],
+                datasets: [{
+                    label: 'Units Sold',
+                    data: [320, 210, 185, 160, 140, 115, 95],
+                    backgroundColor: [
+                        'rgba(0, 90, 50, 0.90)',
+                        'rgba(0, 90, 50, 0.75)',
+                        'rgba(0, 90, 50, 0.60)',
+                        'rgba(0, 90, 50, 0.50)',
+                        'rgba(214, 40, 40, 0.50)',
+                        'rgba(214, 40, 40, 0.65)',
+                        'rgba(214, 40, 40, 0.82)',
+                    ],
+                    borderWidth: 0,
+                    borderRadius: 4
+                }]
             },
             options: {
-                responsive: true, maintainAspectRatio: false,
+                indexAxis: 'y',   // horizontal bars — medicine names fit better
+                responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: 'bottom', labels: { color: textColor, usePointStyle: true, padding: 15 } },
-                    tooltip: { callbacks: { label: c => `${c.label}: ${c.parsed}%` } }
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: c => ` ${Number(c.parsed.x).toLocaleString('en-PH')} units sold`
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: { color: gridColor },
+                        ticks: {
+                            color: textColor,
+                            callback: v => Number(v).toLocaleString('en-PH')
+                        }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: {
+                            color: textColor,
+                            font: { size: 11 }
+                        }
+                    }
                 }
             }
         });
     }
 
+    // ── REFRESH BUTTONS ──
     function refreshInventorySummary() {
         const btn = document.getElementById('refreshInventory');
         btn.classList.add('refreshing');
@@ -755,13 +959,21 @@
     function refreshPrescriptionsSummary() {
         const btn = document.getElementById('refreshPrescriptions');
         btn.classList.add('refreshing');
-        setTimeout(() => { initializeSummaryData(); btn.classList.remove('refreshing'); showToast('Prescriptions data updated'); }, 1000);
+        setTimeout(() => {
+            initializeSummaryData();
+            btn.classList.remove('refreshing');
+            showToast('Prescriptions data updated');
+        }, 1000);
     }
 
     function refreshSalesSummary() {
         const btn = document.getElementById('refreshSales');
         btn.classList.add('refreshing');
-        setTimeout(() => { initializeSummaryData(); btn.classList.remove('refreshing'); showToast('Sales data updated'); }, 1000);
+        loadLiveData().then(() => {
+            initializeSummaryData();
+            btn.classList.remove('refreshing');
+            showToast('Sales data updated');
+        });
     }
 
     function showToast(message) {
@@ -805,7 +1017,6 @@
         });
     }
 
-    // Close dropdowns on outside click
     document.addEventListener('click', function(e) {
         const settingsDropdown = document.getElementById('settingsDropdown');
         if (settingsDropdown && !e.target.closest('[onclick="toggleSettings()"]') && !settingsDropdown.contains(e.target)) {
