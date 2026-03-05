@@ -41,34 +41,15 @@
     </script>
     <style>
         body { font-family: 'Inter', sans-serif; }
-        
         .drag-region { -webkit-app-region: drag; }
         .no-drag     { -webkit-app-region: no-drag; }
 
         /* ── NOTIFICATION DROPDOWN ── */
         @keyframes badge-pop { from { transform: scale(0); } to { transform: scale(1); } }
         #notificationBadge { animation: badge-pop 0.3s cubic-bezier(.34,1.56,.64,1); }
-
-        .notif-dropdown {
-            position: absolute;
-            top: calc(100% + 10px);
-            right: 0;
-            width: 370px;
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.06);
-            border: 1px solid #e5e7eb;
-            z-index: 1000;
-            overflow: hidden;
-            opacity: 0;
-            transform: translateY(-8px) scale(0.97);
-            pointer-events: none;
-            transition: opacity 0.22s ease, transform 0.22s cubic-bezier(.34,1.56,.64,1);
-            transform-origin: top right;
-        }
+        .notif-dropdown { position: absolute; top: calc(100% + 10px); right: 0; width: 370px; background: #fff; border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.06); border: 1px solid #e5e7eb; z-index: 1000; overflow: hidden; opacity: 0; transform: translateY(-8px) scale(0.97); pointer-events: none; transition: opacity 0.22s ease, transform 0.22s cubic-bezier(.34,1.56,.64,1); transform-origin: top right; }
         .dark .notif-dropdown { background: #1F2937; border-color: #374151; }
         .notif-dropdown.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
-
         .notif-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 14px; border-bottom: 1px solid #f0f0f0; }
         .dark .notif-header { border-color: #374151; }
         .notif-header h3 { font-size: 15px; font-weight: 700; color: #111827; }
@@ -77,17 +58,14 @@
         .unread-count-pill { background: #005a32; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
         .mark-all-btn { font-size: 11px; color: #005a32; font-weight: 600; background: none; border: none; cursor: pointer; padding: 2px 4px; border-radius: 4px; transition: background 0.15s; }
         .mark-all-btn:hover { background: #f0fdf4; }
-
         .notif-tabs { display: flex; gap: 4px; padding: 10px 14px; background: #fafafa; border-bottom: 1px solid #f0f0f0; }
         .dark .notif-tabs { background: #111827; border-color: #374151; }
         .notif-tab-btn { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 99px; border: 1px solid transparent; cursor: pointer; background: none; color: #6b7280; transition: all 0.15s; }
         .notif-tab-btn.active { background: #005a32; color: #fff; border-color: #005a32; }
         .notif-tab-btn:not(.active):hover { background: #f3f4f6; border-color: #e5e7eb; color: #374151; }
-
         .notif-list { max-height: 360px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #e5e7eb transparent; }
         .notif-list::-webkit-scrollbar { width: 4px; }
         .notif-list::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 2px; }
-
         .notif-item { display: flex; gap: 12px; align-items: flex-start; padding: 13px 16px; border-bottom: 1px solid #f5f5f5; cursor: pointer; position: relative; transition: background 0.15s; }
         .dark .notif-item { border-color: #374151; }
         .notif-item:last-child { border-bottom: none; }
@@ -100,14 +78,12 @@
         .notif-item.expiry::before   { background: #8b5a2b; }
         .notif-item.pending::before  { background: #3B82F6; }
         .notif-item.shortage::before { background: #358E83; }
-
         .notif-icon-wrap { flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
         .notif-icon-wrap .material-icons { font-size: 20px; }
         .icon-critical { background: #fef2f2; } .icon-critical .material-icons { color: #EF4444; }
         .icon-expiry   { background: #fdf6ec; } .icon-expiry   .material-icons { color: #8b5a2b; }
         .icon-pending  { background: #eff6ff; } .icon-pending  .material-icons { color: #3B82F6; }
         .icon-shortage { background: #f0fdfa; } .icon-shortage .material-icons { color: #358E83; }
-
         .notif-body { flex: 1; min-width: 0; }
         .notif-title { font-size: 13px; font-weight: 600; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .dark .notif-title { color: #F9FAFB; }
@@ -121,24 +97,19 @@
         .btn-expiry   { background: #8b5a2b; color: #fff; }
         .btn-pending  { background: #3B82F6; color: #fff; }
         .btn-shortage { background: #005a32; color: #fff; }
-
         .unread-dot { flex-shrink: 0; width: 7px; height: 7px; border-radius: 50%; background: #005a32; margin-top: 5px; }
         .notif-empty { padding: 40px 20px; text-align: center; color: #9ca3af; }
         .notif-empty .material-icons { font-size: 40px; margin-bottom: 8px; display: block; }
         .notif-empty p { font-size: 13px; }
         .notif-loading { padding: 30px 20px; text-align: center; color: #9ca3af; }
         .notif-loading p { font-size: 12px; margin-top: 8px; }
-
         .notif-footer { border-top: 1px solid #f0f0f0; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; }
         .dark .notif-footer { border-color: #374151; }
         .view-all-link { font-size: 12px; font-weight: 600; color: #005a32; text-decoration: none; display: flex; align-items: center; gap: 4px; }
         .view-all-link:hover { text-decoration: underline; }
         .view-all-link .material-icons { font-size: 14px; }
-        /* ── END NOTIFICATION STYLES ── */
-
+        
         .chart-container { position: relative; height: 256px; width: 100%; }
-        .pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
         .module-summary { transition: all 0.3s ease; }
         .module-summary:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
         .refresh-btn { transition: all 0.3s ease; }
@@ -149,7 +120,6 @@
 </head>
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
 
-    <!-- Title Bar -->
     <header id="title-bar" class="drag-region fixed top-0 left-0 w-full h-8 bg-white flex justify-between items-stretch z-40 border-b border-gray-200 select-none">
         <div class="flex items-center pl-4 gap-2 text-gray-600">
             <span class="text-xs font-semibold">IHMS Pharmacy</span>
@@ -168,7 +138,6 @@
     </header>
 
     <div class="flex h-screen pt-8">
-        <!-- Sidebar -->
         <aside class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-border-light dark:border-border-dark">
             <div class="h-16 flex items-center px-6 border-b border-border-light dark:border-border-dark">
                 <div class="flex items-center gap-3">
@@ -212,16 +181,11 @@
                 <div class="flex items-center gap-2"></div>
                 <div class="flex items-center gap-4">
 
-                    <!-- Notification Bell -->
                     <div class="relative">
-                        <button id="notificationBtn"
-                            class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <button id="notificationBtn" class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                             <span class="material-icons text-2xl">notifications</span>
-                            <span id="notificationBadge"
-                                class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold"
-                                style="display:none;">0</span>
+                            <span id="notificationBadge" class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold" style="display:none;">0</span>
                         </button>
-
                         <div id="notificationDropdown" class="notif-dropdown">
                             <div class="notif-header">
                                 <h3>Notifications</h3>
@@ -237,16 +201,9 @@
                                 <button class="notif-tab-btn" onclick="filterNotifTab(this,'shortage')">Stock</button>
                             </div>
                             <div class="notif-list" id="notifList">
-                                <div class="notif-loading">
-                                    <span class="material-icons" style="font-size:32px;display:block;margin:0 auto 8px;">hourglass_empty</span>
-                                    <p>Loading alerts from inventory...</p>
-                                </div>
+                                <div class="notif-loading"><span class="material-icons" style="font-size:32px;display:block;margin:0 auto 8px;">hourglass_empty</span><p>Loading alerts from inventory...</p></div>
                             </div>
-                            <div class="notif-footer">
-                                <a href="inventory.html" class="view-all-link">
-                                    View inventory <span class="material-icons">arrow_forward</span>
-                                </a>
-                            </div>
+                            <div class="notif-footer"><a href="inventory.html" class="view-all-link">View inventory <span class="material-icons">arrow_forward</span></a></div>
                         </div>
                     </div>
 
@@ -266,21 +223,18 @@
                     </div>
                 </div>
                 
-                <!-- Stats Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                     <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-success">
                         <div class="flex items-start justify-between">
                             <div>
                                 <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1">TOTAL INVENTORY</p>
-                                <p id="totalStock" class="text-4xl font-bold text-text-light dark:text-text-dark">835</p>
+                                <p id="totalStock" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
                                 <div class="flex items-center mt-2 text-sm text-success">
-                                    <span class="material-icons text-base">trending_up</span>
-                                    <span class="ml-1" id="stockChange">+11.2% from last month</span>
+                                    <span class="material-icons text-base">inventory_2</span>
+                                    <span class="ml-1">Active system stock</span>
                                 </div>
                             </div>
-                            <div class="p-3 bg-primary/10 rounded-lg">
-                                <span class="material-icons text-primary" style="font-size: 28px;">inventory</span>
-                            </div>
+                            <div class="p-3 bg-primary/10 rounded-lg"><span class="material-icons text-primary" style="font-size: 28px;">inventory</span></div>
                         </div>
                     </div>
 
@@ -288,15 +242,13 @@
                         <div class="flex items-start justify-between">
                             <div>
                                 <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1">OUT-OF-STOCK</p>
-                                <p id="outOfStock" class="text-4xl font-bold text-text-light dark:text-text-dark">25</p>
+                                <p id="outOfStock" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
                                 <div class="flex items-center mt-2 text-sm text-secondary">
                                     <span class="material-icons text-base">warning</span>
-                                    <span class="ml-1" id="criticalItems">5 critical items</span>
+                                    <span class="ml-1" id="criticalItems">0 critical items</span>
                                 </div>
                             </div>
-                            <div class="p-3 bg-secondary/10 rounded-lg">
-                                <span class="material-icons text-secondary" style="font-size: 28px;">error_outline</span>
-                            </div>
+                            <div class="p-3 bg-secondary/10 rounded-lg"><span class="material-icons text-secondary" style="font-size: 28px;">error_outline</span></div>
                         </div>
                     </div>
 
@@ -304,15 +256,13 @@
                         <div class="flex items-start justify-between">
                             <div>
                                 <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1">EXPIRING SOON</p>
-                                <p id="expiringItems" class="text-4xl font-bold text-text-light dark:text-text-dark">49</p>
+                                <p id="expiringItems" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
                                 <div class="flex items-center mt-2 text-sm text-accent">
                                     <span class="material-icons text-base">calendar_today</span>
-                                    <span class="ml-1" id="expiryPeriod">Next 30 days</span>
+                                    <span class="ml-1">Next 30 days</span>
                                 </div>
                             </div>
-                            <div class="p-3 bg-accent/10 rounded-lg">
-                                <span class="material-icons text-accent" style="font-size: 28px;">watch_later</span>
-                            </div>
+                            <div class="p-3 bg-accent/10 rounded-lg"><span class="material-icons text-accent" style="font-size: 28px;">watch_later</span></div>
                         </div>
                     </div>
 
@@ -320,155 +270,75 @@
                         <div class="flex items-start justify-between">
                             <div>
                                 <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1">TODAY'S REVENUE</p>
-                                <p id="dailySales" class="text-4xl font-bold text-text-light dark:text-text-dark">₱3,428</p>
+                                <p id="dailySales" class="text-4xl font-bold text-text-light dark:text-text-dark">₱0.00</p>
                                 <div class="flex items-center mt-2 text-sm text-success">
                                     <span class="material-icons text-base">trending_up</span>
-                                    <span class="ml-1" id="salesChange">+7.0% from yesterday</span>
+                                    <span class="ml-1" id="salesChange">Today's total</span>
                                 </div>
                             </div>
-                            <div class="p-3 bg-green-100 dark:bg-green-900/50 rounded-lg">
-                                <span class="material-icons text-success" style="font-size: 28px;">payments</span>
-                            </div>
+                            <div class="p-3 bg-green-100 dark:bg-green-900/50 rounded-lg"><span class="material-icons text-success" style="font-size: 28px;">payments</span></div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Charts Section -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8" id="chartsSection">
-
-                    <!-- Daily Sales Trend -->
                     <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="material-icons text-primary">ssid_chart</span>
-                            <h3 class="font-semibold text-text-light dark:text-text-dark">Daily Sales Trends</h3>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="salesTrendChart"></canvas>
-                        </div>
+                        <div class="flex items-center gap-3 mb-4"><span class="material-icons text-primary">ssid_chart</span><h3 class="font-semibold text-text-light dark:text-text-dark">Daily Sales Trends</h3></div>
+                        <div class="chart-container"><canvas id="salesTrendChart"></canvas></div>
                     </div>
-
-                    <!-- Stock Distribution -->
                     <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="material-icons text-primary">bar_chart</span>
-                            <h3 class="font-semibold text-text-light dark:text-text-dark">Stock Distribution</h3>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="stockDistributionChart"></canvas>
-                        </div>
+                        <div class="flex items-center gap-3 mb-4"><span class="material-icons text-primary">bar_chart</span><h3 class="font-semibold text-text-light dark:text-text-dark">Stock Distribution</h3></div>
+                        <div class="chart-container"><canvas id="stockDistributionChart"></canvas></div>
                     </div>
-
-                    <!-- ✅ REPLACED: Top Selling Medicines (was Supplier Contribution pie chart) -->
                     <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
                         <div class="flex items-center justify-between mb-4">
-                            <div class="flex items-center gap-3">
-                                <span class="material-icons text-primary">emoji_events</span>
-                                <h3 class="font-semibold text-text-light dark:text-text-dark">Top Selling Medicines</h3>
-                            </div>
+                            <div class="flex items-center gap-3"><span class="material-icons text-primary">emoji_events</span><h3 class="font-semibold text-text-light dark:text-text-dark">Top Selling Medicines</h3></div>
                             <span class="text-xs text-subtext-light dark:text-subtext-dark bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">This Month</span>
                         </div>
-                        <div class="chart-container">
-                            <canvas id="topSellingChart"></canvas>
-                        </div>
+                        <div class="chart-container"><canvas id="topSellingChart"></canvas></div>
                     </div>
-
                 </div>
                 
-                <!-- Module Summary Reports -->
                 <div class="mb-6">
                     <h2 class="text-2xl font-bold text-text-light dark:text-text-dark mb-4">Module Summary Reports</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-                        <!-- Inventory Summary -->
                         <div class="module-summary bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
                             <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center gap-3">
-                                    <span class="material-icons text-primary">inventory_2</span>
-                                    <h3 class="font-semibold text-text-light dark:text-text-dark">Inventory Summary</h3>
-                                </div>
-                                <button id="refreshInventory" class="refresh-btn text-subtext-light dark:text-subtext-dark hover:text-primary" onclick="refreshInventorySummary()">
-                                    <span class="material-icons">refresh</span>
-                                </button>
+                                <div class="flex items-center gap-3"><span class="material-icons text-primary">inventory_2</span><h3 class="font-semibold text-text-light dark:text-text-dark">Inventory Summary</h3></div>
+                                <button id="refreshInventory" class="refresh-btn text-subtext-light dark:text-subtext-dark hover:text-primary" onclick="refreshInventorySummary()"><span class="material-icons">refresh</span></button>
                             </div>
                             <div class="space-y-3">
-                                <div class="flex justify-between">
-                                    <span class="text-subtext-light dark:text-subtext-dark">Total Items:</span>
-                                    <span id="inventoryTotal" class="font-semibold">835</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-subtext-light dark:text-subtext-dark">Low Stock:</span>
-                                    <span id="inventoryLowStock" class="font-semibold text-accent">25 items</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-subtext-light dark:text-subtext-dark">Expiring Soon:</span>
-                                    <span id="inventoryExpiring" class="font-semibold text-secondary">49 items</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-subtext-light dark:text-subtext-dark text-xs">Last Updated:</span>
-                                    <span id="inventoryUpdated" class="text-xs text-subtext-light dark:text-subtext-dark">Just now</span>
-                                </div>
+                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Total Items:</span><span id="inventoryTotal" class="font-semibold">0</span></div>
+                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Low Stock:</span><span id="inventoryLowStock" class="font-semibold text-accent">0 items</span></div>
+                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Expiring Soon:</span><span id="inventoryExpiring" class="font-semibold text-secondary">0 items</span></div>
+                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark text-xs">Last Updated:</span><span id="inventoryUpdated" class="text-xs text-subtext-light dark:text-subtext-dark">Just now</span></div>
                             </div>
                         </div>
 
-                        <!-- Prescriptions Summary -->
                         <div class="module-summary bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
                             <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center gap-3">
-                                    <span class="material-icons text-primary">receipt_long</span>
-                                    <h3 class="font-semibold text-text-light dark:text-text-dark">Prescriptions Summary</h3>
-                                </div>
-                                <button id="refreshPrescriptions" class="refresh-btn text-subtext-light dark:text-subtext-dark hover:text-primary" onclick="refreshPrescriptionsSummary()">
-                                    <span class="material-icons">refresh</span>
-                                </button>
+                                <div class="flex items-center gap-3"><span class="material-icons text-primary">receipt_long</span><h3 class="font-semibold text-text-light dark:text-text-dark">Prescriptions Summary</h3></div>
+                                <button id="refreshPrescriptions" class="refresh-btn text-subtext-light dark:text-subtext-dark hover:text-primary" onclick="refreshPrescriptionsSummary()"><span class="material-icons">refresh</span></button>
                             </div>
                             <div class="space-y-3">
-                                <div class="flex justify-between">
-                                    <span class="text-subtext-light dark:text-subtext-dark">Today's Total:</span>
-                                    <span id="prescriptionsToday" class="font-semibold">18</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-subtext-light dark:text-subtext-dark">Pending Review:</span>
-                                    <span id="prescriptionsPending" class="font-semibold text-accent">5</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-subtext-light dark:text-subtext-dark">Ready for Pickup:</span>
-                                    <span id="prescriptionsReady" class="font-semibold text-primary">12</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-subtext-light dark:text-subtext-dark text-xs">Last Updated:</span>
-                                    <span id="prescriptionsUpdated" class="text-xs text-subtext-light dark:text-subtext-dark">Just now</span>
-                                </div>
+                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Today's Total:</span><span id="prescriptionsToday" class="font-semibold">0</span></div>
+                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Pending Review:</span><span id="prescriptionsPending" class="font-semibold text-accent">0</span></div>
+                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Ready for Pickup:</span><span id="prescriptionsReady" class="font-semibold text-primary">0</span></div>
+                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark text-xs">Last Updated:</span><span id="prescriptionsUpdated" class="text-xs text-subtext-light dark:text-subtext-dark">Just now</span></div>
                             </div>
                         </div>
 
-                        <!-- Sales Summary -->
                         <div class="module-summary bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
                             <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center gap-3">
-                                    <span class="material-icons text-primary">point_of_sale</span>
-                                    <h3 class="font-semibold text-text-light dark:text-text-dark">Sales Summary</h3>
-                                </div>
-                                <button id="refreshSales" class="refresh-btn text-subtext-light dark:text-subtext-dark hover:text-primary" onclick="refreshSalesSummary()">
-                                    <span class="material-icons">refresh</span>
-                                </button>
+                                <div class="flex items-center gap-3"><span class="material-icons text-primary">point_of_sale</span><h3 class="font-semibold text-text-light dark:text-text-dark">Sales Summary</h3></div>
+                                <button id="refreshSales" class="refresh-btn text-subtext-light dark:text-subtext-dark hover:text-primary" onclick="refreshSalesSummary()"><span class="material-icons">refresh</span></button>
                             </div>
                             <div class="space-y-3">
-                                <div class="flex justify-between">
-                                    <span class="text-subtext-light dark:text-subtext-dark">Today's Revenue:</span>
-                                    <span id="salesRevenue" class="font-semibold">₱3,428</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-subtext-light dark:text-subtext-dark">Transactions:</span>
-                                    <span id="salesTransactions" class="font-semibold">42</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-subtext-light dark:text-subtext-dark">Avg. Transaction:</span>
-                                    <span id="salesAverage" class="font-semibold">₱82</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-subtext-light dark:text-subtext-dark text-xs">Last Updated:</span>
-                                    <span id="salesUpdated" class="text-xs text-subtext-light dark:text-subtext-dark">Just now</span>
-                                </div>
+                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Today's Revenue:</span><span id="salesRevenue" class="font-semibold">₱0.00</span></div>
+                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Transactions:</span><span id="salesTransactions" class="font-semibold">0</span></div>
+                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Avg. Transaction:</span><span id="salesAverage" class="font-semibold">₱0.00</span></div>
+                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark text-xs">Last Updated:</span><span id="salesUpdated" class="text-xs text-subtext-light dark:text-subtext-dark">Just now</span></div>
                             </div>
                         </div>
 
@@ -482,22 +352,25 @@
     const API_BASE_URL = 'http://localhost:5001';
 
     let autoRefreshInterval;
-    let salesChartInstance    = null;
-    let stockChartInstance    = null;
-    let topSellingChartInstance = null; // ✅ renamed from supplierChartInstance
+    let salesChartInstance = null;
+    let stockChartInstance = null;
+    let topSellingChartInstance = null;
 
     // ── HELPERS ──
     function formatPeso(value) {
-        return '₱' + Number(value).toLocaleString('en-PH', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
+        return '₱' + Number(value).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
-    // ── AUTH ──
+    function safeSetText(id, value) { 
+        const el = document.getElementById(id); 
+        if (el) el.textContent = value; 
+    }
+
+    // ── AUTH & API CALL ──
     function getToken() {
-        const direct = sessionStorage.getItem('token');
-        if (direct) return direct;
+        const directToken = sessionStorage.getItem('token');
+        if (directToken) return directToken;
+        
         const userInfo = sessionStorage.getItem('userInfo');
         if (userInfo) {
             try { return JSON.parse(userInfo).token || null; } catch(e) {}
@@ -505,109 +378,210 @@
         return null;
     }
 
-    // ── NOTIFICATIONS ──
-    let notifData         = [];
+    async function apiCall(endpoint) {
+        const token = getToken();
+        if (!token) { window.location.href = 'login.html'; return null; }
+        
+        try {
+            const response = await fetch(`${API_BASE_URL}${endpoint}`, { 
+                headers: { 'Authorization': `Bearer ${token}` } 
+            });
+            
+            if (response.status === 401) { 
+                sessionStorage.clear(); 
+                window.location.href = 'login.html'; 
+                return null; 
+            }
+            
+            if (!response.ok) {
+                console.warn(`Backend blocked request to ${endpoint} with status ${response.status}`);
+                return null;
+            }
+            
+            return await response.json();
+            
+        } catch (error) { 
+            console.error("API Error:", error); 
+            return null; 
+        }
+    }
+
+    // ── INITIALIZATION ──
+    document.addEventListener('DOMContentLoaded', function() {
+        const isDarkMode = sessionStorage.getItem('darkMode') === 'true';
+        document.documentElement.classList.toggle('dark', isDarkMode);
+        
+        initializeCharts();
+        fetchDashboardStats(); 
+        loadTopSellingData();
+        startAutoRefresh();
+        
+        const btn = document.getElementById('notificationBtn');
+        const dropdown = document.getElementById('notificationDropdown');
+        if(btn && dropdown) {
+            btn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('open'); if(dropdown.classList.contains('open')) refreshNotifications(); });
+            document.addEventListener('click', (e) => { if (!dropdown.contains(e.target) && e.target !== btn) dropdown.classList.remove('open'); });
+            dropdown.addEventListener('click', e => e.stopPropagation());
+            setTimeout(refreshNotifications, 800); setInterval(refreshNotifications, 60000);
+        }
+    });
+
+    function initializeSummaryData() {
+        const now = new Date().toLocaleTimeString();
+        safeSetText('inventoryUpdated', now);
+        safeSetText('prescriptionsUpdated', now);
+        safeSetText('salesUpdated', now);
+        safeSetText('lastUpdateTime', now);
+    }
+
+    // ── MAIN DASHBOARD DATA FETCH ──
+    async function fetchDashboardStats() {
+        const data = await apiCall('/api/dashboard/stats');
+        
+        if (data && data.inventory) {
+            // 1. UPDATE TOP CARDS
+            safeSetText('totalStock', data.inventory.totalItems.toLocaleString('en-PH'));
+            safeSetText('outOfStock', data.inventory.outOfStock.toLocaleString('en-PH'));
+            safeSetText('criticalItems', `${data.inventory.lowStock} critical items`);
+            safeSetText('expiringItems', data.inventory.expiringSoon.toLocaleString('en-PH'));
+            safeSetText('dailySales', formatPeso(data.sales.todayRevenue));
+
+            // 2. UPDATE MODULE SUMMARIES
+            safeSetText('inventoryTotal', data.inventory.totalItems.toLocaleString('en-PH'));
+            safeSetText('inventoryLowStock', `${data.inventory.lowStock} items`);
+            safeSetText('inventoryExpiring', `${data.inventory.expiringSoon} items`);
+
+            safeSetText('prescriptionsToday', data.prescriptions.todayTotal.toLocaleString('en-PH'));
+            safeSetText('prescriptionsPending', data.prescriptions.pendingReview.toLocaleString('en-PH'));
+            safeSetText('prescriptionsReady', data.prescriptions.readyForPickup.toLocaleString('en-PH'));
+
+            safeSetText('salesRevenue', formatPeso(data.sales.todayRevenue));
+            safeSetText('salesTransactions', data.sales.todayTransactions.toLocaleString('en-PH'));
+            safeSetText('salesAverage', formatPeso(data.sales.avgTransaction));
+
+            // 3. UPDATE CHARTS
+            if (data.charts) updateMainCharts(data.charts);
+            
+            initializeSummaryData();
+        } else {
+            console.error("Dashboard Stats Failed to Load because backend denied access.");
+        }
+    }
+
+    // ── LIVE TOP SELLING DATA FETCH ──
+    async function loadTopSellingData() {
+        const sales = await apiCall('/api/sales');
+        
+        if (sales && Array.isArray(sales)) {
+            const totals = {};
+            sales.forEach(sale => {
+                if (!sale.items) return;
+                sale.items.forEach(item => {
+                    let name = item.name;
+                    if ((!name || name === 'Unknown') && item.medicine && item.medicine.name) {
+                        name = item.medicine.name;
+                    }
+                    name = name || 'Unknown Medicine';
+                    totals[name] = (totals[name] || 0) + (parseInt(item.quantity) || 0);
+                });
+            });
+
+            const sorted = Object.entries(totals).sort((a, b) => b[1] - a[1]).slice(0, 7);
+            const labels = sorted.map(e => e[0]);
+            const data   = sorted.map(e => e[1]);
+
+            updateTopSellingChart(labels.length ? labels : ['No Data'], data.length ? data : [0]);
+        }
+    }
+
+    // ── CHART UPDATES ──
+    function updateMainCharts(chartData) {
+        if (salesChartInstance && chartData.salesTrend) {
+            salesChartInstance.data.labels = chartData.salesTrend.labels;
+            salesChartInstance.data.datasets[0].data = chartData.salesTrend.data;
+            salesChartInstance.update();
+        }
+        if (stockChartInstance && chartData.stockDistribution) {
+            stockChartInstance.data.labels = chartData.stockDistribution.labels;
+            stockChartInstance.data.datasets[0].data = chartData.stockDistribution.data;
+            stockChartInstance.update();
+        }
+    }
+
+    function updateTopSellingChart(labels, data) {
+        if (topSellingChartInstance) {
+            topSellingChartInstance.data.labels = labels;
+            topSellingChartInstance.data.datasets[0].data = data;
+            topSellingChartInstance.update();
+        }
+    }
+
+    function initializeCharts() {
+        const isDark = document.documentElement.classList.contains('dark');
+        const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.07)';
+        const textColor = isDark ? '#F9FAFB' : '#1F2937';
+
+        const salesCtx = document.getElementById('salesTrendChart').getContext('2d');
+        salesChartInstance = new Chart(salesCtx, { type: 'line', data: { labels: ['Loading...'], datasets: [{ label: 'Daily Sales (₱)', data: [0], borderColor: '#005a32', backgroundColor: 'rgba(0,90,50,0.1)', borderWidth: 2, fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => formatPeso(c.parsed.y) } } }, scales: { y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor, callback: v => '₱' + Number(v).toLocaleString('en-PH') } }, x: { grid: { color: gridColor }, ticks: { color: textColor } } } } });
+
+        const stockCtx = document.getElementById('stockDistributionChart').getContext('2d');
+        stockChartInstance = new Chart(stockCtx, { type: 'bar', data: { labels: ['Loading...'], datasets: [{ label: 'Stock Count', data: [0], backgroundColor: ['#005a32','#d62828','#8b5a2b','#22C55E','#8B5CF6'], borderWidth: 0, borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor, callback: v => Number(v).toLocaleString('en-PH') } }, x: { grid: { display: false }, ticks: { color: textColor } } } } });
+
+        const topSellingCtx = document.getElementById('topSellingChart').getContext('2d');
+        topSellingChartInstance = new Chart(topSellingCtx, { type: 'bar', data: { labels: ['Loading...'], datasets: [{ label: 'Units Sold', data: [0], backgroundColor: ['rgba(0, 90, 50, 0.90)', 'rgba(0, 90, 50, 0.75)', 'rgba(0, 90, 50, 0.60)', 'rgba(0, 90, 50, 0.50)', 'rgba(214, 40, 40, 0.50)', 'rgba(214, 40, 40, 0.65)', 'rgba(214, 40, 40, 0.82)'], borderWidth: 0, borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${Number(c.parsed.x).toLocaleString('en-PH')} units sold` } } }, scales: { x: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor, callback: v => Number(v).toLocaleString('en-PH') } }, y: { grid: { display: false }, ticks: { color: textColor, font: { size: 11 } } } } } });
+    }
+
+    // ── NOTIFICATIONS LOGIC (Fully Restored!) ──
+    let notifData = [];
     let activeNotifFilter = 'all';
 
     function generateAlertsFromInventory(inventory) {
-        const alerts     = [];
-        const today      = new Date();
+        const alerts = [];
+        const today = new Date();
         const thirtyDays = new Date();
         thirtyDays.setDate(today.getDate() + 30);
 
         inventory.forEach((item, idx) => {
             const medName = item.medicine?.name || item.name || 'Unknown Medicine';
-
             if (item.expiryDate) {
                 const expiry = new Date(item.expiryDate);
                 if (expiry < today) {
-                    alerts.push({
-                        id: `exp-${item._id || idx}`, type: 'expiry', unread: true,
-                        medicineName: medName,
-                        title: 'Medicine Expired',
-                        desc:  `${medName} expired on ${expiry.toLocaleDateString('en-PH')}.`,
-                        time:  'Needs immediate attention',
-                        actionLabel: 'View Batch', actionClass: 'btn-expiry',
-                        icon: 'event_busy', iconClass: 'icon-expiry'
-                    });
+                    alerts.push({ id: `exp-${item._id || idx}`, type: 'expiry', unread: true, medicineName: medName, title: 'Medicine Expired', desc:  `${medName} expired on ${expiry.toLocaleDateString('en-PH')}.`, time:  'Needs attention', actionLabel: 'View', actionClass: 'btn-expiry', icon: 'event_busy', iconClass: 'icon-expiry' });
                 } else if (expiry <= thirtyDays) {
                     const d = Math.ceil((expiry - today) / 864e5);
-                    alerts.push({
-                        id: `exp-${item._id || idx}`, type: 'expiry', unread: true,
-                        medicineName: medName,
-                        title: 'Expiring Soon',
-                        desc:  `${medName} expires in ${d} day${d === 1 ? '' : 's'}.`,
-                        time:  `${d} days left`,
-                        actionLabel: 'View Batch', actionClass: 'btn-expiry',
-                        icon: 'schedule', iconClass: 'icon-expiry'
-                    });
+                    alerts.push({ id: `exp-${item._id || idx}`, type: 'expiry', unread: true, medicineName: medName, title: 'Expiring Soon', desc:  `${medName} expires in ${d} days.`, time:  `${d} days left`, actionLabel: 'View', actionClass: 'btn-expiry', icon: 'schedule', iconClass: 'icon-expiry' });
                 }
             }
-
-            const qty      = parseInt(item.quantity || 0);
+            const qty = parseInt(item.quantity || 0);
             const minStock = parseInt(item.minStockLevel || 10);
-
             if (qty === 0) {
-                alerts.push({
-                    id: `stk-${item._id || idx}`, type: 'critical', unread: true,
-                    medicineName: medName,
-                    title: 'Critical: Out of Stock',
-                    desc:  `${medName} is completely out of stock. Needs emergency reorder.`,
-                    time:  'Immediate action required',
-                    actionLabel: 'Go to Inventory', actionClass: 'btn-critical',
-                    icon: 'warning', iconClass: 'icon-critical'
-                });
+                alerts.push({ id: `stk-${item._id || idx}`, type: 'critical', unread: true, medicineName: medName, title: 'Out of Stock', desc:  `${medName} is completely out.`, time:  'Immediate', actionLabel: 'Go to Inventory', actionClass: 'btn-critical', icon: 'warning', iconClass: 'icon-critical' });
             } else if (qty <= minStock) {
-                alerts.push({
-                    id: `stk-${item._id || idx}`, type: 'shortage', unread: true,
-                    medicineName: medName,
-                    title: 'Low Stock Alert',
-                    desc:  `${medName} — only ${qty} unit${qty === 1 ? '' : 's'} remaining (min: ${minStock}).`,
-                    time:  'Reorder soon',
-                    actionLabel: 'Go to Inventory', actionClass: 'btn-shortage',
-                    icon: 'inventory_2', iconClass: 'icon-shortage'
-                });
+                alerts.push({ id: `stk-${item._id || idx}`, type: 'shortage', unread: true, medicineName: medName, title: 'Low Stock Alert', desc:  `${medName} — only ${qty} remaining.`, time:  'Reorder soon', actionLabel: 'Go to Inventory', actionClass: 'btn-shortage', icon: 'inventory_2', iconClass: 'icon-shortage' });
             }
         });
-
         const order = { critical: 0, expiry: 1, shortage: 2 };
         alerts.sort((a, b) => (order[a.type] ?? 9) - (order[b.type] ?? 9));
         return alerts;
     }
 
     function renderNotifications() {
-        const list     = document.getElementById('notifList');
-        const filtered = activeNotifFilter === 'all'
-            ? notifData
-            : notifData.filter(n => n.type === activeNotifFilter);
-
+        const list = document.getElementById('notifList');
+        if(!list) return;
+        const filtered = activeNotifFilter === 'all' ? notifData : notifData.filter(n => n.type === activeNotifFilter);
         if (!filtered.length) {
-            list.innerHTML = `
-                <div class="notif-empty">
-                    <span class="material-icons">notifications_none</span>
-                    <p>${activeNotifFilter === 'all' ? 'All clear — no alerts right now!' : 'No notifications in this category.'}</p>
-                </div>`;
-            updateNotifBadge();
-            return;
+            list.innerHTML = `<div class="notif-empty"><span class="material-icons">notifications_none</span><p>All clear — no alerts!</p></div>`;
+            updateNotifBadge(); return;
         }
-
         list.innerHTML = filtered.map(n => `
             <div class="notif-item ${n.type} ${n.unread ? 'unread' : ''}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
-                <div class="notif-icon-wrap ${n.iconClass}">
-                    <span class="material-icons">${n.icon}</span>
-                </div>
+                <div class="notif-icon-wrap ${n.iconClass}"><span class="material-icons">${n.icon}</span></div>
                 <div class="notif-body">
-                    <div class="notif-title">${n.title}</div>
-                    <div class="notif-desc">${n.desc}</div>
-                    <div class="notif-time">${n.time}</div>
-                    <div class="notif-action">
-                        <button class="notif-action-btn ${n.actionClass}"
-                            onclick="handleNotifAction(event,'${n.id}')">${n.actionLabel}</button>
-                    </div>
+                    <div class="notif-title">${n.title}</div><div class="notif-desc">${n.desc}</div><div class="notif-time">${n.time}</div>
+                    <div class="notif-action"><button class="notif-action-btn ${n.actionClass}" onclick="handleNotifAction(event,'${n.id}')">${n.actionLabel}</button></div>
                 </div>
                 ${n.unread ? '<div class="unread-dot"></div>' : ''}
             </div>`).join('');
-
         updateNotifBadge();
     }
 
@@ -619,45 +593,28 @@
         if (pill)  pill.textContent = count > 0 ? `${count} new` : 'All clear';
     }
 
-    function markNotifRead(id) {
-        const n = notifData.find(n => n.id === id);
-        if (n) { n.unread = false; renderNotifications(); }
-    }
-
-    function markAllRead() {
-        notifData.forEach(n => n.unread = false);
-        renderNotifications();
-    }
+    function markNotifRead(id) { const n = notifData.find(n => n.id === id); if (n) { n.unread = false; renderNotifications(); } }
+    function markAllRead() { notifData.forEach(n => n.unread = false); renderNotifications(); }
 
     function handleNotifAction(event, id) {
-        event.stopPropagation();
-        markNotifRead(id);
-        const n = notifData.find(n => n.id === id);
-        if (!n) return;
-        if (n.type === 'expiry') {
-            sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'batch', medicine: n.medicineName }));
-        } else if (n.type === 'critical' || n.type === 'shortage') {
-            sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'summary', medicine: n.medicineName }));
-        }
+        event.stopPropagation(); markNotifRead(id);
+        const n = notifData.find(n => n.id === id); if (!n) return;
+        if (n.type === 'expiry') { sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'batch', medicine: n.medicineName })); } 
+        else if (n.type === 'critical' || n.type === 'shortage') { sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'summary', medicine: n.medicineName })); }
         window.location.href = 'inventory.html';
     }
 
     function filterNotifTab(btn, filter) {
         document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        activeNotifFilter = filter;
-        renderNotifications();
+        btn.classList.add('active'); activeNotifFilter = filter; renderNotifications();
     }
 
     async function refreshNotifications() {
-        const token = getToken();
-        if (!token) return;
+        const token = getToken(); if (!token) return;
         try {
-            const res = await fetch(`${API_BASE_URL}/api/inventory`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
+            const res = await fetch(`${API_BASE_URL}/api/inventory`, { headers: { 'Authorization': `Bearer ${token}` } });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const raw       = await res.json();
+            const raw = await res.json();
             const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
             const previouslyRead = new Set(notifData.filter(n => !n.unread).map(n => n.id));
             notifData = generateAlertsFromInventory(inventory).slice(0, 15);
@@ -665,364 +622,18 @@
             renderNotifications();
         } catch (e) {
             console.warn('Notification fetch failed:', e);
-            if (!notifData.length) {
-                document.getElementById('notifList').innerHTML = `
-                    <div class="notif-empty">
-                        <span class="material-icons">cloud_off</span>
-                        <p>Could not load alerts. Check server connection.</p>
-                    </div>`;
-            }
+            const list = document.getElementById('notifList');
+            if (list && !notifData.length) { list.innerHTML = `<div class="notif-empty"><span class="material-icons">cloud_off</span><p>Could not load alerts. Check server connection.</p></div>`; }
         }
-    }
-
-    // Bell toggle
-    document.addEventListener('DOMContentLoaded', function () {
-        const btn      = document.getElementById('notificationBtn');
-        const dropdown = document.getElementById('notificationDropdown');
-
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            dropdown.classList.toggle('open');
-            if (dropdown.classList.contains('open')) refreshNotifications();
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!dropdown.contains(e.target) && e.target !== btn) dropdown.classList.remove('open');
-        });
-
-        dropdown.addEventListener('click', e => e.stopPropagation());
-
-        setTimeout(refreshNotifications, 800);
-        setInterval(refreshNotifications, 60000);
-    });
-
-    // ── CHARTS & DASHBOARD ──
-    document.addEventListener('DOMContentLoaded', function() {
-        loadDarkModePreference();
-        initializeCharts();
-        loadLiveData();        // ✅ fetch real sales data for top selling chart
-        initializeSummaryData();
-        startAutoRefresh();
-    });
-
-    function loadDarkModePreference() {
-        const isDarkMode = sessionStorage.getItem('darkMode') === 'true';
-        document.documentElement.classList.toggle('dark', isDarkMode);
-    }
-
-    function initializeSummaryData() {
-        const now = new Date().toLocaleTimeString();
-        document.getElementById('inventoryUpdated').textContent     = now;
-        document.getElementById('prescriptionsUpdated').textContent = now;
-        document.getElementById('salesUpdated').textContent         = now;
-        document.getElementById('lastUpdateTime').textContent       = now;
-    }
-
-    // ── LIVE DATA: fetch sales and build top selling chart ──
-    async function loadLiveData() {
-        const token = getToken();
-        if (!token) return;
-
-        try {
-            const res = await fetch(`${API_BASE_URL}/api/sales`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const sales = await res.json();
-
-            // Aggregate units sold per medicine name
-            const totals = {};
-            sales.forEach(sale => {
-                if (!sale.items) return;
-                sale.items.forEach(item => {
-                    // Resolve medicine name the same way billing.html does
-                    let name = item.name;
-                    if ((!name || name === 'Unknown') && item.medicine && item.medicine.name) {
-                        name = item.medicine.name;
-                    }
-                    name = name || 'Unknown Medicine';
-                    totals[name] = (totals[name] || 0) + (parseInt(item.quantity) || 0);
-                });
-            });
-
-            // Sort descending, take top 7
-            const sorted = Object.entries(totals)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 7);
-
-            const labels = sorted.map(e => e[0]);
-            const data   = sorted.map(e => e[1]);
-
-            updateTopSellingChart(labels, data);
-
-            // Also update Today's Revenue stat card from real data
-            const today = new Date().toDateString();
-            const todayRevenue = sales
-                .filter(s => new Date(s.date || s.createdAt).toDateString() === today && s.paymentStatus === 'Paid')
-                .reduce((acc, s) => acc + (s.totalAmount || 0), 0);
-
-            document.getElementById('dailySales').textContent  = formatPeso(todayRevenue);
-            document.getElementById('salesRevenue').textContent = formatPeso(todayRevenue);
-
-            const totalTransactions = sales.length;
-            const avgTransaction    = totalTransactions > 0
-                ? sales.reduce((acc, s) => acc + (s.totalAmount || 0), 0) / totalTransactions
-                : 0;
-
-            document.getElementById('salesTransactions').textContent = totalTransactions.toLocaleString('en-PH');
-            document.getElementById('salesAverage').textContent      = formatPeso(avgTransaction);
-
-        } catch (e) {
-            console.warn('Live sales data fetch failed:', e);
-            // Chart keeps its placeholder data if fetch fails
-        }
-    }
-
-    function updateTopSellingChart(labels, data) {
-        const isDark    = document.documentElement.classList.contains('dark');
-        const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.07)';
-        const textColor = isDark ? '#F9FAFB' : '#1F2937';
-
-        if (topSellingChartInstance) {
-            // Just update data without rebuilding the whole chart
-            topSellingChartInstance.data.labels   = labels;
-            topSellingChartInstance.data.datasets[0].data = data;
-            topSellingChartInstance.update();
-            return;
-        }
-
-        // Shouldn't reach here normally since initializeCharts runs first,
-        // but just in case call initializeCharts again
-        initializeCharts();
-        if (topSellingChartInstance) {
-            topSellingChartInstance.data.labels   = labels;
-            topSellingChartInstance.data.datasets[0].data = data;
-            topSellingChartInstance.update();
-        }
-    }
-
-    function initializeCharts() {
-        const isDark    = document.documentElement.classList.contains('dark');
-        const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.07)';
-        const textColor = isDark ? '#F9FAFB' : '#1F2937';
-
-        // ── Daily Sales Trend ──
-        const salesCtx = document.getElementById('salesTrendChart').getContext('2d');
-        if (salesChartInstance) salesChartInstance.destroy();
-        salesChartInstance = new Chart(salesCtx, {
-            type: 'line',
-            data: {
-                labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
-                datasets: [{
-                    label: 'Daily Sales (₱)',
-                    data: [2450, 2847, 3100, 2750, 3200, 2950, 3428],
-                    borderColor: '#005a32',
-                    backgroundColor: 'rgba(0,90,50,0.1)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: c => formatPeso(c.parsed.y)
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { color: gridColor },
-                        ticks: {
-                            color: textColor,
-                            callback: v => '₱' + Number(v).toLocaleString('en-PH')
-                        }
-                    },
-                    x: {
-                        grid: { color: gridColor },
-                        ticks: { color: textColor }
-                    }
-                }
-            }
-        });
-
-        // ── Stock Distribution ──
-        const stockCtx = document.getElementById('stockDistributionChart').getContext('2d');
-        if (stockChartInstance) stockChartInstance.destroy();
-        stockChartInstance = new Chart(stockCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Analgesics','Antibiotics','Diabetes','Cardiovascular','Gastro'],
-                datasets: [{
-                    label: 'Stock Count',
-                    data: [450, 75, 120, 90, 200],
-                    backgroundColor: ['#005a32','#d62828','#8b5a2b','#22C55E','#8B5CF6'],
-                    borderWidth: 0,
-                    borderRadius: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { color: gridColor },
-                        ticks: {
-                            color: textColor,
-                            callback: v => Number(v).toLocaleString('en-PH')
-                        }
-                    },
-                    x: {
-                        grid: { display: false },
-                        ticks: { color: textColor }
-                    }
-                }
-            }
-        });
-
-        // ── ✅ Top Selling Medicines (horizontal bar) ──
-        // Placeholder data — gets replaced by loadLiveData() once API responds
-        const topSellingCtx = document.getElementById('topSellingChart').getContext('2d');
-        if (topSellingChartInstance) topSellingChartInstance.destroy();
-        topSellingChartInstance = new Chart(topSellingCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Paracetamol','Amoxicillin','Ibuprofen','Metformin','Amlodipine','Losartan','Cetirizine'],
-                datasets: [{
-                    label: 'Units Sold',
-                    data: [320, 210, 185, 160, 140, 115, 95],
-                    backgroundColor: [
-                        'rgba(0, 90, 50, 0.90)',
-                        'rgba(0, 90, 50, 0.75)',
-                        'rgba(0, 90, 50, 0.60)',
-                        'rgba(0, 90, 50, 0.50)',
-                        'rgba(214, 40, 40, 0.50)',
-                        'rgba(214, 40, 40, 0.65)',
-                        'rgba(214, 40, 40, 0.82)',
-                    ],
-                    borderWidth: 0,
-                    borderRadius: 4
-                }]
-            },
-            options: {
-                indexAxis: 'y',   // horizontal bars — medicine names fit better
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: c => ` ${Number(c.parsed.x).toLocaleString('en-PH')} units sold`
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        grid: { color: gridColor },
-                        ticks: {
-                            color: textColor,
-                            callback: v => Number(v).toLocaleString('en-PH')
-                        }
-                    },
-                    y: {
-                        grid: { display: false },
-                        ticks: {
-                            color: textColor,
-                            font: { size: 11 }
-                        }
-                    }
-                }
-            }
-        });
     }
 
     // ── REFRESH BUTTONS ──
-    function refreshInventorySummary() {
-        const btn = document.getElementById('refreshInventory');
-        btn.classList.add('refreshing');
-        setTimeout(() => {
-            initializeSummaryData();
-            btn.classList.remove('refreshing');
-            showToast('Inventory data updated');
-            refreshNotifications();
-        }, 1000);
-    }
-
-    function refreshPrescriptionsSummary() {
-        const btn = document.getElementById('refreshPrescriptions');
-        btn.classList.add('refreshing');
-        setTimeout(() => {
-            initializeSummaryData();
-            btn.classList.remove('refreshing');
-            showToast('Prescriptions data updated');
-        }, 1000);
-    }
-
-    function refreshSalesSummary() {
-        const btn = document.getElementById('refreshSales');
-        btn.classList.add('refreshing');
-        loadLiveData().then(() => {
-            initializeSummaryData();
-            btn.classList.remove('refreshing');
-            showToast('Sales data updated');
-        });
-    }
-
-    function showToast(message) {
-        const toast = document.createElement('div');
-        toast.className = 'fixed top-4 right-4 bg-success text-white px-4 py-2 rounded-lg shadow-lg z-50 flex items-center gap-2';
-        toast.innerHTML = `<span class="material-icons text-sm">check_circle</span><span>${message}</span>`;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
-    }
-
-    function startAutoRefresh() {
-        autoRefreshInterval = setInterval(() => {
-            document.getElementById('lastUpdateTime').textContent = new Date().toLocaleTimeString();
-        }, 30000);
-    }
-
-    function confirmBackToHMS(event) {
-        event.preventDefault();
-        Swal.fire({
-            title: "Leave Pharmacy?",
-            text: "Return to Integrated Healthcare Management System?",
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonColor: "#005a32",
-            confirmButtonText: "Yes, go back"
-        }).then(r => { if (r.isConfirmed) window.location.href = '../html/index.html'; });
-    }
-
-    function logoutUser() {
-        Swal.fire({
-            title: "Logout?", icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#005a32",
-            confirmButtonText: "Yes, logout"
-        }).then(r => {
-            if (r.isConfirmed) {
-                sessionStorage.removeItem('userInfo');
-                sessionStorage.removeItem('token');
-                window.location.href = 'login.html';
-            }
-        });
-    }
-
-    document.addEventListener('click', function(e) {
-        const settingsDropdown = document.getElementById('settingsDropdown');
-        if (settingsDropdown && !e.target.closest('[onclick="toggleSettings()"]') && !settingsDropdown.contains(e.target)) {
-            settingsDropdown.style.display = 'none';
-        }
-    });
+    function refreshInventorySummary() { document.getElementById('refreshInventory').classList.add('refreshing'); fetchDashboardStats().then(() => { document.getElementById('refreshInventory').classList.remove('refreshing'); showToast('Inventory data updated'); }); }
+    function refreshPrescriptionsSummary() { document.getElementById('refreshPrescriptions').classList.add('refreshing'); fetchDashboardStats().then(() => { document.getElementById('refreshPrescriptions').classList.remove('refreshing'); showToast('Prescriptions data updated'); }); }
+    function refreshSalesSummary() { document.getElementById('refreshSales').classList.add('refreshing'); loadTopSellingData().then(() => { document.getElementById('refreshSales').classList.remove('refreshing'); showToast('Sales data updated'); }); }
+    function showToast(m) { const t = document.createElement('div'); t.className = 'fixed top-4 right-4 bg-success text-white px-4 py-2 rounded-lg shadow-lg z-50 flex items-center gap-2'; t.innerHTML = `<span class="material-icons text-sm">check_circle</span><span>${m}</span>`; document.body.appendChild(t); setTimeout(() => t.remove(), 3000); }
+    function startAutoRefresh() { autoRefreshInterval = setInterval(() => { fetchDashboardStats(); loadTopSellingData(); }, 30000); }
+    function logoutUser() { Swal.fire({title:"Logout?",icon:"warning",showCancelButton:true,confirmButtonColor:"#005a32",confirmButtonText:"Yes, logout"}).then(r=>{if(r.isConfirmed){sessionStorage.clear();window.location.href='login.html';}}); }
 </script>
 <script src="../js/windowcontrollerbtn.js"></script>
 </body>

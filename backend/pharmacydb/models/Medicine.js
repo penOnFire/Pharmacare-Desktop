@@ -22,7 +22,7 @@ const medicineSchema = new mongoose.Schema(
     supplier: {
       type: mongoose.Schema.Types.ObjectId, // This is a reference
       ref: 'Supplier', // Tells Mongoose which model to connect to
-      required: true,
+      required: false,
     },
     requiresPrescription: {
       type: Boolean,
