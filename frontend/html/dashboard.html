@@ -552,278 +552,101 @@
         return null;
     }
 
-    // ══════════════════════════════════════════════════════════
-    //  LIVE NAVBAR CLOCK  — ticks every second
-    // ══════════════════════════════════════════════════════════
-    function updateNavClock() {
-        const now = new Date();
-
-        // Time: "12:28:05 AM"
-        const timeStr = now.toLocaleTimeString('en-US', {
-            hour:   '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: true
-        });
-
-        // Date: "FEB 26, 2026"
-        const dateStr = now.toLocaleDateString('en-US', {
-            month: 'short',
-            day:   'numeric',
-            year:  'numeric'
-        }).toUpperCase();  // e.g. "FEB 26, 2026"
-
-        document.getElementById('navClock').textContent = timeStr;
-        document.getElementById('navDate').textContent  = dateStr;
-    }
-
-    // ── Load user info from session into navbar ──
-    function loadNavUserInfo() {
-        try {
-            const raw = sessionStorage.getItem('userInfo');
-            if (!raw) return;
-            const info = JSON.parse(raw);
-            const name = info.name || info.firstName || info.username || 'User';
-            const role = info.role || info.position || '';
-            const initial = name.charAt(0).toUpperCase();
-
-            document.getElementById('navUserName').textContent = name;
-            document.getElementById('navUserRole').textContent = role;
-            document.getElementById('navAvatar').textContent   = initial;
-        } catch(e) { /* keep defaults */ }
-    }
-
-    // ── NOTIFICATIONS ──
-    let notifData         = [];
-    let activeNotifFilter = 'all';
-
-    function generateAlertsFromInventory(inventory) {
-        const alerts     = [];
-        const today      = new Date();
-        const thirtyDays = new Date();
-        thirtyDays.setDate(today.getDate() + 30);
-
-        inventory.forEach((item, idx) => {
-            const medName = item.medicine?.name || item.name || 'Unknown Medicine';
-
-            if (item.expiryDate) {
-                const expiry = new Date(item.expiryDate);
-                if (expiry < today) {
-                    alerts.push({
-                        id: `exp-${item._id || idx}`, type: 'expiry', unread: true,
-                        medicineName: medName,
-                        title: 'Medicine Expired',
-                        desc:  `${medName} expired on ${expiry.toLocaleDateString('en-PH')}.`,
-                        time:  'Needs immediate attention',
-                        actionLabel: 'View Batch', actionClass: 'btn-expiry',
-                        icon: 'event_busy', iconClass: 'icon-expiry'
-                    });
-                } else if (expiry <= thirtyDays) {
-                    const d = Math.ceil((expiry - today) / 864e5);
-                    alerts.push({
-                        id: `exp-${item._id || idx}`, type: 'expiry', unread: true,
-                        medicineName: medName,
-                        title: 'Expiring Soon',
-                        desc:  `${medName} expires in ${d} day${d === 1 ? '' : 's'}.`,
-                        time:  `${d} days left`,
-                        actionLabel: 'View Batch', actionClass: 'btn-expiry',
-                        icon: 'schedule', iconClass: 'icon-expiry'
-                    });
-                }
-            }
-
-            const qty      = parseInt(item.quantity || 0);
-            const minStock = parseInt(item.minStockLevel || 10);
-
-            if (qty === 0) {
-                alerts.push({
-                    id: `stk-${item._id || idx}`, type: 'critical', unread: true,
-                    medicineName: medName,
-                    title: 'Critical: Out of Stock',
-                    desc:  `${medName} is completely out of stock. Needs emergency reorder.`,
-                    time:  'Immediate action required',
-                    actionLabel: 'Go to Inventory', actionClass: 'btn-critical',
-                    icon: 'warning', iconClass: 'icon-critical'
-                });
-            } else if (qty <= minStock) {
-                alerts.push({
-                    id: `stk-${item._id || idx}`, type: 'shortage', unread: true,
-                    medicineName: medName,
-                    title: 'Low Stock Alert',
-                    desc:  `${medName} — only ${qty} unit${qty === 1 ? '' : 's'} remaining (min: ${minStock}).`,
-                    time:  'Reorder soon',
-                    actionLabel: 'Go to Inventory', actionClass: 'btn-shortage',
-                    icon: 'inventory_2', iconClass: 'icon-shortage'
-                });
-            }
-        });
-
-        const order = { critical: 0, expiry: 1, shortage: 2 };
-        alerts.sort((a, b) => (order[a.type] ?? 9) - (order[b.type] ?? 9));
-        return alerts;
-    }
-
-    function renderNotifications() {
-        const list     = document.getElementById('notifList');
-        const filtered = activeNotifFilter === 'all'
-            ? notifData
-            : notifData.filter(n => n.type === activeNotifFilter);
-
-        if (!filtered.length) {
-            list.innerHTML = `
-                <div class="notif-empty">
-                    <span class="material-icons">notifications_none</span>
-                    <p>${activeNotifFilter === 'all' ? 'All clear — no alerts right now!' : 'No notifications in this category.'}</p>
-                </div>`;
-            updateNotifBadge();
-            return;
-        }
-
-        list.innerHTML = filtered.map(n => `
-            <div class="notif-item ${n.type} ${n.unread ? 'unread' : ''}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
-                <div class="notif-icon-wrap ${n.iconClass}">
-                    <span class="material-icons">${n.icon}</span>
-                </div>
-                <div class="notif-body">
-                    <div class="notif-title">${n.title}</div>
-                    <div class="notif-desc">${n.desc}</div>
-                    <div class="notif-time">${n.time}</div>
-                    <div class="notif-action">
-                        <button class="notif-action-btn ${n.actionClass}"
-                            onclick="handleNotifAction(event,'${n.id}')">${n.actionLabel}</button>
-                    </div>
-                </div>
-                ${n.unread ? '<div class="unread-dot"></div>' : ''}
-            </div>`).join('');
-
-        updateNotifBadge();
-    }
-
-    function updateNotifBadge() {
-        const count = notifData.filter(n => n.unread).length;
-        const badge = document.getElementById('notificationBadge');
-        const pill  = document.getElementById('unreadPill');
-        if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none'; }
-        if (pill)  pill.textContent = count > 0 ? `${count} new` : 'All clear';
-    }
-
-    function markNotifRead(id) {
-        const n = notifData.find(n => n.id === id);
-        if (n) { n.unread = false; renderNotifications(); }
-    }
-
-    function markAllRead() {
-        notifData.forEach(n => n.unread = false);
-        renderNotifications();
-    }
-
-    function handleNotifAction(event, id) {
-        event.stopPropagation();
-        markNotifRead(id);
-        const n = notifData.find(n => n.id === id);
-        if (!n) return;
-        if (n.type === 'expiry') {
-            sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'batch', medicine: n.medicineName }));
-        } else if (n.type === 'critical' || n.type === 'shortage') {
-            sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'summary', medicine: n.medicineName }));
-        }
-        window.location.href = 'inventory.html';
-    }
-
-    function filterNotifTab(btn, filter) {
-        document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        activeNotifFilter = filter;
-        renderNotifications();
-    }
-
-    async function refreshNotifications() {
+    async function apiCall(endpoint) {
         const token = getToken();
-        if (!token) return;
+        if (!token) { window.location.href = 'login.html'; return null; }
+        
         try {
-            const res = await fetch(`${API_BASE_URL}/api/inventory`, {
-                headers: { 'Authorization': `Bearer ${token}` }
+            const response = await fetch(`${API_BASE_URL}${endpoint}`, { 
+                headers: { 'Authorization': `Bearer ${token}` } 
             });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const raw       = await res.json();
-            const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
-            const previouslyRead = new Set(notifData.filter(n => !n.unread).map(n => n.id));
-            notifData = generateAlertsFromInventory(inventory).slice(0, 15);
-            notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
-            renderNotifications();
-        } catch (e) {
-            console.warn('Notification fetch failed:', e);
-            if (!notifData.length) {
-                document.getElementById('notifList').innerHTML = `
-                    <div class="notif-empty">
-                        <span class="material-icons">cloud_off</span>
-                        <p>Could not load alerts. Check server connection.</p>
-                    </div>`;
+            
+            if (response.status === 401) { 
+                sessionStorage.clear(); 
+                window.location.href = 'login.html'; 
+                return null; 
             }
+            
+            if (!response.ok) {
+                console.warn(`Backend blocked request to ${endpoint} with status ${response.status}`);
+                return null;
+            }
+            
+            return await response.json();
+            
+        } catch (error) { 
+            console.error("API Error:", error); 
+            return null; 
         }
     }
 
-    // Bell toggle
-    document.addEventListener('DOMContentLoaded', function () {
-        const btn      = document.getElementById('notificationBtn');
-        const dropdown = document.getElementById('notificationDropdown');
-
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            dropdown.classList.toggle('open');
-            if (dropdown.classList.contains('open')) refreshNotifications();
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!dropdown.contains(e.target) && e.target !== btn) dropdown.classList.remove('open');
-        });
-
-        dropdown.addEventListener('click', e => e.stopPropagation());
-
-        setTimeout(refreshNotifications, 800);
-        setInterval(refreshNotifications, 60000);
-    });
-
-    // ── CHARTS & DASHBOARD ──
+    // ── INITIALIZATION ──
     document.addEventListener('DOMContentLoaded', function() {
-        loadDarkModePreference();
-        loadNavUserInfo();
-
-        // Start live clock immediately, tick every second
-        updateNavClock();
-        setInterval(updateNavClock, 1000);
-
-        initializeCharts();
-        loadLiveData();
-        initializeSummaryData();
-        startAutoRefresh();
-    });
-
-    function loadDarkModePreference() {
         const isDarkMode = sessionStorage.getItem('darkMode') === 'true';
         document.documentElement.classList.toggle('dark', isDarkMode);
-    }
+        
+        initializeCharts();
+        fetchDashboardStats(); 
+        loadTopSellingData();
+        startAutoRefresh();
+        
+        const btn = document.getElementById('notificationBtn');
+        const dropdown = document.getElementById('notificationDropdown');
+        if(btn && dropdown) {
+            btn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('open'); if(dropdown.classList.contains('open')) refreshNotifications(); });
+            document.addEventListener('click', (e) => { if (!dropdown.contains(e.target) && e.target !== btn) dropdown.classList.remove('open'); });
+            dropdown.addEventListener('click', e => e.stopPropagation());
+            setTimeout(refreshNotifications, 800); setInterval(refreshNotifications, 60000);
+        }
+    });
 
     function initializeSummaryData() {
         const now = new Date().toLocaleTimeString();
-        document.getElementById('inventoryUpdated').textContent     = now;
-        document.getElementById('prescriptionsUpdated').textContent = now;
-        document.getElementById('salesUpdated').textContent         = now;
-        document.getElementById('lastUpdateTime').textContent       = now;
+        safeSetText('inventoryUpdated', now);
+        safeSetText('prescriptionsUpdated', now);
+        safeSetText('salesUpdated', now);
+        safeSetText('lastUpdateTime', now);
     }
 
-    // ── LIVE DATA ──
-    async function loadLiveData() {
-        const token = getToken();
-        if (!token) return;
+    // ── MAIN DASHBOARD DATA FETCH ──
+    async function fetchDashboardStats() {
+        const data = await apiCall('/api/dashboard/stats');
+        
+        if (data && data.inventory) {
+            // 1. UPDATE TOP CARDS
+            safeSetText('totalStock', data.inventory.totalItems.toLocaleString('en-PH'));
+            safeSetText('outOfStock', data.inventory.outOfStock.toLocaleString('en-PH'));
+            safeSetText('criticalItems', `${data.inventory.lowStock} critical items`);
+            safeSetText('expiringItems', data.inventory.expiringSoon.toLocaleString('en-PH'));
+            safeSetText('dailySales', formatPeso(data.sales.todayRevenue));
 
-        try {
-            const res = await fetch(`${API_BASE_URL}/api/sales`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const sales = await res.json();
+            // 2. UPDATE MODULE SUMMARIES
+            safeSetText('inventoryTotal', data.inventory.totalItems.toLocaleString('en-PH'));
+            safeSetText('inventoryLowStock', `${data.inventory.lowStock} items`);
+            safeSetText('inventoryExpiring', `${data.inventory.expiringSoon} items`);
 
+            safeSetText('prescriptionsToday', data.prescriptions.todayTotal.toLocaleString('en-PH'));
+            safeSetText('prescriptionsPending', data.prescriptions.pendingReview.toLocaleString('en-PH'));
+            safeSetText('prescriptionsReady', data.prescriptions.readyForPickup.toLocaleString('en-PH'));
+
+            safeSetText('salesRevenue', formatPeso(data.sales.todayRevenue));
+            safeSetText('salesTransactions', data.sales.todayTransactions.toLocaleString('en-PH'));
+            safeSetText('salesAverage', formatPeso(data.sales.avgTransaction));
+
+            // 3. UPDATE CHARTS
+            if (data.charts) updateMainCharts(data.charts);
+            
+            initializeSummaryData();
+        } else {
+            console.error("Dashboard Stats Failed to Load because backend denied access.");
+        }
+    }
+
+    // ── LIVE TOP SELLING DATA FETCH ──
+    async function loadTopSellingData() {
+        const sales = await apiCall('/api/sales');
+        
+        if (sales && Array.isArray(sales)) {
             const totals = {};
             sales.forEach(sale => {
                 if (!sale.items) return;
@@ -943,72 +766,41 @@
         });
 
         const topSellingCtx = document.getElementById('topSellingChart').getContext('2d');
-        if (topSellingChartInstance) topSellingChartInstance.destroy();
-        topSellingChartInstance = new Chart(topSellingCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Paracetamol','Amoxicillin','Ibuprofen','Metformin','Amlodipine','Losartan','Cetirizine'],
-                datasets: [{
-                    label: 'Units Sold',
-                    data: [320, 210, 185, 160, 140, 115, 95],
-                    backgroundColor: [
-                        'rgba(0,90,50,0.90)','rgba(0,90,50,0.75)','rgba(0,90,50,0.60)',
-                        'rgba(0,90,50,0.50)','rgba(214,40,40,0.50)','rgba(214,40,40,0.65)','rgba(214,40,40,0.82)'
-                    ],
-                    borderWidth: 0,
-                    borderRadius: 4
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { callbacks: { label: c => ` ${Number(c.parsed.x).toLocaleString('en-PH')} units sold` } }
-                },
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        grid: { color: gridColor },
-                        ticks: { color: textColor, callback: v => Number(v).toLocaleString('en-PH') }
-                    },
-                    y: { grid: { display: false }, ticks: { color: textColor, font: { size: 11 } } }
+        topSellingChartInstance = new Chart(topSellingCtx, { type: 'bar', data: { labels: ['Loading...'], datasets: [{ label: 'Units Sold', data: [0], backgroundColor: ['rgba(0, 90, 50, 0.90)', 'rgba(0, 90, 50, 0.75)', 'rgba(0, 90, 50, 0.60)', 'rgba(0, 90, 50, 0.50)', 'rgba(214, 40, 40, 0.50)', 'rgba(214, 40, 40, 0.65)', 'rgba(214, 40, 40, 0.82)'], borderWidth: 0, borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${Number(c.parsed.x).toLocaleString('en-PH')} units sold` } } }, scales: { x: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor, callback: v => Number(v).toLocaleString('en-PH') } }, y: { grid: { display: false }, ticks: { color: textColor, font: { size: 11 } } } } } });
+    }
+
+    // ── NOTIFICATIONS LOGIC (Fully Restored!) ──
+    let notifData = [];
+    let activeNotifFilter = 'all';
+
+    function generateAlertsFromInventory(inventory) {
+        const alerts = [];
+        const today = new Date();
+        const thirtyDays = new Date();
+        thirtyDays.setDate(today.getDate() + 30);
+
+        inventory.forEach((item, idx) => {
+            const medName = item.medicine?.name || item.name || 'Unknown Medicine';
+            if (item.expiryDate) {
+                const expiry = new Date(item.expiryDate);
+                if (expiry < today) {
+                    alerts.push({ id: `exp-${item._id || idx}`, type: 'expiry', unread: true, medicineName: medName, title: 'Medicine Expired', desc:  `${medName} expired on ${expiry.toLocaleDateString('en-PH')}.`, time:  'Needs attention', actionLabel: 'View', actionClass: 'btn-expiry', icon: 'event_busy', iconClass: 'icon-expiry' });
+                } else if (expiry <= thirtyDays) {
+                    const d = Math.ceil((expiry - today) / 864e5);
+                    alerts.push({ id: `exp-${item._id || idx}`, type: 'expiry', unread: true, medicineName: medName, title: 'Expiring Soon', desc:  `${medName} expires in ${d} days.`, time:  `${d} days left`, actionLabel: 'View', actionClass: 'btn-expiry', icon: 'schedule', iconClass: 'icon-expiry' });
                 }
             }
+            const qty = parseInt(item.quantity || 0);
+            const minStock = parseInt(item.minStockLevel || 10);
+            if (qty === 0) {
+                alerts.push({ id: `stk-${item._id || idx}`, type: 'critical', unread: true, medicineName: medName, title: 'Out of Stock', desc:  `${medName} is completely out.`, time:  'Immediate', actionLabel: 'Go to Inventory', actionClass: 'btn-critical', icon: 'warning', iconClass: 'icon-critical' });
+            } else if (qty <= minStock) {
+                alerts.push({ id: `stk-${item._id || idx}`, type: 'shortage', unread: true, medicineName: medName, title: 'Low Stock Alert', desc:  `${medName} — only ${qty} remaining.`, time:  'Reorder soon', actionLabel: 'Go to Inventory', actionClass: 'btn-shortage', icon: 'inventory_2', iconClass: 'icon-shortage' });
+            }
         });
-    }
-
-    // ── REFRESH BUTTONS ──
-    function refreshInventorySummary() {
-        const btn = document.getElementById('refreshInventory');
-        btn.classList.add('refreshing');
-        setTimeout(() => {
-            initializeSummaryData();
-            btn.classList.remove('refreshing');
-            showToast('Inventory data updated');
-            refreshNotifications();
-        }, 1000);
-    }
-
-    function refreshPrescriptionsSummary() {
-        const btn = document.getElementById('refreshPrescriptions');
-        btn.classList.add('refreshing');
-        setTimeout(() => {
-            initializeSummaryData();
-            btn.classList.remove('refreshing');
-            showToast('Prescriptions data updated');
-        }, 1000);
-    }
-
-    function refreshSalesSummary() {
-        const btn = document.getElementById('refreshSales');
-        btn.classList.add('refreshing');
-        loadLiveData().then(() => {
-            initializeSummaryData();
-            btn.classList.remove('refreshing');
-            showToast('Sales data updated');
-        });
+        const order = { critical: 0, expiry: 1, shortage: 2 };
+        alerts.sort((a, b) => (order[a.type] ?? 9) - (order[b.type] ?? 9));
+        return alerts;
     }
 
     function showToast(message) {
