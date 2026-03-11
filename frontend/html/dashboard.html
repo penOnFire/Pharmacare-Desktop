@@ -44,6 +44,27 @@
         .drag-region { -webkit-app-region: drag; }
         .no-drag     { -webkit-app-region: no-drag; }
 
+        /* ── NAVBAR CLOCK ── */
+        #navClock {
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+        }
+        #navDate {
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+        }
+
+        /* ── NAVBAR DIVIDER ── */
+        .nav-divider {
+            width: 1px;
+            height: 28px;
+            background: #e5e7eb;
+        }
+        .dark .nav-divider { background: #374151; }
+
         /* ── NOTIFICATION DROPDOWN ── */
         @keyframes badge-pop { from { transform: scale(0); } to { transform: scale(1); } }
         #notificationBadge { animation: badge-pop 0.3s cubic-bezier(.34,1.56,.64,1); }
@@ -177,15 +198,36 @@
         </aside>
         
         <main class="flex-1 flex flex-col">
+
+            <!-- ══════════════════════════════════════════
+                 NAVBAR — matches billing.html
+                 [ Clock+Date ] [ Bell ] [ Name/Role ] [ Avatar ]
+                 ══════════════════════════════════════════ -->
             <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
-                <div class="flex items-center gap-2"></div>
+                <!-- Left: empty spacer -->
+                <div></div>
+
+                <!-- Right: clock · divider · bell · divider · user info · avatar -->
                 <div class="flex items-center gap-4">
 
+                    <!-- Live Clock + Date -->
+                    <div class="text-right">
+                        <div id="navClock" class="text-text-light dark:text-text-dark"></div>
+                        <div id="navDate"  class="text-subtext-light dark:text-subtext-dark uppercase tracking-widest"></div>
+                    </div>
+
+                    <div class="nav-divider"></div>
+
+                    <!-- Notification Bell -->
                     <div class="relative">
-                        <button id="notificationBtn" class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                            <span class="material-icons text-2xl">notifications</span>
-                            <span id="notificationBadge" class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold" style="display:none;">0</span>
+                        <button id="notificationBtn"
+                            class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <span class="material-icons-outlined text-2xl">notifications</span>
+                            <span id="notificationBadge"
+                                class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold"
+                                style="display:none;">0</span>
                         </button>
+
                         <div id="notificationDropdown" class="notif-dropdown">
                             <div class="notif-header">
                                 <h3>Notifications</h3>
@@ -207,7 +249,17 @@
                         </div>
                     </div>
 
-                    <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">PH</div>
+                    <div class="nav-divider"></div>
+
+                    <!-- User Name + Role -->
+                    <div class="text-right leading-tight">
+                        <div id="navUserName" class="text-sm font-bold text-text-light dark:text-text-dark">User</div>
+                        <div id="navUserRole" class="text-xs text-subtext-light dark:text-subtext-dark">Staff</div>
+                    </div>
+
+                    <!-- Avatar with dynamic initial -->
+                    <div id="navAvatar" class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm select-none">U</div>
+
                 </div>
             </header>
             
@@ -370,7 +422,6 @@
     function getToken() {
         const directToken = sessionStorage.getItem('token');
         if (directToken) return directToken;
-        
         const userInfo = sessionStorage.getItem('userInfo');
         if (userInfo) {
             try { return JSON.parse(userInfo).token || null; } catch(e) {}
@@ -381,48 +432,93 @@
     async function apiCall(endpoint) {
         const token = getToken();
         if (!token) { window.location.href = 'login.html'; return null; }
-        
         try {
             const response = await fetch(`${API_BASE_URL}${endpoint}`, { 
                 headers: { 'Authorization': `Bearer ${token}` } 
             });
-            
             if (response.status === 401) { 
                 sessionStorage.clear(); 
                 window.location.href = 'login.html'; 
                 return null; 
             }
-            
             if (!response.ok) {
                 console.warn(`Backend blocked request to ${endpoint} with status ${response.status}`);
                 return null;
             }
-            
             return await response.json();
-            
         } catch (error) { 
             console.error("API Error:", error); 
             return null; 
         }
     }
 
+    // ══════════════════════════════════════════════════════════
+    // LIVE NAVBAR CLOCK — ticks every second
+    // ══════════════════════════════════════════════════════════
+    function updateNavClock() {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('en-US', {
+            hour:   '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+        });
+        const dateStr = now.toLocaleDateString('en-US', {
+            month: 'short',
+            day:   'numeric',
+            year:  'numeric'
+        }).toUpperCase();
+        document.getElementById('navClock').textContent = timeStr;
+        document.getElementById('navDate').textContent  = dateStr;
+    }
+
+    // ── Load user info from session into navbar ──
+    function loadNavUserInfo() {
+        try {
+            const raw = sessionStorage.getItem('userInfo');
+            if (!raw) return;
+            const info    = JSON.parse(raw);
+            const name    = info.name || info.firstName || info.username || 'User';
+            const role    = info.role || info.position || '';
+            const initial = name.charAt(0).toUpperCase();
+            document.getElementById('navUserName').textContent = name;
+            document.getElementById('navUserRole').textContent = role;
+            document.getElementById('navAvatar').textContent   = initial;
+        } catch(e) { /* keep defaults */ }
+    }
+
     // ── INITIALIZATION ──
     document.addEventListener('DOMContentLoaded', function() {
         const isDarkMode = sessionStorage.getItem('darkMode') === 'true';
         document.documentElement.classList.toggle('dark', isDarkMode);
+
+        // ── Live clock ──
+        updateNavClock();
+        setInterval(updateNavClock, 1000);
+
+        // ── Navbar user info ──
+        loadNavUserInfo();
         
         initializeCharts();
         fetchDashboardStats(); 
         loadTopSellingData();
         startAutoRefresh();
         
-        const btn = document.getElementById('notificationBtn');
+        // ── Notification bell wiring ──
+        const btn      = document.getElementById('notificationBtn');
         const dropdown = document.getElementById('notificationDropdown');
-        if(btn && dropdown) {
-            btn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('open'); if(dropdown.classList.contains('open')) refreshNotifications(); });
-            document.addEventListener('click', (e) => { if (!dropdown.contains(e.target) && e.target !== btn) dropdown.classList.remove('open'); });
+        if (btn && dropdown) {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('open');
+                if (dropdown.classList.contains('open')) refreshNotifications();
+            });
+            document.addEventListener('click', (e) => {
+                if (!dropdown.contains(e.target) && e.target !== btn) dropdown.classList.remove('open');
+            });
             dropdown.addEventListener('click', e => e.stopPropagation());
-            setTimeout(refreshNotifications, 800); setInterval(refreshNotifications, 60000);
+            setTimeout(refreshNotifications, 800);
+            setInterval(refreshNotifications, 60000);
         }
     });
 
@@ -439,14 +535,12 @@
         const data = await apiCall('/api/dashboard/stats');
         
         if (data && data.inventory) {
-            // 1. UPDATE TOP CARDS
             safeSetText('totalStock', data.inventory.totalItems.toLocaleString('en-PH'));
             safeSetText('outOfStock', data.inventory.outOfStock.toLocaleString('en-PH'));
             safeSetText('criticalItems', `${data.inventory.lowStock} critical items`);
             safeSetText('expiringItems', data.inventory.expiringSoon.toLocaleString('en-PH'));
             safeSetText('dailySales', formatPeso(data.sales.todayRevenue));
 
-            // 2. UPDATE MODULE SUMMARIES
             safeSetText('inventoryTotal', data.inventory.totalItems.toLocaleString('en-PH'));
             safeSetText('inventoryLowStock', `${data.inventory.lowStock} items`);
             safeSetText('inventoryExpiring', `${data.inventory.expiringSoon} items`);
@@ -459,7 +553,6 @@
             safeSetText('salesTransactions', data.sales.todayTransactions.toLocaleString('en-PH'));
             safeSetText('salesAverage', formatPeso(data.sales.avgTransaction));
 
-            // 3. UPDATE CHARTS
             if (data.charts) updateMainCharts(data.charts);
             
             initializeSummaryData();
@@ -531,7 +624,9 @@
         topSellingChartInstance = new Chart(topSellingCtx, { type: 'bar', data: { labels: ['Loading...'], datasets: [{ label: 'Units Sold', data: [0], backgroundColor: ['rgba(0, 90, 50, 0.90)', 'rgba(0, 90, 50, 0.75)', 'rgba(0, 90, 50, 0.60)', 'rgba(0, 90, 50, 0.50)', 'rgba(214, 40, 40, 0.50)', 'rgba(214, 40, 40, 0.65)', 'rgba(214, 40, 40, 0.82)'], borderWidth: 0, borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${Number(c.parsed.x).toLocaleString('en-PH')} units sold` } } }, scales: { x: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor, callback: v => Number(v).toLocaleString('en-PH') } }, y: { grid: { display: false }, ticks: { color: textColor, font: { size: 11 } } } } } });
     }
 
-    // ── NOTIFICATIONS LOGIC (Fully Restored!) ──
+    // ══════════════════════════════════════════════════════════
+    // FANCY NOTIFICATION BELL — live from /api/inventory
+    // ══════════════════════════════════════════════════════════
     let notifData = [];
     let activeNotifFilter = 'all';
 
@@ -546,18 +641,18 @@
             if (item.expiryDate) {
                 const expiry = new Date(item.expiryDate);
                 if (expiry < today) {
-                    alerts.push({ id: `exp-${item._id || idx}`, type: 'expiry', unread: true, medicineName: medName, title: 'Medicine Expired', desc:  `${medName} expired on ${expiry.toLocaleDateString('en-PH')}.`, time:  'Needs attention', actionLabel: 'View', actionClass: 'btn-expiry', icon: 'event_busy', iconClass: 'icon-expiry' });
+                    alerts.push({ id: `exp-${item._id || idx}`, type: 'expiry', unread: true, medicineName: medName, title: 'Medicine Expired', desc: `${medName} expired on ${expiry.toLocaleDateString('en-PH')}.`, time: 'Needs attention', actionLabel: 'View', actionClass: 'btn-expiry', icon: 'event_busy', iconClass: 'icon-expiry' });
                 } else if (expiry <= thirtyDays) {
                     const d = Math.ceil((expiry - today) / 864e5);
-                    alerts.push({ id: `exp-${item._id || idx}`, type: 'expiry', unread: true, medicineName: medName, title: 'Expiring Soon', desc:  `${medName} expires in ${d} days.`, time:  `${d} days left`, actionLabel: 'View', actionClass: 'btn-expiry', icon: 'schedule', iconClass: 'icon-expiry' });
+                    alerts.push({ id: `exp-${item._id || idx}`, type: 'expiry', unread: true, medicineName: medName, title: 'Expiring Soon', desc: `${medName} expires in ${d} days.`, time: `${d} days left`, actionLabel: 'View', actionClass: 'btn-expiry', icon: 'schedule', iconClass: 'icon-expiry' });
                 }
             }
             const qty = parseInt(item.quantity || 0);
             const minStock = parseInt(item.minStockLevel || 10);
             if (qty === 0) {
-                alerts.push({ id: `stk-${item._id || idx}`, type: 'critical', unread: true, medicineName: medName, title: 'Out of Stock', desc:  `${medName} is completely out.`, time:  'Immediate', actionLabel: 'Go to Inventory', actionClass: 'btn-critical', icon: 'warning', iconClass: 'icon-critical' });
+                alerts.push({ id: `stk-${item._id || idx}`, type: 'critical', unread: true, medicineName: medName, title: 'Out of Stock', desc: `${medName} is completely out.`, time: 'Immediate', actionLabel: 'Go to Inventory', actionClass: 'btn-critical', icon: 'warning', iconClass: 'icon-critical' });
             } else if (qty <= minStock) {
-                alerts.push({ id: `stk-${item._id || idx}`, type: 'shortage', unread: true, medicineName: medName, title: 'Low Stock Alert', desc:  `${medName} — only ${qty} remaining.`, time:  'Reorder soon', actionLabel: 'Go to Inventory', actionClass: 'btn-shortage', icon: 'inventory_2', iconClass: 'icon-shortage' });
+                alerts.push({ id: `stk-${item._id || idx}`, type: 'shortage', unread: true, medicineName: medName, title: 'Low Stock Alert', desc: `${medName} — only ${qty} remaining.`, time: 'Reorder soon', actionLabel: 'Go to Inventory', actionClass: 'btn-shortage', icon: 'inventory_2', iconClass: 'icon-shortage' });
             }
         });
         const order = { critical: 0, expiry: 1, shortage: 2 };
@@ -567,7 +662,7 @@
 
     function renderNotifications() {
         const list = document.getElementById('notifList');
-        if(!list) return;
+        if (!list) return;
         const filtered = activeNotifFilter === 'all' ? notifData : notifData.filter(n => n.type === activeNotifFilter);
         if (!filtered.length) {
             list.innerHTML = `<div class="notif-empty"><span class="material-icons">notifications_none</span><p>All clear — no alerts!</p></div>`;
