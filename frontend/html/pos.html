@@ -48,100 +48,6 @@
     .pos-primary-bg { background-color: #319795; }
     .pos-primary-border { border-color: #319795; }
     .pos-primary-ring:focus { --tw-ring-color: #319795; }
-
-    /* ── NAVBAR ── */
-    .nav-divider { width: 1px; height: 28px; background: #e5e7eb; }
-    .dark .nav-divider { background: #374151; }
-
-    /* ── NOTIFICATION DROPDOWN ── */
-    @keyframes badge-pop { from { transform: scale(0); } to { transform: scale(1); } }
-    #notificationBadge { animation: badge-pop 0.3s cubic-bezier(.34,1.56,.64,1); }
-
-    .notif-dropdown {
-        position: absolute;
-        top: calc(100% + 10px);
-        right: 0;
-        width: 370px;
-        background: #fff;
-        border-radius: 14px;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.06);
-        border: 1px solid #e5e7eb;
-        z-index: 1000;
-        overflow: hidden;
-        opacity: 0;
-        transform: translateY(-8px) scale(0.97);
-        pointer-events: none;
-        transition: opacity 0.22s ease, transform 0.22s cubic-bezier(.34,1.56,.64,1);
-        transform-origin: top right;
-    }
-    .dark .notif-dropdown { background: #1F2937; border-color: #374151; }
-    .notif-dropdown.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
-
-    .notif-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 14px; border-bottom: 1px solid #f0f0f0; }
-    .dark .notif-header { border-color: #374151; }
-    .notif-header h3 { font-size: 15px; font-weight: 700; color: #111827; }
-    .dark .notif-header h3 { color: #F9FAFB; }
-    .notif-header-meta { display: flex; align-items: center; gap: 10px; }
-    .unread-count-pill { background: #005a32; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
-    .mark-all-btn { font-size: 11px; color: #005a32; font-weight: 600; background: none; border: none; cursor: pointer; padding: 2px 4px; border-radius: 4px; transition: background 0.15s; }
-    .mark-all-btn:hover { background: #f0fdf4; }
-
-    .notif-tabs { display: flex; gap: 4px; padding: 10px 14px; background: #fafafa; border-bottom: 1px solid #f0f0f0; }
-    .dark .notif-tabs { background: #111827; border-color: #374151; }
-    .notif-tab-btn { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 99px; border: 1px solid transparent; cursor: pointer; background: none; color: #6b7280; transition: all 0.15s; }
-    .notif-tab-btn.active { background: #005a32; color: #fff; border-color: #005a32; }
-    .notif-tab-btn:not(.active):hover { background: #f3f4f6; border-color: #e5e7eb; color: #374151; }
-
-    .notif-list { max-height: 360px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #e5e7eb transparent; }
-    .notif-list::-webkit-scrollbar { width: 4px; }
-    .notif-list::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 2px; }
-
-    .notif-item { display: flex; gap: 12px; align-items: flex-start; padding: 13px 16px; border-bottom: 1px solid #f5f5f5; cursor: pointer; position: relative; transition: background 0.15s; }
-    .dark .notif-item { border-color: #374151; }
-    .notif-item:last-child { border-bottom: none; }
-    .notif-item:hover { background: #f9fafb; }
-    .dark .notif-item:hover { background: #111827; }
-    .notif-item.unread { background: #ffffff; }
-    .dark .notif-item.unread { background: #1F2937; }
-    .notif-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 0 2px 2px 0; }
-    .notif-item.critical::before { background: #EF4444; }
-    .notif-item.expiry::before   { background: #8b5a2b; }
-    .notif-item.pending::before  { background: #3B82F6; }
-    .notif-item.shortage::before { background: #358E83; }
-
-    .notif-icon-wrap { flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-    .notif-icon-wrap .material-icons { font-size: 20px; }
-    .icon-critical { background: #fef2f2; } .icon-critical .material-icons { color: #EF4444; }
-    .icon-expiry   { background: #fdf6ec; } .icon-expiry   .material-icons { color: #8b5a2b; }
-    .icon-pending  { background: #eff6ff; } .icon-pending  .material-icons { color: #3B82F6; }
-    .icon-shortage { background: #f0fdfa; } .icon-shortage .material-icons { color: #358E83; }
-
-    .notif-body { flex: 1; min-width: 0; }
-    .notif-title { font-size: 13px; font-weight: 600; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .dark .notif-title { color: #F9FAFB; }
-    .notif-desc  { font-size: 12px; color: #6b7280; margin-top: 2px; line-height: 1.4; }
-    .notif-time  { font-size: 10px; color: #9ca3af; margin-top: 6px; }
-    .notif-action { margin-top: 8px; }
-    .notif-action-btn { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 6px; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 0.04em; transition: opacity 0.15s, transform 0.1s; }
-    .notif-action-btn:active { transform: scale(0.96); }
-    .notif-action-btn:hover  { opacity: 0.88; }
-    .btn-critical { background: #EF4444; color: #fff; }
-    .btn-expiry   { background: #8b5a2b; color: #fff; }
-    .btn-pending  { background: #3B82F6; color: #fff; }
-    .btn-shortage { background: #005a32; color: #fff; }
-
-    .unread-dot { flex-shrink: 0; width: 7px; height: 7px; border-radius: 50%; background: #005a32; margin-top: 5px; }
-    .notif-empty { padding: 40px 20px; text-align: center; color: #9ca3af; }
-    .notif-empty .material-icons { font-size: 40px; margin-bottom: 8px; display: block; }
-    .notif-empty p { font-size: 13px; }
-    .notif-loading { padding: 30px 20px; text-align: center; color: #9ca3af; }
-    .notif-loading p { font-size: 12px; margin-top: 8px; }
-
-    .notif-footer { border-top: 1px solid #f0f0f0; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; }
-    .dark .notif-footer { border-color: #374151; }
-    .view-all-link { font-size: 12px; font-weight: 600; color: #005a32; text-decoration: none; display: flex; align-items: center; gap: 4px; }
-    .view-all-link:hover { text-decoration: underline; }
-    .view-all-link .material-icons { font-size: 14px; }
 </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
@@ -190,12 +96,15 @@
             <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="patient_records.html">
                 <span class="material-icons mr-3">folder_shared</span> Patient Records
             </a>
-            <a class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold" href="pos.html">
+             <a class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold" href="pos.html">
                 <span class="material-icons mr-3">shopping_cart</span> Counter Dispensing
             </a>
+            
             <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="billing.html">
                 <span class="material-icons mr-3">point_of_sale</span> Sales &amp; Billing
             </a>
+           
+           
         </nav>
         <div class="p-4 border-t border-border-light dark:border-border-dark">
             <button onclick="logoutUser()"
@@ -210,66 +119,32 @@
 
         <!-- Top Header -->
         <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
-            <div></div>
+            <div class="flex items-center gap-3">
+                <span class="material-icons text-primary">shopping_cart</span>
+                <div>
+                    <h2 class="font-bold text-text-light dark:text-text-dark leading-tight">New Transaction</h2>
+                    <p class="text-xs text-subtext-light dark:text-subtext-dark">Select items and proceed to payment</p>
+                </div>
+            </div>
             <div class="flex items-center gap-4">
-
-                <!-- Live Clock + Date -->
-                <div class="text-right">
-                    <div id="navClock" class="font-bold text-sm text-text-light dark:text-text-dark"></div>
-                    <div id="navDate" class="text-[10px] font-medium uppercase tracking-widest text-subtext-light dark:text-subtext-dark"></div>
+                <!-- System Status -->
+                <div class="flex items-center gap-2 bg-white dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 text-xs">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="font-medium text-slate-600 dark:text-slate-300 uppercase tracking-wider">System Online</span>
                 </div>
-
-                <div class="nav-divider"></div>
-
-                <!-- Notification Bell -->
-                <div class="relative">
-                    <button id="notificationBtn"
-                        class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                        <span class="material-icons-outlined text-2xl">notifications</span>
-                        <span id="notificationBadge"
-                            class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold"
-                            style="display:none;">0</span>
-                    </button>
-
-                    <div id="notificationDropdown" class="notif-dropdown">
-                        <div class="notif-header">
-                            <h3>Notifications</h3>
-                            <div class="notif-header-meta">
-                                <span class="unread-count-pill" id="unreadPill">Loading...</span>
-                                <button class="mark-all-btn" onclick="markAllRead()">Mark all read</button>
-                            </div>
-                        </div>
-                        <div class="notif-tabs">
-                            <button class="notif-tab-btn active" onclick="filterNotifTab(this,'all')">All</button>
-                            <button class="notif-tab-btn" onclick="filterNotifTab(this,'critical')">Critical</button>
-                            <button class="notif-tab-btn" onclick="filterNotifTab(this,'expiry')">Expiry</button>
-                            <button class="notif-tab-btn" onclick="filterNotifTab(this,'shortage')">Stock</button>
-                        </div>
-                        <div class="notif-list" id="notifList">
-                            <div class="notif-loading">
-                                <span class="material-icons" style="font-size:32px;display:block;margin:0 auto 8px;">hourglass_empty</span>
-                                <p>Loading alerts from inventory...</p>
-                            </div>
-                        </div>
-                        <div class="notif-footer">
-                            <a href="inventory.html" class="view-all-link">
-                                View inventory <span class="material-icons">arrow_forward</span>
-                            </a>
-                        </div>
-                    </div>
+                <!-- Cashier Info -->
+                <div class="flex items-center gap-2 text-xs">
+                    <span class="text-subtext-light dark:text-subtext-dark">Cashier:</span>
+                    <span class="font-semibold">Jane Doe</span>
                 </div>
-
-                <div class="nav-divider"></div>
-
-                <!-- User Name + Role -->
-                <div class="text-right leading-tight">
-                    <div id="navUserName" class="text-sm font-bold text-text-light dark:text-text-dark">User</div>
-                    <div id="navUserRole" class="text-xs text-subtext-light dark:text-subtext-dark">Role</div>
-                </div>
-
+                <!-- Date -->
+                <span class="text-xs font-medium text-subtext-light dark:text-subtext-dark" id="currentDate"></span>
+                <!-- Dark Mode Toggle -->
+                <button onclick="toggleDarkMode()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                    <span class="material-icons text-subtext-light dark:text-subtext-dark" style="font-size:20px;">dark_mode</span>
+                </button>
                 <!-- Avatar -->
-                <div id="navAvatar" class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm select-none">U</div>
-
+                <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm">PH</div>
             </div>
         </header>
 
@@ -389,7 +264,6 @@
 </div>
 
 <script>
-<<<<<<< Updated upstream
     const API_BASE_URL = 'http://localhost:5001';
     
     // ── AUTH & API CALL ──
@@ -596,481 +470,6 @@
             document.getElementById('cartCount').textContent = '0 Items';
             return;
         }
-=======
-const API_BASE_URL = 'http://localhost:5001';
-
-// ── DATA ──
-const products = [
-    { id: 1, name: 'Amoxicillin 500mg',  category: 'Antibiotics',      price: 12.50, stock: 45,  catColor: 'blue',    lowStock: false },
-    { id: 2, name: 'Paracetamol 500mg',  category: 'Pain Relief',      price:  5.00, stock: 120, catColor: 'purple',  lowStock: false },
-    { id: 3, name: 'Ibuprofen 400mg',    category: 'Pain Relief',      price:  8.75, stock: 15,  catColor: 'purple',  lowStock: true  },
-    { id: 4, name: 'Cetirizine 10mg',    category: 'Antihistamine',    price: 15.20, stock: 60,  catColor: 'indigo',  lowStock: false },
-    { id: 5, name: 'Omeprazole 20mg',    category: 'Gastrointestinal', price:  9.30, stock: 85,  catColor: 'emerald', lowStock: false },
-    { id: 6, name: 'Metformin 500mg',    category: 'Diabetes',         price:  6.45, stock: 200, catColor: 'rose',    lowStock: false },
-    { id: 7, name: 'Amlodipine 5mg',     category: 'Cardiovascular',   price: 18.00, stock: 30,  catColor: 'sky',     lowStock: false },
-    { id: 8, name: 'Losartan 50mg',      category: 'Cardiovascular',   price: 22.50, stock: 8,   catColor: 'sky',     lowStock: true  },
-    { id: 9, name: 'Loratadine 10mg',    category: 'Antihistamine',    price:  7.80, stock: 55,  catColor: 'indigo',  lowStock: false },
-];
-
-const catColors = {
-    blue:   { bg: 'bg-blue-50 dark:bg-blue-900/30',      text: 'text-blue-600 dark:text-blue-400' },
-    purple: { bg: 'bg-purple-50 dark:bg-purple-900/30',  text: 'text-purple-600 dark:text-purple-400' },
-    indigo: { bg: 'bg-indigo-50 dark:bg-indigo-900/30',  text: 'text-indigo-600 dark:text-indigo-400' },
-    emerald:{ bg: 'bg-emerald-50 dark:bg-emerald-900/30',text: 'text-emerald-600 dark:text-emerald-400' },
-    rose:   { bg: 'bg-rose-50 dark:bg-rose-900/30',      text: 'text-rose-600 dark:text-rose-400' },
-    sky:    { bg: 'bg-sky-50 dark:bg-sky-900/30',        text: 'text-sky-600 dark:text-sky-400' },
-};
-
-let cart           = {};
-let activeCategory = 'all';
-let activePayment  = 'cash';
-
-// ── AUTH ──
-function getToken() {
-    const direct = sessionStorage.getItem('token');
-    if (direct) return direct;
-    const userInfo = sessionStorage.getItem('userInfo');
-    if (userInfo) {
-        try { return JSON.parse(userInfo).token || null; } catch(e) {}
-    }
-    return null;
-}
-
-// ── NAVBAR ──
-function updateNavClock() {
-    const now = new Date();
-    document.getElementById('navClock').textContent = now.toLocaleTimeString('en-US', {
-        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
-    });
-    document.getElementById('navDate').textContent = now.toLocaleDateString('en-US', {
-        month: 'short', day: 'numeric', year: 'numeric'
-    }).toUpperCase();
-}
-
-function loadNavUserInfo() {
-    try {
-        const info = JSON.parse(sessionStorage.getItem('userInfo') || '{}');
-        const name = info.name || info.firstName || info.username || 'User';
-        const role = info.role || info.position || '';
-        document.getElementById('navUserName').textContent = name;
-        document.getElementById('navUserRole').textContent = role;
-        document.getElementById('navAvatar').textContent   = name.charAt(0).toUpperCase();
-    } catch(e) {}
-}
-
-// ── NOTIFICATIONS ──
-let notifData         = [];
-let activeNotifFilter = 'all';
-
-function generateAlertsFromInventory(inventory) {
-    const alerts     = [];
-    const today      = new Date();
-    const thirtyDays = new Date();
-    thirtyDays.setDate(today.getDate() + 30);
-
-    inventory.forEach((item, idx) => {
-        const medName = item.medicine?.name || item.name || 'Unknown Medicine';
-
-        if (item.expiryDate) {
-            const expiry = new Date(item.expiryDate);
-            if (expiry < today) {
-                alerts.push({
-                    id: `exp-${item._id || idx}`, type: 'expiry', unread: true,
-                    medicineName: medName,
-                    title: 'Medicine Expired',
-                    desc:  `${medName} expired on ${expiry.toLocaleDateString('en-PH')}.`,
-                    time:  'Needs immediate attention',
-                    actionLabel: 'View Batch', actionClass: 'btn-expiry',
-                    icon: 'event_busy', iconClass: 'icon-expiry'
-                });
-            } else if (expiry <= thirtyDays) {
-                const d = Math.ceil((expiry - today) / 864e5);
-                alerts.push({
-                    id: `exp-${item._id || idx}`, type: 'expiry', unread: true,
-                    medicineName: medName,
-                    title: 'Expiring Soon',
-                    desc:  `${medName} expires in ${d} day${d === 1 ? '' : 's'}.`,
-                    time:  `${d} days left`,
-                    actionLabel: 'View Batch', actionClass: 'btn-expiry',
-                    icon: 'schedule', iconClass: 'icon-expiry'
-                });
-            }
-        }
-
-        const qty      = parseInt(item.quantity || 0);
-        const minStock = parseInt(item.minStockLevel || 10);
-
-        if (qty === 0) {
-            alerts.push({
-                id: `stk-${item._id || idx}`, type: 'critical', unread: true,
-                medicineName: medName,
-                title: 'Critical: Out of Stock',
-                desc:  `${medName} is completely out of stock. Needs emergency reorder.`,
-                time:  'Immediate action required',
-                actionLabel: 'Go to Inventory', actionClass: 'btn-critical',
-                icon: 'warning', iconClass: 'icon-critical'
-            });
-        } else if (qty <= minStock) {
-            alerts.push({
-                id: `stk-${item._id || idx}`, type: 'shortage', unread: true,
-                medicineName: medName,
-                title: 'Low Stock Alert',
-                desc:  `${medName} — only ${qty} unit${qty === 1 ? '' : 's'} remaining (min: ${minStock}).`,
-                time:  'Reorder soon',
-                actionLabel: 'Go to Inventory', actionClass: 'btn-shortage',
-                icon: 'inventory_2', iconClass: 'icon-shortage'
-            });
-        }
-    });
-
-    const order = { critical: 0, expiry: 1, shortage: 2 };
-    alerts.sort((a, b) => (order[a.type] ?? 9) - (order[b.type] ?? 9));
-    return alerts;
-}
-
-function renderNotifications() {
-    const list     = document.getElementById('notifList');
-    const filtered = activeNotifFilter === 'all'
-        ? notifData
-        : notifData.filter(n => n.type === activeNotifFilter);
-
-    if (!filtered.length) {
-        list.innerHTML = `
-            <div class="notif-empty">
-                <span class="material-icons">notifications_none</span>
-                <p>${activeNotifFilter === 'all' ? 'All clear — no alerts right now!' : 'No notifications in this category.'}</p>
-            </div>`;
-        updateNotifBadge();
-        return;
-    }
-
-    list.innerHTML = filtered.map(n => `
-        <div class="notif-item ${n.type} ${n.unread ? 'unread' : ''}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
-            <div class="notif-icon-wrap ${n.iconClass}">
-                <span class="material-icons">${n.icon}</span>
-            </div>
-            <div class="notif-body">
-                <div class="notif-title">${n.title}</div>
-                <div class="notif-desc">${n.desc}</div>
-                <div class="notif-time">${n.time}</div>
-                <div class="notif-action">
-                    <button class="notif-action-btn ${n.actionClass}"
-                        onclick="handleNotifAction(event,'${n.id}')">${n.actionLabel}</button>
-                </div>
-            </div>
-            ${n.unread ? '<div class="unread-dot"></div>' : ''}
-        </div>`).join('');
-
-    updateNotifBadge();
-}
-
-function updateNotifBadge() {
-    const count = notifData.filter(n => n.unread).length;
-    const badge = document.getElementById('notificationBadge');
-    const pill  = document.getElementById('unreadPill');
-    if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none'; }
-    if (pill)  pill.textContent = count > 0 ? `${count} new` : 'All clear';
-}
-
-function markNotifRead(id) {
-    const n = notifData.find(n => n.id === id);
-    if (n) { n.unread = false; renderNotifications(); }
-}
-
-function markAllRead() {
-    notifData.forEach(n => n.unread = false);
-    renderNotifications();
-}
-
-function handleNotifAction(event, id) {
-    event.stopPropagation();
-    markNotifRead(id);
-    const n = notifData.find(n => n.id === id);
-    if (!n) return;
-    if (n.type === 'expiry') {
-        sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'batch', medicine: n.medicineName }));
-    } else if (n.type === 'critical' || n.type === 'shortage') {
-        sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'summary', medicine: n.medicineName }));
-    }
-    window.location.href = 'inventory.html';
-}
-
-function filterNotifTab(btn, filter) {
-    document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    activeNotifFilter = filter;
-    renderNotifications();
-}
-
-async function refreshNotifications() {
-    const token = getToken();
-    if (!token) return;
-    try {
-        const res = await fetch(`${API_BASE_URL}/api/inventory`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const raw       = await res.json();
-        const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
-        const previouslyRead = new Set(notifData.filter(n => !n.unread).map(n => n.id));
-        notifData = generateAlertsFromInventory(inventory).slice(0, 15);
-        notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
-        renderNotifications();
-    } catch (e) {
-        console.warn('Notification fetch failed:', e);
-        if (!notifData.length) {
-            document.getElementById('notifList').innerHTML = `
-                <div class="notif-empty">
-                    <span class="material-icons">cloud_off</span>
-                    <p>Could not load alerts. Check server connection.</p>
-                </div>`;
-        }
-    }
-}
-
-// ── INIT ──
-document.addEventListener('DOMContentLoaded', () => {
-    renderProducts();
-    loadNavUserInfo();
-    updateNavClock();
-    setInterval(updateNavClock, 1000);
-
-    // Bell toggle
-    const btn      = document.getElementById('notificationBtn');
-    const dropdown = document.getElementById('notificationDropdown');
-    btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        dropdown.classList.toggle('open');
-        if (dropdown.classList.contains('open')) refreshNotifications();
-    });
-    document.addEventListener('click', (e) => {
-        if (!dropdown.contains(e.target) && e.target !== btn) dropdown.classList.remove('open');
-    });
-    dropdown.addEventListener('click', e => e.stopPropagation());
-
-    setTimeout(refreshNotifications, 800);
-    setInterval(refreshNotifications, 60000);
-});
-
-// ── PRODUCTS ──
-function renderProducts() {
-    const grid  = document.getElementById('productGrid');
-    const query = (document.getElementById('searchInput')?.value || '').toLowerCase();
-    const list  = products.filter(p => {
-        const matchCat    = activeCategory === 'all' || p.category === activeCategory;
-        const matchSearch = p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query);
-        return matchCat && matchSearch;
-    });
-
-    if (!list.length) {
-        grid.innerHTML = `<div class="col-span-3 flex flex-col items-center justify-center h-40 text-slate-400 gap-2">
-            <span class="material-icons-round text-4xl">search_off</span>
-            <p class="text-sm">No medicines found</p>
-        </div>`;
-        return;
-    }
-
-    grid.innerHTML = list.map(p => {
-        const cc     = catColors[p.catColor] || catColors.blue;
-        const inCart = cart[p.id]?.qty || 0;
-        return `
-        <div class="group bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-teal-500 dark:hover:border-teal-500 transition-all shadow-sm hover:shadow-md">
-            <div class="flex justify-between items-start mb-4">
-                <span class="px-2.5 py-1 ${cc.bg} ${cc.text} text-[10px] font-bold uppercase tracking-wider rounded">${p.category}</span>
-                ${p.lowStock ? `<span class="px-2 py-0.5 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-500 text-[10px] font-bold rounded">Low Stock</span>` : ''}
-            </div>
-            <h3 class="text-base font-bold mb-1">${p.name}</h3>
-            <p class="text-xs text-slate-400 mb-5">Stock: ${p.stock} units</p>
-            <div class="flex items-center justify-between">
-                <span class="text-xl font-bold text-slate-800 dark:text-slate-100">₱${p.price.toFixed(2)}</span>
-                <div class="flex items-center gap-2">
-                    ${inCart > 0 ? `
-                    <div class="flex items-center gap-1">
-                        <button onclick="updateQty(${p.id},-1)" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 flex items-center justify-center hover:bg-red-100 hover:text-red-500 transition-all text-lg font-bold leading-none">−</button>
-                        <span class="w-6 text-center text-sm font-bold">${inCart}</span>
-                        <button onclick="updateQty(${p.id},1)" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 flex items-center justify-center hover:bg-teal-100 hover:text-teal-600 transition-all text-lg font-bold leading-none">+</button>
-                    </div>` : `
-                    <button onclick="addToCart(${p.id})" class="w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-900 text-teal-600 border border-slate-100 dark:border-slate-700 flex items-center justify-center hover:bg-teal-600 hover:text-white transition-all transform active:scale-95">
-                        <span class="material-icons-round">add</span>
-                    </button>`}
-                </div>
-            </div>
-        </div>`;
-    }).join('');
-}
-
-function setCategory(btn, cat) {
-    activeCategory = cat;
-    document.querySelectorAll('.category-btn').forEach(b => {
-        b.className = 'category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap';
-    });
-    
-    function updateDate() {
-        const el = document.getElementById('currentDate');
-        if (el) el.textContent = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
-    }
-    
-    // ── INVENTORY FETCH ──
-    async function loadInventory() {
-        const inventoryData = await apiCall('/api/inventory');
-        if (!inventoryData) return;
-    
-        const liveInventory = (Array.isArray(inventoryData) ? inventoryData : (inventoryData.medicines || [])).filter(i => i.status !== 'Archived');
-        const grouped = {};
-        const today = new Date();
-    
-        liveInventory.forEach(item => {
-            if (!item.medicine) return;
-            const isExpired = new Date(item.expiryDate) < today;
-            if (isExpired) return; // Hide expired items from POS!
-    
-            const medObj = typeof item.medicine === 'object' ? item.medicine : { _id: item.medicine, name: item.name, type: 'General', strength: '' };
-            const medId = String(medObj._id);
-            const qty = parseInt(item.quantity || 0);
-            if (qty <= 0) return;
-    
-            const price = parseFloat(item.sellingPrice || item.price || medObj.sellingPrice || 0);
-    
-            if (!grouped[medId]) {
-                grouped[medId] = {
-                    id: medId,
-                    name: `${medObj.name} ${medObj.strength || ''}`.trim(),
-                    category: medObj.type || 'General',
-                    price: price,
-                    stock: 0,
-                    lowStock: false,
-                    catColor: getColorForCategory(medObj.type)
-                };
-            }
-            
-            grouped[medId].stock += qty;
-            const minLevel = parseInt(item.minStockLevel || 10);
-            grouped[medId].lowStock = grouped[medId].stock <= minLevel;
-        });
-    
-        products = Object.values(grouped).sort((a,b) => a.name.localeCompare(b.name));
-        renderProducts();
-    }
-    
-    // ── PRODUCTS ──
-    function renderProducts() {
-        const grid = document.getElementById('productGrid');
-        const query = (document.getElementById('searchInput')?.value || '').toLowerCase();
-        
-        const list = products.filter(p => {
-            const matchCat = activeCategory === 'all' || p.category === activeCategory;
-            const matchSearch = p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query);
-            return matchCat && matchSearch;
-        });
-    
-        if (!list.length) {
-            grid.innerHTML = `<div class="col-span-3 flex flex-col items-center justify-center h-40 text-slate-400 gap-2">
-                <span class="material-icons-round text-4xl">search_off</span>
-                <p class="text-sm">No active medicines found</p>
-            </div>`;
-            return;
-        }
-    
-        grid.innerHTML = list.map(p => {
-            const cc = catColors[p.catColor] || catColors.blue;
-            const inCart = cart[p.id]?.qty || 0;
-            return `
-            <div class="group bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-teal-500 transition-all shadow-sm hover:shadow-md">
-                <div class="flex justify-between items-start mb-4">
-                    <span class="px-2.5 py-1 ${cc.bg} ${cc.text} text-[10px] font-bold uppercase tracking-wider rounded">${p.category}</span>
-                    ${p.lowStock ? `<span class="px-2 py-0.5 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-500 text-[10px] font-bold rounded">Low Stock</span>` : ''}
-                </div>
-            </div>
-            <div class="text-right">
-                <p class="text-sm font-bold">₱${(p.price * qty).toFixed(2)}</p>
-                <button onclick="removeFromCart(${p.id})" class="text-[10px] text-rose-500 font-medium opacity-0 group-hover:opacity-100 transition-opacity">Remove</button>
-            </div>
-        </div>`).join('');
-}
-
-function updateTotals() {
-    const subtotal = Object.values(cart).reduce((s, i) => s + i.product.price * i.qty, 0);
-    document.getElementById('subtotal').textContent    = `₱${subtotal.toFixed(2)}`;
-    document.getElementById('totalAmount').textContent = `₱${subtotal.toFixed(2)}`;
-    document.getElementById('payBtnText').textContent  = `Pay ₱${subtotal.toFixed(2)}`;
-    calcChange();
-}
-
-function calcChange() {
-    const subtotal = Object.values(cart).reduce((s, i) => s + i.product.price * i.qty, 0);
-    const received = parseFloat(document.getElementById('amountReceived').value) || 0;
-    const change   = Math.max(0, received - subtotal);
-    document.getElementById('changeDue').textContent = `₱${change.toFixed(2)}`;
-}
-
-// ── PAYMENT ──
-function setPayment(btn, method) {
-    activePayment = method;
-    document.querySelectorAll('.payment-btn').forEach(b => {
-        b.className = 'payment-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-transparent bg-white dark:bg-slate-800 text-slate-400 hover:border-slate-200 dark:hover:border-slate-600 transition-all';
-    });
-    btn.className = 'payment-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-teal-600 bg-teal-50 dark:bg-teal-900/20 text-teal-600 transition-all';
-}
-
-function processPayment() {
-    const items = Object.values(cart);
-    if (!items.length) { Swal.fire({ icon: 'warning', title: 'Empty Cart', text: 'Please add items to proceed.' }); return; }
-
-    const subtotal = items.reduce((s, i) => s + i.product.price * i.qty, 0);
-    const received = parseFloat(document.getElementById('amountReceived').value) || 0;
-
-    if (activePayment === 'cash' && received < subtotal) {
-        Swal.fire({ icon: 'error', title: 'Insufficient Amount', text: `Please enter at least ₱${subtotal.toFixed(2)}.` });
-        return;
-    }
-    
-    function setCategory(btn, cat) {
-        activeCategory = cat;
-        document.querySelectorAll('.category-btn').forEach(b => {
-            b.className = 'category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap';
-        });
-        btn.className = 'category-btn px-5 py-2 rounded-full bg-teal-600 text-white text-sm font-medium shadow-md whitespace-nowrap';
-        renderProducts();
-    }
-    
-    function filterProducts() { renderProducts(); }
-    
-    // ── CART ──
-    function addToCart(id) {
-        const p = products.find(x => x.id === id);
-        if (!p) return;
-        if (!cart[id]) cart[id] = { product: p, qty: 0 };
-        if (cart[id].qty >= p.stock) { Swal.fire({icon:'warning', title:'Stock Limit', text:'Cannot exceed available active stock.'}); return; }
-        cart[id].qty++;
-        updateUI();
-    }
-    
-    function updateQty(id, delta) {
-        if (!cart[id]) return;
-        const p = cart[id].product;
-        if (delta > 0 && cart[id].qty >= p.stock) { Swal.fire({icon:'warning', title:'Stock Limit', text:'Cannot exceed available active stock.'}); return; }
-        cart[id].qty += delta;
-        if (cart[id].qty <= 0) delete cart[id];
-        updateUI();
-    }
-    
-    function removeFromCart(id) { delete cart[id]; updateUI(); }
-    
-    function updateUI() { renderProducts(); renderCart(); updateTotals(); }
-    
-    function renderCart() {
-        const container = document.getElementById('cartItems');
-        const items = Object.values(cart);
-    
-        if (!items.length) {
-            container.innerHTML = `<div class="flex flex-col items-center justify-center h-32 text-slate-400 text-sm gap-2">
-                <span class="material-icons-round text-4xl">shopping_basket</span>
-                <p>No items added yet</p>
-            </div>`;
-            document.getElementById('cartCount').textContent = '0 Items';
-            return;
-        }
->>>>>>> Stashed changes
     
         const total = items.reduce((s, i) => s + i.qty, 0);
         document.getElementById('cartCount').textContent = `${total} Item${total !== 1 ? 's' : ''}`;

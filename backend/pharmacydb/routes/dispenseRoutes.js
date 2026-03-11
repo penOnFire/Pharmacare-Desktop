@@ -1,5 +1,4 @@
 // dispenseRoutes.js
-import { logActivity } from '../utils/logActivity.js';
 import express from "express";
 import mongoose from "mongoose";
 import Prescription from "../models/Prescription.js"; // adjust path/name if different

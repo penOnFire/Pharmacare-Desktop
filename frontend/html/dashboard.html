@@ -48,7 +48,6 @@
         @keyframes badge-pop { from { transform: scale(0); } to { transform: scale(1); } }
         #notificationBadge { animation: badge-pop 0.3s cubic-bezier(.34,1.56,.64,1); }
         .notif-dropdown { position: absolute; top: calc(100% + 10px); right: 0; width: 370px; background: #fff; border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.06); border: 1px solid #e5e7eb; z-index: 1000; overflow: hidden; opacity: 0; transform: translateY(-8px) scale(0.97); pointer-events: none; transition: opacity 0.22s ease, transform 0.22s cubic-bezier(.34,1.56,.64,1); transform-origin: top right; }
-        .notif-dropdown { position: absolute; top: calc(100% + 10px); right: 0; width: 370px; background: #fff; border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.06); border: 1px solid #e5e7eb; z-index: 1000; overflow: hidden; opacity: 0; transform: translateY(-8px) scale(0.97); pointer-events: none; transition: opacity 0.22s ease, transform 0.22s cubic-bezier(.34,1.56,.64,1); transform-origin: top right; }
         .dark .notif-dropdown { background: #1F2937; border-color: #374151; }
         .notif-dropdown.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
         .notif-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 14px; border-bottom: 1px solid #f0f0f0; }
@@ -110,7 +109,6 @@
         .view-all-link:hover { text-decoration: underline; }
         .view-all-link .material-icons { font-size: 14px; }
         
-        
         .chart-container { position: relative; height: 256px; width: 100%; }
         .module-summary { transition: all 0.3s ease; }
         .module-summary:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
@@ -118,27 +116,6 @@
         .refresh-btn:hover { transform: rotate(180deg); }
         .refreshing { animation: spin 1s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        /* ── NAVBAR CLOCK ── */
-        #navClock {
-            font-size: 15px;
-            font-weight: 700;
-            line-height: 1.2;
-            letter-spacing: -0.01em;
-        }
-        #navDate {
-            font-size: 10px;
-            font-weight: 500;
-            letter-spacing: 0.06em;
-        }
-
-        /* ── NAVBAR DIVIDER ── */
-        .nav-divider {
-            width: 1px;
-            height: 28px;
-            background: #e5e7eb;
-        }
-        .dark .nav-divider { background: #374151; }
     </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
@@ -162,7 +139,7 @@
 
     <div class="flex h-screen pt-8">
         <aside class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-border-light dark:border-border-dark">
-            <div class="h-16 flex items-center px-6">
+            <div class="h-16 flex items-center px-6 border-b border-border-light dark:border-border-dark">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm">
                         <img src="images/wellserved.png" alt="Well Served Logo" class="w-full h-full object-cover">
@@ -200,34 +177,14 @@
         </aside>
         
         <main class="flex-1 flex flex-col">
-
-            <!-- ══════════════════════════════════════════
-                 UPDATED NAVBAR — matches screenshot layout
-                 [ Clock+Date ] [ Bell ] [ Name/Role ] [ Avatar ]
-                 ══════════════════════════════════════════ -->
             <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
-                <!-- Left: empty spacer (kept for layout) -->
-                <div></div>
-
-                <!-- Right: clock · divider · bell · divider · user info · avatar -->
+                <div class="flex items-center gap-2"></div>
                 <div class="flex items-center gap-4">
 
-                    <!-- Live Clock + Date -->
-                    <div class="text-right">
-                        <div id="navClock" class="text-text-light dark:text-text-dark"></div>
-                        <div id="navDate"  class="text-subtext-light dark:text-subtext-dark uppercase tracking-widest"></div>
-                    </div>
-
-                    <div class="nav-divider"></div>
-
-                    <!-- Notification Bell -->
                     <div class="relative">
-                        <button id="notificationBtn"
-                            class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                            <span class="material-icons-outlined text-2xl">notifications</span>
-                            <span id="notificationBadge"
-                                class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold"
-                                style="display:none;">0</span>
+                        <button id="notificationBtn" class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <span class="material-icons text-2xl">notifications</span>
+                            <span id="notificationBadge" class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold" style="display:none;">0</span>
                         </button>
                         <div id="notificationDropdown" class="notif-dropdown">
                             <div class="notif-header">
@@ -250,17 +207,7 @@
                         </div>
                     </div>
 
-                    <div class="nav-divider"></div>
-
-                    <!-- User Name + Role -->
-                    <div class="text-right leading-tight">
-                        <div id="navUserName" class="text-sm font-bold text-text-light dark:text-text-dark">Vaughn</div>
-                        <div id="navUserRole" class="text-xs text-subtext-light dark:text-subtext-dark">Nurse</div>
-                    </div>
-
-                    <!-- Avatar with initial -->
-                    <div id="navAvatar" class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm select-none">V</div>
-
+                    <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">PH</div>
                 </div>
             </header>
             
@@ -282,15 +229,11 @@
                             <div>
                                 <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1">TOTAL INVENTORY</p>
                                 <p id="totalStock" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
-                                <p id="totalStock" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
                                 <div class="flex items-center mt-2 text-sm text-success">
-                                    <span class="material-icons text-base">inventory_2</span>
-                                    <span class="ml-1">Active system stock</span>
                                     <span class="material-icons text-base">inventory_2</span>
                                     <span class="ml-1">Active system stock</span>
                                 </div>
                             </div>
-                            <div class="p-3 bg-primary/10 rounded-lg"><span class="material-icons text-primary" style="font-size: 28px;">inventory</span></div>
                             <div class="p-3 bg-primary/10 rounded-lg"><span class="material-icons text-primary" style="font-size: 28px;">inventory</span></div>
                         </div>
                     </div>
@@ -300,14 +243,11 @@
                             <div>
                                 <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1">OUT-OF-STOCK</p>
                                 <p id="outOfStock" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
-                                <p id="outOfStock" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
                                 <div class="flex items-center mt-2 text-sm text-secondary">
                                     <span class="material-icons text-base">warning</span>
                                     <span class="ml-1" id="criticalItems">0 critical items</span>
-                                    <span class="ml-1" id="criticalItems">0 critical items</span>
                                 </div>
                             </div>
-                            <div class="p-3 bg-secondary/10 rounded-lg"><span class="material-icons text-secondary" style="font-size: 28px;">error_outline</span></div>
                             <div class="p-3 bg-secondary/10 rounded-lg"><span class="material-icons text-secondary" style="font-size: 28px;">error_outline</span></div>
                         </div>
                     </div>
@@ -317,14 +257,11 @@
                             <div>
                                 <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1">EXPIRING SOON</p>
                                 <p id="expiringItems" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
-                                <p id="expiringItems" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
                                 <div class="flex items-center mt-2 text-sm text-accent">
                                     <span class="material-icons text-base">calendar_today</span>
                                     <span class="ml-1">Next 30 days</span>
-                                    <span class="ml-1">Next 30 days</span>
                                 </div>
                             </div>
-                            <div class="p-3 bg-accent/10 rounded-lg"><span class="material-icons text-accent" style="font-size: 28px;">watch_later</span></div>
                             <div class="p-3 bg-accent/10 rounded-lg"><span class="material-icons text-accent" style="font-size: 28px;">watch_later</span></div>
                         </div>
                     </div>
@@ -334,14 +271,11 @@
                             <div>
                                 <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1">TODAY'S REVENUE</p>
                                 <p id="dailySales" class="text-4xl font-bold text-text-light dark:text-text-dark">₱0.00</p>
-                                <p id="dailySales" class="text-4xl font-bold text-text-light dark:text-text-dark">₱0.00</p>
                                 <div class="flex items-center mt-2 text-sm text-success">
                                     <span class="material-icons text-base">trending_up</span>
                                     <span class="ml-1" id="salesChange">Today's total</span>
-                                    <span class="ml-1" id="salesChange">Today's total</span>
                                 </div>
                             </div>
-                            <div class="p-3 bg-green-100 dark:bg-green-900/50 rounded-lg"><span class="material-icons text-success" style="font-size: 28px;">payments</span></div>
                             <div class="p-3 bg-green-100 dark:bg-green-900/50 rounded-lg"><span class="material-icons text-success" style="font-size: 28px;">payments</span></div>
                         </div>
                     </div>
@@ -359,7 +293,6 @@
                     <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
                         <div class="flex items-center justify-between mb-4">
                             <div class="flex items-center gap-3"><span class="material-icons text-primary">emoji_events</span><h3 class="font-semibold text-text-light dark:text-text-dark">Top Selling Medicines</h3></div>
-                            <div class="flex items-center gap-3"><span class="material-icons text-primary">emoji_events</span><h3 class="font-semibold text-text-light dark:text-text-dark">Top Selling Medicines</h3></div>
                             <span class="text-xs text-subtext-light dark:text-subtext-dark bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">This Month</span>
                         </div>
                         <div class="chart-container"><canvas id="topSellingChart"></canvas></div>
@@ -374,14 +307,8 @@
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center gap-3"><span class="material-icons text-primary">inventory_2</span><h3 class="font-semibold text-text-light dark:text-text-dark">Inventory Summary</h3></div>
                                 <button id="refreshInventory" class="refresh-btn text-subtext-light dark:text-subtext-dark hover:text-primary" onclick="refreshInventorySummary()"><span class="material-icons">refresh</span></button>
-                                <div class="flex items-center gap-3"><span class="material-icons text-primary">inventory_2</span><h3 class="font-semibold text-text-light dark:text-text-dark">Inventory Summary</h3></div>
-                                <button id="refreshInventory" class="refresh-btn text-subtext-light dark:text-subtext-dark hover:text-primary" onclick="refreshInventorySummary()"><span class="material-icons">refresh</span></button>
                             </div>
                             <div class="space-y-3">
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Total Items:</span><span id="inventoryTotal" class="font-semibold">0</span></div>
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Low Stock:</span><span id="inventoryLowStock" class="font-semibold text-accent">0 items</span></div>
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Expiring Soon:</span><span id="inventoryExpiring" class="font-semibold text-secondary">0 items</span></div>
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark text-xs">Last Updated:</span><span id="inventoryUpdated" class="text-xs text-subtext-light dark:text-subtext-dark">Just now</span></div>
                                 <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Total Items:</span><span id="inventoryTotal" class="font-semibold">0</span></div>
                                 <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Low Stock:</span><span id="inventoryLowStock" class="font-semibold text-accent">0 items</span></div>
                                 <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Expiring Soon:</span><span id="inventoryExpiring" class="font-semibold text-secondary">0 items</span></div>
@@ -393,14 +320,8 @@
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center gap-3"><span class="material-icons text-primary">receipt_long</span><h3 class="font-semibold text-text-light dark:text-text-dark">Prescriptions Summary</h3></div>
                                 <button id="refreshPrescriptions" class="refresh-btn text-subtext-light dark:text-subtext-dark hover:text-primary" onclick="refreshPrescriptionsSummary()"><span class="material-icons">refresh</span></button>
-                                <div class="flex items-center gap-3"><span class="material-icons text-primary">receipt_long</span><h3 class="font-semibold text-text-light dark:text-text-dark">Prescriptions Summary</h3></div>
-                                <button id="refreshPrescriptions" class="refresh-btn text-subtext-light dark:text-subtext-dark hover:text-primary" onclick="refreshPrescriptionsSummary()"><span class="material-icons">refresh</span></button>
                             </div>
                             <div class="space-y-3">
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Today's Total:</span><span id="prescriptionsToday" class="font-semibold">0</span></div>
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Pending Review:</span><span id="prescriptionsPending" class="font-semibold text-accent">0</span></div>
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Ready for Pickup:</span><span id="prescriptionsReady" class="font-semibold text-primary">0</span></div>
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark text-xs">Last Updated:</span><span id="prescriptionsUpdated" class="text-xs text-subtext-light dark:text-subtext-dark">Just now</span></div>
                                 <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Today's Total:</span><span id="prescriptionsToday" class="font-semibold">0</span></div>
                                 <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Pending Review:</span><span id="prescriptionsPending" class="font-semibold text-accent">0</span></div>
                                 <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Ready for Pickup:</span><span id="prescriptionsReady" class="font-semibold text-primary">0</span></div>
@@ -412,14 +333,8 @@
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center gap-3"><span class="material-icons text-primary">point_of_sale</span><h3 class="font-semibold text-text-light dark:text-text-dark">Sales Summary</h3></div>
                                 <button id="refreshSales" class="refresh-btn text-subtext-light dark:text-subtext-dark hover:text-primary" onclick="refreshSalesSummary()"><span class="material-icons">refresh</span></button>
-                                <div class="flex items-center gap-3"><span class="material-icons text-primary">point_of_sale</span><h3 class="font-semibold text-text-light dark:text-text-dark">Sales Summary</h3></div>
-                                <button id="refreshSales" class="refresh-btn text-subtext-light dark:text-subtext-dark hover:text-primary" onclick="refreshSalesSummary()"><span class="material-icons">refresh</span></button>
                             </div>
                             <div class="space-y-3">
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Today's Revenue:</span><span id="salesRevenue" class="font-semibold">₱0.00</span></div>
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Transactions:</span><span id="salesTransactions" class="font-semibold">0</span></div>
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Avg. Transaction:</span><span id="salesAverage" class="font-semibold">₱0.00</span></div>
-                                <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark text-xs">Last Updated:</span><span id="salesUpdated" class="text-xs text-subtext-light dark:text-subtext-dark">Just now</span></div>
                                 <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Today's Revenue:</span><span id="salesRevenue" class="font-semibold">₱0.00</span></div>
                                 <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Transactions:</span><span id="salesTransactions" class="font-semibold">0</span></div>
                                 <div class="flex justify-between"><span class="text-subtext-light dark:text-subtext-dark">Avg. Transaction:</span><span id="salesAverage" class="font-semibold">₱0.00</span></div>
@@ -437,8 +352,8 @@
     const API_BASE_URL = 'http://localhost:5001';
 
     let autoRefreshInterval;
-    let salesChartInstance      = null;
-    let stockChartInstance      = null;
+    let salesChartInstance = null;
+    let stockChartInstance = null;
     let topSellingChartInstance = null;
 
     // ── HELPERS ──
@@ -449,20 +364,10 @@
     function safeSetText(id, value) { 
         const el = document.getElementById(id); 
         if (el) el.textContent = value; 
-        return '₱' + Number(value).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
-    function safeSetText(id, value) { 
-        const el = document.getElementById(id); 
-        if (el) el.textContent = value; 
-    }
-
-    // ── AUTH & API CALL ──
     // ── AUTH & API CALL ──
     function getToken() {
-        const directToken = sessionStorage.getItem('token');
-        if (directToken) return directToken;
-        
         const directToken = sessionStorage.getItem('token');
         if (directToken) return directToken;
         
@@ -473,126 +378,7 @@
         return null;
     }
 
-    // ══════════════════════════════════════════════════════════
-    //  LIVE NAVBAR CLOCK  — ticks every second
-    // ══════════════════════════════════════════════════════════
-    function updateNavClock() {
-        const now = new Date();
-
-        // Time: "12:28:05 AM"
-        const timeStr = now.toLocaleTimeString('en-US', {
-            hour:   '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: true
-        });
-
-        // Date: "FEB 26, 2026"
-        const dateStr = now.toLocaleDateString('en-US', {
-            month: 'short',
-            day:   'numeric',
-            year:  'numeric'
-        }).toUpperCase();  // e.g. "FEB 26, 2026"
-
-        document.getElementById('navClock').textContent = timeStr;
-        document.getElementById('navDate').textContent  = dateStr;
-    }
-
-    // ── Load user info from session into navbar ──
-    function loadNavUserInfo() {
-        try {
-            const raw = sessionStorage.getItem('userInfo');
-            if (!raw) return;
-            const info = JSON.parse(raw);
-            const name = info.name || info.firstName || info.username || 'User';
-            const role = info.role || info.position || '';
-            const initial = name.charAt(0).toUpperCase();
-
-            document.getElementById('navUserName').textContent = name;
-            document.getElementById('navUserRole').textContent = role;
-            document.getElementById('navAvatar').textContent   = initial;
-        } catch(e) { /* keep defaults */ }
-    }
-
-    // ── NOTIFICATIONS ──
-    let notifData         = [];
-    let activeNotifFilter = 'all';
-
-    function generateAlertsFromInventory(inventory) {
-        const alerts = [];
-        const today = new Date();
-        const thirtyDays = new Date();
-        thirtyDays.setDate(today.getDate() + 30);
-
-        inventory.forEach((item, idx) => {
-            const medName = item.medicine?.name || item.name || 'Unknown Medicine';
-            if (item.expiryDate) {
-                const expiry = new Date(item.expiryDate);
-                if (expiry < today) {
-                    alerts.push({ id: `exp-${item._id || idx}`, type: 'expiry', unread: true, medicineName: medName, title: 'Medicine Expired', desc:  `${medName} expired on ${expiry.toLocaleDateString('en-PH')}.`, time:  'Needs attention', actionLabel: 'View', actionClass: 'btn-expiry', icon: 'event_busy', iconClass: 'icon-expiry' });
-                } else if (expiry <= thirtyDays) {
-                    const d = Math.ceil((expiry - today) / 864e5);
-                    alerts.push({ id: `exp-${item._id || idx}`, type: 'expiry', unread: true, medicineName: medName, title: 'Expiring Soon', desc:  `${medName} expires in ${d} days.`, time:  `${d} days left`, actionLabel: 'View', actionClass: 'btn-expiry', icon: 'schedule', iconClass: 'icon-expiry' });
-                }
-            }
-            const qty = parseInt(item.quantity || 0);
-            const minStock = parseInt(item.minStockLevel || 10);
-            if (qty === 0) {
-                alerts.push({ id: `stk-${item._id || idx}`, type: 'critical', unread: true, medicineName: medName, title: 'Out of Stock', desc:  `${medName} is completely out.`, time:  'Immediate', actionLabel: 'Go to Inventory', actionClass: 'btn-critical', icon: 'warning', iconClass: 'icon-critical' });
-            } else if (qty <= minStock) {
-                alerts.push({ id: `stk-${item._id || idx}`, type: 'shortage', unread: true, medicineName: medName, title: 'Low Stock Alert', desc:  `${medName} — only ${qty} remaining.`, time:  'Reorder soon', actionLabel: 'Go to Inventory', actionClass: 'btn-shortage', icon: 'inventory_2', iconClass: 'icon-shortage' });
-            }
-        });
-        const order = { critical: 0, expiry: 1, shortage: 2 };
-        alerts.sort((a, b) => (order[a.type] ?? 9) - (order[b.type] ?? 9));
-        return alerts;
-    }
-
-    function renderNotifications() {
-        const list = document.getElementById('notifList');
-        if(!list) return;
-        const filtered = activeNotifFilter === 'all' ? notifData : notifData.filter(n => n.type === activeNotifFilter);
-        if (!filtered.length) {
-            list.innerHTML = `<div class="notif-empty"><span class="material-icons">notifications_none</span><p>All clear — no alerts!</p></div>`;
-            updateNotifBadge(); return;
-        }
-        list.innerHTML = filtered.map(n => `
-            <div class="notif-item ${n.type} ${n.unread ? 'unread' : ''}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
-                <div class="notif-icon-wrap ${n.iconClass}"><span class="material-icons">${n.icon}</span></div>
-                <div class="notif-body">
-                    <div class="notif-title">${n.title}</div><div class="notif-desc">${n.desc}</div><div class="notif-time">${n.time}</div>
-                    <div class="notif-action"><button class="notif-action-btn ${n.actionClass}" onclick="handleNotifAction(event,'${n.id}')">${n.actionLabel}</button></div>
-                </div>
-                ${n.unread ? '<div class="unread-dot"></div>' : ''}
-            </div>`).join('');
-        updateNotifBadge();
-    }
-
-    function updateNotifBadge() {
-        const count = notifData.filter(n => n.unread).length;
-        const badge = document.getElementById('notificationBadge');
-        const pill  = document.getElementById('unreadPill');
-        if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none'; }
-        if (pill)  pill.textContent = count > 0 ? `${count} new` : 'All clear';
-    }
-
-    function markNotifRead(id) { const n = notifData.find(n => n.id === id); if (n) { n.unread = false; renderNotifications(); } }
-    function markAllRead() { notifData.forEach(n => n.unread = false); renderNotifications(); }
-
-    function handleNotifAction(event, id) {
-        event.stopPropagation(); markNotifRead(id);
-        const n = notifData.find(n => n.id === id); if (!n) return;
-        if (n.type === 'expiry') { sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'batch', medicine: n.medicineName })); } 
-        else if (n.type === 'critical' || n.type === 'shortage') { sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'summary', medicine: n.medicineName })); }
-        window.location.href = 'inventory.html';
-    }
-
-    function filterNotifTab(btn, filter) {
-        document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active'); activeNotifFilter = filter; renderNotifications();
-    }
-
-    async function refreshNotifications() {
+    async function apiCall(endpoint) {
         const token = getToken();
         if (!token) { window.location.href = 'login.html'; return null; }
         
@@ -622,16 +408,12 @@
 
     // ── INITIALIZATION ──
     document.addEventListener('DOMContentLoaded', function() {
-        loadDarkModePreference();
-        loadNavUserInfo();
-
-        // Start live clock immediately, tick every second
-        updateNavClock();
-        setInterval(updateNavClock, 1000);
-
+        const isDarkMode = sessionStorage.getItem('darkMode') === 'true';
+        document.documentElement.classList.toggle('dark', isDarkMode);
+        
         initializeCharts();
-        loadLiveData();
-        initializeSummaryData();
+        fetchDashboardStats(); 
+        loadTopSellingData();
         startAutoRefresh();
         
         const btn = document.getElementById('notificationBtn');
@@ -652,61 +434,81 @@
         safeSetText('lastUpdateTime', now);
     }
 
-    // ── LIVE DATA ──
-    async function loadLiveData() {
-        const token = getToken();
-        if (!token) return;
+    // ── MAIN DASHBOARD DATA FETCH ──
+    async function fetchDashboardStats() {
+        const data = await apiCall('/api/dashboard/stats');
+        
+        if (data && data.inventory) {
+            // 1. UPDATE TOP CARDS
+            safeSetText('totalStock', data.inventory.totalItems.toLocaleString('en-PH'));
+            safeSetText('outOfStock', data.inventory.outOfStock.toLocaleString('en-PH'));
+            safeSetText('criticalItems', `${data.inventory.lowStock} critical items`);
+            safeSetText('expiringItems', data.inventory.expiringSoon.toLocaleString('en-PH'));
+            safeSetText('dailySales', formatPeso(data.sales.todayRevenue));
 
-        try {
-            const res = await fetch(`${API_BASE_URL}/api/sales`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const sales = await res.json();
+            // 2. UPDATE MODULE SUMMARIES
+            safeSetText('inventoryTotal', data.inventory.totalItems.toLocaleString('en-PH'));
+            safeSetText('inventoryLowStock', `${data.inventory.lowStock} items`);
+            safeSetText('inventoryExpiring', `${data.inventory.expiringSoon} items`);
 
+            safeSetText('prescriptionsToday', data.prescriptions.todayTotal.toLocaleString('en-PH'));
+            safeSetText('prescriptionsPending', data.prescriptions.pendingReview.toLocaleString('en-PH'));
+            safeSetText('prescriptionsReady', data.prescriptions.readyForPickup.toLocaleString('en-PH'));
+
+            safeSetText('salesRevenue', formatPeso(data.sales.todayRevenue));
+            safeSetText('salesTransactions', data.sales.todayTransactions.toLocaleString('en-PH'));
+            safeSetText('salesAverage', formatPeso(data.sales.avgTransaction));
+
+            // 3. UPDATE CHARTS
+            if (data.charts) updateMainCharts(data.charts);
+            
+            initializeSummaryData();
+        } else {
+            console.error("Dashboard Stats Failed to Load because backend denied access.");
+        }
+    }
+
+    // ── LIVE TOP SELLING DATA FETCH ──
+    async function loadTopSellingData() {
+        const sales = await apiCall('/api/sales');
+        
+        if (sales && Array.isArray(sales)) {
             const totals = {};
             sales.forEach(sale => {
                 if (!sale.items) return;
                 sale.items.forEach(item => {
                     let name = item.name;
-                    if ((!name || name === 'Unknown') && item.medicine && item.medicine.name) name = item.medicine.name;
+                    if ((!name || name === 'Unknown') && item.medicine && item.medicine.name) {
+                        name = item.medicine.name;
+                    }
                     name = name || 'Unknown Medicine';
                     totals[name] = (totals[name] || 0) + (parseInt(item.quantity) || 0);
                 });
             });
 
             const sorted = Object.entries(totals).sort((a, b) => b[1] - a[1]).slice(0, 7);
-            updateTopSellingChart(sorted.map(e => e[0]), sorted.map(e => e[1]));
+            const labels = sorted.map(e => e[0]);
+            const data   = sorted.map(e => e[1]);
 
-            const today = new Date().toDateString();
-            const todayRevenue = sales
-                .filter(s => new Date(s.date || s.createdAt).toDateString() === today && s.paymentStatus === 'Paid')
-                .reduce((acc, s) => acc + (s.totalAmount || 0), 0);
+            updateTopSellingChart(labels.length ? labels : ['No Data'], data.length ? data : [0]);
+        }
+    }
 
-            document.getElementById('dailySales').textContent   = formatPeso(todayRevenue);
-            document.getElementById('salesRevenue').textContent = formatPeso(todayRevenue);
-
-            const totalTransactions = sales.length;
-            const avgTransaction    = totalTransactions > 0
-                ? sales.reduce((acc, s) => acc + (s.totalAmount || 0), 0) / totalTransactions
-                : 0;
-
-            document.getElementById('salesTransactions').textContent = totalTransactions.toLocaleString('en-PH');
-            document.getElementById('salesAverage').textContent      = formatPeso(avgTransaction);
-
-        } catch (e) {
-            console.warn('Live sales data fetch failed:', e);
+    // ── CHART UPDATES ──
+    function updateMainCharts(chartData) {
+        if (salesChartInstance && chartData.salesTrend) {
+            salesChartInstance.data.labels = chartData.salesTrend.labels;
+            salesChartInstance.data.datasets[0].data = chartData.salesTrend.data;
+            salesChartInstance.update();
+        }
+        if (stockChartInstance && chartData.stockDistribution) {
+            stockChartInstance.data.labels = chartData.stockDistribution.labels;
+            stockChartInstance.data.datasets[0].data = chartData.stockDistribution.data;
+            stockChartInstance.update();
         }
     }
 
     function updateTopSellingChart(labels, data) {
-        if (topSellingChartInstance) {
-            topSellingChartInstance.data.labels = labels;
-            topSellingChartInstance.data.datasets[0].data = data;
-            topSellingChartInstance.update();
-            return;
-        }
-        initializeCharts();
         if (topSellingChartInstance) {
             topSellingChartInstance.data.labels = labels;
             topSellingChartInstance.data.datasets[0].data = data;
@@ -720,103 +522,13 @@
         const textColor = isDark ? '#F9FAFB' : '#1F2937';
 
         const salesCtx = document.getElementById('salesTrendChart').getContext('2d');
-        if (salesChartInstance) salesChartInstance.destroy();
-        salesChartInstance = new Chart(salesCtx, {
-            type: 'line',
-            data: {
-                labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
-                datasets: [{
-                    label: 'Daily Sales (₱)',
-                    data: [2450, 2847, 3100, 2750, 3200, 2950, 3428],
-                    borderColor: '#005a32',
-                    backgroundColor: 'rgba(0,90,50,0.1)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { callbacks: { label: c => formatPeso(c.parsed.y) } }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { color: gridColor },
-                        ticks: { color: textColor, callback: v => '₱' + Number(v).toLocaleString('en-PH') }
-                    },
-                    x: { grid: { color: gridColor }, ticks: { color: textColor } }
-                }
-            }
-        });
+        salesChartInstance = new Chart(salesCtx, { type: 'line', data: { labels: ['Loading...'], datasets: [{ label: 'Daily Sales (₱)', data: [0], borderColor: '#005a32', backgroundColor: 'rgba(0,90,50,0.1)', borderWidth: 2, fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => formatPeso(c.parsed.y) } } }, scales: { y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor, callback: v => '₱' + Number(v).toLocaleString('en-PH') } }, x: { grid: { color: gridColor }, ticks: { color: textColor } } } } });
 
         const stockCtx = document.getElementById('stockDistributionChart').getContext('2d');
-        if (stockChartInstance) stockChartInstance.destroy();
-        stockChartInstance = new Chart(stockCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Analgesics','Antibiotics','Diabetes','Cardiovascular','Gastro'],
-                datasets: [{
-                    label: 'Stock Count',
-                    data: [450, 75, 120, 90, 200],
-                    backgroundColor: ['#005a32','#d62828','#8b5a2b','#22C55E','#8B5CF6'],
-                    borderWidth: 0,
-                    borderRadius: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { color: gridColor },
-                        ticks: { color: textColor, callback: v => Number(v).toLocaleString('en-PH') }
-                    },
-                    x: { grid: { display: false }, ticks: { color: textColor } }
-                }
-            }
-        });
+        stockChartInstance = new Chart(stockCtx, { type: 'bar', data: { labels: ['Loading...'], datasets: [{ label: 'Stock Count', data: [0], backgroundColor: ['#005a32','#d62828','#8b5a2b','#22C55E','#8B5CF6'], borderWidth: 0, borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor, callback: v => Number(v).toLocaleString('en-PH') } }, x: { grid: { display: false }, ticks: { color: textColor } } } } });
 
         const topSellingCtx = document.getElementById('topSellingChart').getContext('2d');
-        if (topSellingChartInstance) topSellingChartInstance.destroy();
-        topSellingChartInstance = new Chart(topSellingCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Paracetamol','Amoxicillin','Ibuprofen','Metformin','Amlodipine','Losartan','Cetirizine'],
-                datasets: [{
-                    label: 'Units Sold',
-                    data: [320, 210, 185, 160, 140, 115, 95],
-                    backgroundColor: [
-                        'rgba(0,90,50,0.90)','rgba(0,90,50,0.75)','rgba(0,90,50,0.60)',
-                        'rgba(0,90,50,0.50)','rgba(214,40,40,0.50)','rgba(214,40,40,0.65)','rgba(214,40,40,0.82)'
-                    ],
-                    borderWidth: 0,
-                    borderRadius: 4
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { callbacks: { label: c => ` ${Number(c.parsed.x).toLocaleString('en-PH')} units sold` } }
-                },
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        grid: { color: gridColor },
-                        ticks: { color: textColor, callback: v => Number(v).toLocaleString('en-PH') }
-                    },
-                    y: { grid: { display: false }, ticks: { color: textColor, font: { size: 11 } } }
-                }
-            }
-        });
+        topSellingChartInstance = new Chart(topSellingCtx, { type: 'bar', data: { labels: ['Loading...'], datasets: [{ label: 'Units Sold', data: [0], backgroundColor: ['rgba(0, 90, 50, 0.90)', 'rgba(0, 90, 50, 0.75)', 'rgba(0, 90, 50, 0.60)', 'rgba(0, 90, 50, 0.50)', 'rgba(214, 40, 40, 0.50)', 'rgba(214, 40, 40, 0.65)', 'rgba(214, 40, 40, 0.82)'], borderWidth: 0, borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${Number(c.parsed.x).toLocaleString('en-PH')} units sold` } } }, scales: { x: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor, callback: v => Number(v).toLocaleString('en-PH') } }, y: { grid: { display: false }, ticks: { color: textColor, font: { size: 11 } } } } } });
     }
 
     // ── NOTIFICATIONS LOGIC (Fully Restored!) ──
