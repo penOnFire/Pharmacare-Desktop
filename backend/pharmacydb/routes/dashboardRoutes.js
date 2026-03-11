@@ -1,3 +1,4 @@
+import { logActivity } from '../utils/logActivity.js';
 import express from 'express';
 import { protect } from '../middleware/authMiddleware.js'; // 'admin' is REMOVED from here
 import Inventory from '../models/Inventory.js';
