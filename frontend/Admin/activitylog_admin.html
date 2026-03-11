@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Activity Log - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#005a32", secondary: "#d62828", accent: "#8b5a2b",
+                        "background-light": "#f1f5f9", "background-dark": "#0f172a",
+                        "surface-light": "#FFFFFF", "surface-dark": "#1F2937",
+                        "text-light": "#1F2937", "text-dark": "#F9FAFB",
+                        "subtext-light": "#6B7280", "subtext-dark": "#9CA3AF",
+                        "border-light": "#E5E7EB", "border-dark": "#374151",
+                        "success": "#22C55E", "warning": "#F59E0B", "danger": "#EF4444"
+                    },
+                    fontFamily: { display: ["Inter", "sans-serif"] },
+                },
+            },
+        };
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .drag-region { -webkit-app-region: drag; }
+        .no-drag { -webkit-app-region: no-drag; }
+        #navClock { font-size: 15px; font-weight: 700; line-height: 1.2; }
+        #navDate  { font-size: 10px; font-weight: 500; letter-spacing: 0.06em; }
+        .nav-divider { width: 1px; height: 28px; background: #e5e7eb; }
+        .dark .nav-divider { background: #374151; }
+        .sidebar-logout-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 16px; border: none; background: none; cursor: pointer; border-radius: 8px; color: #d62828; font-size: 14px; font-weight: 600; transition: background 0.15s; text-align: left; }
+        .sidebar-logout-btn:hover { background: #fef2f2; }
+        .sidebar-logout-btn .material-icons { font-size: 20px; color: #d62828; }
+        .table-container { max-height: 520px; overflow-y: auto; position: relative; }
+        thead th { position: sticky; top: 0; z-index: 10; background: white; }
+        .dark thead th { background: #1F2937; }
+        .badge { padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+        .badge-admin      { background:#dcfce7; color:#15803d; }
+        .badge-pharmacist { background:#dbeafe; color:#1d4ed8; }
+        .badge-assistant  { background:#fef3c7; color:#b45309; }
+        .badge-success    { background:#dcfce7; color:#15803d; }
+        .badge-failed     { background:#fee2e2; color:#dc2626; }
+        .action-chip { padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; background: #f1f5f9; color: #374151; }
+        .dark .action-chip { background: #374151; color: #d1d5db; }
+        @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+        .spinning { animation: spin 1s linear infinite; }
+
+        /* ── NOTIFICATION DROPDOWN ── */
+        @keyframes badge-pop { from { transform: scale(0); } to { transform: scale(1); } }
+        #notificationBadge { animation: badge-pop 0.3s cubic-bezier(.34,1.56,.64,1); }
+        .notif-dropdown { position: absolute; top: calc(100% + 10px); right: 0; width: 370px; background: #fff; border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.06); border: 1px solid #e5e7eb; z-index: 1000; overflow: hidden; opacity: 0; transform: translateY(-8px) scale(0.97); pointer-events: none; transition: opacity 0.22s ease, transform 0.22s cubic-bezier(.34,1.56,.64,1); transform-origin: top right; }
+        .dark .notif-dropdown { background: #1F2937; border-color: #374151; }
+        .notif-dropdown.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
+        .notif-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 14px; border-bottom: 1px solid #f0f0f0; }
+        .dark .notif-header { border-color: #374151; }
+        .notif-header h3 { font-size: 15px; font-weight: 700; color: #111827; }
+        .dark .notif-header h3 { color: #F9FAFB; }
+        .notif-header-meta { display: flex; align-items: center; gap: 10px; }
+        .unread-count-pill { background: #005a32; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+        .mark-all-btn { font-size: 11px; color: #005a32; font-weight: 600; background: none; border: none; cursor: pointer; padding: 2px 4px; border-radius: 4px; transition: background 0.15s; }
+        .mark-all-btn:hover { background: #f0fdf4; }
+        .notif-tabs { display: flex; gap: 4px; padding: 10px 14px; background: #fafafa; border-bottom: 1px solid #f0f0f0; }
+        .dark .notif-tabs { background: #111827; border-color: #374151; }
+        .notif-tab-btn { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 99px; border: 1px solid transparent; cursor: pointer; background: none; color: #6b7280; transition: all 0.15s; }
+        .notif-tab-btn.active { background: #005a32; color: #fff; border-color: #005a32; }
+        .notif-tab-btn:not(.active):hover { background: #f3f4f6; border-color: #e5e7eb; color: #374151; }
+        .notif-list { max-height: 360px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #e5e7eb transparent; }
+        .notif-list::-webkit-scrollbar { width: 4px; }
+        .notif-list::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 2px; }
+        .notif-item { display: flex; gap: 12px; align-items: flex-start; padding: 13px 16px; border-bottom: 1px solid #f5f5f5; cursor: pointer; position: relative; transition: background 0.15s; }
+        .dark .notif-item { border-color: #374151; }
+        .notif-item:last-child { border-bottom: none; }
+        .notif-item:hover { background: #f9fafb; }
+        .dark .notif-item:hover { background: #111827; }
+        .notif-item.unread { background: #ffffff; }
+        .dark .notif-item.unread { background: #1F2937; }
+        .notif-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 0 2px 2px 0; }
+        .notif-item.critical::before { background: #EF4444; }
+        .notif-item.expiry::before   { background: #8b5a2b; }
+        .notif-item.shortage::before { background: #358E83; }
+        .notif-icon-wrap { flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+        .notif-icon-wrap .material-icons { font-size: 20px; }
+        .icon-critical { background: #fef2f2; } .icon-critical .material-icons { color: #EF4444; }
+        .icon-expiry   { background: #fdf6ec; } .icon-expiry   .material-icons { color: #8b5a2b; }
+        .icon-shortage { background: #f0fdfa; } .icon-shortage .material-icons { color: #358E83; }
+        .notif-body { flex: 1; min-width: 0; }
+        .notif-title { font-size: 13px; font-weight: 600; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .dark .notif-title { color: #F9FAFB; }
+        .notif-desc  { font-size: 12px; color: #6b7280; margin-top: 2px; line-height: 1.4; }
+        .notif-time  { font-size: 10px; color: #9ca3af; margin-top: 6px; }
+        .notif-action { margin-top: 8px; }
+        .notif-action-btn { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 6px; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 0.04em; transition: opacity 0.15s, transform 0.1s; }
+        .notif-action-btn:active { transform: scale(0.96); }
+        .notif-action-btn:hover  { opacity: 0.88; }
+        .btn-critical { background: #EF4444; color: #fff; }
+        .btn-expiry   { background: #8b5a2b; color: #fff; }
+        .btn-shortage { background: #005a32; color: #fff; }
+        .unread-dot { flex-shrink: 0; width: 7px; height: 7px; border-radius: 50%; background: #005a32; margin-top: 5px; }
+        .notif-empty { padding: 40px 20px; text-align: center; color: #9ca3af; }
+        .notif-empty .material-icons { font-size: 40px; margin-bottom: 8px; display: block; }
+        .notif-empty p { font-size: 13px; }
+        .notif-footer { border-top: 1px solid #f0f0f0; padding: 12px 18px; }
+        .dark .notif-footer { border-color: #374151; }
+        .view-all-link { font-size: 12px; font-weight: 600; color: #005a32; text-decoration: none; display: flex; align-items: center; gap: 4px; }
+        .view-all-link:hover { text-decoration: underline; }
+        .view-all-link .material-icons { font-size: 14px; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
+
+    <!-- Title Bar -->
+    <div id="title-bar" class="drag-region fixed top-0 left-0 w-full h-8 bg-white flex justify-between items-stretch z-40 border-b border-gray-200 select-none">
+        <div class="flex items-center pl-4 gap-2 text-gray-600"><span class="text-xs font-semibold">IHMS Pharmacy</span></div>
+        <div class="no-drag flex items-center relative z-50">
+            <button id="min-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors"><span class="material-icons-outlined text-sm text-gray-600">remove</span></button>
+            <button id="max-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors"><span class="material-icons-outlined text-sm text-gray-600" id="maxIcon">crop_square</span></button>
+            <button id="close-btn" class="h-full w-12 flex justify-center items-center hover:bg-red-500 transition-colors group"><span class="material-icons-outlined text-sm text-gray-600 group-hover:text-white">close</span></button>
+        </div>
+    </div>
+
+    <div class="flex h-screen pt-8">
+
+        <!-- Sidebar -->
+        <aside class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-border-light dark:border-border-dark flex-shrink-0">
+            <div class="h-16 flex items-center px-6 gap-3">
+                <img src="images/wellserved.png" alt="Well Served Logo" class="w-12 h-12 rounded-full object-cover border border-slate-100 shadow-sm"/>
+                <div>
+                    <h1 class="font-bold text-primary dark:text-green-400 leading-tight">Well Served</h1>
+                    <p class="text-[10px] uppercase tracking-wider text-accent font-semibold">Since 1994</p>
+                </div>
+            </div>
+            <nav class="flex-1 px-4 py-6 space-y-2">
+                <div class="px-2 text-sm font-semibold text-subtext-light dark:text-subtext-dark mb-2">Admin Panel</div>
+                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="dashboard_admin.html">
+                    <span class="material-icons mr-3">dashboard</span> Dashboard
+                </a>
+                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="inventory_admin.html">
+                    <span class="material-icons mr-3">inventory_2</span> Inventory
+                </a>
+                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="sales-reports.html">
+                    <span class="material-icons mr-3">analytics</span> Sales Reports
+                </a>
+                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="user_management.html">
+                    <span class="material-icons mr-3">group</span> User Management
+                </a>
+                <a class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold" href="activitylog_admin.html">
+                    <span class="material-icons mr-3">history</span> Activity Log
+                </a>
+            </nav>
+            <div class="px-4 pb-6 border-t border-border-light dark:border-border-dark pt-4">
+                <button onclick="logoutUser()" class="sidebar-logout-btn"><span class="material-icons">logout</span> Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+
+            <!-- Navbar -->
+            <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
+                <div></div>
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <div id="navClock" class="text-text-light dark:text-text-dark"></div>
+                        <div id="navDate" class="text-subtext-light dark:text-subtext-dark uppercase tracking-widest"></div>
+                    </div>
+                    <div class="nav-divider"></div>
+
+                    <!-- Notification Bell -->
+                    <div class="relative">
+                        <button id="notificationBtn"
+                            class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <span class="material-icons-outlined text-2xl">notifications</span>
+                            <span id="notificationBadge"
+                                class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold"
+                                style="display:none;">0</span>
+                        </button>
+                        <div id="notificationDropdown" class="notif-dropdown">
+                            <div class="notif-header">
+                                <h3>Notifications</h3>
+                                <div class="notif-header-meta">
+                                    <span class="unread-count-pill" id="unreadPill">Loading...</span>
+                                    <button class="mark-all-btn" onclick="markAllRead()">Mark all read</button>
+                                </div>
+                            </div>
+                            <div class="notif-tabs">
+                                <button class="notif-tab-btn active" onclick="filterNotifTab(this,'all')">All</button>
+                                <button class="notif-tab-btn" onclick="filterNotifTab(this,'critical')">Critical</button>
+                                <button class="notif-tab-btn" onclick="filterNotifTab(this,'expiry')">Expiry</button>
+                                <button class="notif-tab-btn" onclick="filterNotifTab(this,'shortage')">Stock</button>
+                            </div>
+                            <div class="notif-list" id="notifList">
+                                <div style="padding:30px 20px;text-align:center;color:#9ca3af;">
+                                    <span class="material-icons" style="font-size:32px;display:block;margin:0 auto 8px;">hourglass_empty</span>
+                                    <p style="font-size:12px;">Loading alerts from inventory...</p>
+                                </div>
+                            </div>
+                            <div class="notif-footer">
+                                <a href="inventory_admin.html" class="view-all-link">
+                                    View inventory <span class="material-icons">arrow_forward</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="nav-divider"></div>
+                    <div class="text-right leading-tight">
+                        <div id="navUserName" class="text-sm font-bold text-text-light dark:text-text-dark">Admin</div>
+                        <div class="text-xs text-subtext-light dark:text-subtext-dark">Administrator</div>
+                    </div>
+                    <div id="navAvatar" class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm select-none">A</div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="flex-1 p-8 overflow-y-auto">
+
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h1 class="text-3xl font-bold text-text-light dark:text-text-dark">Activity Log</h1>
+                        <p class="text-subtext-light dark:text-subtext-dark mt-1">Monitor all user and system activity across the platform</p>
+                    </div>
+                    <button onclick="clearOldLogs()" class="flex items-center gap-2 px-4 py-2 border border-secondary text-secondary rounded-lg hover:bg-secondary/10 transition text-sm font-semibold">
+                        <span class="material-icons text-lg">delete_sweep</span> Clear Old Logs (90d)
+                    </button>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-surface-light dark:bg-surface-dark p-5 rounded-xl border border-slate-200 dark:border-slate-800 border-t-4 border-t-primary">
+                        <p class="text-xs text-subtext-light font-medium uppercase tracking-wide">Total Logs</p>
+                        <p id="statTotal" class="text-3xl font-bold mt-1 text-text-light dark:text-text-dark">—</p>
+                        <p class="text-xs text-subtext-light mt-1">All time</p>
+                    </div>
+                    <div class="bg-surface-light dark:bg-surface-dark p-5 rounded-xl border border-slate-200 dark:border-slate-800 border-t-4 border-t-success">
+                        <p class="text-xs text-subtext-light font-medium uppercase tracking-wide">Today's Activity</p>
+                        <p id="statToday" class="text-3xl font-bold mt-1 text-text-light dark:text-text-dark">—</p>
+                        <p class="text-xs text-subtext-light mt-1">Actions today</p>
+                    </div>
+                    <div class="bg-surface-light dark:bg-surface-dark p-5 rounded-xl border border-slate-200 dark:border-slate-800 border-t-4 border-t-danger">
+                        <p class="text-xs text-subtext-light font-medium uppercase tracking-wide">Failed Actions</p>
+                        <p id="statFailed" class="text-3xl font-bold mt-1 text-danger">—</p>
+                        <p class="text-xs text-subtext-light mt-1">Last 24 hours</p>
+                    </div>
+                    <div class="bg-surface-light dark:bg-surface-dark p-5 rounded-xl border border-slate-200 dark:border-slate-800 border-t-4 border-t-accent">
+                        <p class="text-xs text-subtext-light font-medium uppercase tracking-wide">Active Users</p>
+                        <p id="statActiveUsers" class="text-3xl font-bold mt-1 text-text-light dark:text-text-dark">—</p>
+                        <p class="text-xs text-subtext-light mt-1">Logged actions today</p>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="bg-surface-light dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 mb-4">
+                    <div class="p-4 border-b border-slate-200 dark:border-slate-800">
+                        <h2 class="font-semibold text-text-light dark:text-text-dark flex items-center gap-2">
+                            <span class="material-icons text-primary">filter_list</span> Filters
+                        </h2>
+                    </div>
+                    <div class="p-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                        <div class="lg:col-span-2">
+                            <input id="filterSearch" type="text" placeholder="Search user or description..."
+                                class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-background-light dark:bg-background-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
+                        </div>
+                        <select id="filterRole" class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-background-light dark:bg-background-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="">All Roles</option>
+                            <option value="pharmacist">Pharmacist</option>
+                            <option value="pharmacy_assistant">Pharmacy Assistant</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                        <select id="filterModule" class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-background-light dark:bg-background-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="">All Modules</option>
+                            <option value="Authentication">Authentication</option>
+                            <option value="Inventory">Inventory</option>
+                            <option value="Sales & Billing">Sales & Billing</option>
+                            <option value="Prescriptions">Prescriptions</option>
+                            <option value="Patient Records">Patient Records</option>
+                            <option value="User Management">User Management</option>
+                            <option value="Counter Dispensing">Counter Dispensing</option>
+                        </select>
+                        <select id="filterStatus" class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-background-light dark:bg-background-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="">All Status</option>
+                            <option value="success">Success</option>
+                            <option value="failed">Failed</option>
+                        </select>
+                        <div class="flex gap-2 lg:col-span-1">
+                            <input id="filterStartDate" type="date" title="From date"
+                                class="w-full px-2 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-background-light dark:bg-background-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
+                        </div>
+                    </div>
+                    <div class="px-4 pb-4 flex gap-2 justify-end">
+                        <input id="filterEndDate" type="date" title="To date"
+                            class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-background-light dark:bg-background-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
+                        <button onclick="applyFilters()" class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition flex items-center gap-1">
+                            <span class="material-icons text-base">search</span> Apply
+                        </button>
+                        <button onclick="resetFilters()" class="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition flex items-center gap-1">
+                            <span class="material-icons text-base">refresh</span> Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Logs Table -->
+                <div class="bg-surface-light dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800">
+                    <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <h2 class="font-semibold text-text-light dark:text-text-dark">Activity Records</h2>
+                            <span id="logCount" class="text-xs bg-primary/10 text-primary font-semibold px-2 py-1 rounded-full">0 records</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-subtext-light">Auto-refresh:</span>
+                            <button id="refreshBtn" onclick="fetchLogs()" class="flex items-center gap-1 px-3 py-1.5 border border-primary text-primary rounded-lg text-xs font-semibold hover:bg-primary/10 transition">
+                                <span id="refreshIcon" class="material-icons text-sm">refresh</span> Refresh
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="w-full text-left text-sm">
+                            <thead class="text-xs text-subtext-light uppercase tracking-wider border-b border-slate-200 dark:border-slate-700">
+                                <tr>
+                                    <th class="px-4 py-3 font-medium">Timestamp</th>
+                                    <th class="px-4 py-3 font-medium">User</th>
+                                    <th class="px-4 py-3 font-medium">Role</th>
+                                    <th class="px-4 py-3 font-medium">Module</th>
+                                    <th class="px-4 py-3 font-medium">Action</th>
+                                    <th class="px-4 py-3 font-medium">Description</th>
+                                    <th class="px-4 py-3 font-medium">Status</th>
+                                    <th class="px-4 py-3 font-medium">IP</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logTableBody">
+                                <tr>
+                                    <td colspan="8" class="px-4 py-12 text-center text-subtext-light">
+                                        <span class="material-icons text-4xl block mb-2 opacity-30">history</span>
+                                        Loading activity logs...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="p-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                        <p id="paginationInfo" class="text-xs text-subtext-light">Showing — records</p>
+                        <div class="flex items-center gap-2">
+                            <button id="prevBtn" onclick="changePage(-1)" disabled
+                                class="px-3 py-1.5 border border-slate-300 dark:border-slate-600 rounded-lg text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-700 transition">
+                                ← Prev
+                            </button>
+                            <span id="pageIndicator" class="text-xs text-subtext-light px-2">Page 1</span>
+                            <button id="nextBtn" onclick="changePage(1)" disabled
+                                class="px-3 py-1.5 border border-slate-300 dark:border-slate-600 rounded-lg text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-700 transition">
+                                Next →
+                            </button>
+                        </div>
+                        <select id="limitSelect" onchange="fetchLogs()" class="px-2 py-1.5 border border-slate-300 dark:border-slate-600 rounded-lg text-xs bg-background-light dark:bg-background-dark">
+                            <option value="20">20 / page</option>
+                            <option value="50">50 / page</option>
+                            <option value="100">100 / page</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+<script>
+    const API_BASE_URL = 'http://localhost:5001';
+    let currentPage = 1;
+    let totalPages  = 1;
+
+    function getToken() {
+        const d = sessionStorage.getItem('token'); if (d) return d;
+        const u = sessionStorage.getItem('userInfo');
+        if (u) { try { return JSON.parse(u).token || null; } catch(e){} }
+        return null;
+    }
+
+    function updateNavClock() {
+        const now = new Date();
+        document.getElementById('navClock').textContent = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
+        document.getElementById('navDate').textContent  = now.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
+    }
+
+    function loadNavUserInfo() {
+        try {
+            const raw = sessionStorage.getItem('userInfo'); if (!raw) return;
+            const info = JSON.parse(raw);
+            const name = info.name || info.firstName || info.username || 'Admin';
+            document.getElementById('navUserName').textContent = name;
+            document.getElementById('navAvatar').textContent   = name.charAt(0).toUpperCase();
+        } catch(e) {}
+    }
+
+    function logoutUser() {
+        Swal.fire({title:'Logout?',icon:'warning',showCancelButton:true,confirmButtonColor:'#005a32',confirmButtonText:'Yes, logout'})
+        .then(r=>{ if(r.isConfirmed){ sessionStorage.clear(); window.location.href='../html/login.html'; } });
+    }
+
+    document.getElementById('min-btn').addEventListener('click', () => { if(window.electronAPI) window.electronAPI.minimize(); });
+    document.getElementById('max-btn').addEventListener('click', () => {
+        if(window.electronAPI) window.electronAPI.maximize();
+        else { if(!document.fullscreenElement){document.documentElement.requestFullscreen().catch(()=>{});document.getElementById('maxIcon').textContent='filter_none';}else{document.exitFullscreen();document.getElementById('maxIcon').textContent='crop_square';} }
+    });
+    document.getElementById('close-btn').addEventListener('click', () => {
+        Swal.fire({title:'Close Application?',icon:'question',showCancelButton:true,confirmButtonColor:'#005a32',confirmButtonText:'Yes, close'})
+        .then(r=>{if(r.isConfirmed){sessionStorage.clear();window.location.href='../html/login.html';}});
+    });
+
+    // ══════════════════════════════════════════════════════════
+    // NOTIFICATION SYSTEM
+    // ══════════════════════════════════════════════════════════
+    let notifData = [], activeNotifFilter = 'all';
+
+    function generateAlertsFromInventory(inventory) {
+        const alerts = [], today = new Date(), thirtyDays = new Date();
+        thirtyDays.setDate(today.getDate() + 30);
+        inventory.forEach((item, idx) => {
+            const medName = item.medicine?.name || item.name || 'Unknown Medicine';
+            if (item.expiryDate) {
+                const expiry = new Date(item.expiryDate);
+                if (expiry < today) {
+                    alerts.push({ id:`exp-${item._id||idx}`, type:'expiry', unread:true, medicineName:medName, title:'Medicine Expired', desc:`${medName} expired on ${expiry.toLocaleDateString('en-PH')}.`, time:'Needs immediate attention', actionLabel:'View Batch', actionClass:'btn-expiry', icon:'event_busy', iconClass:'icon-expiry' });
+                } else if (expiry <= thirtyDays) {
+                    const d = Math.ceil((expiry - today) / 864e5);
+                    alerts.push({ id:`exp-${item._id||idx}`, type:'expiry', unread:true, medicineName:medName, title:'Expiring Soon', desc:`${medName} expires in ${d} day${d===1?'':'s'}.`, time:`${d} days left`, actionLabel:'View Batch', actionClass:'btn-expiry', icon:'schedule', iconClass:'icon-expiry' });
+                }
+            }
+            const qty = parseInt(item.quantity||0), minStock = parseInt(item.minStockLevel||10);
+            if (qty === 0) {
+                alerts.push({ id:`stk-${item._id||idx}`, type:'critical', unread:true, medicineName:medName, title:'Critical: Out of Stock', desc:`${medName} is completely out of stock. Needs emergency reorder.`, time:'Immediate action required', actionLabel:'Go to Inventory', actionClass:'btn-critical', icon:'warning', iconClass:'icon-critical' });
+            } else if (qty <= minStock) {
+                alerts.push({ id:`stk-${item._id||idx}`, type:'shortage', unread:true, medicineName:medName, title:'Low Stock Alert', desc:`${medName} — only ${qty} unit${qty===1?'':'s'} remaining (min: ${minStock}).`, time:'Reorder soon', actionLabel:'Go to Inventory', actionClass:'btn-shortage', icon:'inventory_2', iconClass:'icon-shortage' });
+            }
+        });
+        alerts.sort((a,b) => ({critical:0,expiry:1,shortage:2}[a.type]??9) - ({critical:0,expiry:1,shortage:2}[b.type]??9));
+        return alerts;
+    }
+
+    function renderNotifications() {
+        const list     = document.getElementById('notifList');
+        const filtered = activeNotifFilter === 'all' ? notifData : notifData.filter(n => n.type === activeNotifFilter);
+        if (!filtered.length) {
+            list.innerHTML = `<div class="notif-empty"><span class="material-icons">notifications_none</span><p>${activeNotifFilter==='all'?'All clear — no alerts right now!':'No notifications in this category.'}</p></div>`;
+            updateNotifBadge(); return;
+        }
+        list.innerHTML = filtered.map(n => `
+            <div class="notif-item ${n.type} ${n.unread?'unread':''}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
+                <div class="notif-icon-wrap ${n.iconClass}"><span class="material-icons">${n.icon}</span></div>
+                <div class="notif-body">
+                    <div class="notif-title">${n.title}</div>
+                    <div class="notif-desc">${n.desc}</div>
+                    <div class="notif-time">${n.time}</div>
+                    <div class="notif-action"><button class="notif-action-btn ${n.actionClass}" onclick="handleNotifAction(event,'${n.id}')">${n.actionLabel}</button></div>
+                </div>
+                ${n.unread ? '<div class="unread-dot"></div>' : ''}
+            </div>`).join('');
+        updateNotifBadge();
+    }
+
+    function updateNotifBadge() {
+        const count = notifData.filter(n => n.unread).length;
+        const badge = document.getElementById('notificationBadge');
+        const pill  = document.getElementById('unreadPill');
+        if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none'; }
+        if (pill)  pill.textContent = count > 0 ? `${count} new` : 'All clear';
+    }
+
+    function markNotifRead(id) { const n = notifData.find(n => n.id === id); if (n) { n.unread = false; renderNotifications(); } }
+    function markAllRead()     { notifData.forEach(n => n.unread = false); renderNotifications(); }
+
+    function handleNotifAction(event, id) {
+        event.stopPropagation();
+        markNotifRead(id);
+        const n = notifData.find(n => n.id === id); if (!n) return;
+        if (n.type === 'expiry') { sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'batch',   medicine: n.medicineName })); }
+        else if (n.type === 'critical' || n.type === 'shortage') { sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'summary', medicine: n.medicineName })); }
+        window.location.href = 'inventory_admin.html';
+    }
+
+    function filterNotifTab(btn, filter) {
+        document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeNotifFilter = filter;
+        renderNotifications();
+    }
+
+    async function refreshNotifications() {
+        const token = getToken(); if (!token) return;
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/inventory`, { headers: { 'Authorization': `Bearer ${token}` } });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const raw = await res.json();
+            const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
+            const previouslyRead = new Set(notifData.filter(n => !n.unread).map(n => n.id));
+            notifData = generateAlertsFromInventory(inventory).slice(0, 15);
+            notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
+            renderNotifications();
+        } catch(e) {
+            console.warn('Notification fetch failed:', e);
+            if (!notifData.length) document.getElementById('notifList').innerHTML = `<div class="notif-empty"><span class="material-icons">cloud_off</span><p>Could not load alerts. Check server connection.</p></div>`;
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // ACTIVITY LOG
+    // ══════════════════════════════════════════════════════════
+    function formatDate(dateStr) {
+        if (!dateStr) return '—';
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'}) + ' ' +
+               d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
+    }
+
+    function roleBadge(role) {
+        if (role === 'admin')              return `<span class="badge badge-admin">Admin</span>`;
+        if (role === 'pharmacist')         return `<span class="badge badge-pharmacist">Pharmacist</span>`;
+        if (role === 'pharmacy_assistant') return `<span class="badge badge-assistant">Asst.</span>`;
+        return `<span class="badge">${role}</span>`;
+    }
+
+    function statusBadge(status) {
+        if (status === 'success') return `<span class="badge badge-success">✓ Success</span>`;
+        return `<span class="badge badge-failed">✗ Failed</span>`;
+    }
+
+    function moduleIcon(mod) {
+        const icons = { 'Authentication':'lock', 'Inventory':'inventory_2', 'Sales & Billing':'point_of_sale', 'Prescriptions':'receipt_long', 'Patient Records':'folder_shared', 'User Management':'group', 'Counter Dispensing':'shopping_cart', 'Other':'more_horiz' };
+        return icons[mod] || 'circle';
+    }
+
+    async function fetchStats() {
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/activity/stats`, { headers: { 'Authorization': `Bearer ${getToken()}` } });
+            if (!res.ok) throw new Error();
+            const data = await res.json();
+            document.getElementById('statTotal').textContent       = (data.total ?? 0).toLocaleString();
+            document.getElementById('statToday').textContent       = (data.todayCount ?? 0).toLocaleString();
+            document.getElementById('statFailed').textContent      = (data.recentFailed ?? 0).toLocaleString();
+            document.getElementById('statActiveUsers').textContent = (data.byRole || []).reduce((a,r) => a + r.count, 0).toLocaleString();
+        } catch(e) { console.warn('Stats fetch failed:', e); }
+    }
+
+    async function fetchLogs() {
+        const icon = document.getElementById('refreshIcon');
+        icon.classList.add('spinning');
+        const limit     = document.getElementById('limitSelect').value;
+        const search    = document.getElementById('filterSearch').value.trim();
+        const role      = document.getElementById('filterRole').value;
+        const module    = document.getElementById('filterModule').value;
+        const status    = document.getElementById('filterStatus').value;
+        const startDate = document.getElementById('filterStartDate').value;
+        const endDate   = document.getElementById('filterEndDate').value;
+        const params = new URLSearchParams({ page: currentPage, limit });
+        if (search)    params.append('search', search);
+        if (role)      params.append('role', role);
+        if (module)    params.append('module', module);
+        if (status)    params.append('status', status);
+        if (startDate) params.append('startDate', startDate);
+        if (endDate)   params.append('endDate', endDate);
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/activity?${params.toString()}`, { headers: { 'Authorization': `Bearer ${getToken()}` } });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            renderLogs(data.logs || []);
+            updatePagination(data.pagination);
+        } catch(e) {
+            document.getElementById('logTableBody').innerHTML = `<tr><td colspan="8" class="px-4 py-12 text-center text-subtext-light"><span class="material-icons text-4xl block mb-2 opacity-30">cloud_off</span>Could not load activity logs. Check server connection.</td></tr>`;
+        } finally { icon.classList.remove('spinning'); }
+    }
+
+    function renderLogs(logs) {
+        const tbody = document.getElementById('logTableBody');
+        document.getElementById('logCount').textContent = `${logs.length} records`;
+        if (!logs.length) { tbody.innerHTML = `<tr><td colspan="8" class="px-4 py-12 text-center text-subtext-light"><span class="material-icons text-4xl block mb-2 opacity-30">search_off</span>No activity logs found for the selected filters.</td></tr>`; return; }
+        tbody.innerHTML = logs.map(log => `
+            <tr class="border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                <td class="px-4 py-3 text-xs text-subtext-light whitespace-nowrap">${formatDate(log.createdAt)}</td>
+                <td class="px-4 py-3"><div class="font-semibold text-text-light dark:text-text-dark text-sm">${log.userName || '—'}</div></td>
+                <td class="px-4 py-3">${roleBadge(log.userRole)}</td>
+                <td class="px-4 py-3"><div class="flex items-center gap-1 text-xs text-subtext-light"><span class="material-icons text-sm">${moduleIcon(log.module)}</span>${log.module || '—'}</div></td>
+                <td class="px-4 py-3"><span class="action-chip">${log.action || '—'}</span></td>
+                <td class="px-4 py-3 text-sm text-text-light dark:text-text-dark max-w-xs truncate" title="${log.description || ''}">${log.description || '—'}</td>
+                <td class="px-4 py-3">${statusBadge(log.status)}</td>
+                <td class="px-4 py-3 text-xs text-subtext-light">${log.ipAddress || '—'}</td>
+            </tr>`).join('');
+    }
+
+    function updatePagination(pagination) {
+        if (!pagination) return;
+        totalPages = pagination.totalPages || 1;
+        const { total, page, limit } = pagination;
+        const start = (page - 1) * limit + 1, end = Math.min(page * limit, total);
+        document.getElementById('paginationInfo').textContent = `Showing ${total > 0 ? start : 0}–${end} of ${total} records`;
+        document.getElementById('pageIndicator').textContent  = `Page ${page} of ${totalPages}`;
+        document.getElementById('prevBtn').disabled = page <= 1;
+        document.getElementById('nextBtn').disabled = page >= totalPages;
+    }
+
+    function changePage(dir) {
+        const newPage = currentPage + dir;
+        if (newPage < 1 || newPage > totalPages) return;
+        currentPage = newPage; fetchLogs();
+    }
+
+    function applyFilters() { currentPage = 1; fetchLogs(); }
+
+    function resetFilters() {
+        ['filterSearch','filterRole','filterModule','filterStatus','filterStartDate','filterEndDate'].forEach(id => document.getElementById(id).value = '');
+        currentPage = 1; fetchLogs();
+    }
+
+    async function clearOldLogs() {
+        const result = await Swal.fire({ title:'Clear Old Logs?', text:'This will permanently delete all activity logs older than 90 days.', icon:'warning', showCancelButton:true, confirmButtonColor:'#d62828', confirmButtonText:'Yes, clear them' });
+        if (!result.isConfirmed) return;
+        try {
+            const res  = await fetch(`${API_BASE_URL}/api/activity/clear`, { method:'DELETE', headers:{ 'Authorization':`Bearer ${getToken()}` } });
+            const data = await res.json();
+            Swal.fire({ icon:'success', title:'Cleared!', text: data.message, confirmButtonColor:'#005a32' });
+            fetchLogs(); fetchStats();
+        } catch(e) { Swal.fire({ icon:'error', title:'Error', text:'Could not clear logs.', confirmButtonColor:'#005a32' }); }
+    }
+
+    // ── INIT ──
+    document.addEventListener('DOMContentLoaded', () => {
+        try {
+            document.documentElement.classList.toggle('dark', sessionStorage.getItem('darkMode') === 'true');
+            updateNavClock();
+            setInterval(updateNavClock, 1000);
+            loadNavUserInfo();
+
+            // Wire up notification bell
+            const btn      = document.getElementById('notificationBtn');
+            const dropdown = document.getElementById('notificationDropdown');
+            btn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('open'); if (dropdown.classList.contains('open')) refreshNotifications(); });
+            document.addEventListener('click', (e) => { if (!dropdown.contains(e.target) && e.target !== btn) dropdown.classList.remove('open'); });
+            dropdown.addEventListener('click', e => e.stopPropagation());
+
+            fetchStats();
+            fetchLogs();
+            setTimeout(refreshNotifications, 800);
+            setInterval(() => { fetchStats(); fetchLogs(); }, 60000);
+            setInterval(refreshNotifications, 60000);
+        } catch(e) { console.error('Init error:', e); }
+    });
+</script>
+<script src="../js/windowcontrollerbtn.js"></script>
+</body>
+</html>

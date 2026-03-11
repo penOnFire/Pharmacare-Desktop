@@ -1,4 +1,5 @@
 import express from 'express';
+import { logActivity } from '../utils/logActivity.js';
 import { protect } from '../middleware/authMiddleware.js';
 import Inventory from '../models/Inventory.js';
 import Medicine from '../models/Medicine.js';

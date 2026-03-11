@@ -47,7 +47,6 @@
     .pos-primary-color { color: #319795; }
     .pos-primary-bg { background-color: #319795; }
     .pos-primary-border { border-color: #319795; }
-    .pos-primary-ring:focus { --tw-ring-color: #319795; }
 
     /* ── NAVBAR ── */
     .nav-divider { width: 1px; height: 28px; background: #e5e7eb; }
@@ -58,19 +57,11 @@
     #notificationBadge { animation: badge-pop 0.3s cubic-bezier(.34,1.56,.64,1); }
 
     .notif-dropdown {
-        position: absolute;
-        top: calc(100% + 10px);
-        right: 0;
-        width: 370px;
-        background: #fff;
-        border-radius: 14px;
+        position: absolute; top: calc(100% + 10px); right: 0; width: 370px;
+        background: #fff; border-radius: 14px;
         box-shadow: 0 20px 50px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.06);
-        border: 1px solid #e5e7eb;
-        z-index: 1000;
-        overflow: hidden;
-        opacity: 0;
-        transform: translateY(-8px) scale(0.97);
-        pointer-events: none;
+        border: 1px solid #e5e7eb; z-index: 1000; overflow: hidden;
+        opacity: 0; transform: translateY(-8px) scale(0.97); pointer-events: none;
         transition: opacity 0.22s ease, transform 0.22s cubic-bezier(.34,1.56,.64,1);
         transform-origin: top right;
     }
@@ -106,14 +97,12 @@
     .notif-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 0 2px 2px 0; }
     .notif-item.critical::before { background: #EF4444; }
     .notif-item.expiry::before   { background: #8b5a2b; }
-    .notif-item.pending::before  { background: #3B82F6; }
     .notif-item.shortage::before { background: #358E83; }
 
     .notif-icon-wrap { flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
     .notif-icon-wrap .material-icons { font-size: 20px; }
     .icon-critical { background: #fef2f2; } .icon-critical .material-icons { color: #EF4444; }
     .icon-expiry   { background: #fdf6ec; } .icon-expiry   .material-icons { color: #8b5a2b; }
-    .icon-pending  { background: #eff6ff; } .icon-pending  .material-icons { color: #3B82F6; }
     .icon-shortage { background: #f0fdfa; } .icon-shortage .material-icons { color: #358E83; }
 
     .notif-body { flex: 1; min-width: 0; }
@@ -127,7 +116,6 @@
     .notif-action-btn:hover  { opacity: 0.88; }
     .btn-critical { background: #EF4444; color: #fff; }
     .btn-expiry   { background: #8b5a2b; color: #fff; }
-    .btn-pending  { background: #3B82F6; color: #fff; }
     .btn-shortage { background: #005a32; color: #fff; }
 
     .unread-dot { flex-shrink: 0; width: 7px; height: 7px; border-radius: 50%; background: #005a32; margin-top: 5px; }
@@ -136,7 +124,6 @@
     .notif-empty p { font-size: 13px; }
     .notif-loading { padding: 30px 20px; text-align: center; color: #9ca3af; }
     .notif-loading p { font-size: 12px; margin-top: 8px; }
-
     .notif-footer { border-top: 1px solid #f0f0f0; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; }
     .dark .notif-footer { border-color: #374151; }
     .view-all-link { font-size: 12px; font-weight: 600; color: #005a32; text-decoration: none; display: flex; align-items: center; gap: 4px; }
@@ -180,20 +167,22 @@
             </div>
         </div>
         <nav class="flex-1 px-4 py-6 space-y-2">
-            <div class="px-2 text-sm font-semibold text-subtext-light dark:text-subtext-dark mb-2">Pharmacy</div>
-            <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="dashboard.html">
+            <!-- Role label updated to Pharmacy Assistant -->
+            <div class="px-2 text-sm font-semibold text-subtext-light dark:text-subtext-dark mb-2">Pharmacy Assistant</div>
+            <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="dashboard_pharmasst.html">
                 <span class="material-icons mr-3">dashboard</span> Dashboard
             </a>
-            <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="inventory.html">
+            <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="inventory_pharmasst.html">
                 <span class="material-icons mr-3">inventory_2</span> Inventory
             </a>
-            <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="patient_records.html">
+            <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="patient_records_pharmasst.html">
                 <span class="material-icons mr-3">folder_shared</span> Patient Records
             </a>
-            <a class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold" href="pos.html">
+            <!-- Active page -->
+            <a class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold" href="pos_pharmasst.html">
                 <span class="material-icons mr-3">shopping_cart</span> Counter Dispensing
             </a>
-            <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="billing.html">
+            <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="billing_pharmasst.html">
                 <span class="material-icons mr-3">point_of_sale</span> Sales &amp; Billing
             </a>
         </nav>
@@ -230,7 +219,6 @@
                             class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold"
                             style="display:none;">0</span>
                     </button>
-
                     <div id="notificationDropdown" class="notif-dropdown">
                         <div class="notif-header">
                             <h3>Notifications</h3>
@@ -252,7 +240,8 @@
                             </div>
                         </div>
                         <div class="notif-footer">
-                            <a href="inventory.html" class="view-all-link">
+                            <!-- Link updated to pharmacy assistant inventory -->
+                            <a href="inventory_pharmasst.html" class="view-all-link">
                                 View inventory <span class="material-icons">arrow_forward</span>
                             </a>
                         </div>
@@ -264,7 +253,8 @@
                 <!-- User Name + Role -->
                 <div class="text-right leading-tight">
                     <div id="navUserName" class="text-sm font-bold text-text-light dark:text-text-dark">User</div>
-                    <div id="navUserRole" class="text-xs text-subtext-light dark:text-subtext-dark">Role</div>
+                    <!-- Role label updated -->
+                    <div id="navUserRole" class="text-xs text-subtext-light dark:text-subtext-dark">Pharmacy Assistant</div>
                 </div>
 
                 <!-- Avatar -->
@@ -389,214 +379,6 @@
 </div>
 
 <script>
-<<<<<<< Updated upstream
-    const API_BASE_URL = 'http://localhost:5001';
-    
-    // ── AUTH & API CALL ──
-    function getToken() {
-        const directToken = sessionStorage.getItem('token');
-        if (directToken) return directToken;
-        const userInfoString = sessionStorage.getItem('userInfo');
-        if (userInfoString) { try { return JSON.parse(userInfoString).token; } catch(e){} }
-        return null;
-    }
-    
-    async function apiCall(endpoint, method = 'GET', body = null) {
-        const token = getToken();
-        if (!token) { window.location.href = 'login.html'; return null; }
-        
-        const options = { method, headers: { 'Authorization': `Bearer ${token}` } };
-        if (body) {
-            options.headers['Content-Type'] = 'application/json';
-            options.body = JSON.stringify(body);
-        }
-        
-        try {
-            const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-            if (response.status === 401 || response.status === 403) { sessionStorage.clear(); window.location.href = 'login.html'; return null; }
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.message || 'API Error');
-            return data;
-        } catch (error) {
-            console.error("API Error:", error);
-            Swal.fire('Transaction Error', error.message, 'error');
-            return null;
-        }
-    }
-    
-    // ── DATA ──
-    let products = [];
-    let cart = {};
-    let activeCategory = 'all';
-    let activePayment = 'cash';
-    
-    const catColors = {
-        blue:   { bg: 'bg-blue-50 dark:bg-blue-900/30',     text: 'text-blue-600 dark:text-blue-400' },
-        purple: { bg: 'bg-purple-50 dark:bg-purple-900/30', text: 'text-purple-600 dark:text-purple-400' },
-        indigo: { bg: 'bg-indigo-50 dark:bg-indigo-900/30', text: 'text-indigo-600 dark:text-indigo-400' },
-        emerald:{ bg: 'bg-emerald-50 dark:bg-emerald-900/30',text: 'text-emerald-600 dark:text-emerald-400' },
-        rose:   { bg: 'bg-rose-50 dark:bg-rose-900/30',     text: 'text-rose-600 dark:text-rose-400' },
-        sky:    { bg: 'bg-sky-50 dark:bg-sky-900/30',       text: 'text-sky-600 dark:text-sky-400' },
-    };
-    
-    function getColorForCategory(cat) {
-        cat = (cat || '').toLowerCase();
-        if (cat.includes('anti')) return 'blue';
-        if (cat.includes('pain')) return 'purple';
-        if (cat.includes('gastro')) return 'emerald';
-        if (cat.includes('diabet')) return 'rose';
-        if (cat.includes('cardio')) return 'sky';
-        return 'indigo';
-    }
-    
-    // ── INIT ──
-    document.addEventListener('DOMContentLoaded', () => {
-        loadInventory();
-        updateDate();
-    });
-    
-    function updateDate() {
-        const el = document.getElementById('currentDate');
-        if (el) el.textContent = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
-    }
-    
-    // ── INVENTORY FETCH ──
-    async function loadInventory() {
-        const inventoryData = await apiCall('/api/inventory');
-        if (!inventoryData) return;
-    
-        const liveInventory = (Array.isArray(inventoryData) ? inventoryData : (inventoryData.medicines || [])).filter(i => i.status !== 'Archived');
-        const grouped = {};
-        const today = new Date();
-    
-        liveInventory.forEach(item => {
-            if (!item.medicine) return;
-            const isExpired = new Date(item.expiryDate) < today;
-            if (isExpired) return; // Hide expired items from POS!
-    
-            const medObj = typeof item.medicine === 'object' ? item.medicine : { _id: item.medicine, name: item.name, type: 'General', strength: '' };
-            const medId = String(medObj._id);
-            const qty = parseInt(item.quantity || 0);
-            if (qty <= 0) return;
-    
-            const price = parseFloat(item.sellingPrice || item.price || medObj.sellingPrice || 0);
-    
-            if (!grouped[medId]) {
-                grouped[medId] = {
-                    id: medId,
-                    name: `${medObj.name} ${medObj.strength || ''}`.trim(),
-                    category: medObj.type || 'General',
-                    price: price,
-                    stock: 0,
-                    lowStock: false,
-                    catColor: getColorForCategory(medObj.type)
-                };
-            }
-            
-            grouped[medId].stock += qty;
-            const minLevel = parseInt(item.minStockLevel || 10);
-            grouped[medId].lowStock = grouped[medId].stock <= minLevel;
-        });
-    
-        products = Object.values(grouped).sort((a,b) => a.name.localeCompare(b.name));
-        renderProducts();
-    }
-    
-    // ── PRODUCTS ──
-    function renderProducts() {
-        const grid = document.getElementById('productGrid');
-        const query = (document.getElementById('searchInput')?.value || '').toLowerCase();
-        
-        const list = products.filter(p => {
-            const matchCat = activeCategory === 'all' || p.category === activeCategory;
-            const matchSearch = p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query);
-            return matchCat && matchSearch;
-        });
-    
-        if (!list.length) {
-            grid.innerHTML = `<div class="col-span-3 flex flex-col items-center justify-center h-40 text-slate-400 gap-2">
-                <span class="material-icons-round text-4xl">search_off</span>
-                <p class="text-sm">No active medicines found</p>
-            </div>`;
-            return;
-        }
-    
-        grid.innerHTML = list.map(p => {
-            const cc = catColors[p.catColor] || catColors.blue;
-            const inCart = cart[p.id]?.qty || 0;
-            return `
-            <div class="group bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-teal-500 transition-all shadow-sm hover:shadow-md">
-                <div class="flex justify-between items-start mb-4">
-                    <span class="px-2.5 py-1 ${cc.bg} ${cc.text} text-[10px] font-bold uppercase tracking-wider rounded">${p.category}</span>
-                    ${p.lowStock ? `<span class="px-2 py-0.5 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-500 text-[10px] font-bold rounded">Low Stock</span>` : ''}
-                </div>
-                <h3 class="text-base font-bold mb-1 truncate" title="${p.name}">${p.name}</h3>
-                <p class="text-xs text-slate-400 mb-5">Available Stock: ${p.stock} units</p>
-                <div class="flex items-center justify-between">
-                    <span class="text-xl font-bold text-slate-800 dark:text-slate-100">₱${p.price.toFixed(2)}</span>
-                    <div class="flex items-center gap-2">
-                        ${inCart > 0 ? `
-                        <div class="flex items-center gap-1">
-                            <button onclick="updateQty('${p.id}',-1)" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 flex items-center justify-center hover:bg-red-100 hover:text-red-500 font-bold transition-all">−</button>
-                            <span class="w-6 text-center text-sm font-bold">${inCart}</span>
-                            <button onclick="updateQty('${p.id}',1)" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 flex items-center justify-center hover:bg-teal-100 hover:text-teal-600 font-bold transition-all">+</button>
-                        </div>` : `
-                        <button onclick="addToCart('${p.id}')" class="w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-900 text-teal-600 border border-slate-100 flex items-center justify-center hover:bg-teal-600 hover:text-white transition-all transform active:scale-95">
-                            <span class="material-icons-round">add</span>
-                        </button>`}
-                    </div>
-                </div>
-            </div>`;
-        }).join('');
-    }
-    
-    function setCategory(btn, cat) {
-        activeCategory = cat;
-        document.querySelectorAll('.category-btn').forEach(b => {
-            b.className = 'category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap';
-        });
-        btn.className = 'category-btn px-5 py-2 rounded-full bg-teal-600 text-white text-sm font-medium shadow-md whitespace-nowrap';
-        renderProducts();
-    }
-    
-    function filterProducts() { renderProducts(); }
-    
-    // ── CART ──
-    function addToCart(id) {
-        const p = products.find(x => x.id === id);
-        if (!p) return;
-        if (!cart[id]) cart[id] = { product: p, qty: 0 };
-        if (cart[id].qty >= p.stock) { Swal.fire({icon:'warning', title:'Stock Limit', text:'Cannot exceed available active stock.'}); return; }
-        cart[id].qty++;
-        updateUI();
-    }
-    
-    function updateQty(id, delta) {
-        if (!cart[id]) return;
-        const p = cart[id].product;
-        if (delta > 0 && cart[id].qty >= p.stock) { Swal.fire({icon:'warning', title:'Stock Limit', text:'Cannot exceed available active stock.'}); return; }
-        cart[id].qty += delta;
-        if (cart[id].qty <= 0) delete cart[id];
-        updateUI();
-    }
-    
-    function removeFromCart(id) { delete cart[id]; updateUI(); }
-    
-    function updateUI() { renderProducts(); renderCart(); updateTotals(); }
-    
-    function renderCart() {
-        const container = document.getElementById('cartItems');
-        const items = Object.values(cart);
-    
-        if (!items.length) {
-            container.innerHTML = `<div class="flex flex-col items-center justify-center h-32 text-slate-400 text-sm gap-2">
-                <span class="material-icons-round text-4xl">shopping_basket</span>
-                <p>No items added yet</p>
-            </div>`;
-            document.getElementById('cartCount').textContent = '0 Items';
-            return;
-        }
-=======
 const API_BASE_URL = 'http://localhost:5001';
 
 // ── DATA ──
@@ -639,21 +421,16 @@ function getToken() {
 // ── NAVBAR ──
 function updateNavClock() {
     const now = new Date();
-    document.getElementById('navClock').textContent = now.toLocaleTimeString('en-US', {
-        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
-    });
-    document.getElementById('navDate').textContent = now.toLocaleDateString('en-US', {
-        month: 'short', day: 'numeric', year: 'numeric'
-    }).toUpperCase();
+    document.getElementById('navClock').textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+    document.getElementById('navDate').textContent  = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
 }
 
 function loadNavUserInfo() {
     try {
         const info = JSON.parse(sessionStorage.getItem('userInfo') || '{}');
         const name = info.name || info.firstName || info.username || 'User';
-        const role = info.role || info.position || '';
         document.getElementById('navUserName').textContent = name;
-        document.getElementById('navUserRole').textContent = role;
+        // Role label stays as Pharmacy Assistant from HTML
         document.getElementById('navAvatar').textContent   = name.charAt(0).toUpperCase();
     } catch(e) {}
 }
@@ -670,56 +447,21 @@ function generateAlertsFromInventory(inventory) {
 
     inventory.forEach((item, idx) => {
         const medName = item.medicine?.name || item.name || 'Unknown Medicine';
-
         if (item.expiryDate) {
             const expiry = new Date(item.expiryDate);
             if (expiry < today) {
-                alerts.push({
-                    id: `exp-${item._id || idx}`, type: 'expiry', unread: true,
-                    medicineName: medName,
-                    title: 'Medicine Expired',
-                    desc:  `${medName} expired on ${expiry.toLocaleDateString('en-PH')}.`,
-                    time:  'Needs immediate attention',
-                    actionLabel: 'View Batch', actionClass: 'btn-expiry',
-                    icon: 'event_busy', iconClass: 'icon-expiry'
-                });
+                alerts.push({ id: `exp-${item._id || idx}`, type: 'expiry', unread: true, medicineName: medName, title: 'Medicine Expired', desc: `${medName} expired on ${expiry.toLocaleDateString('en-PH')}.`, time: 'Needs immediate attention', actionLabel: 'View Batch', actionClass: 'btn-expiry', icon: 'event_busy', iconClass: 'icon-expiry' });
             } else if (expiry <= thirtyDays) {
                 const d = Math.ceil((expiry - today) / 864e5);
-                alerts.push({
-                    id: `exp-${item._id || idx}`, type: 'expiry', unread: true,
-                    medicineName: medName,
-                    title: 'Expiring Soon',
-                    desc:  `${medName} expires in ${d} day${d === 1 ? '' : 's'}.`,
-                    time:  `${d} days left`,
-                    actionLabel: 'View Batch', actionClass: 'btn-expiry',
-                    icon: 'schedule', iconClass: 'icon-expiry'
-                });
+                alerts.push({ id: `exp-${item._id || idx}`, type: 'expiry', unread: true, medicineName: medName, title: 'Expiring Soon', desc: `${medName} expires in ${d} day${d === 1 ? '' : 's'}.`, time: `${d} days left`, actionLabel: 'View Batch', actionClass: 'btn-expiry', icon: 'schedule', iconClass: 'icon-expiry' });
             }
         }
-
         const qty      = parseInt(item.quantity || 0);
         const minStock = parseInt(item.minStockLevel || 10);
-
         if (qty === 0) {
-            alerts.push({
-                id: `stk-${item._id || idx}`, type: 'critical', unread: true,
-                medicineName: medName,
-                title: 'Critical: Out of Stock',
-                desc:  `${medName} is completely out of stock. Needs emergency reorder.`,
-                time:  'Immediate action required',
-                actionLabel: 'Go to Inventory', actionClass: 'btn-critical',
-                icon: 'warning', iconClass: 'icon-critical'
-            });
+            alerts.push({ id: `stk-${item._id || idx}`, type: 'critical', unread: true, medicineName: medName, title: 'Critical: Out of Stock', desc: `${medName} is completely out of stock. Needs emergency reorder.`, time: 'Immediate action required', actionLabel: 'Go to Inventory', actionClass: 'btn-critical', icon: 'warning', iconClass: 'icon-critical' });
         } else if (qty <= minStock) {
-            alerts.push({
-                id: `stk-${item._id || idx}`, type: 'shortage', unread: true,
-                medicineName: medName,
-                title: 'Low Stock Alert',
-                desc:  `${medName} — only ${qty} unit${qty === 1 ? '' : 's'} remaining (min: ${minStock}).`,
-                time:  'Reorder soon',
-                actionLabel: 'Go to Inventory', actionClass: 'btn-shortage',
-                icon: 'inventory_2', iconClass: 'icon-shortage'
-            });
+            alerts.push({ id: `stk-${item._id || idx}`, type: 'shortage', unread: true, medicineName: medName, title: 'Low Stock Alert', desc: `${medName} — only ${qty} unit${qty === 1 ? '' : 's'} remaining (min: ${minStock}).`, time: 'Reorder soon', actionLabel: 'Go to Inventory', actionClass: 'btn-shortage', icon: 'inventory_2', iconClass: 'icon-shortage' });
         }
     });
 
@@ -730,37 +472,23 @@ function generateAlertsFromInventory(inventory) {
 
 function renderNotifications() {
     const list     = document.getElementById('notifList');
-    const filtered = activeNotifFilter === 'all'
-        ? notifData
-        : notifData.filter(n => n.type === activeNotifFilter);
-
+    const filtered = activeNotifFilter === 'all' ? notifData : notifData.filter(n => n.type === activeNotifFilter);
     if (!filtered.length) {
-        list.innerHTML = `
-            <div class="notif-empty">
-                <span class="material-icons">notifications_none</span>
-                <p>${activeNotifFilter === 'all' ? 'All clear — no alerts right now!' : 'No notifications in this category.'}</p>
-            </div>`;
+        list.innerHTML = `<div class="notif-empty"><span class="material-icons">notifications_none</span><p>${activeNotifFilter === 'all' ? 'All clear — no alerts right now!' : 'No notifications in this category.'}</p></div>`;
         updateNotifBadge();
         return;
     }
-
     list.innerHTML = filtered.map(n => `
         <div class="notif-item ${n.type} ${n.unread ? 'unread' : ''}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
-            <div class="notif-icon-wrap ${n.iconClass}">
-                <span class="material-icons">${n.icon}</span>
-            </div>
+            <div class="notif-icon-wrap ${n.iconClass}"><span class="material-icons">${n.icon}</span></div>
             <div class="notif-body">
                 <div class="notif-title">${n.title}</div>
                 <div class="notif-desc">${n.desc}</div>
                 <div class="notif-time">${n.time}</div>
-                <div class="notif-action">
-                    <button class="notif-action-btn ${n.actionClass}"
-                        onclick="handleNotifAction(event,'${n.id}')">${n.actionLabel}</button>
-                </div>
+                <div class="notif-action"><button class="notif-action-btn ${n.actionClass}" onclick="handleNotifAction(event,'${n.id}')">${n.actionLabel}</button></div>
             </div>
             ${n.unread ? '<div class="unread-dot"></div>' : ''}
         </div>`).join('');
-
     updateNotifBadge();
 }
 
@@ -772,15 +500,8 @@ function updateNotifBadge() {
     if (pill)  pill.textContent = count > 0 ? `${count} new` : 'All clear';
 }
 
-function markNotifRead(id) {
-    const n = notifData.find(n => n.id === id);
-    if (n) { n.unread = false; renderNotifications(); }
-}
-
-function markAllRead() {
-    notifData.forEach(n => n.unread = false);
-    renderNotifications();
-}
+function markNotifRead(id) { const n = notifData.find(n => n.id === id); if (n) { n.unread = false; renderNotifications(); } }
+function markAllRead() { notifData.forEach(n => n.unread = false); renderNotifications(); }
 
 function handleNotifAction(event, id) {
     event.stopPropagation();
@@ -792,7 +513,8 @@ function handleNotifAction(event, id) {
     } else if (n.type === 'critical' || n.type === 'shortage') {
         sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'summary', medicine: n.medicineName }));
     }
-    window.location.href = 'inventory.html';
+    // Redirect to pharmacy assistant inventory
+    window.location.href = 'inventory_pharmasst.html';
 }
 
 function filterNotifTab(btn, filter) {
@@ -806,9 +528,7 @@ async function refreshNotifications() {
     const token = getToken();
     if (!token) return;
     try {
-        const res = await fetch(`${API_BASE_URL}/api/inventory`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
+        const res = await fetch(`${API_BASE_URL}/api/inventory`, { headers: { 'Authorization': `Bearer ${token}` } });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const raw       = await res.json();
         const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
@@ -819,11 +539,7 @@ async function refreshNotifications() {
     } catch (e) {
         console.warn('Notification fetch failed:', e);
         if (!notifData.length) {
-            document.getElementById('notifList').innerHTML = `
-                <div class="notif-empty">
-                    <span class="material-icons">cloud_off</span>
-                    <p>Could not load alerts. Check server connection.</p>
-                </div>`;
+            document.getElementById('notifList').innerHTML = `<div class="notif-empty"><span class="material-icons">cloud_off</span><p>Could not load alerts. Check server connection.</p></div>`;
         }
     }
 }
@@ -835,19 +551,11 @@ document.addEventListener('DOMContentLoaded', () => {
     updateNavClock();
     setInterval(updateNavClock, 1000);
 
-    // Bell toggle
     const btn      = document.getElementById('notificationBtn');
     const dropdown = document.getElementById('notificationDropdown');
-    btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        dropdown.classList.toggle('open');
-        if (dropdown.classList.contains('open')) refreshNotifications();
-    });
-    document.addEventListener('click', (e) => {
-        if (!dropdown.contains(e.target) && e.target !== btn) dropdown.classList.remove('open');
-    });
+    btn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('open'); if (dropdown.classList.contains('open')) refreshNotifications(); });
+    document.addEventListener('click', (e) => { if (!dropdown.contains(e.target) && e.target !== btn) dropdown.classList.remove('open'); });
     dropdown.addEventListener('click', e => e.stopPropagation());
-
     setTimeout(refreshNotifications, 800);
     setInterval(refreshNotifications, 60000);
 });
@@ -863,10 +571,7 @@ function renderProducts() {
     });
 
     if (!list.length) {
-        grid.innerHTML = `<div class="col-span-3 flex flex-col items-center justify-center h-40 text-slate-400 gap-2">
-            <span class="material-icons-round text-4xl">search_off</span>
-            <p class="text-sm">No medicines found</p>
-        </div>`;
+        grid.innerHTML = `<div class="col-span-3 flex flex-col items-center justify-center h-40 text-slate-400 gap-2"><span class="material-icons-round text-4xl">search_off</span><p class="text-sm">No medicines found</p></div>`;
         return;
     }
 
@@ -904,81 +609,50 @@ function setCategory(btn, cat) {
     document.querySelectorAll('.category-btn').forEach(b => {
         b.className = 'category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap';
     });
-    
-    function updateDate() {
-        const el = document.getElementById('currentDate');
-        if (el) el.textContent = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+    btn.className = 'category-btn px-5 py-2 rounded-full bg-teal-600 text-white text-sm font-medium shadow-md whitespace-nowrap';
+    renderProducts();
+}
+
+function filterProducts() { renderProducts(); }
+
+// ── CART ──
+function addToCart(id) {
+    const p = products.find(x => x.id === id);
+    if (!p) return;
+    if (!cart[id]) cart[id] = { product: p, qty: 0 };
+    if (cart[id].qty >= p.stock) { alert('Cannot exceed available stock!'); return; }
+    cart[id].qty++;
+    updateUI();
+}
+
+function updateQty(id, delta) {
+    if (!cart[id]) return;
+    cart[id].qty += delta;
+    if (cart[id].qty <= 0) delete cart[id];
+    updateUI();
+}
+
+function removeFromCart(id) { delete cart[id]; updateUI(); }
+
+function updateUI() { renderProducts(); renderCart(); updateTotals(); }
+
+function renderCart() {
+    const container = document.getElementById('cartItems');
+    const items     = Object.values(cart);
+    if (!items.length) {
+        container.innerHTML = `<div class="flex flex-col items-center justify-center h-32 text-slate-400 text-sm gap-2"><span class="material-icons-round text-4xl">shopping_basket</span><p>No items added yet</p></div>`;
+        document.getElementById('cartCount').textContent = '0 Items';
+        return;
     }
-    
-    // ── INVENTORY FETCH ──
-    async function loadInventory() {
-        const inventoryData = await apiCall('/api/inventory');
-        if (!inventoryData) return;
-    
-        const liveInventory = (Array.isArray(inventoryData) ? inventoryData : (inventoryData.medicines || [])).filter(i => i.status !== 'Archived');
-        const grouped = {};
-        const today = new Date();
-    
-        liveInventory.forEach(item => {
-            if (!item.medicine) return;
-            const isExpired = new Date(item.expiryDate) < today;
-            if (isExpired) return; // Hide expired items from POS!
-    
-            const medObj = typeof item.medicine === 'object' ? item.medicine : { _id: item.medicine, name: item.name, type: 'General', strength: '' };
-            const medId = String(medObj._id);
-            const qty = parseInt(item.quantity || 0);
-            if (qty <= 0) return;
-    
-            const price = parseFloat(item.sellingPrice || item.price || medObj.sellingPrice || 0);
-    
-            if (!grouped[medId]) {
-                grouped[medId] = {
-                    id: medId,
-                    name: `${medObj.name} ${medObj.strength || ''}`.trim(),
-                    category: medObj.type || 'General',
-                    price: price,
-                    stock: 0,
-                    lowStock: false,
-                    catColor: getColorForCategory(medObj.type)
-                };
-            }
-            
-            grouped[medId].stock += qty;
-            const minLevel = parseInt(item.minStockLevel || 10);
-            grouped[medId].lowStock = grouped[medId].stock <= minLevel;
-        });
-    
-        products = Object.values(grouped).sort((a,b) => a.name.localeCompare(b.name));
-        renderProducts();
-    }
-    
-    // ── PRODUCTS ──
-    function renderProducts() {
-        const grid = document.getElementById('productGrid');
-        const query = (document.getElementById('searchInput')?.value || '').toLowerCase();
-        
-        const list = products.filter(p => {
-            const matchCat = activeCategory === 'all' || p.category === activeCategory;
-            const matchSearch = p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query);
-            return matchCat && matchSearch;
-        });
-    
-        if (!list.length) {
-            grid.innerHTML = `<div class="col-span-3 flex flex-col items-center justify-center h-40 text-slate-400 gap-2">
-                <span class="material-icons-round text-4xl">search_off</span>
-                <p class="text-sm">No active medicines found</p>
-            </div>`;
-            return;
-        }
-    
-        grid.innerHTML = list.map(p => {
-            const cc = catColors[p.catColor] || catColors.blue;
-            const inCart = cart[p.id]?.qty || 0;
-            return `
-            <div class="group bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-teal-500 transition-all shadow-sm hover:shadow-md">
-                <div class="flex justify-between items-start mb-4">
-                    <span class="px-2.5 py-1 ${cc.bg} ${cc.text} text-[10px] font-bold uppercase tracking-wider rounded">${p.category}</span>
-                    ${p.lowStock ? `<span class="px-2 py-0.5 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-500 text-[10px] font-bold rounded">Low Stock</span>` : ''}
+    const total = items.reduce((s, i) => s + i.qty, 0);
+    document.getElementById('cartCount').textContent = `${total} Item${total !== 1 ? 's' : ''}`;
+    container.innerHTML = items.map(({ product: p, qty }) => `
+        <div class="flex justify-between items-start group py-2 border-b border-slate-100 dark:border-slate-700 last:border-0">
+            <div class="flex gap-3">
+                <div class="w-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 flex items-center justify-center font-bold text-xs text-teal-600">${qty}x</div>
+                <div>
+                    <h4 class="text-sm font-semibold">${p.name}</h4>
+                    <p class="text-[10px] text-slate-400">₱${p.price.toFixed(2)} / unit</p>
                 </div>
             </div>
             <div class="text-right">
@@ -999,8 +673,7 @@ function updateTotals() {
 function calcChange() {
     const subtotal = Object.values(cart).reduce((s, i) => s + i.product.price * i.qty, 0);
     const received = parseFloat(document.getElementById('amountReceived').value) || 0;
-    const change   = Math.max(0, received - subtotal);
-    document.getElementById('changeDue').textContent = `₱${change.toFixed(2)}`;
+    document.getElementById('changeDue').textContent = `₱${Math.max(0, received - subtotal).toFixed(2)}`;
 }
 
 // ── PAYMENT ──
@@ -1015,162 +688,33 @@ function setPayment(btn, method) {
 function processPayment() {
     const items = Object.values(cart);
     if (!items.length) { Swal.fire({ icon: 'warning', title: 'Empty Cart', text: 'Please add items to proceed.' }); return; }
-
     const subtotal = items.reduce((s, i) => s + i.product.price * i.qty, 0);
     const received = parseFloat(document.getElementById('amountReceived').value) || 0;
-
     if (activePayment === 'cash' && received < subtotal) {
         Swal.fire({ icon: 'error', title: 'Insufficient Amount', text: `Please enter at least ₱${subtotal.toFixed(2)}.` });
         return;
     }
-    
-    function setCategory(btn, cat) {
-        activeCategory = cat;
-        document.querySelectorAll('.category-btn').forEach(b => {
-            b.className = 'category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap';
-        });
-        btn.className = 'category-btn px-5 py-2 rounded-full bg-teal-600 text-white text-sm font-medium shadow-md whitespace-nowrap';
-        renderProducts();
-    }
-    
-    function filterProducts() { renderProducts(); }
-    
-    // ── CART ──
-    function addToCart(id) {
-        const p = products.find(x => x.id === id);
-        if (!p) return;
-        if (!cart[id]) cart[id] = { product: p, qty: 0 };
-        if (cart[id].qty >= p.stock) { Swal.fire({icon:'warning', title:'Stock Limit', text:'Cannot exceed available active stock.'}); return; }
-        cart[id].qty++;
+    const change = Math.max(0, received - subtotal);
+    Swal.fire({
+        icon: 'success',
+        title: 'Payment Successful!',
+        html: `<p class="text-lg font-bold text-teal-600">Total: ₱${subtotal.toFixed(2)}</p>
+               ${activePayment === 'cash' ? `<p class="text-sm text-gray-500 mt-1">Change: ₱${change.toFixed(2)}</p>` : ''}
+               <p class="text-xs text-gray-400 mt-2">Payment via ${activePayment.charAt(0).toUpperCase() + activePayment.slice(1)}</p>`,
+        confirmButtonColor: '#005a32',
+        confirmButtonText: 'New Transaction'
+    }).then(() => {
+        cart = {};
+        document.getElementById('amountReceived').value = '';
         updateUI();
-    }
-    
-    function updateQty(id, delta) {
-        if (!cart[id]) return;
-        const p = cart[id].product;
-        if (delta > 0 && cart[id].qty >= p.stock) { Swal.fire({icon:'warning', title:'Stock Limit', text:'Cannot exceed available active stock.'}); return; }
-        cart[id].qty += delta;
-        if (cart[id].qty <= 0) delete cart[id];
-        updateUI();
-    }
-    
-    function removeFromCart(id) { delete cart[id]; updateUI(); }
-    
-    function updateUI() { renderProducts(); renderCart(); updateTotals(); }
-    
-    function renderCart() {
-        const container = document.getElementById('cartItems');
-        const items = Object.values(cart);
-    
-        if (!items.length) {
-            container.innerHTML = `<div class="flex flex-col items-center justify-center h-32 text-slate-400 text-sm gap-2">
-                <span class="material-icons-round text-4xl">shopping_basket</span>
-                <p>No items added yet</p>
-            </div>`;
-            document.getElementById('cartCount').textContent = '0 Items';
-            return;
-        }
->>>>>>> Stashed changes
-    
-        const total = items.reduce((s, i) => s + i.qty, 0);
-        document.getElementById('cartCount').textContent = `${total} Item${total !== 1 ? 's' : ''}`;
-    
-        container.innerHTML = items.map(({ product: p, qty }) => `
-            <div class="flex justify-between items-start group py-2 border-b border-slate-100 dark:border-slate-700 last:border-0">
-                <div class="flex gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 flex items-center justify-center font-bold text-xs text-teal-600">${qty}x</div>
-                    <div>
-                        <h4 class="text-sm font-semibold truncate w-36" title="${p.name}">${p.name}</h4>
-                        <p class="text-[10px] text-slate-400">₱${p.price.toFixed(2)} / unit</p>
-                    </div>
-                </div>
-                <div class="text-right">
-                    <p class="text-sm font-bold">₱${(p.price * qty).toFixed(2)}</p>
-                    <button onclick="removeFromCart('${p.id}')" class="text-[10px] text-rose-500 font-medium opacity-0 group-hover:opacity-100 transition-opacity">Remove</button>
-                </div>
-            </div>`).join('');
-    }
-    
-    function updateTotals() {
-        const subtotal = Object.values(cart).reduce((s, i) => s + i.product.price * i.qty, 0);
-        document.getElementById('subtotal').textContent = `₱${subtotal.toFixed(2)}`;
-        document.getElementById('totalAmount').textContent = `₱${subtotal.toFixed(2)}`;
-        document.getElementById('payBtnText').textContent = `Pay ₱${subtotal.toFixed(2)}`;
-        calcChange();
-    }
-    
-    function calcChange() {
-        const subtotal = Object.values(cart).reduce((s, i) => s + i.product.price * i.qty, 0);
-        const received = parseFloat(document.getElementById('amountReceived').value) || 0;
-        const change = Math.max(0, received - subtotal);
-        document.getElementById('changeDue').textContent = `₱${change.toFixed(2)}`;
-    }
-    
-    // ── PAYMENT ──
-    function setPayment(btn, method) {
-        activePayment = method;
-        document.querySelectorAll('.payment-btn').forEach(b => {
-            b.className = 'payment-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-transparent bg-white dark:bg-slate-800 text-slate-400 hover:border-slate-200 transition-all';
-        });
-        btn.className = 'payment-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-teal-600 bg-teal-50 dark:bg-teal-900/20 text-teal-600 transition-all';
-    }
-    
-    async function processPayment() {
-        const items = Object.values(cart);
-        if (!items.length) { Swal.fire({ icon: 'warning', title: 'Empty Cart', text: 'Please add items to proceed.' }); return; }
-    
-        const subtotal = items.reduce((s, i) => s + i.product.price * i.qty, 0);
-        const received = parseFloat(document.getElementById('amountReceived').value) || 0;
-    
-        if (activePayment === 'cash' && received < subtotal) {
-            Swal.fire({ icon: 'error', title: 'Insufficient Amount', text: `Please enter at least ₱${subtotal.toFixed(2)}.` });
-            return;
-        }
-    
-        const change = Math.max(0, received - subtotal);
-    
-        // Construct Backend Payload
-        const payload = {
-            items: items.map(i => ({ medicineId: i.product.id, quantity: i.qty })),
-            paymentMethod: activePayment,
-            amountReceived: received
-        };
-    
-        const res = await apiCall('/api/sales/otc', 'POST', payload);
-        
-        if (res) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Transaction Successful!',
-                html: `<p class="text-lg font-bold text-teal-600">Total: ₱${subtotal.toFixed(2)}</p>
-                       ${activePayment === 'cash' ? `<p class="text-sm text-gray-500 mt-1">Change: ₱${change.toFixed(2)}</p>` : ''}
-                       <p class="text-xs text-gray-400 mt-2">Walk-in Payment via ${activePayment.charAt(0).toUpperCase() + activePayment.slice(1)}</p>`,
-                confirmButtonColor: '#005a32',
-                confirmButtonText: 'New Transaction'
-            }).then(() => {
-                cart = {};
-                document.getElementById('amountReceived').value = '';
-                updateUI();
-                loadInventory(); // Instantly refresh stock count from database!
-            });
-        }
-    }
-    
-    // ── UTILS ──
-    function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
-    function logoutUser() {
-        Swal.fire({
-            title: 'Logout?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#005a32', confirmButtonText: 'Yes, logout'
-        }).then(r => {
-            if (r.isConfirmed) {
-                sessionStorage.removeItem('userInfo');
-                sessionStorage.removeItem('token');
-                window.location.href = 'login.html';
-            }
-        });
-    }
-    </script>
+    });
+}
+
+function logoutUser() {
+    Swal.fire({ title: 'Logout?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#005a32', confirmButtonText: 'Yes, logout' })
+    .then(r => { if (r.isConfirmed) { sessionStorage.removeItem('userInfo'); sessionStorage.removeItem('token'); window.location.href = 'login.html'; } });
+}
+</script>
 <script src="../js/windowcontrollerbtn.js"></script>
-<script src="../audio/audio-system.js"></script>
 </body>
 </html>

@@ -38,22 +38,39 @@
     };
 </script>
 <style>
-    
-
     thead th {
-    background: transparent !important;
-}
-
-thead tr {
-    background: linear-gradient(to right, rgba(0,90,50,0.2), rgba(255,255,255,0.5), rgba(214,40,40,0.2));
-}
-
-.dark thead tr {
-    background: linear-gradient(to right, rgba(0,90,50,0.3), rgba(15,23,42,0.8), rgba(214,40,40,0.3));
-}
+        background: transparent !important;
+    }
+    thead tr {
+        background: linear-gradient(to right, rgba(0,90,50,0.2), rgba(255,255,255,0.5), rgba(214,40,40,0.2));
+    }
+    .dark thead tr {
+        background: linear-gradient(to right, rgba(0,90,50,0.3), rgba(15,23,42,0.8), rgba(214,40,40,0.3));
+    }
 
     .drag-region { -webkit-app-region: drag; }
     .no-drag { -webkit-app-region: no-drag; }
+
+    /* ── NAVBAR CLOCK ── */
+    #navClock {
+        font-size: 15px;
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: -0.01em;
+    }
+    #navDate {
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+    }
+
+    /* ── NAVBAR DIVIDER ── */
+    .nav-divider {
+        width: 1px;
+        height: 28px;
+        background: #e5e7eb;
+    }
+    .dark .nav-divider { background: #374151; }
 
     /* ── FANCY NOTIFICATION DROPDOWN ── */
     @keyframes badge-pop { from { transform: scale(0); } to { transform: scale(1); } }
@@ -143,7 +160,7 @@ thead tr {
     .hidden { display: none !important; }
     .animate-spin-slow { animation: spin 2s linear infinite; }
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    
+
     /* Status Badges */
     .status-badge { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 500; }
     .status-Paid    { background-color: rgba(34, 197, 94, 0.1); color: rgb(22, 163, 74); }
@@ -153,13 +170,12 @@ thead tr {
 </head>
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark font-display">
 
-
 <!--Titlebar-->
 <div id="title-bar" class="drag-region fixed top-0 left-0 w-full h-8 bg-white flex justify-between items-stretch z-40 border-b border-gray-200 select-none">
     <div class="flex items-center pl-4 gap-2 text-gray-600">
         <span class="text-xs font-semibold">IHMS Pharmacy</span>
     </div>
-    <div class="no-drag flex items-center relative z-50"> 
+    <div class="no-drag flex items-center relative z-50">
         <button id="min-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200">
             <span class="material-icons-outlined text-sm text-gray-600">remove</span>
         </button>
@@ -172,16 +188,14 @@ thead tr {
     </div>
 </div>
 
-    <div class="flex h-screen pt-8">
-    
+<div class="flex h-screen pt-8">
+
     <aside class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-border-light dark:border-border-dark">
-        <div class="h-16 flex items-center px-6 border-b border-border-light dark:border-border-dark">
+        <div class="h-16 flex items-center px-6">
             <div class="flex items-center gap-3">
-                 <div class="w-12 h-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm">
-                        <img src="images/wellserved.png" 
-                        alt="Well Served Logo" 
-                        class="w-full h-full object-cover">
-                    </div>
+                <div class="w-12 h-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm">
+                    <img src="images/wellserved.png" alt="Well Served Logo" class="w-full h-full object-cover">
+                </div>
                 <div>
                     <h1 class="font-bold text-primary dark:text-green-400 leading-tight">Well Served</h1>
                     <p class="text-[10px] uppercase tracking-wider text-accent dark:text-amber-600 font-semibold">Since 1994</p>
@@ -202,36 +216,49 @@ thead tr {
             <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="pos.html">
                 <span class="material-icons mr-3">shopping_cart</span> Counter Dispensing
             </a>
-           
             <a class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold" href="billing.html">
                 <span class="material-icons mr-3">point_of_sale</span> Sales &amp; Billing
             </a>
         </nav>
         <div class="p-4 border-t border-border-light dark:border-border-dark">
-            <button onclick="logoutUser()" 
+            <button onclick="logoutUser()"
                 class="flex items-center w-full px-4 py-2 gap-3 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors">
                 <span class="material-icons text-red-500">logout</span> Logout
             </button>
         </div>
     </aside>
-    </aside>
 
     <main class="flex-1 flex flex-col overflow-hidden">
-        <!-- ── HEADER (matches dashboard/inventory) ── -->
+
+        <!-- ══════════════════════════════════════════
+             NAVBAR — copied from dashboard.html
+             [ Clock+Date ] [ Bell ] [ Name/Role ] [ Avatar ]
+             ══════════════════════════════════════════ -->
         <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
-            <div class="flex items-center gap-2">
-                
-            </div>
+            <!-- Left: empty spacer -->
+            <div></div>
+
+            <!-- Right: clock · divider · bell · divider · user info · avatar -->
             <div class="flex items-center gap-4">
-                <!-- Fancy Notification Bell -->
+
+                <!-- Live Clock + Date -->
+                <div class="text-right">
+                    <div id="navClock" class="text-text-light dark:text-text-dark"></div>
+                    <div id="navDate"  class="text-subtext-light dark:text-subtext-dark uppercase tracking-widest"></div>
+                </div>
+
+                <div class="nav-divider"></div>
+
+                <!-- Notification Bell -->
                 <div class="relative">
                     <button id="notificationBtn"
-                        class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                        <span class="material-icons text-2xl">notifications</span>
+                        class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <span class="material-icons-outlined text-2xl">notifications</span>
                         <span id="notificationBadge"
                             class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold"
                             style="display:none;">0</span>
                     </button>
+
                     <div id="notificationDropdown" class="notif-dropdown">
                         <div class="notif-header">
                             <h3>Notifications</h3>
@@ -259,10 +286,18 @@ thead tr {
                         </div>
                     </div>
                 </div>
-                <!-- Profile avatar -->
-                <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">PH</div>
-                <!-- Logout button -->
-                
+
+                <div class="nav-divider"></div>
+
+                <!-- User Name + Role -->
+                <div class="text-right leading-tight">
+                    <div id="navUserName" class="text-sm font-bold text-text-light dark:text-text-dark">User</div>
+                    <div id="navUserRole" class="text-xs text-subtext-light dark:text-subtext-dark">Staff</div>
+                </div>
+
+                <!-- Avatar with dynamic initial -->
+                <div id="navAvatar" class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm select-none">U</div>
+
             </div>
         </header>
 
@@ -279,7 +314,6 @@ thead tr {
                     <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-subtext-light dark:text-subtext-dark">search</span>
                     <input id="tableSearchInput" oninput="billingManager.handleSearch(this.value)" class="w-full bg-background-light dark:bg-background-dark border-none rounded-lg pl-10 pr-4 py-2.5 text-sm focus:ring-primary focus:border-primary text-text-light dark:text-text-dark" placeholder="Search by Patient Name or ID..." type="text"/>
                 </div>
-                
                 <select id="statusFilter" onchange="billingManager.handleFilter(this.value)" class="px-4 py-2.5 text-sm font-medium border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-primary/5 dark:hover:bg-primary/20 transition-colors bg-surface-light dark:bg-surface-dark focus:ring-primary text-text-light dark:text-text-dark">
                     <option value="all">All Status</option>
                     <option value="Paid">Paid</option>
@@ -291,18 +325,18 @@ thead tr {
                 <h2 class="text-xl font-semibold text-text-light dark:text-text-dark mb-4">Sales Transactions</h2>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left">
-    <thead class="text-xs text-subtext-light dark:text-subtext-dark uppercase">
-        <tr>
-            <th class="px-6 py-3 rounded-l-lg cursor-pointer">Date</th>
-            <th class="px-6 py-3 cursor-pointer">Patient</th>
-            <th class="px-6 py-3 cursor-pointer">Medicine(s)</th>
-            <th class="px-6 py-3 cursor-pointer">Amount</th>
-            <th class="px-6 py-3 cursor-pointer">Payment Status</th>
-            <th class="px-6 py-3 cursor-pointer text-center">Action</th>
-        </tr>
-    </thead>
-    <tbody id="transactionsTableBody"></tbody>
-</table>
+                        <thead class="text-xs text-subtext-light dark:text-subtext-dark uppercase">
+                            <tr>
+                                <th class="px-6 py-3 rounded-l-lg cursor-pointer">Date</th>
+                                <th class="px-6 py-3 cursor-pointer">Patient</th>
+                                <th class="px-6 py-3 cursor-pointer">Medicine(s)</th>
+                                <th class="px-6 py-3 cursor-pointer">Amount</th>
+                                <th class="px-6 py-3 cursor-pointer">Payment Status</th>
+                                <th class="px-6 py-3 cursor-pointer text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTableBody"></tbody>
+                    </table>
                 </div>
                 <div id="noResults" class="hidden text-center py-12 text-subtext-light dark:text-subtext-dark">
                     <span class="material-icons text-5xl mb-2 opacity-50">search_off</span>
@@ -315,6 +349,41 @@ thead tr {
 
 <script>
     const API_BASE_URL = 'http://localhost:5001';
+
+    // ══════════════════════════════════════════════════════════
+    // LIVE NAVBAR CLOCK — ticks every second
+    // ══════════════════════════════════════════════════════════
+    function updateNavClock() {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('en-US', {
+            hour:   '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+        });
+        const dateStr = now.toLocaleDateString('en-US', {
+            month: 'short',
+            day:   'numeric',
+            year:  'numeric'
+        }).toUpperCase();
+        document.getElementById('navClock').textContent = timeStr;
+        document.getElementById('navDate').textContent  = dateStr;
+    }
+
+    // ── Load user info from session into navbar ──
+    function loadNavUserInfo() {
+        try {
+            const raw = sessionStorage.getItem('userInfo');
+            if (!raw) return;
+            const info    = JSON.parse(raw);
+            const name    = info.name || info.firstName || info.username || 'User';
+            const role    = info.role || info.position || '';
+            const initial = name.charAt(0).toUpperCase();
+            document.getElementById('navUserName').textContent = name;
+            document.getElementById('navUserRole').textContent = role;
+            document.getElementById('navAvatar').textContent   = initial;
+        } catch(e) { /* keep defaults */ }
+    }
 
     // ══════════════════════════════════════════════════════════
     // FANCY NOTIFICATION BELL — live from /api/inventory
@@ -510,15 +579,11 @@ thead tr {
                 });
                 if(res.ok) {
                     let data = await res.json();
-                    
-                    // --- SORTING FIX: FORCE LATEST DATE FIRST ---
                     data.sort((a, b) => {
                         const dateA = new Date(a.date || a.createdAt);
                         const dateB = new Date(b.date || b.createdAt);
-                        return dateB - dateA; 
+                        return dateB - dateA;
                     });
-                    // --------------------------------------------
-
                     this.salesData = data;
                     this.renderTable(this.salesData);
                 }
@@ -531,7 +596,7 @@ thead tr {
             const btn = document.getElementById('syncBtn');
             const icon = document.getElementById('syncIcon');
             const staticIcon = document.getElementById('staticSyncIcon');
-            
+
             btn.disabled = true;
             btn.classList.add('opacity-75');
             icon.style.display = 'inline-block';
@@ -542,9 +607,7 @@ thead tr {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${this.getToken()}` }
                 });
-                
                 const result = await res.json();
-                
                 if (res.ok) {
                     Swal.fire({
                         title: 'Sync Complete',
@@ -558,7 +621,6 @@ thead tr {
                 } else {
                     Swal.fire('Sync Failed', result.message, 'error');
                 }
-
             } catch (err) {
                 Swal.fire('Error', 'Could not connect to server', 'error');
             } finally {
@@ -573,12 +635,10 @@ thead tr {
             const totalRevenue = this.salesData
                 .filter(s => s.paymentStatus === 'Paid')
                 .reduce((acc, curr) => acc + curr.totalAmount, 0);
-            
             const today = new Date().toDateString();
             const todaysSales = this.salesData
                 .filter(s => new Date(s.date).toDateString() === today && s.paymentStatus === 'Paid')
                 .reduce((acc, curr) => acc + curr.totalAmount, 0);
-
             document.getElementById('totalTransactions').textContent = this.salesData.length;
             document.getElementById('totalRevenue').textContent = `₱${totalRevenue.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
             document.getElementById('todaysSales').textContent = `₱${todaysSales.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
@@ -596,84 +656,63 @@ thead tr {
             noResults.classList.add('hidden');
 
             tbody.innerHTML = data.map(sale => {
-                // 1. Status Badge
                 const statusClass = `status-${sale.paymentStatus || 'Pending'}`;
-                
-                // 2. Date Fix
+
                 let dateDisplay = "N/A";
                 const rawDate = sale.date || sale.createdAt;
                 if (rawDate) {
                     const d = new Date(rawDate);
-                    if (!isNaN(d.getTime())) {
-                        dateDisplay = d.toLocaleDateString();
-                    }
+                    if (!isNaN(d.getTime())) dateDisplay = d.toLocaleDateString();
                 }
 
-                // 3. Patient Info
                 const pName = sale.patientName || "Walk-in";
                 let pIdDisplay = "Guest";
                 if (sale.patient && sale.patient.patientId) {
-                     pIdDisplay = sale.patient.patientId; 
+                    pIdDisplay = sale.patient.patientId;
                 } else if (typeof sale.patient === 'string') {
-                     pIdDisplay = sale.patient.substring(0, 6).toUpperCase();
+                    pIdDisplay = sale.patient.substring(0, 6).toUpperCase();
                 }
 
-                // 4. Medicine Dropdown Logic
                 let medicineHtml = '<span class="text-gray-400 italic">No items</span>';
-                
                 if (sale.items && sale.items.length > 0) {
                     const options = sale.items.map(item => {
                         let name = item.name;
-                        if ((!name || name === "Unknown") && item.medicine && item.medicine.name) {
-                            name = item.medicine.name;
-                        }
+                        if ((!name || name === "Unknown") && item.medicine && item.medicine.name) name = item.medicine.name;
                         const finalName = name || "Unknown Medicine";
                         return `<option>${finalName} (x${item.quantity})</option>`;
                     }).join('');
-
                     medicineHtml = `
                         <select class="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             ${options}
-                        </select>
-                    `;
+                        </select>`;
                 }
 
-                // 5. Amount
                 const amount = sale.totalAmount !== undefined ? sale.totalAmount : 0;
 
                 return `
                 <tr class="border-b border-slate-200 dark:border-slate-700 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 transition-colors">
-                    <td class="px-6 py-4 text-subtext-light dark:text-subtext-dark whitespace-nowrap">
-                        ${dateDisplay}
-                    </td>
+                    <td class="px-6 py-4 text-subtext-light dark:text-subtext-dark whitespace-nowrap">${dateDisplay}</td>
                     <td class="px-6 py-4">
                         <div class="font-medium text-text-light dark:text-text-dark">${pName}</div>
                         <div class="text-xs text-subtext-light dark:text-subtext-dark bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded w-fit mt-1">${pIdDisplay}</div>
                     </td>
+                    <td class="px-6 py-4"><div class="w-64">${medicineHtml}</div></td>
+                    <td class="px-6 py-4 font-bold text-text-light dark:text-text-dark">₱${amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
                     <td class="px-6 py-4">
-                        <div class="w-64">${medicineHtml}</div>
-                    </td>
-                    <td class="px-6 py-4 font-bold text-text-light dark:text-text-dark">
-                        ₱${amount.toLocaleString(undefined, {minimumFractionDigits: 2})}
-                    </td>
-                    <td class="px-6 py-4">
-                        <span class="status-badge ${statusClass}">
-                            ${sale.paymentStatus || 'Pending'}
-                        </span>
+                        <span class="status-badge ${statusClass}">${sale.paymentStatus || 'Pending'}</span>
                     </td>
                     <td class="px-6 py-4 text-center">
                         <button onclick="billingManager.viewDetails('${sale._id}')" class="text-primary hover:text-primary/80 font-medium text-sm flex items-center justify-center gap-1 mx-auto">
                             <span class="material-icons text-base">receipt</span> View
                         </button>
                     </td>
-                </tr>
-                `;
+                </tr>`;
             }).join('');
         }
 
         handleSearch(val) {
             const lower = val.toLowerCase();
-            const filtered = this.salesData.filter(s => 
+            const filtered = this.salesData.filter(s =>
                 (s.patientName && s.patientName.toLowerCase().includes(lower)) ||
                 s._id.includes(lower) ||
                 s.items.some(i => i.name.toLowerCase().includes(lower))
@@ -692,14 +731,12 @@ thead tr {
         viewDetails(id) {
             const sale = this.salesData.find(s => s._id === id);
             if(!sale) return;
-            
-            const itemsHtml = sale.items.map(i => 
+            const itemsHtml = sale.items.map(i =>
                 `<div class="flex justify-between text-sm py-1 border-b border-gray-100 last:border-0">
                     <span>${i.name} <span class="text-gray-500 text-xs">x${i.quantity}</span></span>
                     <span>₱${(i.priceAtSale * i.quantity).toFixed(2)}</span>
                 </div>`
             ).join('');
-
             Swal.fire({
                 title: 'Transaction Details',
                 html: `
@@ -718,8 +755,7 @@ thead tr {
                             <span>Total Amount</span>
                             <span>₱${sale.totalAmount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
                         </div>
-                    </div>
-                `,
+                    </div>`,
                 confirmButtonColor: '#005a32'
             });
         }
@@ -759,11 +795,18 @@ thead tr {
     window.billingManager = billingManager;
 
     document.addEventListener('DOMContentLoaded', function() {
-        // Dark mode
+        // ── Dark mode ──
         const isDarkMode = sessionStorage.getItem('darkMode') === 'true';
         document.documentElement.classList.toggle('dark', isDarkMode);
 
-        // Wire up fancy notification bell
+        // ── Live clock ──
+        updateNavClock();
+        setInterval(updateNavClock, 1000);
+
+        // ── Navbar user info ──
+        loadNavUserInfo();
+
+        // ── Notification bell wiring ──
         const btn      = document.getElementById('notificationBtn');
         const dropdown = document.getElementById('notificationDropdown');
         if (btn && dropdown) {

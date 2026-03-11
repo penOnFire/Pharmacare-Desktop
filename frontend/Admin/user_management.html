@@ -39,10 +39,8 @@
     </script>
     <style>
         body { font-family: 'Inter', sans-serif; }
-
         .drag-region { -webkit-app-region: drag; }
         .no-drag     { -webkit-app-region: no-drag; }
-
         .hidden { display: none !important; }
 
         .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #374151; }
@@ -52,33 +50,95 @@
         .dark .form-group input,
         .dark .form-group select { background-color: #374151; border-color: #4B5563; color: #F9FAFB; }
         .form-group input:focus,
-        .form-group select:focus { outline: none; border-color: #005a32; box-shadow: 0 0 0 3px rgba(0, 90, 50, 0.1); }
+        .form-group select:focus { outline: none; border-color: #005a32; box-shadow: 0 0 0 3px rgba(0,90,50,0.1); }
 
         .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 50; }
-        .status-badge { padding: 2px 10px; border-radius: 99px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
 
-        /* ── SIDEBAR LOGOUT BUTTON (matching inventory_admin.html) ── */
-        .sidebar-logout-btn {
-            display: flex; align-items: center; gap: 10px;
-            width: 100%; padding: 10px 16px; border: none;
-            background: none; cursor: pointer; border-radius: 8px;
-            color: #d62828; font-size: 14px; font-weight: 600;
-            transition: background 0.15s; text-align: left;
+        /* ── NOTIFICATION DROPDOWN — full version ── */
+        @keyframes badge-pop { from { transform: scale(0); } to { transform: scale(1); } }
+        #notificationBadge { animation: badge-pop 0.3s cubic-bezier(.34,1.56,.64,1); }
+
+        .notif-dropdown {
+            position: absolute; top: calc(100% + 10px); right: 0; width: 370px;
+            background: #fff; border-radius: 14px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.06);
+            border: 1px solid #e5e7eb; z-index: 1000; overflow: hidden;
+            opacity: 0; transform: translateY(-8px) scale(0.97); pointer-events: none;
+            transition: opacity 0.22s ease, transform 0.22s cubic-bezier(.34,1.56,.64,1);
+            transform-origin: top right;
         }
+        .dark .notif-dropdown { background: #1F2937; border-color: #374151; }
+        .notif-dropdown.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
+
+        .notif-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 14px; border-bottom: 1px solid #f0f0f0; }
+        .dark .notif-header { border-color: #374151; }
+        .notif-header h3 { font-size: 15px; font-weight: 700; color: #111827; }
+        .dark .notif-header h3 { color: #F9FAFB; }
+        .notif-header-meta { display: flex; align-items: center; gap: 10px; }
+        .unread-count-pill { background: #005a32; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+        .mark-all-btn { font-size: 11px; color: #005a32; font-weight: 600; background: none; border: none; cursor: pointer; padding: 2px 4px; border-radius: 4px; transition: background 0.15s; }
+        .mark-all-btn:hover { background: #f0fdf4; }
+
+        .notif-tabs { display: flex; gap: 4px; padding: 10px 14px; background: #fafafa; border-bottom: 1px solid #f0f0f0; }
+        .dark .notif-tabs { background: #111827; border-color: #374151; }
+        .notif-tab-btn { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 99px; border: 1px solid transparent; cursor: pointer; background: none; color: #6b7280; transition: all 0.15s; }
+        .notif-tab-btn.active { background: #005a32; color: #fff; border-color: #005a32; }
+        .notif-tab-btn:not(.active):hover { background: #f3f4f6; border-color: #e5e7eb; color: #374151; }
+
+        .notif-list { max-height: 360px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #e5e7eb transparent; }
+        .notif-list::-webkit-scrollbar { width: 4px; }
+        .notif-list::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 2px; }
+
+        .notif-item { display: flex; gap: 12px; align-items: flex-start; padding: 13px 16px; border-bottom: 1px solid #f5f5f5; cursor: pointer; position: relative; transition: background 0.15s; }
+        .dark .notif-item { border-color: #374151; }
+        .notif-item:last-child { border-bottom: none; }
+        .notif-item:hover { background: #f9fafb; }
+        .dark .notif-item:hover { background: #111827; }
+        .notif-item.unread { background: #ffffff; }
+        .dark .notif-item.unread { background: #1F2937; }
+        .notif-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 0 2px 2px 0; }
+        .notif-item.critical::before { background: #EF4444; }
+        .notif-item.expiry::before   { background: #8b5a2b; }
+        .notif-item.shortage::before { background: #358E83; }
+
+        .notif-icon-wrap { flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+        .notif-icon-wrap .material-icons { font-size: 20px; }
+        .icon-critical { background: #fef2f2; } .icon-critical .material-icons { color: #EF4444; }
+        .icon-expiry   { background: #fdf6ec; } .icon-expiry   .material-icons { color: #8b5a2b; }
+        .icon-shortage { background: #f0fdfa; } .icon-shortage .material-icons { color: #358E83; }
+
+        .notif-body { flex: 1; min-width: 0; }
+        .notif-title { font-size: 13px; font-weight: 600; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .dark .notif-title { color: #F9FAFB; }
+        .notif-desc  { font-size: 12px; color: #6b7280; margin-top: 2px; line-height: 1.4; }
+        .notif-time  { font-size: 10px; color: #9ca3af; margin-top: 6px; }
+        .notif-action { margin-top: 8px; }
+        .notif-action-btn { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 6px; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 0.04em; transition: opacity 0.15s, transform 0.1s; }
+        .notif-action-btn:active { transform: scale(0.96); }
+        .notif-action-btn:hover  { opacity: 0.88; }
+        .btn-critical { background: #EF4444; color: #fff; }
+        .btn-expiry   { background: #8b5a2b; color: #fff; }
+        .btn-shortage { background: #005a32; color: #fff; }
+
+        .unread-dot { flex-shrink: 0; width: 7px; height: 7px; border-radius: 50%; background: #005a32; margin-top: 5px; }
+        .notif-empty { padding: 40px 20px; text-align: center; color: #9ca3af; }
+        .notif-empty .material-icons { font-size: 40px; margin-bottom: 8px; display: block; }
+        .notif-empty p { font-size: 13px; }
+        .notif-footer { border-top: 1px solid #f0f0f0; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; }
+        .dark .notif-footer { border-color: #374151; }
+        .view-all-link { font-size: 12px; font-weight: 600; color: #005a32; text-decoration: none; display: flex; align-items: center; gap: 4px; }
+        .view-all-link:hover { text-decoration: underline; }
+        .view-all-link .material-icons { font-size: 14px; }
+        /* ── END NOTIFICATION STYLES ── */
+
+        #navClock { font-size: 15px; font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; }
+        #navDate  { font-size: 10px; font-weight: 500; letter-spacing: 0.06em; }
+        .nav-divider { width: 1px; height: 28px; background: #e5e7eb; }
+        .dark .nav-divider { background: #374151; }
+
+        .sidebar-logout-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 16px; border: none; background: none; cursor: pointer; border-radius: 8px; color: #d62828; font-size: 14px; font-weight: 600; transition: background 0.15s; text-align: left; }
         .sidebar-logout-btn:hover { background: #fef2f2; }
         .sidebar-logout-btn .material-icons { font-size: 20px; color: #d62828; }
-
-        .notification-dropdown {
-    display: none; position: absolute; top: 100%; right: 0;
-    width: 380px; background: white; border-radius: 8px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 1000;
-    border: 1px solid #e5e7eb;
-}
-.notification-dropdown.show { display: block; }
-.notification-item { padding: 12px 16px; border-bottom: 1px solid #f3f4f6; cursor: pointer; }
-.notification-item:hover { background-color: #f9fafb; }
-.notification-item:last-child { border-bottom: none; }
-
     </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
@@ -105,26 +165,13 @@
 
         <!-- ── SIDEBAR ── -->
         <aside class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-border-light dark:border-border-dark">
-
-            <!-- Logo -->
-           <div class="h-16 flex items-center gap-3 px-4 border-b border-border-light dark:border-border-dark">
-
-    <img
-      src="images/wellserved.png"
-      alt="Well Served Logo"
-      class="w-12 h-12 rounded-full object-cover border border-slate-100 dark:border-slate-700 shadow-sm"
-    />
-    <div>
-        <h1 class="font-bold text-primary dark:text-green-400 leading-tight">
-            Well Served
-        </h1>
-        <p class="text-[10px] uppercase tracking-wider text-accent dark:text-amber-600 font-semibold">
-            Since 1994
-        </p>
-    </div>
-</div>
-
-            <!-- Nav Links -->
+            <div class="h-16 flex items-center px-6">
+                <img src="images/wellserved.png" alt="Well Served Logo" class="w-12 h-12 rounded-full object-cover border border-slate-100 dark:border-slate-700 shadow-sm"/>
+                <div>
+                    <h1 class="font-bold text-primary dark:text-green-400 leading-tight">Well Served</h1>
+                    <p class="text-[10px] uppercase tracking-wider text-accent dark:text-amber-600 font-semibold">Since 1994</p>
+                </div>
+            </div>
             <nav class="flex-1 px-4 py-6 space-y-2">
                 <div class="px-2 text-sm font-semibold text-subtext-light dark:text-subtext-dark">Admin Panel</div>
                 <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="dashboard_admin.html">
@@ -133,53 +180,81 @@
                 <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="inventory_admin.html">
                     <span class="material-icons mr-3">inventory_2</span> Inventory
                 </a>
-                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="sales-reports.html">
+                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 rounded-md hover:bg-slate-50 dark:hover:bg-slate-700" href="sales-reports.html">
                     <span class="material-icons mr-3">analytics</span> Sales Reports
                 </a>
                 <a class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold" href="user_management.html">
                     <span class="material-icons mr-3">group</span> User Management
                 </a>
+                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="activitylog_admin.html">
+                    <span class="material-icons mr-3">history</span> Activity Log
+                </a>
             </nav>
-
-            <!-- ── LOGOUT at bottom of sidebar ── -->
             <div class="px-4 pb-6 border-t border-border-light dark:border-border-dark pt-4">
                 <button onclick="logoutUser()" class="sidebar-logout-btn">
-                    <span class="material-icons">logout</span>
-                    Logout
+                    <span class="material-icons">logout</span> Logout
                 </button>
             </div>
         </aside>
 
         <!-- ── RIGHT COLUMN ── -->
-        <main class="flex-1 flex flex-col">
+        <main class="flex-1 flex flex-col overflow-hidden">
 
-            <!-- ── APP HEADER (no logout here) ── -->
-           <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-end px-6 border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
-    <div class="flex items-center gap-4">
-        <!-- Notification Bell -->
-        <div class="relative">
-            <button id="notificationBtn" class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span class="material-icons text-2xl">notifications</span>
-                <span id="notificationBadge" class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">0</span>
-            </button>
-            <div id="notificationDropdown" class="notification-dropdown dark:bg-surface-dark dark:border-border-dark">
-                <div class="p-4 border-b border-border-light dark:border-border-dark">
-                    <h3 class="font-semibold text-text-light dark:text-text-dark">Notifications</h3>
-                </div>
-                <div class="max-h-80 overflow-y-auto" id="notifContentArea">
-                    <div class="notification-item text-center text-subtext-light">
-                        <p class="text-sm">Loading alerts...</p>
+            <!-- ── APP HEADER ── -->
+            <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
+                <div></div>
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <div id="navClock" class="text-text-light dark:text-text-dark"></div>
+                        <div id="navDate"  class="text-subtext-light dark:text-subtext-dark uppercase tracking-widest"></div>
                     </div>
+                    <div class="nav-divider"></div>
+
+                    <!-- Notification Bell — full version -->
+                    <div class="relative">
+                        <button id="notificationBtn"
+                            class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <span class="material-icons-outlined text-2xl">notifications</span>
+                            <span id="notificationBadge"
+                                class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold"
+                                style="display:none;">0</span>
+                        </button>
+                        <div id="notificationDropdown" class="notif-dropdown">
+                            <div class="notif-header">
+                                <h3>Notifications</h3>
+                                <div class="notif-header-meta">
+                                    <span class="unread-count-pill" id="unreadPill">Loading...</span>
+                                    <button class="mark-all-btn" onclick="markAllRead()">Mark all read</button>
+                                </div>
+                            </div>
+                            <div class="notif-tabs">
+                                <button class="notif-tab-btn active" onclick="filterNotifTab(this,'all')">All</button>
+                                <button class="notif-tab-btn" onclick="filterNotifTab(this,'critical')">Critical</button>
+                                <button class="notif-tab-btn" onclick="filterNotifTab(this,'expiry')">Expiry</button>
+                                <button class="notif-tab-btn" onclick="filterNotifTab(this,'shortage')">Stock</button>
+                            </div>
+                            <div class="notif-list" id="notifList">
+                                <div style="padding:30px 20px;text-align:center;color:#9ca3af;">
+                                    <span class="material-icons" style="font-size:32px;display:block;margin:0 auto 8px;">hourglass_empty</span>
+                                    <p style="font-size:12px;">Loading alerts from inventory...</p>
+                                </div>
+                            </div>
+                            <div class="notif-footer">
+                                <a href="inventory_admin.html" class="view-all-link">
+                                    View inventory <span class="material-icons">arrow_forward</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="nav-divider"></div>
+                    <div class="text-right leading-tight">
+                        <div id="navUserName" class="text-sm font-bold text-text-light dark:text-text-dark">Admin</div>
+                        <div id="navUserRole" class="text-xs text-subtext-light dark:text-subtext-dark">Administrator</div>
+                    </div>
+                    <div id="navAvatar" class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm select-none">A</div>
                 </div>
-                <div class="p-3 border-t border-border-light dark:border-border-dark text-center">
-                    <a href="medication_alerts.html" class="text-sm text-primary font-medium hover:underline">View all notifications</a>
-                </div>
-            </div>
-        </div>
-        <!-- Profile Avatar -->
-        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">AD</div>
-    </div>
-</header>
+            </header>
 
             <!-- ── PAGE BODY ── -->
             <div class="flex-1 p-8 overflow-y-auto">
@@ -195,27 +270,21 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4 border-t-4 border-t-primary">
-                        <div class="p-3 bg-primary/10 text-primary rounded-full">
-                            <span class="material-icons">group</span>
-                        </div>
+                        <div class="p-3 bg-primary/10 text-primary rounded-full"><span class="material-icons">group</span></div>
                         <div>
                             <p class="text-sm text-subtext-light">Total Users</p>
                             <p id="totalUsers" class="text-2xl font-bold text-text-light dark:text-text-dark">0</p>
                         </div>
                     </div>
                     <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4 border-t-4 border-t-green-600">
-                        <div class="p-3 bg-green-100 dark:bg-green-900/30 text-green-600 rounded-full">
-                            <span class="material-icons">verified_user</span>
-                        </div>
+                        <div class="p-3 bg-green-100 dark:bg-green-900/30 text-green-600 rounded-full"><span class="material-icons">verified_user</span></div>
                         <div>
                             <p class="text-sm text-subtext-light">Active Pharmacists</p>
                             <p id="activeUsers" class="text-2xl font-bold text-text-light dark:text-text-dark">0</p>
                         </div>
                     </div>
-                   <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4 border-t-4 border-t-accent">
-                        <div class="p-3 bg-accent/10 text-accent rounded-full">
-                            <span class="material-icons">admin_panel_settings</span>
-                        </div>
+                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4 border-t-4 border-t-accent">
+                        <div class="p-3 bg-accent/10 text-accent rounded-full"><span class="material-icons">admin_panel_settings</span></div>
                         <div>
                             <p class="text-sm text-subtext-light">Admins</p>
                             <p id="adminUsers" class="text-2xl font-bold text-text-light dark:text-text-dark">0</p>
@@ -234,15 +303,15 @@
                         </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-sm text-left">
-                               <thead class="text-xs uppercase" style="background: linear-gradient(to right, #dcfce7, #fee2e2); color: #14532d;">
-    <tr>
-        <th class="px-4 py-3">User Info</th>
-        <th class="px-4 py-3">Role</th>
-        <th class="px-4 py-3">Status</th>
-        <th class="px-4 py-3">Last Login</th>
-        <th class="px-4 py-3 text-center">Actions</th>
-    </tr>
-</thead>
+                                <thead class="text-xs uppercase" style="background: linear-gradient(to right, #dcfce7, #fee2e2); color: #14532d;">
+                                    <tr>
+                                        <th class="px-4 py-3">User Info</th>
+                                        <th class="px-4 py-3">Role</th>
+                                        <th class="px-4 py-3">Status</th>
+                                        <th class="px-4 py-3">Last Login</th>
+                                        <th class="px-4 py-3 text-center">Actions</th>
+                                    </tr>
+                                </thead>
                                 <tbody id="userTableBody" class="divide-y divide-gray-100 dark:divide-gray-700"></tbody>
                             </table>
                         </div>
@@ -267,35 +336,14 @@
             </div>
             <div class="p-6">
                 <form id="addUserForm" class="space-y-4">
-                    <div class="form-group">
-                        <label>Full Name</label>
-                        <input type="text" id="addName" placeholder="e.g. John Doe" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" id="addEmail" placeholder="employee@wellserved.com" required>
-                    </div>
+                    <div class="form-group"><label>Full Name</label><input type="text" id="addName" placeholder="e.g. John Doe" required></div>
+                    <div class="form-group"><label>Email</label><input type="email" id="addEmail" placeholder="employee@wellserved.com" required></div>
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="form-group">
-                            <label>Role</label>
-                            <select id="addRole" required>
-                                <option value="pharmacist">Pharmacist</option>
-                                <option value="admin">Admin</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Status</label>
-                            <select id="addStatus" required>
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
-                        </div>
+                        <!-- ── CHANGE 1: Added Pharmacy Assistant option to Add User role dropdown ── -->
+                        <div class="form-group"><label>Role</label><select id="addRole" required><option value="pharmacist">Pharmacist</option><option value="admin">Admin</option><option value="pharmacy_assistant">Pharmacy Assistant</option></select></div>
+                        <div class="form-group"><label>Status</label><select id="addStatus" required><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
                     </div>
-                    <div class="form-group">
-                        <label>Default Password</label>
-                        <input type="password" id="addPassword" value="WellServed123" required>
-                        <p class="text-xs text-subtext-light mt-1">Default: WellServed123</p>
-                    </div>
+                    <div class="form-group"><label>Default Password</label><input type="password" id="addPassword" value="WellServed123" required><p class="text-xs text-subtext-light mt-1">Default: WellServed123</p></div>
                 </form>
             </div>
             <div class="p-5 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3 bg-gray-50 dark:bg-gray-800/50">
@@ -313,34 +361,14 @@
             </div>
             <div class="p-6">
                 <form id="editUserForm" class="space-y-4">
-                    <div class="form-group">
-                        <label>Full Name</label>
-                        <input type="text" id="editUsername" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" id="editEmail" required>
-                    </div>
+                    <div class="form-group"><label>Full Name</label><input type="text" id="editUsername" required></div>
+                    <div class="form-group"><label>Email</label><input type="email" id="editEmail" required></div>
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="form-group">
-                            <label>Role</label>
-                            <select id="editRole" required>
-                                <option value="pharmacist">Pharmacist</option>
-                                <option value="admin">Admin</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Status</label>
-                            <select id="editStatus" required>
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
-                        </div>
+                        <!-- ── CHANGE 2: Added Pharmacy Assistant option to Edit User role dropdown ── -->
+                        <div class="form-group"><label>Role</label><select id="editRole" required><option value="pharmacist">Pharmacist</option><option value="admin">Admin</option><option value="pharmacy_assistant">Pharmacy Assistant</option></select></div>
+                        <div class="form-group"><label>Status</label><select id="editStatus" required><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
                     </div>
-                    <div class="form-group">
-                        <label>Reset Password (Optional)</label>
-                        <input type="password" id="editPassword" placeholder="Leave blank to keep current">
-                    </div>
+                    <div class="form-group"><label>Reset Password (Optional)</label><input type="password" id="editPassword" placeholder="Leave blank to keep current"></div>
                 </form>
             </div>
             <div class="p-5 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3 bg-gray-50 dark:bg-gray-800/50">
@@ -395,137 +423,129 @@
 
     <div id="toastContainer" class="toast-container"></div>
 
-    <script>
-        const API_BASE_URL = 'http://localhost:5001';
+<script>
+    const API_BASE_URL = 'http://localhost:5001';
 
-        // ── GLOBAL FUNCTIONS ──
-        function confirmBackToHMS(event) {
-            event.preventDefault();
-            Swal.fire({
-                title: 'Leave User Management?',
-                text: 'Return to Integrated Healthcare Management System?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#1a5f3e',
-                confirmButtonText: 'Yes, go back'
-            }).then(r => {
-                if (r.isConfirmed) window.location.href = '../../html/index.html';
-            });
-        }
+    // ── HELPERS ──
+    function getToken() {
+        const d = sessionStorage.getItem('token'); if (d) return d;
+        const u = sessionStorage.getItem('userInfo');
+        if (u) { try { return JSON.parse(u).token || null; } catch(e){} }
+        return null;
+    }
 
-        function logoutUser() {
-            Swal.fire({
-                title: "Logout?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#1a5f3e",
-                confirmButtonText: "Yes, logout"
-            }).then(r => {
-                if (r.isConfirmed) {
-                    sessionStorage.removeItem('userInfo');
-                    sessionStorage.removeItem('token');
-                    window.location.href = '../html/login.html';
+    // ── CLOCK ──
+    function updateNavClock() {
+        const now = new Date();
+        document.getElementById('navClock').textContent = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
+        document.getElementById('navDate').textContent  = now.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
+    }
+
+    function loadNavUserInfo() {
+        try {
+            const raw = sessionStorage.getItem('userInfo'); if (!raw) return;
+            const info = JSON.parse(raw);
+            const name = info.name || info.firstName || info.username || 'Admin';
+            document.getElementById('navUserName').textContent = name;
+            document.getElementById('navUserRole').textContent = info.role || info.position || 'Administrator';
+            document.getElementById('navAvatar').textContent   = name.charAt(0).toUpperCase();
+        } catch(e) {}
+    }
+
+    // ── WINDOW CONTROLS ──
+    document.getElementById('min-btn').addEventListener('click',()=>{ if(window.electronAPI) window.electronAPI.minimize(); });
+    document.getElementById('max-btn').addEventListener('click',()=>{
+        if(window.electronAPI) window.electronAPI.maximize();
+        else { if(!document.fullscreenElement){document.documentElement.requestFullscreen().catch(()=>{});document.getElementById('maxIcon').textContent='filter_none';}else{document.exitFullscreen();document.getElementById('maxIcon').textContent='crop_square';} }
+    });
+    document.getElementById('close-btn').addEventListener('click',()=>{
+        Swal.fire({title:'Close Application?',icon:'question',showCancelButton:true,confirmButtonColor:'#005a32',confirmButtonText:'Yes, close'})
+        .then(r=>{if(r.isConfirmed){sessionStorage.clear();window.location.href='../html/login.html';}});
+    });
+
+    function logoutUser() {
+        Swal.fire({title:"Logout?",icon:"warning",showCancelButton:true,confirmButtonColor:"#005a32",confirmButtonText:"Yes, logout"})
+        .then(r=>{if(r.isConfirmed){sessionStorage.clear();window.location.href='../html/login.html';}});
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // NOTIFICATION SYSTEM — full version matching dashboard/inventory
+    // Action buttons redirect to inventory_admin with sessionStorage
+    // ══════════════════════════════════════════════════════════
+    let notifData         = [];
+    let activeNotifFilter = 'all';
+
+    function generateAlertsFromInventory(inventory) {
+        const alerts     = [];
+        const today      = new Date();
+        const thirtyDays = new Date();
+        thirtyDays.setDate(today.getDate() + 30);
+
+        inventory.forEach((item, idx) => {
+            const medName = item.medicine?.name || item.name || 'Unknown Medicine';
+
+            if (item.expiryDate) {
+                const expiry = new Date(item.expiryDate);
+                if (expiry < today) {
+                    alerts.push({
+                        id: `exp-${item._id || idx}`, type: 'expiry', unread: true,
+                        medicineName: medName,
+                        title: 'Medicine Expired',
+                        desc:  `${medName} expired on ${expiry.toLocaleDateString('en-PH')}.`,
+                        time:  'Needs immediate attention',
+                        actionLabel: 'View Batch', actionClass: 'btn-expiry',
+                        icon: 'event_busy', iconClass: 'icon-expiry'
+                    });
+                } else if (expiry <= thirtyDays) {
+                    const d = Math.ceil((expiry - today) / 864e5);
+                    alerts.push({
+                        id: `exp-${item._id || idx}`, type: 'expiry', unread: true,
+                        medicineName: medName,
+                        title: 'Expiring Soon',
+                        desc:  `${medName} expires in ${d} day${d===1?'':'s'}.`,
+                        time:  `${d} days left`,
+                        actionLabel: 'View Batch', actionClass: 'btn-expiry',
+                        icon: 'schedule', iconClass: 'icon-expiry'
+                    });
                 }
-            });
-        }
-
-        class UserManager {
-            constructor() {
-                this.users = [];
-                this.actionInProgress = null;
-                this.targetUserId = null;
-                this.init();
             }
 
-            async init() {
-                if(this.getToken()) await this.fetchUsers();
-                this.setupEventListeners();
+            const qty      = parseInt(item.quantity || 0);
+            const minStock = parseInt(item.minStockLevel || 10);
+
+            if (qty === 0) {
+                alerts.push({
+                    id: `stk-${item._id || idx}`, type: 'critical', unread: true,
+                    medicineName: medName,
+                    title: 'Critical: Out of Stock',
+                    desc:  `${medName} is completely out of stock. Needs emergency reorder.`,
+                    time:  'Immediate action required',
+                    actionLabel: 'Go to Inventory', actionClass: 'btn-critical',
+                    icon: 'warning', iconClass: 'icon-critical'
+                });
+            } else if (qty <= minStock) {
+                alerts.push({
+                    id: `stk-${item._id || idx}`, type: 'shortage', unread: true,
+                    medicineName: medName,
+                    title: 'Low Stock Alert',
+                    desc:  `${medName} — only ${qty} unit${qty===1?'':'s'} remaining (min: ${minStock}).`,
+                    time:  'Reorder soon',
+                    actionLabel: 'Go to Inventory', actionClass: 'btn-shortage',
+                    icon: 'inventory_2', iconClass: 'icon-shortage'
+                });
             }
+        });
 
-            getToken() {
-                const userInfo = sessionStorage.getItem('userInfo');
-                if (!userInfo) { window.location.href = '../../html/login.html'; return null; }
-                return JSON.parse(userInfo).token;
-            }
+        const order = { critical: 0, expiry: 1, shortage: 2 };
+        alerts.sort((a, b) => (order[a.type] ?? 9) - (order[b.type] ?? 9));
+        return alerts;
+    }
 
-            async apiCall(method, url, body = null) {
-                const token = this.getToken();
-                const options = {
-                    method: method,
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
-                };
-                if (body) options.body = JSON.stringify(body);
-                const response = await fetch(`${API_BASE_URL}${url}`, options);
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.message || 'Error occurred');
-                return data;
-            }
-
-            async fetchUsers() {
-                try {
-                    const users = await this.apiCall('GET', '/api/users');
-                    this.users = users;
-                    this.renderUserTable(this.users);
-                    this.updateStats();
-                    this.renderRecentActivity();
-                } catch (error) {
-                    this.showToast(error.message, 'error');
-                }
-            }
-
-            renderUserTable(users) {
-                const tbody = document.getElementById('userTableBody');
-                tbody.innerHTML = users.map(user => {
-                    const isMe = this.isSelf(user._id);
-                    let statusBadge;
-                    let actionButtons = '';
-
-                    if (user.isLocked) {
-                        statusBadge = `<span class="px-2 py-1 text-xs font-bold rounded-full bg-secondary/10 text-secondary border border-secondary/30 flex items-center w-fit gap-1"><span class="material-icons text-[10px]">lock</span> LOCKED</span>`;
-                        actionButtons += `<button onclick="userManager.openUnlockModal('${user._id}')" class="p-1.5 text-accent hover:bg-accent/10 rounded-md transition border border-accent/30" title="Unlock Account">
-                            <span class="material-icons text-sm">lock_open</span>
-                        </button>`;
-                    } else {
-                        const colorClass = user.status === 'active'
-                            ? 'bg-green-100 text-green-800 border-green-200'
-                            : 'bg-gray-100 text-gray-800 border-gray-200';
-                        statusBadge = `<span class="px-2 py-1 text-xs font-medium rounded-full border ${colorClass} capitalize">${user.status}</span>`;
-                    }
-
-                    actionButtons += `<button onclick="userManager.openEditUserModal('${user._id}')" class="p-1.5 text-accent hover:bg-accent/10 rounded-md transition" title="Edit">
-                        <span class="material-icons text-sm">edit</span>
-                    </button>`;
-
-                    if (!isMe) {
-                        actionButtons += `<button onclick="userManager.openAdminPasswordModal('delete', '${user._id}')" class="p-1.5 text-secondary hover:bg-secondary/10 rounded-md transition" title="Delete">
-                            <span class="material-icons text-sm">delete</span>
-                        </button>`;
-                    }
-
-                    return `<tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                        <td class="px-4 py-4">
-                            <div class="font-medium text-gray-900 dark:text-white">${user.name} ${isMe ? '(You)' : ''}</div>
-                            <div class="text-xs text-gray-500">${user.email}</div>
-                        </td>
-                        <td class="px-4 py-4 capitalize text-gray-600 dark:text-gray-300">${user.role}</td>
-                        <td class="px-4 py-4">${statusBadge}</td>
-                        <td class="px-4 py-4 text-gray-500 text-xs">${user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never'}</td>
-                        <td class="px-4 py-4 text-center flex justify-center gap-2">${actionButtons}</td>
-                    </tr>`;
-                }).join('');
-            }
-
-            openUnlockModal(userId) {
-                document.getElementById('unlockUserId').value = userId;
-                document.getElementById('tempPasswordInput').value = '';
-                document.getElementById('unlockUserModal').classList.remove('hidden');
-                document.getElementById('unlockUserModal').classList.add('flex');
-            }
-
-            closeUnlockModal() {
-                document.getElementById('unlockUserModal').classList.add('hidden');
-                document.getElementById('unlockUserModal').classList.remove('flex');
-            }
+    function renderNotifications() {
+        const list     = document.getElementById('notifList');
+        const filtered = activeNotifFilter === 'all'
+            ? notifData
+            : notifData.filter(n => n.type === activeNotifFilter);
 
             async submitUnlockUser() {
                 const userId = document.getElementById('unlockUserId').value;
@@ -547,63 +567,94 @@
                 }
             }
 
-            renderRecentActivity() {
-                const container = document.getElementById('recentActivityList');
-                const recentUsers = [...this.users].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5);
-                if(recentUsers.length === 0) {
-                    container.innerHTML = '<p class="text-sm text-gray-500 italic">No activity recorded.</p>';
-                    return;
-                }
-                container.innerHTML = recentUsers.map(u => `
-                    <div class="flex items-start gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700">
-                        <div class="p-2 bg-primary/10 rounded-full text-primary"><span class="material-icons text-xs">person_add</span></div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">New ${u.role}</p>
-                            <p class="text-xs text-gray-500">Added ${u.name}</p>
-                            <p class="text-[10px] text-gray-400 mt-1">${new Date(u.createdAt).toLocaleDateString()}</p>
-                        </div>
-                    </div>`).join('');
-            }
+        list.innerHTML = filtered.map(n => `
+            <div class="notif-item ${n.type} ${n.unread?'unread':''}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
+                <div class="notif-icon-wrap ${n.iconClass}">
+                    <span class="material-icons">${n.icon}</span>
+                </div>
+                <div class="notif-body">
+                    <div class="notif-title">${n.title}</div>
+                    <div class="notif-desc">${n.desc}</div>
+                    <div class="notif-time">${n.time}</div>
+                    <div class="notif-action">
+                        <button class="notif-action-btn ${n.actionClass}"
+                            onclick="handleNotifAction(event,'${n.id}')">${n.actionLabel}</button>
+                    </div>
+                </div>
+                ${n.unread ? '<div class="unread-dot"></div>' : ''}
+            </div>`).join('');
 
-            updateStats() {
-                document.getElementById('totalUsers').textContent = this.users.length;
-                document.getElementById('activeUsers').textContent = this.users.filter(u => u.status === 'active' && u.role === 'pharmacist').length;
-                document.getElementById('adminUsers').textContent = this.users.filter(u => u.role === 'admin').length;
-            }
+        updateNotifBadge();
+    }
 
-            openAddUserModal() {
-                document.getElementById('addUserForm').reset();
-                document.getElementById('addUserModal').classList.remove('hidden');
-            }
+    function updateNotifBadge() {
+        const count = notifData.filter(n => n.unread).length;
+        const badge = document.getElementById('notificationBadge');
+        const pill  = document.getElementById('unreadPill');
+        if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none'; }
+        if (pill)  pill.textContent = count > 0 ? `${count} new` : 'All clear';
+    }
 
-            openEditUserModal(id) {
-                const user = this.users.find(u => u._id === id);
-                if(!user) return;
-                this.targetUserId = id;
-                document.getElementById('editUsername').value = user.name;
-                document.getElementById('editEmail').value = user.email;
-                document.getElementById('editRole').value = user.role;
-                document.getElementById('editStatus').value = user.status;
-                document.getElementById('editUserModal').classList.remove('hidden');
-            }
+    function markNotifRead(id) {
+        const n = notifData.find(n => n.id === id);
+        if (n) { n.unread = false; renderNotifications(); }
+    }
 
-            openAdminPasswordModal(action, id = null) {
-                this.actionInProgress = action;
-                if(id) this.targetUserId = id;
-                document.getElementById('adminPasswordConfirm').value = '';
-                document.getElementById('adminPasswordError').textContent = '';
-                document.getElementById('adminPasswordModal').classList.remove('hidden');
-            }
+    function markAllRead() { notifData.forEach(n => n.unread = false); renderNotifications(); }
 
-            closeAllModals() {
-                document.querySelectorAll('[id$="Modal"]').forEach(m => m.classList.add('hidden'));
-                this.actionInProgress = null;
-                this.targetUserId = null;
-            }
+    // Redirect to inventory_admin with sessionStorage hint (same as dashboard_admin)
+    function handleNotifAction(event, id) {
+        event.stopPropagation();
+        markNotifRead(id);
+        const n = notifData.find(n => n.id === id);
+        if (!n) return;
+        if (n.type === 'expiry') {
+            sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'batch', medicine: n.medicineName }));
+        } else if (n.type === 'critical' || n.type === 'shortage') {
+            sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'summary', medicine: n.medicineName }));
+        }
+        window.location.href = 'inventory_admin.html';
+    }
 
-            closeAdminPasswordModal() {
-                document.getElementById('adminPasswordModal').classList.add('hidden');
+    function filterNotifTab(btn, filter) {
+        document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeNotifFilter = filter;
+        renderNotifications();
+    }
+
+    async function refreshNotifications() {
+        const token = getToken(); if (!token) return;
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/inventory`, { headers: { 'Authorization': `Bearer ${token}` } });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const raw       = await res.json();
+            const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
+            const previouslyRead = new Set(notifData.filter(n => !n.unread).map(n => n.id));
+            notifData = generateAlertsFromInventory(inventory).slice(0, 15);
+            notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
+            renderNotifications();
+        } catch(e) {
+            console.warn('Notification fetch failed:', e);
+            if (!notifData.length) {
+                document.getElementById('notifList').innerHTML = `<div class="notif-empty"><span class="material-icons">cloud_off</span><p>Could not load alerts. Check server connection.</p></div>`;
             }
+        }
+    }
+
+    // ── USER MANAGER ──
+    class UserManager {
+        constructor() {
+            this.users = [];
+            this.actionInProgress = null;
+            this.targetUserId = null;
+            this.init();
+        }
+
+        async init() {
+            if (this.getToken()) await this.fetchUsers();
+            this.setupEventListeners();
+        }
 
             async handleAdminConfirm() {
                 const password = document.getElementById('adminPasswordConfirm').value;
@@ -662,92 +713,107 @@ if (window.playSystemSound && soundToPlay) {
                         window.playSystemSound('error');
                     }
                 }
-            }
-
-            handleSearch(e) {
-                const term = e.target.value.toLowerCase();
-                const filtered = this.users.filter(u =>
-                    u.name.toLowerCase().includes(term) ||
-                    u.email.toLowerCase().includes(term)
-                );
-                this.renderUserTable(filtered);
-            }
-
-            isSelf(id) {
-                const userInfo = sessionStorage.getItem('userInfo');
-                return userInfo && JSON.parse(userInfo)._id === id;
-            }
-
-            showToast(msg, type='info') {
-                const container = document.getElementById('toastContainer');
-                const color = type === 'success' ? 'border-primary' : 'border-secondary';
-                const icon = type === 'success' ? 'check_circle' : 'error';
-                const iconColor = type === 'success' ? 'text-primary' : 'text-secondary';
-                const toast = document.createElement('div');
-                toast.className = `p-4 bg-white border-l-4 ${color} shadow-lg rounded-md animate-slideIn flex items-center gap-3`;
-                toast.innerHTML = `<span class="material-icons ${iconColor}">${icon}</span><span>${msg}</span>`;
-                container.appendChild(toast);
-                setTimeout(() => toast.remove(), 3000);
-            }
-
-            setupEventListeners() {
-                document.querySelectorAll('form').forEach(f => f.onsubmit = (e) => e.preventDefault());
-            }
+                actionButtons += `<button onclick="userManager.openEditUserModal('${user._id}')" class="p-1.5 text-accent hover:bg-accent/10 rounded-md transition" title="Edit"><span class="material-icons text-sm">edit</span></button>`;
+                if (!isMe) actionButtons += `<button onclick="userManager.openAdminPasswordModal('delete', '${user._id}')" class="p-1.5 text-secondary hover:bg-secondary/10 rounded-md transition" title="Delete"><span class="material-icons text-sm">delete</span></button>`;
+                return `<tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                    <td class="px-4 py-4"><div class="font-medium text-gray-900 dark:text-white">${user.name} ${isMe ? '(You)' : ''}</div><div class="text-xs text-gray-500">${user.email}</div></td>
+                    <td class="px-4 py-4 text-gray-600 dark:text-gray-300">${this.formatRole(user.role)}</td>
+                    <td class="px-4 py-4">${statusBadge}</td>
+                    <td class="px-4 py-4 text-gray-500 text-xs">${user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never'}</td>
+                    <td class="px-4 py-4 text-center flex justify-center gap-2">${actionButtons}</td>
+                </tr>`;
+            }).join('');
         }
 
-        const userManager = new UserManager();
+        openUnlockModal(userId) {
+            document.getElementById('unlockUserId').value = userId;
+            document.getElementById('tempPasswordInput').value = '';
+            document.getElementById('unlockUserModal').classList.remove('hidden');
+            document.getElementById('unlockUserModal').classList.add('flex');
+        }
 
-        // ── NOTIFICATIONS ──
-document.addEventListener('DOMContentLoaded', function() {
-    const notificationBtn = document.getElementById('notificationBtn');
-    const notificationDropdown = document.getElementById('notificationDropdown');
-    if (notificationBtn && notificationDropdown) {
-        notificationBtn.addEventListener('click', (e) => { e.stopPropagation(); notificationDropdown.classList.toggle('show'); });
-        document.addEventListener('click', () => notificationDropdown.classList.remove('show'));
-        notificationDropdown.addEventListener('click', (e) => e.stopPropagation());
-    }
-    setTimeout(updateNotificationBadge, 1000);
-    setInterval(updateNotificationBadge, 30000);
-});
+        closeUnlockModal() {
+            document.getElementById('unlockUserModal').classList.add('hidden');
+            document.getElementById('unlockUserModal').classList.remove('flex');
+        }
 
-function getToken() {
-    const userInfo = sessionStorage.getItem('userInfo');
-    return userInfo ? JSON.parse(userInfo).token : null;
-}
+        async submitUnlockUser() {
+            const userId = document.getElementById('unlockUserId').value;
+            const tempPassword = document.getElementById('tempPasswordInput').value;
+            if (!userId) return this.showToast("User ID missing. Please try again.", "error");
+            if (!tempPassword) return this.showToast("Please enter a temporary password", "error");
+            try {
+                await this.apiCall('POST', `/api/users/${userId}/unlock`, { tempPassword });
+                this.showToast("Success! User unlocked with temporary password.", "success");
+                this.closeUnlockModal();
+                this.fetchUsers();
+            } catch (error) { this.showToast(error.message || "Failed to unlock", "error"); }
+        }
 
-async function updateNotificationBadge() {
-    try {
-        const token = getToken(); if (!token) return;
-        const res = await fetch(`${API_BASE_URL}/api/inventory`, { headers: { 'Authorization': `Bearer ${token}` } });
-        if (!res.ok) return;
-        const inventory = await res.json();
-        const alerts = generateAlertsFromInventory(inventory);
-        const badge = document.getElementById('notificationBadge');
-        if (badge) { badge.textContent = alerts.length; badge.style.display = alerts.length > 0 ? 'flex' : 'none'; }
-        updateNotificationDropdown(alerts);
-    } catch(e) { console.error('Notification error:', e); }
-}
+        renderRecentActivity() {
+            const container = document.getElementById('recentActivityList');
+            const recentUsers = [...this.users].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5);
+            if (!recentUsers.length) { container.innerHTML = '<p class="text-sm text-gray-500 italic">No activity recorded.</p>'; return; }
+            container.innerHTML = recentUsers.map(u => `
+                <div class="flex items-start gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700">
+                    <div class="p-2 bg-primary/10 rounded-full text-primary"><span class="material-icons text-xs">person_add</span></div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">New ${this.formatRole(u.role)}</p>
+                        <p class="text-xs text-gray-500">Added ${u.name}</p>
+                        <p class="text-[10px] text-gray-400 mt-1">${new Date(u.createdAt).toLocaleDateString()}</p>
+                    </div>
+                </div>`).join('');
+        }
 
-function generateAlertsFromInventory(inventory) {
-    const alerts = [], today = new Date(), thirtyDays = new Date();
-    thirtyDays.setDate(today.getDate() + 30);
-    inventory.forEach(item => {
-        const medName = item.medicine ? (item.medicine.name || 'Unknown') : 'Unknown';
-        if (item.expiryDate) { const exp = new Date(item.expiryDate); if (exp < today) { alerts.push({ type:'expiry', severity:'critical', title:'Medicine Expired', medicine:medName, description:`Expired on ${exp.toLocaleDateString()}`, icon:'event_busy', iconColor:'#EF4444', time:'Just now' }); } else if (exp < thirtyDays) { const d = Math.ceil((exp-today)/(864e5)); alerts.push({ type:'expiry', severity:'high', title:'Expiring Soon', medicine:medName, description:`Expires in ${d} days`, icon:'schedule', iconColor:'#F59E0B', time:`${d} days left` }); } }
-        if (item.quantity === 0) { alerts.push({ type:'shortage', severity:'medium', title:'Out of Stock', medicine:medName, description:'Stock is empty', icon:'inventory_2', iconColor:'#358E83', time:'Immediate' }); }
-        else if (item.quantity <= item.minStockLevel) { alerts.push({ type:'shortage', severity:'medium', title:'Low Stock', medicine:medName, description:`Only ${item.quantity} units remaining`, icon:'inventory_2', iconColor:'#358E83', time:'Reorder soon' }); }
-    });
-    return alerts;
-}
+        updateStats() {
+            document.getElementById('totalUsers').textContent  = this.users.length;
+            // ── CHANGE 4: Active count now includes pharmacy_assistant alongside pharmacist ──
+            document.getElementById('activeUsers').textContent = this.users.filter(u => u.status === 'active' && (u.role === 'pharmacist' || u.role === 'pharmacy_assistant')).length;
+            document.getElementById('adminUsers').textContent  = this.users.filter(u => u.role === 'admin').length;
+        }
 
-function updateNotificationDropdown(alerts) {
-    const contentDiv = document.getElementById('notifContentArea');
-    if (!contentDiv) return;
-    if (!alerts.length) { contentDiv.innerHTML = `<div class="notification-item text-center text-subtext-light"><span class="material-icons text-4xl mb-2 block">notifications_none</span><p class="text-sm">No new notifications</p></div>`; return; }
-    const sorted = [...alerts].sort((a,b) => ({critical:0,high:1,medium:2}[a.severity]||3) - ({critical:0,high:1,medium:2}[b.severity]||3)).slice(0,5);
-    contentDiv.innerHTML = sorted.map(a => `<div class="notification-item" onclick="window.location.href='medication_alerts.html'"><div class="flex items-start gap-3"><span class="material-icons text-lg mt-0.5" style="color:${a.iconColor}">${a.icon}</span><div><p class="text-sm font-medium text-text-light">${a.title}</p><p class="text-xs text-subtext-light">${a.medicine} - ${a.description}</p><p class="text-xs text-subtext-light mt-1">${a.time}</p></div></div></div>`).join('');
-}
-    </script>
+        openAddUserModal() { document.getElementById('addUserForm').reset(); document.getElementById('addUserModal').classList.remove('hidden'); }
+
+        openEditUserModal(id) {
+            const user = this.users.find(u => u._id === id); if (!user) return;
+            this.targetUserId = id;
+            document.getElementById('editUsername').value = user.name;
+            document.getElementById('editEmail').value = user.email;
+            document.getElementById('editRole').value = user.role;
+            document.getElementById('editStatus').value = user.status;
+            document.getElementById('editUserModal').classList.remove('hidden');
+        }
+
+        openAdminPasswordModal(action, id = null) {
+            this.actionInProgress = action;
+            if (id) this.targetUserId = id;
+            document.getElementById('adminPasswordConfirm').value = '';
+            document.getElementById('adminPasswordError').textContent = '';
+            document.getElementById('adminPasswordModal').classList.remove('hidden');
+        }
+
+        closeAllModals() { document.querySelectorAll('[id$="Modal"]').forEach(m => m.classList.add('hidden')); this.actionInProgress = null; this.targetUserId = null; }
+        closeAdminPasswordModal() { document.getElementById('adminPasswordModal').classList.add('hidden'); }
+
+        async handleAdminConfirm() {
+            const password = document.getElementById('adminPasswordConfirm').value;
+            if (!password) { document.getElementById('adminPasswordError').textContent = 'Password required'; return; }
+            try {
+                if (this.actionInProgress === 'create') {
+                    const userData = { name: document.getElementById('addName').value, email: document.getElementById('addEmail').value, role: document.getElementById('addRole').value, status: document.getElementById('addStatus').value, password: document.getElementById('addPassword').value };
+                    await this.apiCall('POST', '/api/users', { ...userData, adminPassword: password });
+                    this.showToast('User created successfully!', 'success');
+                } else if (this.actionInProgress === 'update') {
+                    const userData = { name: document.getElementById('editUsername').value, email: document.getElementById('editEmail').value, role: document.getElementById('editRole').value, status: document.getElementById('editStatus').value, password: document.getElementById('editPassword').value || undefined };
+                    await this.apiCall('PUT', `/api/users/${this.targetUserId}`, { ...userData, adminPassword: password });
+                    this.showToast('User updated successfully!', 'success');
+                } else if (this.actionInProgress === 'delete') {
+                    await this.apiCall('DELETE', `/api/users/${this.targetUserId}`, { adminPassword: password });
+                    this.showToast('User deleted.', 'success');
+                }
+                this.closeAllModals(); this.fetchUsers();
+            } catch (error) { document.getElementById('adminPasswordError').textContent = 'Incorrect Password'; }
+        }
 
     <script src="../js/windowcontrollerbtn.js"></script>
     <script src="../audio/audio-system.js"></script>

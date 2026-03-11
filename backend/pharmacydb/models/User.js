@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true, lowercase: true },
     password: { type: String, required: true },
-    role: { type: String, required: true, enum: ['admin', 'pharmacist'], default: 'pharmacist' },
+    role: { type: String, required: true, enum: ['admin', 'pharmacist','pharmacy_assistant'], default: 'pharmacist' },
     status: { type: String, enum: ['active', 'inactive'], default: 'active' },
     lastLogin: { type: Date, default: null },
     

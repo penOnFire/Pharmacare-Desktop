@@ -1,4 +1,5 @@
 import express from 'express';
+import { logActivity } from '../utils/logActivity.js';
 import mongoose from 'mongoose';
 import { protect } from '../middleware/authMiddleware.js';
 import Prescription from '../models/Prescription.js';

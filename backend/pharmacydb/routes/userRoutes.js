@@ -1,4 +1,6 @@
+import ActivityLog from '../models/ActivityLog.js';
 import express from 'express';
+import { logActivity } from '../utils/logActivity.js';
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
