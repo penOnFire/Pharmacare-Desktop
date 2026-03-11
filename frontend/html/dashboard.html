@@ -145,6 +145,27 @@
         .refresh-btn:hover { transform: rotate(180deg); }
         .refreshing { animation: spin 1s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* ── NAVBAR CLOCK ── */
+        #navClock {
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+        }
+        #navDate {
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+        }
+
+        /* ── NAVBAR DIVIDER ── */
+        .nav-divider {
+            width: 1px;
+            height: 28px;
+            background: #e5e7eb;
+        }
+        .dark .nav-divider { background: #374151; }
     </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
@@ -170,7 +191,7 @@
     <div class="flex h-screen pt-8">
         <!-- Sidebar -->
         <aside class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-border-light dark:border-border-dark">
-            <div class="h-16 flex items-center px-6 border-b border-border-light dark:border-border-dark">
+            <div class="h-16 flex items-center px-6">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm">
                         <img src="images/wellserved.png" alt="Well Served Logo" class="w-full h-full object-cover">
@@ -208,15 +229,31 @@
         </aside>
         
         <main class="flex-1 flex flex-col">
+
+            <!-- ══════════════════════════════════════════
+                 UPDATED NAVBAR — matches screenshot layout
+                 [ Clock+Date ] [ Bell ] [ Name/Role ] [ Avatar ]
+                 ══════════════════════════════════════════ -->
             <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
-                <div class="flex items-center gap-2"></div>
+                <!-- Left: empty spacer (kept for layout) -->
+                <div></div>
+
+                <!-- Right: clock · divider · bell · divider · user info · avatar -->
                 <div class="flex items-center gap-4">
+
+                    <!-- Live Clock + Date -->
+                    <div class="text-right">
+                        <div id="navClock" class="text-text-light dark:text-text-dark"></div>
+                        <div id="navDate"  class="text-subtext-light dark:text-subtext-dark uppercase tracking-widest"></div>
+                    </div>
+
+                    <div class="nav-divider"></div>
 
                     <!-- Notification Bell -->
                     <div class="relative">
                         <button id="notificationBtn"
-                            class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                            <span class="material-icons text-2xl">notifications</span>
+                            class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <span class="material-icons-outlined text-2xl">notifications</span>
                             <span id="notificationBadge"
                                 class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold"
                                 style="display:none;">0</span>
@@ -250,7 +287,17 @@
                         </div>
                     </div>
 
-                    <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">PH</div>
+                    <div class="nav-divider"></div>
+
+                    <!-- User Name + Role -->
+                    <div class="text-right leading-tight">
+                        <div id="navUserName" class="text-sm font-bold text-text-light dark:text-text-dark">Vaughn</div>
+                        <div id="navUserRole" class="text-xs text-subtext-light dark:text-subtext-dark">Nurse</div>
+                    </div>
+
+                    <!-- Avatar with initial -->
+                    <div id="navAvatar" class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm select-none">V</div>
+
                 </div>
             </header>
             
@@ -358,7 +405,7 @@
                         </div>
                     </div>
 
-                    <!-- ✅ REPLACED: Top Selling Medicines (was Supplier Contribution pie chart) -->
+                    <!-- Top Selling Medicines -->
                     <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
                         <div class="flex items-center justify-between mb-4">
                             <div class="flex items-center gap-3">
@@ -482,9 +529,9 @@
     const API_BASE_URL = 'http://localhost:5001';
 
     let autoRefreshInterval;
-    let salesChartInstance    = null;
-    let stockChartInstance    = null;
-    let topSellingChartInstance = null; // ✅ renamed from supplierChartInstance
+    let salesChartInstance      = null;
+    let stockChartInstance      = null;
+    let topSellingChartInstance = null;
 
     // ── HELPERS ──
     function formatPeso(value) {
@@ -503,6 +550,47 @@
             try { return JSON.parse(userInfo).token || null; } catch(e) {}
         }
         return null;
+    }
+
+    // ══════════════════════════════════════════════════════════
+    //  LIVE NAVBAR CLOCK  — ticks every second
+    // ══════════════════════════════════════════════════════════
+    function updateNavClock() {
+        const now = new Date();
+
+        // Time: "12:28:05 AM"
+        const timeStr = now.toLocaleTimeString('en-US', {
+            hour:   '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+        });
+
+        // Date: "FEB 26, 2026"
+        const dateStr = now.toLocaleDateString('en-US', {
+            month: 'short',
+            day:   'numeric',
+            year:  'numeric'
+        }).toUpperCase();  // e.g. "FEB 26, 2026"
+
+        document.getElementById('navClock').textContent = timeStr;
+        document.getElementById('navDate').textContent  = dateStr;
+    }
+
+    // ── Load user info from session into navbar ──
+    function loadNavUserInfo() {
+        try {
+            const raw = sessionStorage.getItem('userInfo');
+            if (!raw) return;
+            const info = JSON.parse(raw);
+            const name = info.name || info.firstName || info.username || 'User';
+            const role = info.role || info.position || '';
+            const initial = name.charAt(0).toUpperCase();
+
+            document.getElementById('navUserName').textContent = name;
+            document.getElementById('navUserRole').textContent = role;
+            document.getElementById('navAvatar').textContent   = initial;
+        } catch(e) { /* keep defaults */ }
     }
 
     // ── NOTIFICATIONS ──
@@ -699,8 +787,14 @@
     // ── CHARTS & DASHBOARD ──
     document.addEventListener('DOMContentLoaded', function() {
         loadDarkModePreference();
+        loadNavUserInfo();
+
+        // Start live clock immediately, tick every second
+        updateNavClock();
+        setInterval(updateNavClock, 1000);
+
         initializeCharts();
-        loadLiveData();        // ✅ fetch real sales data for top selling chart
+        loadLiveData();
         initializeSummaryData();
         startAutoRefresh();
     });
@@ -718,7 +812,7 @@
         document.getElementById('lastUpdateTime').textContent       = now;
     }
 
-    // ── LIVE DATA: fetch sales and build top selling chart ──
+    // ── LIVE DATA ──
     async function loadLiveData() {
         const token = getToken();
         if (!token) return;
@@ -730,38 +824,26 @@
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const sales = await res.json();
 
-            // Aggregate units sold per medicine name
             const totals = {};
             sales.forEach(sale => {
                 if (!sale.items) return;
                 sale.items.forEach(item => {
-                    // Resolve medicine name the same way billing.html does
                     let name = item.name;
-                    if ((!name || name === 'Unknown') && item.medicine && item.medicine.name) {
-                        name = item.medicine.name;
-                    }
+                    if ((!name || name === 'Unknown') && item.medicine && item.medicine.name) name = item.medicine.name;
                     name = name || 'Unknown Medicine';
                     totals[name] = (totals[name] || 0) + (parseInt(item.quantity) || 0);
                 });
             });
 
-            // Sort descending, take top 7
-            const sorted = Object.entries(totals)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 7);
+            const sorted = Object.entries(totals).sort((a, b) => b[1] - a[1]).slice(0, 7);
+            updateTopSellingChart(sorted.map(e => e[0]), sorted.map(e => e[1]));
 
-            const labels = sorted.map(e => e[0]);
-            const data   = sorted.map(e => e[1]);
-
-            updateTopSellingChart(labels, data);
-
-            // Also update Today's Revenue stat card from real data
             const today = new Date().toDateString();
             const todayRevenue = sales
                 .filter(s => new Date(s.date || s.createdAt).toDateString() === today && s.paymentStatus === 'Paid')
                 .reduce((acc, s) => acc + (s.totalAmount || 0), 0);
 
-            document.getElementById('dailySales').textContent  = formatPeso(todayRevenue);
+            document.getElementById('dailySales').textContent   = formatPeso(todayRevenue);
             document.getElementById('salesRevenue').textContent = formatPeso(todayRevenue);
 
             const totalTransactions = sales.length;
@@ -774,28 +856,19 @@
 
         } catch (e) {
             console.warn('Live sales data fetch failed:', e);
-            // Chart keeps its placeholder data if fetch fails
         }
     }
 
     function updateTopSellingChart(labels, data) {
-        const isDark    = document.documentElement.classList.contains('dark');
-        const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.07)';
-        const textColor = isDark ? '#F9FAFB' : '#1F2937';
-
         if (topSellingChartInstance) {
-            // Just update data without rebuilding the whole chart
-            topSellingChartInstance.data.labels   = labels;
+            topSellingChartInstance.data.labels = labels;
             topSellingChartInstance.data.datasets[0].data = data;
             topSellingChartInstance.update();
             return;
         }
-
-        // Shouldn't reach here normally since initializeCharts runs first,
-        // but just in case call initializeCharts again
         initializeCharts();
         if (topSellingChartInstance) {
-            topSellingChartInstance.data.labels   = labels;
+            topSellingChartInstance.data.labels = labels;
             topSellingChartInstance.data.datasets[0].data = data;
             topSellingChartInstance.update();
         }
@@ -806,7 +879,6 @@
         const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.07)';
         const textColor = isDark ? '#F9FAFB' : '#1F2937';
 
-        // ── Daily Sales Trend ──
         const salesCtx = document.getElementById('salesTrendChart').getContext('2d');
         if (salesChartInstance) salesChartInstance.destroy();
         salesChartInstance = new Chart(salesCtx, {
@@ -828,30 +900,19 @@
                 maintainAspectRatio: false,
                 plugins: {
                     legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: c => formatPeso(c.parsed.y)
-                        }
-                    }
+                    tooltip: { callbacks: { label: c => formatPeso(c.parsed.y) } }
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
                         grid: { color: gridColor },
-                        ticks: {
-                            color: textColor,
-                            callback: v => '₱' + Number(v).toLocaleString('en-PH')
-                        }
+                        ticks: { color: textColor, callback: v => '₱' + Number(v).toLocaleString('en-PH') }
                     },
-                    x: {
-                        grid: { color: gridColor },
-                        ticks: { color: textColor }
-                    }
+                    x: { grid: { color: gridColor }, ticks: { color: textColor } }
                 }
             }
         });
 
-        // ── Stock Distribution ──
         const stockCtx = document.getElementById('stockDistributionChart').getContext('2d');
         if (stockChartInstance) stockChartInstance.destroy();
         stockChartInstance = new Chart(stockCtx, {
@@ -874,21 +935,13 @@
                     y: {
                         beginAtZero: true,
                         grid: { color: gridColor },
-                        ticks: {
-                            color: textColor,
-                            callback: v => Number(v).toLocaleString('en-PH')
-                        }
+                        ticks: { color: textColor, callback: v => Number(v).toLocaleString('en-PH') }
                     },
-                    x: {
-                        grid: { display: false },
-                        ticks: { color: textColor }
-                    }
+                    x: { grid: { display: false }, ticks: { color: textColor } }
                 }
             }
         });
 
-        // ── ✅ Top Selling Medicines (horizontal bar) ──
-        // Placeholder data — gets replaced by loadLiveData() once API responds
         const topSellingCtx = document.getElementById('topSellingChart').getContext('2d');
         if (topSellingChartInstance) topSellingChartInstance.destroy();
         topSellingChartInstance = new Chart(topSellingCtx, {
@@ -899,46 +952,28 @@
                     label: 'Units Sold',
                     data: [320, 210, 185, 160, 140, 115, 95],
                     backgroundColor: [
-                        'rgba(0, 90, 50, 0.90)',
-                        'rgba(0, 90, 50, 0.75)',
-                        'rgba(0, 90, 50, 0.60)',
-                        'rgba(0, 90, 50, 0.50)',
-                        'rgba(214, 40, 40, 0.50)',
-                        'rgba(214, 40, 40, 0.65)',
-                        'rgba(214, 40, 40, 0.82)',
+                        'rgba(0,90,50,0.90)','rgba(0,90,50,0.75)','rgba(0,90,50,0.60)',
+                        'rgba(0,90,50,0.50)','rgba(214,40,40,0.50)','rgba(214,40,40,0.65)','rgba(214,40,40,0.82)'
                     ],
                     borderWidth: 0,
                     borderRadius: 4
                 }]
             },
             options: {
-                indexAxis: 'y',   // horizontal bars — medicine names fit better
+                indexAxis: 'y',
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
                     legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: c => ` ${Number(c.parsed.x).toLocaleString('en-PH')} units sold`
-                        }
-                    }
+                    tooltip: { callbacks: { label: c => ` ${Number(c.parsed.x).toLocaleString('en-PH')} units sold` } }
                 },
                 scales: {
                     x: {
                         beginAtZero: true,
                         grid: { color: gridColor },
-                        ticks: {
-                            color: textColor,
-                            callback: v => Number(v).toLocaleString('en-PH')
-                        }
+                        ticks: { color: textColor, callback: v => Number(v).toLocaleString('en-PH') }
                     },
-                    y: {
-                        grid: { display: false },
-                        ticks: {
-                            color: textColor,
-                            font: { size: 11 }
-                        }
-                    }
+                    y: { grid: { display: false }, ticks: { color: textColor, font: { size: 11 } } }
                 }
             }
         });

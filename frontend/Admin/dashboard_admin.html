@@ -16,22 +16,13 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: "#005a32",
-                        secondary: "#d62828",
-                        accent: "#8b5a2b",
-                        "background-light": "#f1f5f9",
-                        "background-dark": "#0f172a",
-                        "surface-light": "#FFFFFF",
-                        "surface-dark": "#1F2937",
-                        "text-light": "#1F2937",
-                        "text-dark": "#F9FAFB",
-                        "subtext-light": "#6B7280",
-                        "subtext-dark": "#9CA3AF",
-                        "border-light": "#E5E7EB",
-                        "border-dark": "#374151",
-                        "success": "#22C55E",
-                        "warning": "#F59E0B",
-                        "danger": "#EF4444"
+                        primary: "#005a32", secondary: "#d62828", accent: "#8b5a2b",
+                        "background-light": "#f1f5f9", "background-dark": "#0f172a",
+                        "surface-light": "#FFFFFF", "surface-dark": "#1F2937",
+                        "text-light": "#1F2937", "text-dark": "#F9FAFB",
+                        "subtext-light": "#6B7280", "subtext-dark": "#9CA3AF",
+                        "border-light": "#E5E7EB", "border-dark": "#374151",
+                        "success": "#22C55E", "warning": "#F59E0B", "danger": "#EF4444"
                     },
                     fontFamily: { display: ["Inter", "sans-serif"] },
                     borderRadius: { DEFAULT: "0.5rem" },
@@ -41,26 +32,14 @@
     </script>
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .hidden { display: none !important; }
         .drag-region { -webkit-app-region: drag; }
         .no-drag     { -webkit-app-region: no-drag; }
 
-        /* ── NOTIFICATION DROPDOWN ── */
         @keyframes badge-pop { from { transform: scale(0); } to { transform: scale(1); } }
         #notificationBadge { animation: badge-pop 0.3s cubic-bezier(.34,1.56,.64,1); }
-
-        .notif-dropdown {
-            position: absolute; top: calc(100% + 10px); right: 0; width: 370px;
-            background: #fff; border-radius: 14px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.06);
-            border: 1px solid #e5e7eb; z-index: 1000; overflow: hidden;
-            opacity: 0; transform: translateY(-8px) scale(0.97); pointer-events: none;
-            transition: opacity 0.22s ease, transform 0.22s cubic-bezier(.34,1.56,.64,1);
-            transform-origin: top right;
-        }
+        .notif-dropdown { position: absolute; top: calc(100% + 10px); right: 0; width: 370px; background: #fff; border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.06); border: 1px solid #e5e7eb; z-index: 1000; overflow: hidden; opacity: 0; transform: translateY(-8px) scale(0.97); pointer-events: none; transition: opacity 0.22s ease, transform 0.22s cubic-bezier(.34,1.56,.64,1); transform-origin: top right; }
         .dark .notif-dropdown { background: #1F2937; border-color: #374151; }
         .notif-dropdown.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
-
         .notif-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 14px; border-bottom: 1px solid #f0f0f0; }
         .dark .notif-header { border-color: #374151; }
         .notif-header h3 { font-size: 15px; font-weight: 700; color: #111827; }
@@ -69,36 +48,32 @@
         .unread-count-pill { background: #005a32; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
         .mark-all-btn { font-size: 11px; color: #005a32; font-weight: 600; background: none; border: none; cursor: pointer; padding: 2px 4px; border-radius: 4px; transition: background 0.15s; }
         .mark-all-btn:hover { background: #f0fdf4; }
-
         .notif-tabs { display: flex; gap: 4px; padding: 10px 14px; background: #fafafa; border-bottom: 1px solid #f0f0f0; }
         .dark .notif-tabs { background: #111827; border-color: #374151; }
         .notif-tab-btn { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 99px; border: 1px solid transparent; cursor: pointer; background: none; color: #6b7280; transition: all 0.15s; }
         .notif-tab-btn.active { background: #005a32; color: #fff; border-color: #005a32; }
         .notif-tab-btn:not(.active):hover { background: #f3f4f6; border-color: #e5e7eb; color: #374151; }
-
         .notif-list { max-height: 360px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #e5e7eb transparent; }
         .notif-list::-webkit-scrollbar { width: 4px; }
         .notif-list::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 2px; }
-
         .notif-item { display: flex; gap: 12px; align-items: flex-start; padding: 13px 16px; border-bottom: 1px solid #f5f5f5; cursor: pointer; position: relative; transition: background 0.15s; }
         .dark .notif-item { border-color: #374151; }
         .notif-item:last-child { border-bottom: none; }
         .notif-item:hover { background: #f9fafb; }
         .dark .notif-item:hover { background: #111827; }
         .notif-item.unread { background: #ffffff; }
+        .dark .notif-item.unread { background: #1F2937; }
         .notif-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 0 2px 2px 0; }
         .notif-item.critical::before { background: #EF4444; }
         .notif-item.expiry::before   { background: #8b5a2b; }
         .notif-item.pending::before  { background: #3B82F6; }
         .notif-item.shortage::before { background: #358E83; }
-
         .notif-icon-wrap { flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
         .notif-icon-wrap .material-icons { font-size: 20px; }
         .icon-critical { background: #fef2f2; } .icon-critical .material-icons { color: #EF4444; }
         .icon-expiry   { background: #fdf6ec; } .icon-expiry   .material-icons { color: #8b5a2b; }
         .icon-pending  { background: #eff6ff; } .icon-pending  .material-icons { color: #3B82F6; }
         .icon-shortage { background: #f0fdfa; } .icon-shortage .material-icons { color: #358E83; }
-
         .notif-body { flex: 1; min-width: 0; }
         .notif-title { font-size: 13px; font-weight: 600; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .dark .notif-title { color: #F9FAFB; }
@@ -112,143 +87,90 @@
         .btn-expiry   { background: #8b5a2b; color: #fff; }
         .btn-pending  { background: #3B82F6; color: #fff; }
         .btn-shortage { background: #005a32; color: #fff; }
-
         .unread-dot { flex-shrink: 0; width: 7px; height: 7px; border-radius: 50%; background: #005a32; margin-top: 5px; }
         .notif-empty { padding: 40px 20px; text-align: center; color: #9ca3af; }
         .notif-empty .material-icons { font-size: 40px; margin-bottom: 8px; display: block; }
         .notif-empty p { font-size: 13px; }
+        .notif-loading { padding: 30px 20px; text-align: center; color: #9ca3af; }
+        .notif-loading p { font-size: 12px; margin-top: 8px; }
         .notif-footer { border-top: 1px solid #f0f0f0; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; }
         .dark .notif-footer { border-color: #374151; }
         .view-all-link { font-size: 12px; font-weight: 600; color: #005a32; text-decoration: none; display: flex; align-items: center; gap: 4px; }
         .view-all-link:hover { text-decoration: underline; }
         .view-all-link .material-icons { font-size: 14px; }
-        .notif-settings-btn { font-size: 11px; color: #9ca3af; background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 3px; }
-        .notif-settings-btn:hover { color: #6b7280; }
 
         .chart-container { position: relative; height: 300px; width: 100%; }
-        .refreshing { animation: spin 1s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        /* ── SIDEBAR LOGOUT BUTTON ── */
-        .sidebar-logout-btn {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            width: 100%;
-            padding: 10px 16px;
-            border: none;
-            background: none;
-            cursor: pointer;
-            border-radius: 8px;
-            color: #d62828;
-            font-size: 14px;
-            font-weight: 600;
-            transition: background 0.15s;
-            text-align: left;
-        }
-        .sidebar-logout-btn:hover {
-            background: #fef2f2;
-        }
-        .sidebar-logout-btn .material-icons {
-            font-size: 20px;
-            color: #d62828;
-        }
+        .refreshing { animation: spin 1s linear infinite; }
+        #navClock { font-size: 15px; font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; }
+        #navDate  { font-size: 10px; font-weight: 500; letter-spacing: 0.06em; }
+        .nav-divider { width: 1px; height: 28px; background: #e5e7eb; }
+        .dark .nav-divider { background: #374151; }
+        .sidebar-logout-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 16px; border: none; background: none; cursor: pointer; border-radius: 8px; color: #d62828; font-size: 14px; font-weight: 600; transition: background 0.15s; text-align: left; }
+        .sidebar-logout-btn:hover { background: #fef2f2; }
+        .sidebar-logout-btn .material-icons { font-size: 20px; color: #d62828; }
     </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
 
-    <!-- TITLE BAR -->
     <div id="title-bar" class="drag-region fixed top-0 left-0 w-full h-8 bg-white flex justify-between items-stretch z-40 border-b border-gray-200 select-none">
-        <div class="flex items-center pl-4 gap-2 text-gray-600">
-            <span class="text-xs font-semibold">IHMS Pharmacy</span>
-        </div>
+        <div class="flex items-center pl-4 gap-2 text-gray-600"><span class="text-xs font-semibold">IHMS Pharmacy</span></div>
         <div class="no-drag flex items-center relative z-50">
-            <button id="min-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200">
-                <span class="material-icons-outlined text-sm text-gray-600">remove</span>
-            </button>
-            <button id="max-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200">
-                <span class="material-icons-outlined text-sm text-gray-600" id="maxIcon">crop_square</span>
-            </button>
-            <button id="close-btn" class="h-full w-12 flex justify-center items-center hover:bg-red-500 transition-colors duration-200 group">
-                <span class="material-icons-outlined text-sm text-gray-600 group-hover:text-white">close</span>
-            </button>
+            <button id="min-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200"><span class="material-icons-outlined text-sm text-gray-600">remove</span></button>
+            <button id="max-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200"><span class="material-icons-outlined text-sm text-gray-600" id="maxIcon">crop_square</span></button>
+            <button id="close-btn" class="h-full w-12 flex justify-center items-center hover:bg-red-500 transition-colors duration-200 group"><span class="material-icons-outlined text-sm text-gray-600 group-hover:text-white">close</span></button>
         </div>
     </div>
 
     <div class="flex h-screen pt-8">
-
-        <!-- ── SIDEBAR ── -->
         <aside class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-border-light dark:border-border-dark">
-            <!-- Logo -->
-          <!-- Logo -->
-<div class="h-16 flex items-center gap-3 px-4 border-b border-border-light dark:border-border-dark">
-
-    <img
-      src="images/wellserved.png"
-      alt="Well Served Logo"
-      class="w-12 h-12 rounded-full object-cover border border-slate-100 dark:border-slate-700 shadow-sm"
-    />
-    <div>
-        <h1 class="font-bold text-primary dark:text-green-400 leading-tight">
-            Well Served
-        </h1>
-        <p class="text-[10px] uppercase tracking-wider text-accent dark:text-amber-600 font-semibold">
-            Since 1994
-        </p>
-    </div>
-</div>
-
-
-            <!-- Nav Links -->
+            <div class="h-16 flex items-center px-6">
+                <img src="images/wellserved.png" alt="Well Served Logo" class="w-12 h-12 rounded-full object-cover border border-slate-100 dark:border-slate-700 shadow-sm"/>
+                <div>
+                    <h1 class="font-bold text-primary dark:text-green-400 leading-tight">Well Served</h1>
+                    <p class="text-[10px] uppercase tracking-wider text-accent dark:text-amber-600 font-semibold">Since 1994</p>
+                </div>
+            </div>
             <nav class="flex-1 px-4 py-6 space-y-2">
                 <div class="px-2 text-sm font-semibold text-subtext-light dark:text-subtext-dark mb-2">Admin Panel</div>
-                <a class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold" href="dashboard_admin.html">
-                    <span class="material-icons mr-3">dashboard</span> Dashboard
-                </a>
-                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="inventory_admin.html">
-                    <span class="material-icons mr-3">inventory_2</span> Inventory
-                </a>
-                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="sales-reports.html">
-                    <span class="material-icons mr-3">analytics</span> Sales Reports
-                </a>
-                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="user_management.html">
-                    <span class="material-icons mr-3">group</span> User Management
+                <a class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold" href="dashboard_admin.html"><span class="material-icons mr-3">dashboard</span> Dashboard</a>
+                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="inventory_admin.html"><span class="material-icons mr-3">inventory_2</span> Inventory</a>
+                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="sales-reports.html"><span class="material-icons mr-3">analytics</span> Sales Reports</a>
+                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="user_management.html"><span class="material-icons mr-3">group</span> User Management</a>
+                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="activitylog_admin.html">
+                    <span class="material-icons mr-3">history</span> Activity Log
                 </a>
             </nav>
 
             <!-- ── LOGOUT at the bottom of sidebar ── -->
             <div class="px-4 pb-6 border-t border-border-light dark:border-border-dark pt-4">
-                <button onclick="logoutUser()" class="sidebar-logout-btn">
-                    <span class="material-icons">logout</span>
-                    Logout
-                </button>
+                <button onclick="logoutUser()" class="sidebar-logout-btn"><span class="material-icons">logout</span> Logout</button>
             </div>
         </aside>
 
-        <!-- ── RIGHT COLUMN ── -->
         <main class="flex-1 flex flex-col overflow-hidden">
-
-            <!-- APP HEADER (no logout button here anymore) -->
             <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
-                <div class="flex items-center gap-2">
-                   
-                </div>
-
+                <div></div>
                 <div class="flex items-center gap-4">
-                    <!-- Notification Bell -->
+                    <div class="text-right">
+                        <div id="navClock" class="text-text-light dark:text-text-dark"></div>
+                        <div id="navDate"  class="text-subtext-light dark:text-subtext-dark uppercase tracking-widest"></div>
+                    </div>
+                    <div class="nav-divider"></div>
+
                     <div class="relative">
                         <button id="notificationBtn"
-                            class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                            <span class="material-icons text-2xl">notifications</span>
+                            class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <span class="material-icons-outlined text-2xl">notifications</span>
                             <span id="notificationBadge"
-                                class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold">4</span>
+                                class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold"
+                                style="display:none;">0</span>
                         </button>
-
                         <div id="notificationDropdown" class="notif-dropdown">
                             <div class="notif-header">
                                 <h3>Notifications</h3>
                                 <div class="notif-header-meta">
-                                    <span class="unread-count-pill" id="unreadPill">4 new</span>
+                                    <span class="unread-count-pill" id="unreadPill">Loading...</span>
                                     <button class="mark-all-btn" onclick="markAllRead()">Mark all read</button>
                                 </div>
                             </div>
@@ -257,99 +179,95 @@
                                 <button class="notif-tab-btn" onclick="filterNotifTab(this,'critical')">Critical</button>
                                 <button class="notif-tab-btn" onclick="filterNotifTab(this,'expiry')">Expiry</button>
                                 <button class="notif-tab-btn" onclick="filterNotifTab(this,'shortage')">Stock</button>
-                                <button class="notif-tab-btn" onclick="filterNotifTab(this,'pending')">Pending</button>
                             </div>
-                            <div class="notif-list" id="notifList"></div>
+                            <div class="notif-list" id="notifList">
+                                <div class="notif-loading">
+                                    <span class="material-icons" style="font-size:32px;display:block;margin:0 auto 8px;">hourglass_empty</span>
+                                    <p>Loading alerts from inventory...</p>
+                                </div>
+                            </div>
                             <div class="notif-footer">
-                                <a href="medication_alerts.html" class="view-all-link">
-                                    View all alerts <span class="material-icons">arrow_forward</span>
+                                <a href="inventory_admin.html" class="view-all-link">
+                                    View inventory <span class="material-icons">arrow_forward</span>
                                 </a>
-                                <button class="notif-settings-btn">
-                                    <span class="material-icons">settings</span> Settings
-                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Profile Avatar -->
-                    <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">AD</div>
+                    <div class="nav-divider"></div>
+                    <div class="text-right leading-tight">
+                        <div id="navUserName" class="text-sm font-bold text-text-light dark:text-text-dark">Admin</div>
+                        <div id="navUserRole" class="text-xs text-subtext-light dark:text-subtext-dark">Administrator</div>
+                    </div>
+                    <div id="navAvatar" class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm select-none">A</div>
                 </div>
             </header>
 
-            <!-- SCROLLABLE PAGE BODY -->
             <div class="flex-1 p-8 overflow-y-auto">
                 <div class="flex items-center justify-between mb-8">
                     <h2 class="text-3xl font-bold text-text-light dark:text-text-dark">Analytics Dashboard</h2>
-                    <button onclick="fetchDashboardStats()" class="bg-primary hover:bg-primary/90 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2">
-                        <span class="material-icons">refresh</span> Refresh Data
+                    <button id="refreshBtn" onclick="handleRefresh()" class="bg-primary hover:bg-primary/90 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
+                        <span id="refreshIcon" class="material-icons">refresh</span>
+                        <span id="refreshLabel">Refresh Data</span>
                     </button>
                 </div>
 
-                <!-- STAT CARDS -->
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-                   <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 border-t-4 border-t-primary">
+
+                    <!-- ══ CARD 1: TOTAL USERS ══ -->
+                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 border-t-4 border-t-primary">
                         <div class="flex items-start justify-between">
                             <div>
-                                <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1">TOTAL INVENTORY</p>
-                                <p id="cardTotalMedicines" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
+                                <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1">TOTAL USERS</p>
+                                <p id="cardTotalUsers" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
                                 <div class="flex items-center mt-2 text-sm text-primary">
-                                    <span class="material-icons text-base">inventory_2</span>
-                                    <span class="ml-1">Items in Stock</span>
+                                    <span class="material-icons text-base">person</span>
+                                    <span class="ml-1" id="cardActiveUsers">0 active</span>
                                 </div>
                             </div>
                             <div class="p-3 bg-primary/10 rounded-lg">
-                                <span class="material-icons text-primary" style="font-size:28px;">inventory</span>
+                                <span class="material-icons text-primary" style="font-size:28px;">group</span>
                             </div>
                         </div>
                     </div>
+
+                    <!-- CARD 2: OUT-OF-STOCK -->
                     <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 border-t-4 border-t-secondary">
                         <div class="flex items-start justify-between">
                             <div>
                                 <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1">OUT-OF-STOCK</p>
                                 <p id="cardOutOfStock" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
-                                <div class="flex items-center mt-2 text-sm text-secondary">
-                                    <span class="material-icons text-base">warning</span>
-                                    <span class="ml-1" id="cardLowStock">0 low stock</span>
-                                </div>
+                                <div class="flex items-center mt-2 text-sm text-secondary"><span class="material-icons text-base">warning</span><span class="ml-1" id="cardLowStock">0 low stock</span></div>
                             </div>
-                            <div class="p-3 bg-secondary/10 rounded-lg">
-                                <span class="material-icons text-secondary" style="font-size:28px;">error_outline</span>
-                            </div>
+                            <div class="p-3 bg-secondary/10 rounded-lg"><span class="material-icons text-secondary" style="font-size:28px;">error_outline</span></div>
                         </div>
                     </div>
-                   <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 border-t-4 border-t-accent">
+
+                    <!-- CARD 3: EXPIRING SOON -->
+                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 border-t-4 border-t-accent">
                         <div class="flex items-start justify-between">
                             <div>
                                 <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1">EXPIRING SOON</p>
                                 <p id="cardExpiring" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
-                                <div class="flex items-center mt-2 text-sm text-accent">
-                                    <span class="material-icons text-base">watch_later</span>
-                                    <span class="ml-1">Next 30 days</span>
-                                </div>
+                                <div class="flex items-center mt-2 text-sm text-accent"><span class="material-icons text-base">watch_later</span><span class="ml-1">Next 30 days</span></div>
                             </div>
-                            <div class="p-3 bg-accent/10 rounded-lg">
-                                <span class="material-icons text-accent" style="font-size:28px;">calendar_today</span>
-                            </div>
+                            <div class="p-3 bg-accent/10 rounded-lg"><span class="material-icons text-accent" style="font-size:28px;">calendar_today</span></div>
                         </div>
                     </div>
+
+                    <!-- CARD 4: TODAY'S REVENUE -->
                     <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 border-t-4 border-t-primary">
                         <div class="flex items-start justify-between">
                             <div>
                                 <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1">TODAY'S REVENUE</p>
                                 <p id="cardTotalRevenue" class="text-4xl font-bold text-text-light dark:text-text-dark">₱0.00</p>
-                                <div class="flex items-center mt-2 text-sm text-green-600">
-                                    <span class="material-icons text-base">trending_up</span>
-                                    <span class="ml-1" id="cardTransactions">0 transactions</span>
-                                </div>
+                                <div class="flex items-center mt-2 text-sm text-green-600"><span class="material-icons text-base">trending_up</span><span class="ml-1" id="cardTransactions">0 transactions</span></div>
                             </div>
-                            <div class="p-3 bg-green-100 dark:bg-green-900/50 rounded-lg">
-                                <span class="material-icons text-green-600" style="font-size:28px;">payments</span>
-                            </div>
+                            <div class="p-3 bg-green-100 dark:bg-green-900/50 rounded-lg"><span class="material-icons text-green-600" style="font-size:28px;">payments</span></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- CHARTS -->
                 <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
                     <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
                         <h3 class="text-xl font-semibold text-text-light dark:text-text-dark mb-6">Sales Trends</h3>
@@ -361,15 +279,11 @@
                     </div>
                 </div>
 
-                <!-- MODULE SUMMARIES -->
                 <div class="mb-6">
                     <h2 class="text-2xl font-bold text-text-light dark:text-text-dark mb-4">Module Summary Reports</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
-                            <div class="flex items-center gap-3 mb-4">
-                                <span class="material-icons text-primary">inventory_2</span>
-                                <h3 class="font-semibold text-text-light dark:text-text-dark">Inventory Summary</h3>
-                            </div>
+                            <div class="flex items-center gap-3 mb-4"><span class="material-icons text-primary">inventory_2</span><h3 class="font-semibold text-text-light dark:text-text-dark">Inventory Summary</h3></div>
                             <div class="space-y-3">
                                 <div class="flex justify-between"><span>Total Items:</span><span id="inventoryTotal" class="font-semibold">0</span></div>
                                 <div class="flex justify-between"><span>Low Stock:</span><span id="inventoryLowStock" class="font-semibold text-accent">0 items</span></div>
@@ -378,10 +292,7 @@
                             </div>
                         </div>
                         <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
-                            <div class="flex items-center gap-3 mb-4">
-                                <span class="material-icons text-primary">receipt_long</span>
-                                <h3 class="font-semibold text-text-light dark:text-text-dark">Prescriptions Summary</h3>
-                            </div>
+                            <div class="flex items-center gap-3 mb-4"><span class="material-icons text-primary">receipt_long</span><h3 class="font-semibold text-text-light dark:text-text-dark">Prescriptions Summary</h3></div>
                             <div class="space-y-3">
                                 <div class="flex justify-between"><span>Today's Total:</span><span id="prescriptionsToday" class="font-semibold">0</span></div>
                                 <div class="flex justify-between"><span>Pending:</span><span id="prescriptionsPending" class="font-semibold text-accent">0</span></div>
@@ -390,10 +301,7 @@
                             </div>
                         </div>
                         <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
-                            <div class="flex items-center gap-3 mb-4">
-                                <span class="material-icons text-primary">point_of_sale</span>
-                                <h3 class="font-semibold text-text-light dark:text-text-dark">Sales Summary</h3>
-                            </div>
+                            <div class="flex items-center gap-3 mb-4"><span class="material-icons text-primary">point_of_sale</span><h3 class="font-semibold text-text-light dark:text-text-dark">Sales Summary</h3></div>
                             <div class="space-y-3">
                                 <div class="flex justify-between"><span>Revenue:</span><span id="salesRevenue" class="font-semibold">₱0.00</span></div>
                                 <div class="flex justify-between"><span>Transactions:</span><span id="salesTransactions" class="font-semibold">0</span></div>
@@ -404,79 +312,226 @@
                     </div>
                 </div>
             </div>
-
         </main>
     </div>
 
 <script>
     const API_BASE_URL = 'http://localhost:5001';
+    let salesChartInstance = null, inventoryChartInstance = null;
 
-    // ── WINDOW CONTROLS ──
-    document.getElementById('min-btn').addEventListener('click', () => { if (window.electronAPI) window.electronAPI.minimize(); });
-    document.getElementById('max-btn').addEventListener('click', () => {
-        if (window.electronAPI) { window.electronAPI.maximize(); }
-        else {
-            if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(()=>{}); document.getElementById('maxIcon').textContent = 'filter_none'; }
-            else { document.exitFullscreen(); document.getElementById('maxIcon').textContent = 'crop_square'; }
-        }
-    });
-    document.getElementById('close-btn').addEventListener('click', () => {
-        Swal.fire({ title:'Close Application?', text:'You will be returned to the login screen.', icon:'question', showCancelButton:true, confirmButtonColor:'#005a32', cancelButtonColor:'#6B7280', confirmButtonText:'Yes, close', cancelButtonText:'Cancel' })
-        .then(r => { if (r.isConfirmed) { sessionStorage.removeItem('userInfo'); sessionStorage.removeItem('token'); window.location.href = '../html/login.html'; } });
-    });
-
-    // ── BACK TO IHMS ──
-    function confirmBackToHMS(event) {
-        event.preventDefault();
-        Swal.fire({ title:'Leave Dashboard?', text:'Return to Integrated Healthcare Management System?', icon:'question', showCancelButton:true, confirmButtonColor:'#005a32', confirmButtonText:'Yes, go back' })
-        .then(r => { if (r.isConfirmed) window.location.href = '../html/index.html'; });
-    }
-
-    // ── AUTH ──
     function getToken() {
-        const userInfo = sessionStorage.getItem('userInfo');
-        return userInfo ? JSON.parse(userInfo).token : null;
+        const direct = sessionStorage.getItem('token');
+        if (direct) return direct;
+        const u = sessionStorage.getItem('userInfo');
+        if (u) { try { return JSON.parse(u).token || null; } catch(e){} }
+        return null;
     }
 
-    async function apiCall(endpoint) {
-        const token = getToken();
-        if (!token) { window.location.href = '../html/login.html'; return null; }
+    function updateNavClock() {
+        const now = new Date();
+        document.getElementById('navClock').textContent = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
+        document.getElementById('navDate').textContent  = now.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
+    }
+
+    function loadNavUserInfo() {
         try {
-            const response = await fetch(`${API_BASE_URL}${endpoint}`, { headers: { 'Authorization': `Bearer ${token}` } });
-            if (response.status === 401) { sessionStorage.removeItem('userInfo'); window.location.href = '../html/login.html'; return null; }
-            return await response.json();
-        } catch (error) { console.error("API Error:", error); return null; }
+            const raw = sessionStorage.getItem('userInfo'); if (!raw) return;
+            const info = JSON.parse(raw);
+            const name = info.name || info.firstName || info.username || 'Admin';
+            document.getElementById('navUserName').textContent = name;
+            document.getElementById('navUserRole').textContent = info.role || info.position || 'Administrator';
+            document.getElementById('navAvatar').textContent   = name.charAt(0).toUpperCase();
+        } catch(e) {}
     }
 
-    // ── LOGOUT (sidebar bottom) ──
+    document.getElementById('min-btn').addEventListener('click',()=>{ if(window.electronAPI) window.electronAPI.minimize(); });
+    document.getElementById('max-btn').addEventListener('click',()=>{
+        if(window.electronAPI) window.electronAPI.maximize();
+        else { if(!document.fullscreenElement){document.documentElement.requestFullscreen().catch(()=>{});document.getElementById('maxIcon').textContent='filter_none';}else{document.exitFullscreen();document.getElementById('maxIcon').textContent='crop_square';} }
+    });
+    document.getElementById('close-btn').addEventListener('click',()=>{
+        Swal.fire({title:'Close Application?',text:'You will be returned to the login screen.',icon:'question',showCancelButton:true,confirmButtonColor:'#005a32',cancelButtonColor:'#6B7280',confirmButtonText:'Yes, close'})
+        .then(r=>{if(r.isConfirmed){sessionStorage.clear();window.location.href='../html/login.html';}});
+    });
+
     function logoutUser() {
-        Swal.fire({
-            title: "Logout?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#005a32",
-            confirmButtonText: "Yes, logout"
-        }).then(r => {
-            if (r.isConfirmed) {
-                sessionStorage.removeItem('userInfo');
-                sessionStorage.removeItem('token');
-                window.location.href = '../html/login.html';
+        Swal.fire({title:"Logout?",icon:"warning",showCancelButton:true,confirmButtonColor:"#005a32",confirmButtonText:"Yes, logout"})
+        .then(r=>{if(r.isConfirmed){sessionStorage.clear();window.location.href='../html/login.html';}});
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // NOTIFICATION SYSTEM
+    // ══════════════════════════════════════════════════════════
+    let notifData = [], activeNotifFilter = 'all';
+
+    function generateAlertsFromInventory(inventory) {
+        const alerts = [], today = new Date(), thirtyDays = new Date();
+        thirtyDays.setDate(today.getDate() + 30);
+        inventory.forEach((item, idx) => {
+            const medName = item.medicine?.name || item.name || 'Unknown Medicine';
+            if (item.expiryDate) {
+                const expiry = new Date(item.expiryDate);
+                if (expiry < today) {
+                    alerts.push({ id:`exp-${item._id||idx}`, type:'expiry', unread:true, medicineName:medName, title:'Medicine Expired', desc:`${medName} expired on ${expiry.toLocaleDateString('en-PH')}.`, time:'Needs immediate attention', actionLabel:'View Batch', actionClass:'btn-expiry', icon:'event_busy', iconClass:'icon-expiry' });
+                } else if (expiry <= thirtyDays) {
+                    const d = Math.ceil((expiry - today) / 864e5);
+                    alerts.push({ id:`exp-${item._id||idx}`, type:'expiry', unread:true, medicineName:medName, title:'Expiring Soon', desc:`${medName} expires in ${d} day${d===1?'':'s'}.`, time:`${d} days left`, actionLabel:'View Batch', actionClass:'btn-expiry', icon:'schedule', iconClass:'icon-expiry' });
+                }
+            }
+            const qty = parseInt(item.quantity||0), minStock = parseInt(item.minStockLevel||10);
+            if (qty === 0) {
+                alerts.push({ id:`stk-${item._id||idx}`, type:'critical', unread:true, medicineName:medName, title:'Critical: Out of Stock', desc:`${medName} is completely out of stock. Needs emergency reorder.`, time:'Immediate action required', actionLabel:'Go to Inventory', actionClass:'btn-critical', icon:'warning', iconClass:'icon-critical' });
+            } else if (qty <= minStock) {
+                alerts.push({ id:`stk-${item._id||idx}`, type:'shortage', unread:true, medicineName:medName, title:'Low Stock Alert', desc:`${medName} — only ${qty} unit${qty===1?'':'s'} remaining (min: ${minStock}).`, time:'Reorder soon', actionLabel:'Go to Inventory', actionClass:'btn-shortage', icon:'inventory_2', iconClass:'icon-shortage' });
             }
         });
+        alerts.sort((a,b) => ({critical:0,expiry:1,shortage:2}[a.type]??9) - ({critical:0,expiry:1,shortage:2}[b.type]??9));
+        return alerts;
     }
 
-    // ── DASHBOARD DATA ──
+    function renderNotifications() {
+        const list = document.getElementById('notifList');
+        const filtered = activeNotifFilter === 'all' ? notifData : notifData.filter(n => n.type === activeNotifFilter);
+        if (!filtered.length) { list.innerHTML = `<div class="notif-empty"><span class="material-icons">notifications_none</span><p>${activeNotifFilter==='all'?'All clear — no alerts right now!':'No notifications in this category.'}</p></div>`; updateNotifBadge(); return; }
+        list.innerHTML = filtered.map(n => `
+            <div class="notif-item ${n.type} ${n.unread?'unread':''}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
+                <div class="notif-icon-wrap ${n.iconClass}"><span class="material-icons">${n.icon}</span></div>
+                <div class="notif-body">
+                    <div class="notif-title">${n.title}</div>
+                    <div class="notif-desc">${n.desc}</div>
+                    <div class="notif-time">${n.time}</div>
+                    <div class="notif-action"><button class="notif-action-btn ${n.actionClass}" onclick="handleNotifAction(event,'${n.id}')">${n.actionLabel}</button></div>
+                </div>
+                ${n.unread ? '<div class="unread-dot"></div>' : ''}
+            </div>`).join('');
+        updateNotifBadge();
+    }
+
+    function updateNotifBadge() {
+        const count = notifData.filter(n => n.unread).length;
+        const badge = document.getElementById('notificationBadge'), pill = document.getElementById('unreadPill');
+        if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none'; }
+        if (pill)  pill.textContent = count > 0 ? `${count} new` : 'All clear';
+    }
+
+    function markNotifRead(id) { const n = notifData.find(n => n.id === id); if (n) { n.unread = false; renderNotifications(); } }
+    function markAllRead()     { notifData.forEach(n => n.unread = false); renderNotifications(); }
+
+    function handleNotifAction(event, id) {
+        event.stopPropagation(); markNotifRead(id);
+        const n = notifData.find(n => n.id === id); if (!n) return;
+        if (n.type === 'expiry') { sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'batch', medicine: n.medicineName })); }
+        else if (n.type === 'critical' || n.type === 'shortage') { sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'summary', medicine: n.medicineName })); }
+        window.location.href = 'inventory_admin.html';
+    }
+
+    function filterNotifTab(btn, filter) {
+        document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active'); activeNotifFilter = filter; renderNotifications();
+    }
+
+    async function refreshNotifications() {
+        const token = getToken(); if (!token) return;
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/inventory`, { headers: { 'Authorization': `Bearer ${token}` } });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const raw = await res.json();
+            const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
+            const previouslyRead = new Set(notifData.filter(n => !n.unread).map(n => n.id));
+            notifData = generateAlertsFromInventory(inventory).slice(0, 15);
+            notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
+            renderNotifications();
+        } catch(e) {
+            console.warn('Notification fetch failed:', e);
+            if (!notifData.length) document.getElementById('notifList').innerHTML = `<div class="notif-empty"><span class="material-icons">cloud_off</span><p>Could not load alerts. Check server connection.</p></div>`;
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // FETCH TOTAL USERS
+    // ══════════════════════════════════════════════════════════
+    async function fetchTotalUsers() {
+        const token = getToken(); if (!token) return;
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/users`, { headers: { 'Authorization': `Bearer ${token}` } });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data  = await res.json();
+            const users = Array.isArray(data) ? data : (data.users || data.data || []);
+            const total  = users.length;
+            // Count active users — handle common status field patterns
+            const active = users.filter(u =>
+                u.status === 'active' || u.status === 'Active' ||
+                u.isActive === true   || u.active === true
+            ).length;
+            document.getElementById('cardTotalUsers').textContent  = total.toLocaleString();
+            document.getElementById('cardActiveUsers').textContent = `${active > 0 ? active : total} active`;
+        } catch(e) {
+            console.warn('Users fetch failed:', e);
+        }
+    }
+
+    // ── DASHBOARD STATS ──
     async function fetchDashboardStats() {
-        const data = await apiCall('/api/dashboard/stats');
-        if (data) { updateDashboardUI(data); if (data.charts) updateCharts(data.charts); }
+        const token = getToken(); if (!token) return;
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/dashboard/stats`, { headers: { 'Authorization': `Bearer ${token}` } });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            updateDashboardUI(data);
+            if (data.charts) updateCharts(data.charts);
+        } catch(e) {
+            console.error('Dashboard stats error:', e);
+            throw e; // re-throw so handleRefresh can catch it
+        }
+        await fetchTotalUsers();
     }
 
-    function safeSetText(id, value) { const el = document.getElementById(id); if (el) el.textContent = value; }
+    // ── REFRESH BUTTON HANDLER ──
+    async function handleRefresh() {
+        const btn   = document.getElementById('refreshBtn');
+        const icon  = document.getElementById('refreshIcon');
+        const label = document.getElementById('refreshLabel');
+
+        // Prevent double-clicks
+        btn.disabled = true;
+        icon.classList.add('refreshing');
+        label.textContent = 'Refreshing...';
+
+        try {
+            await Promise.all([
+                fetchDashboardStats(),
+                refreshNotifications()
+            ]);
+            // Brief "Done" flash
+            icon.classList.remove('refreshing');
+            icon.textContent = 'check';
+            label.textContent = 'Updated!';
+            setTimeout(() => {
+                icon.textContent  = 'refresh';
+                label.textContent = 'Refresh Data';
+                btn.disabled = false;
+            }, 1200);
+        } catch(e) {
+            icon.classList.remove('refreshing');
+            icon.textContent  = 'refresh';
+            label.textContent = 'Refresh Data';
+            btn.disabled = false;
+            Swal.fire({
+                icon: 'error',
+                title: 'Refresh Failed',
+                text: 'Could not reach the server. Please check your connection.',
+                confirmButtonColor: '#005a32',
+                timer: 3000,
+                timerProgressBar: true
+            });
+        }
+    }
+
+    function safeSetText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
 
     function updateDashboardUI(data) {
         const now = new Date().toLocaleTimeString();
         if (data.inventory) {
-            safeSetText('cardTotalMedicines', data.inventory.totalItems.toLocaleString());
             safeSetText('cardOutOfStock', data.inventory.outOfStock);
             safeSetText('cardLowStock', `${data.inventory.lowStock} low stock`);
             safeSetText('cardExpiring', data.inventory.expiringSoon);
@@ -486,12 +541,12 @@
             safeSetText('inventoryUpdated', now);
         }
         if (data.sales) {
-            const revenue = `₱${(data.sales.todayRevenue || 0).toLocaleString(undefined, {minimumFractionDigits:2})}`;
-            safeSetText('cardTotalRevenue', revenue);
+            const rev = `₱${(data.sales.todayRevenue||0).toLocaleString(undefined,{minimumFractionDigits:2})}`;
+            safeSetText('cardTotalRevenue', rev);
             safeSetText('cardTransactions', `${data.sales.todayTransactions} transactions`);
-            safeSetText('salesRevenue', revenue);
+            safeSetText('salesRevenue', rev);
             safeSetText('salesTransactions', data.sales.todayTransactions);
-            safeSetText('salesAverage', `₱${Math.floor(data.sales.avgTransaction || 0).toLocaleString()}`);
+            safeSetText('salesAverage', `₱${Math.floor(data.sales.avgTransaction||0).toLocaleString()}`);
             safeSetText('salesUpdated', now);
         }
         if (data.prescriptions) {
@@ -500,11 +555,12 @@
             safeSetText('prescriptionsReady', data.prescriptions.readyForPickup);
             safeSetText('prescriptionsUpdated', now);
         }
+        // If dashboard/stats also returns user count, use it
+        if (data.users) {
+            safeSetText('cardTotalUsers', (data.users.total || 0).toLocaleString());
+            if (data.users.active !== undefined) safeSetText('cardActiveUsers', `${data.users.active} active`);
+        }
     }
-
-    // ── CHARTS ──
-    let salesChartInstance = null;
-    let inventoryChartInstance = null;
 
     function updateCharts(chartData) {
         const salesCtx = document.getElementById('salesChart').getContext('2d');
@@ -514,85 +570,34 @@
             data: { labels: chartData.salesTrend?.labels?.length ? chartData.salesTrend.labels : ['No Data'], datasets: [{ label:'Revenue (₱)', data: chartData.salesTrend?.data?.length ? chartData.salesTrend.data : [0], borderColor:'#005a32', backgroundColor:'rgba(0,90,50,0.1)', fill:true, tension:0.4 }] },
             options: { responsive:true, maintainAspectRatio:false }
         });
-
-        const inventoryCtx = document.getElementById('inventoryChart').getContext('2d');
+        const invCtx = document.getElementById('inventoryChart').getContext('2d');
         if (inventoryChartInstance) inventoryChartInstance.destroy();
-        const stockLabels = chartData.stockDistribution?.labels?.length ? chartData.stockDistribution.labels : ['No Stock'];
-        inventoryChartInstance = new Chart(inventoryCtx, {
+        const sl = chartData.stockDistribution?.labels?.length ? chartData.stockDistribution.labels : ['No Stock'];
+        inventoryChartInstance = new Chart(invCtx, {
             type: 'bar',
-            data: { labels: stockLabels, datasets: [{ label:'Stock Count', data: chartData.stockDistribution?.data?.length ? chartData.stockDistribution.data : [0], backgroundColor: ['#005a32','#d62828','#8b5a2b','#10B981','#8B5CF6'].slice(0, stockLabels.length) }] },
+            data: { labels: sl, datasets: [{ label:'Stock Count', data: chartData.stockDistribution?.data?.length ? chartData.stockDistribution.data : [0], backgroundColor:['#005a32','#d62828','#8b5a2b','#10B981','#8B5CF6'].slice(0,sl.length) }] },
             options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } } }
         });
     }
 
-    // ── NOTIFICATIONS ──
-  let notifData = [];
-
-  //you only live once is my motherfuckin motto
-    let activeNotifFilter = 'all';
-
-    function renderNotifications() {
-        const list = document.getElementById('notifList');
-        const filtered = activeNotifFilter === 'all' ? notifData : notifData.filter(n => n.type === activeNotifFilter);
-        if (!filtered.length) { list.innerHTML = `<div class="notif-empty"><span class="material-icons">notifications_none</span><p>No notifications in this category</p></div>`; updateNotifBadge(); return; }
-        list.innerHTML = filtered.map(n => `
-            <div class="notif-item ${n.type} ${n.unread ? 'unread' : ''}" id="notif-${n.id}" onclick="markNotifRead(${n.id})">
-                <div class="notif-icon-wrap ${n.iconClass}"><span class="material-icons">${n.icon}</span></div>
-                <div class="notif-body">
-                    <div class="notif-title">${n.title}</div>
-                    <div class="notif-desc">${n.desc}</div>
-                    <div class="notif-time">${n.time}</div>
-                  
-                </div>
-                ${n.unread ? '<div class="unread-dot"></div>' : ''}
-            </div>`).join('');
-        updateNotifBadge();
-    }
-
-    function updateNotifBadge() {
-        const count = notifData.filter(n => n.unread).length;
-        const badge = document.getElementById('notificationBadge');
-        const pill  = document.getElementById('unreadPill');
-        badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none';
-        if (pill) pill.textContent = count > 0 ? `${count} new` : 'All read';
-    }
-    function markNotifRead(id) { const n = notifData.find(n => n.id === id); if (n) { n.unread = false; renderNotifications(); } }
-    function markAllRead() { notifData.forEach(n => n.unread = false); renderNotifications(); }
-    function handleNotifAction(event, id) { event.stopPropagation(); markNotifRead(id); }
-    function filterNotifTab(btn, filter) { document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); activeNotifFilter = filter; renderNotifications(); }
-
-    async function updateNotificationBadge() {
-        try {
-            const token = getToken(); if (!token) return;
-            const res = await fetch(`${API_BASE_URL}/api/inventory`, { headers: { 'Authorization': `Bearer ${token}` } });
-            if (!res.ok) return;
-            const inventory = await res.json();
-            const today = new Date(), thirtyDays = new Date(); thirtyDays.setDate(today.getDate() + 30);
-            const alerts = [];
-            inventory.forEach((item, idx) => {
-                const medName = item.medicine ? (item.medicine.name || 'Unknown') : 'Unknown';
-                if (item.expiryDate) { const expiry = new Date(item.expiryDate); if (expiry < today) { alerts.push({ id:`exp-${idx}`, type:'expiry', unread:true, title:'Medicine Expired', desc:`${medName} expired`, time:'Just now', actionLabel:'Review Batch', actionClass:'btn-expiry', icon:'event_busy', iconClass:'icon-expiry' }); } else if (expiry < thirtyDays) { const d = Math.ceil((expiry-today)/(864e5)); alerts.push({ id:`exp-${idx}`, type:'expiry', unread:true, title:'Expiring Soon', desc:`${medName} expires in ${d} days`, time:`${d} days left`, actionLabel:'Review Batch', actionClass:'btn-expiry', icon:'schedule', iconClass:'icon-expiry' }); } }
-                if (item.quantity === 0) { alerts.push({ id:`stk-${idx}`, type:'critical', unread:true, title:'Out of Stock', desc:`${medName} is out of stock`, time:'Immediate', actionLabel:'Emergency Order', actionClass:'btn-critical', icon:'warning', iconClass:'icon-critical' }); }
-                else if (item.quantity <= item.minStockLevel) { alerts.push({ id:`stk-${idx}`, type:'shortage', unread:true, title:'Low Stock', desc:`${medName} — only ${item.quantity} units`, time:'Reorder soon', actionLabel:'Restock Now', actionClass:'btn-shortage', icon:'inventory_2', iconClass:'icon-shortage' }); }
-            });
-            notifData = alerts.slice(0, 10); renderNotifications();
-        } catch(e) { console.error('Notification error:', e); }
-    }
-
+    // ── INIT ──
     document.addEventListener('DOMContentLoaded', function() {
-        const btn      = document.getElementById('notificationBtn');
-        const dropdown = document.getElementById('notificationDropdown');
-        btn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('open'); });
-        document.addEventListener('click', (e) => { if (!dropdown.contains(e.target)) dropdown.classList.remove('open'); });
+        document.documentElement.classList.toggle('dark', sessionStorage.getItem('darkMode') === 'true');
+        updateNavClock();
+        setInterval(updateNavClock, 1000);
+        loadNavUserInfo();
+
+        const btn = document.getElementById('notificationBtn'), dropdown = document.getElementById('notificationDropdown');
+        btn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('open'); if (dropdown.classList.contains('open')) refreshNotifications(); });
+        document.addEventListener('click', (e) => { if (!dropdown.contains(e.target) && e.target !== btn) dropdown.classList.remove('open'); });
         dropdown.addEventListener('click', e => e.stopPropagation());
-        renderNotifications();
+
         fetchDashboardStats();
-        setTimeout(updateNotificationBadge, 1000);
+        setTimeout(refreshNotifications, 800);
+        setInterval(refreshNotifications, 60000);
         setInterval(fetchDashboardStats, 30000);
-        setInterval(updateNotificationBadge, 30000);
     });
 </script>
-
 <script src="../js/windowcontrollerbtn.js"></script>
 </body>
 </html>

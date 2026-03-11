@@ -667,8 +667,12 @@ body {
 // THIS IS CORRECT
         window.location.href = '../Admin/dashboard_admin.html';
         } else if (role === 'pharmacist') {
-            window.location.href = 'patient_records.html'; 
-        } else {
+            window.location.href = 'dashboard.html'; 
+        } 
+        else if (role === 'pharmacy_assistant') {
+        window.location.href = '../assistant/dashboard_pharmasst.html'; // 👈 add this
+    } 
+        else {
             window.location.href = '../html/index.html'; 
         }
     }

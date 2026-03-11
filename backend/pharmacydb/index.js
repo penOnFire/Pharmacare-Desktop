@@ -1,3 +1,4 @@
+import activityRoutes from './routes/activityRoutes.js';
 import express from 'express';
 import dotenv from 'dotenv';
 import { connectDB } from './config/db.js';
@@ -31,6 +32,7 @@ app.use(cors());
 app.use(express.json());
 
 // routes
+app.use('/api/activity', activityRoutes);
 app.use('/api/patients', patientRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/medicines', medicineRoutes);

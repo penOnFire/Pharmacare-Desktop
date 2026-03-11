@@ -1,3 +1,4 @@
+import { logActivity } from '../utils/logActivity.js';
 import express from 'express';
 import { protect, admin } from '../middleware/authMiddleware.js';
 import Inventory from '../models/Inventory.js';
