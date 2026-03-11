@@ -563,6 +563,7 @@ body {
 
             if (!email || !password) {
                 errorBox.textContent = "Please fill in all fields.";
+                if (window.playSystemSound) window.playSystemSound('error'); // ADDED: Play error sound
                 return;
             }
 
@@ -581,38 +582,66 @@ body {
                 loginBtn.disabled = false;
 
                 if (response.ok) {
-                    // Save User Data
+
+                    // (Success logic remains exactly the same)
+
                     sessionStorage.setItem('userInfo', JSON.stringify(data));
+
                     if (data.token) sessionStorage.setItem('token', data.token);
 
-                    // --- CHECK FORCE PASSWORD CHANGE ---
+
+
                     if (data.mustChangePassword) {
-                        // Open the Change Password Modal
+
                         document.getElementById('changePasswordModal').style.display = 'flex';
+
                     } else {
-                        // Normal Redirect
+
+                        // ADDED OPTIONAL: You could play a success sound here!
+
+                        // if (window.playSystemSound) window.playSystemSound('success');
+
                         redirectUser(data.role);
+
                     }
-                } 
-                else if (response.status === 403) {
-                    // Account Locked
-                    errorBox.innerHTML = `<span style="color: #DC2626; font-weight: bold;">Login Failed</span><br>${data.message}`;
-                    emailInput.classList.add("is-invalid");
-                    passwordInput.classList.add("is-invalid");
-                    attemptsContainer.style.display = 'none';
-                } 
-                else {
-                    // Invalid Credentials
-                    errorBox.textContent = data.message || "Invalid credentials.";
-                    emailInput.classList.add("is-invalid");
-                    passwordInput.classList.add("is-invalid");
+
                 }
 
+                else if (response.status === 403) {
+
+                    // Account Locked
+
+                    errorBox.innerHTML = `<span style="color: #DC2626; font-weight: bold;">Login Failed</span><br>${data.message}`;
+
+                    emailInput.classList.add("is-invalid");
+
+                    passwordInput.classList.add("is-invalid");
+
+                    attemptsContainer.style.display = 'none';
+
+                    if (window.playSystemSound) window.playSystemSound('error'); // ADDED: Play error sound
+
+                }
+
+                else {
+
+                    // Invalid Credentials
+
+                    errorBox.textContent = data.message || "Invalid credentials.";
+
+                    emailInput.classList.add("is-invalid");
+
+                    passwordInput.classList.add("is-invalid");
+
+                    if (window.playSystemSound) window.playSystemSound('error'); // ADDED: Play error sound
+
+                }
             } catch (error) {
                 console.error("Login Error:", error);
                 loginBtn.textContent = "Sign In";
                 loginBtn.disabled = false;
                 errorBox.textContent = "Cannot connect to server. Is the backend running?";
+                if (window.playSystemSound) window.playSystemSound('error'); // ADDED: Play error sound
             }
         }
 
@@ -682,5 +711,6 @@ body {
     function goToMainIndex() { window.location.href = '../html/index.html'; }
 </script>
 <script src="../js/windowcontrollerbtn.js"></script>
+<script src="../audio/audio-system.js"></script>
 </body>
 </html>

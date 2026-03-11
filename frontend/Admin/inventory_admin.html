@@ -672,8 +672,13 @@
 
             async saveMedicine() {
                 const hiddenIdInput = document.getElementById('medicineSelect');
-                if (!hiddenIdInput.value) { this.showNotification("Please select a medicine from the list", "error"); return; }
+                if (!hiddenIdInput.value) { 
+                    this.showNotification("Please select a medicine from the list", "error"); 
+                    if (window.playSystemSound) window.playSystemSound('error'); // Added error sound
+                    return; 
+                }
                 const token = this.getToken(); if (!token) return;
+                
                 const medicineData = {
                     medicineId: hiddenIdInput.value,
                     batchNumber: document.getElementById('batchNumber').value,
@@ -684,13 +689,30 @@
                     minStockLevel: parseInt(document.getElementById('minStockLevel').value),
                 };
                 if (medicineData.expiryDate === "") delete medicineData.expiryDate;
+                
                 const isEdit = !!this.currentEditingId;
+                
                 try {
                     await this.apiCall(isEdit ? 'PUT' : 'POST', isEdit ? `/api/inventory/${this.currentEditingId}` : '/api/inventory', token, medicineData);
                     this.closeMedicineModal();
+                    
+                    // Show notification
                     this.showNotification(isEdit ? "Stock updated!" : "Stock added!", "success");
+                    
+                    // ── ADDED: Play the correct sound ──
+                    if (window.playSystemSound) {
+                        if (isEdit) {
+                            window.playSystemSound('update'); // Plays the new update sound
+                        } else {
+                            window.playSystemSound('success'); // Plays the regular success sound
+                        }
+                    }
+                    
                     await this.fetchInventory();
-                } catch(e) { this.showNotification(e.message, "error"); }
+                } catch(e) { 
+                    this.showNotification(e.message, "error"); 
+                    if (window.playSystemSound) window.playSystemSound('error'); // Added error sound
+                }
             }
 
             async handleConfirmAction() {
@@ -1031,5 +1053,6 @@
     </script>
 
     <script src="../js/windowcontrollerbtn.js"></script>
+    <script src="../audio/audio-system.js"></script>
 </body>
 </html>

@@ -535,10 +535,15 @@
                 try {
                     await this.apiCall('POST', `/api/users/${userId}/unlock`, { tempPassword });
                     this.showToast("Success! User unlocked with temporary password.", "success");
+                    
+                    // ── ADDED: Play success sound ──
+                    if (window.playSystemSound) window.playSystemSound('success');
+
                     this.closeUnlockModal();
                     this.fetchUsers();
                 } catch (error) {
                     this.showToast(error.message || "Failed to unlock", "error");
+                    if (window.playSystemSound) window.playSystemSound('error');
                 }
             }
 
@@ -603,7 +608,10 @@
             async handleAdminConfirm() {
                 const password = document.getElementById('adminPasswordConfirm').value;
                 if(!password) { document.getElementById('adminPasswordError').textContent = 'Password required'; return; }
+                
                 try {
+                    let soundToPlay = 'success'; // Default sound
+
                     if (this.actionInProgress === 'create') {
                         const userData = {
                             name: document.getElementById('addName').value,
@@ -614,6 +622,7 @@
                         };
                         await this.apiCall('POST', '/api/users', { ...userData, adminPassword: password });
                         this.showToast('User created successfully!', 'success');
+                        soundToPlay = 'success'; // Sound for new account
                     } else if (this.actionInProgress === 'update') {
                         const userData = {
                             name: document.getElementById('editUsername').value,
@@ -624,14 +633,34 @@
                         };
                         await this.apiCall('PUT', `/api/users/${this.targetUserId}`, { ...userData, adminPassword: password });
                         this.showToast('User updated successfully!', 'success');
-                    } else if (this.actionInProgress === 'delete') {
-                        await this.apiCall('DELETE', `/api/users/${this.targetUserId}`, { adminPassword: password });
-                        this.showToast('User deleted.', 'success');
-                    }
+                        soundToPlay = 'update'; // Sound for editing
+                    // Inside your handleAdminConfirm() method...
+
+} else if (this.actionInProgress === 'delete') {
+    // 1. Perform the API call to delete the user
+    await this.apiCall('DELETE', `/api/users/${this.targetUserId}`, { adminPassword: password });
+    
+    // 2. Show the toast notification
+    this.showToast('User deleted.', 'success');
+    
+    // 3. Set the sound variable to 'delete'
+    soundToPlay = 'delete'; 
+}
+
+// 4. This part (already in your code) will then play the 'delete.mp3'
+if (window.playSystemSound && soundToPlay) {
+    window.playSystemSound(soundToPlay);
+}
+
                     this.closeAllModals();
                     this.fetchUsers();
                 } catch (error) {
                     document.getElementById('adminPasswordError').textContent = 'Incorrect Password';
+                    
+                    // ── OPTIONAL: Play error sound on wrong password ──
+                    if (window.playSystemSound) {
+                        window.playSystemSound('error');
+                    }
                 }
             }
 
@@ -721,5 +750,6 @@ function updateNotificationDropdown(alerts) {
     </script>
 
     <script src="../js/windowcontrollerbtn.js"></script>
+    <script src="../audio/audio-system.js"></script>
 </body>
 </html>

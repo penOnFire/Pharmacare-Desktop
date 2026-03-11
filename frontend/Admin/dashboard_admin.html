@@ -527,22 +527,22 @@
 
     // ── NOTIFICATIONS ──
   let notifData = [];
-
-  //you only live once is my motherfuckin motto
     let activeNotifFilter = 'all';
+
+    // ── ADDED: Track previous unread count using sessionStorage so it doesn't beep on every page load ──
+    let previousUnreadCount = parseInt(sessionStorage.getItem('lastUnreadCount')) || 0;
 
     function renderNotifications() {
         const list = document.getElementById('notifList');
         const filtered = activeNotifFilter === 'all' ? notifData : notifData.filter(n => n.type === activeNotifFilter);
         if (!filtered.length) { list.innerHTML = `<div class="notif-empty"><span class="material-icons">notifications_none</span><p>No notifications in this category</p></div>`; updateNotifBadge(); return; }
         list.innerHTML = filtered.map(n => `
-            <div class="notif-item ${n.type} ${n.unread ? 'unread' : ''}" id="notif-${n.id}" onclick="markNotifRead(${n.id})">
+            <div class="notif-item ${n.type} ${n.unread ? 'unread' : ''}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
                 <div class="notif-icon-wrap ${n.iconClass}"><span class="material-icons">${n.icon}</span></div>
                 <div class="notif-body">
                     <div class="notif-title">${n.title}</div>
                     <div class="notif-desc">${n.desc}</div>
                     <div class="notif-time">${n.time}</div>
-                  
                 </div>
                 ${n.unread ? '<div class="unread-dot"></div>' : ''}
             </div>`).join('');
@@ -556,10 +556,30 @@
         badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none';
         if (pill) pill.textContent = count > 0 ? `${count} new` : 'All read';
     }
-    function markNotifRead(id) { const n = notifData.find(n => n.id === id); if (n) { n.unread = false; renderNotifications(); } }
-    function markAllRead() { notifData.forEach(n => n.unread = false); renderNotifications(); }
+
+    // ── ADDED AUDIO TRIGGERS TO UI ACTIONS ──
+    function markNotifRead(id) { 
+        if (window.playSystemSound) window.playSystemSound('default'); // Play standard click
+        const n = notifData.find(n => n.id === id); 
+        if (n) { n.unread = false; renderNotifications(); } 
+    }
+    
+    function markAllRead() { 
+        if (window.playSystemSound) window.playSystemSound('success'); // Rewarding sound for clearing all
+        notifData.forEach(n => n.unread = false); 
+        renderNotifications(); 
+    }
+    
+    function filterNotifTab(btn, filter) { 
+        if (window.playSystemSound) window.playSystemSound('default'); // Play standard click
+        document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active')); 
+        btn.classList.add('active'); 
+        activeNotifFilter = filter; 
+        renderNotifications(); 
+    }
+    // ────────────────────────────────────────
+
     function handleNotifAction(event, id) { event.stopPropagation(); markNotifRead(id); }
-    function filterNotifTab(btn, filter) { document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); activeNotifFilter = filter; renderNotifications(); }
 
     async function updateNotificationBadge() {
         try {
@@ -575,7 +595,20 @@
                 if (item.quantity === 0) { alerts.push({ id:`stk-${idx}`, type:'critical', unread:true, title:'Out of Stock', desc:`${medName} is out of stock`, time:'Immediate', actionLabel:'Emergency Order', actionClass:'btn-critical', icon:'warning', iconClass:'icon-critical' }); }
                 else if (item.quantity <= item.minStockLevel) { alerts.push({ id:`stk-${idx}`, type:'shortage', unread:true, title:'Low Stock', desc:`${medName} — only ${item.quantity} units`, time:'Reorder soon', actionLabel:'Restock Now', actionClass:'btn-shortage', icon:'inventory_2', iconClass:'icon-shortage' }); }
             });
-            notifData = alerts.slice(0, 10); renderNotifications();
+            
+            notifData = alerts.slice(0, 10); 
+            
+            // ── ADDED: Logic to play sound only when unread count INCREASES ──
+            const currentUnreadCount = notifData.filter(n => n.unread).length;
+            if (currentUnreadCount > previousUnreadCount) {
+                if (window.playSystemSound) window.playSystemSound('notification');
+            }
+            // Update storage and variable for the next check
+            sessionStorage.setItem('lastUnreadCount', currentUnreadCount);
+            previousUnreadCount = currentUnreadCount;
+            // ─────────────────────────────────────────────────────────────────
+
+            renderNotifications();
         } catch(e) { console.error('Notification error:', e); }
     }
 
@@ -585,14 +618,16 @@
         btn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('open'); });
         document.addEventListener('click', (e) => { if (!dropdown.contains(e.target)) dropdown.classList.remove('open'); });
         dropdown.addEventListener('click', e => e.stopPropagation());
+        
         renderNotifications();
-        fetchDashboardStats();
+        if (typeof fetchDashboardStats === 'function') fetchDashboardStats();
         setTimeout(updateNotificationBadge, 1000);
-        setInterval(fetchDashboardStats, 30000);
+        if (typeof fetchDashboardStats === 'function') setInterval(fetchDashboardStats, 30000);
         setInterval(updateNotificationBadge, 30000);
     });
 </script>
 
 <script src="../js/windowcontrollerbtn.js"></script>
+<script src="../audio/audio-system.js"></script>
 </body>
 </html>
