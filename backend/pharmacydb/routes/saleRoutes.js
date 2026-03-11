@@ -8,6 +8,7 @@ import Sale from '../models/Sale.js';
 import Medicine from '../models/Medicine.js';
 import Order from '../models/Order.js';
 import Patient from '../models/Patient.js';
+import SystemSettings from '../models/SystemSettings.js';
 
 const router = express.Router();
 
@@ -17,21 +18,15 @@ const router = express.Router();
 const billingDbUri = process.env.BILLING_MONGO_URI;
 let ExternalPayment;
 
-
-
 if (billingDbUri) {
     try {
         const billingConn = mongoose.createConnection(billingDbUri);
-        
-        // Define a schema for THEIR 'payments' collection
-        // We only need to read the fields that link back to us
         const paymentSchema = new mongoose.Schema({
-            pharmacyReferenceId: String, // This matches your Sale._id
-            status: String,              // e.g., 'Paid', 'Completed'
-            transactionId: String        // Their reference number
+            pharmacyReferenceId: String, 
+            status: String,              
+            transactionId: String        
         }, { strict: false });
 
-        // Connect to their 'payments' collection
         ExternalPayment = billingConn.model('Payment', paymentSchema, 'payments');
         console.log("✅ Connected to External Billing DB (Collection: payments)");
     } catch (err) {
@@ -39,24 +34,55 @@ if (billingDbUri) {
     }
 }
 
-if (billingDbUri) {
+// ==============================================================================
+// 2. GET ALL SALES (History)
+// ==============================================================================
+router.get('/', protect, async (req, res) => {
     try {
-        const billingConn = mongoose.createConnection(billingDbUri);
-        const paymentSchema = new mongoose.Schema({
-            pharmacyReferenceId: String,
-            status: String,
-            transactionId: String
-        }, { strict: false });
-        ExternalPayment = billingConn.model('Payment', paymentSchema, 'payments');
-        console.log("✅ Connected to External Billing DB");
-    } catch (err) {
-        console.error("❌ Billing DB Connection Error:", err.message);
-    }
-}
+        const sales = await Sale.find({})
+            .populate('pharmacist', 'name')
+            .populate({ path: 'items.medicine', select: 'name strength' })
+            .sort({ date: -1 })
+            .lean(); 
 
+        const patientIds = sales
+            .map(s => s.patient)
+            .filter(id => id && mongoose.Types.ObjectId.isValid(id));
+
+        const patients = await Patient.find({ _id: { $in: patientIds } })
+            .select('firstname lastname patientId')
+            .lean();
+
+        const patientMap = {};
+        patients.forEach(p => { patientMap[p._id.toString()] = p; });
+
+        sales.forEach(sale => {
+            if (sale.patient && patientMap[sale.patient.toString()]) {
+                const p = patientMap[sale.patient.toString()];
+                sale.patient = {
+                    _id: p._id,
+                    patientId: p.patientId, 
+                    name: `${p.firstname} ${p.lastname}`
+                };
+                sale.patientName = `${p.firstname} ${p.lastname}`;
+            }
+            if (!sale.date && sale.createdAt) {
+                sale.date = sale.createdAt;
+            }
+        });
+
+        res.json(sales);
+    } catch (err) {
+        console.error("GET Sales Error:", err);
+        res.status(500).json({ message: 'Server Error' });
+    }
+});
+
+// ==============================================================================
+// 3. SYNC STATUS (Billing Integration)
+// ==============================================================================
 router.post('/sync', protect, async (req, res) => {
     try {
-        // 1. CHECK SETTINGS FIRST!
         const settings = await SystemSettings.findOne();
         if (!settings || !settings.billing.enabled) {
             return res.status(400).json({ 
@@ -65,20 +91,16 @@ router.post('/sync', protect, async (req, res) => {
             });
         }
 
-        // 2. Check Connection
         if (!ExternalPayment) {
             return res.status(503).json({ message: "Billing DB connection not configured in .env." });
         }
 
-        // 3. Proceed with Sync Logic
         const pendingSales = await Sale.find({ paymentStatus: 'Pending' });
-        
         if (pendingSales.length === 0) {
             return res.json({ message: "No pending sales to sync.", updated: 0 });
         }
 
         let updatedCount = 0;
-
         for (const sale of pendingSales) {
             const paymentRecord = await ExternalPayment.findOne({ 
                 pharmacyReferenceId: sale._id.toString() 
@@ -91,109 +113,6 @@ router.post('/sync', protect, async (req, res) => {
                 updatedCount++;
             }
         }
-
-        res.json({ message: "Sync complete", updated: updatedCount });
-
-    } catch (err) {
-        console.error("Sync Error:", err);
-        res.status(500).json({ message: "Sync failed: " + err.message });
-    }
-});
-// ==============================================================================
-// 1. GET ALL SALES (History)
-// ==============================================================================
-router.get('/', protect, async (req, res) => {
-    try {
-        // 1. Fetch Sales & Populate deep nested fields
-        const sales = await Sale.find({})
-            .populate('pharmacist', 'name')
-            // This retrieves the Medicine Name even if it wasn't saved in the item array
-            .populate({
-                path: 'items.medicine',
-                select: 'name strength' 
-            })
-            .sort({ date: -1 })
-            .lean(); 
-
-        // 2. Extract Patient IDs for manual fetch (Cross-DB support)
-        const patientIds = sales
-            .map(s => s.patient)
-            .filter(id => id && mongoose.Types.ObjectId.isValid(id));
-
-        // 3. Fetch Patients from EMR DB
-        const patients = await Patient.find({ _id: { $in: patientIds } })
-            .select('firstname lastname patientId')
-            .lean();
-
-        const patientMap = {};
-        patients.forEach(p => {
-            patientMap[p._id.toString()] = p;
-        });
-
-        // 4. Merge Data
-        sales.forEach(sale => {
-            // Fix Patient Info
-            if (sale.patient && patientMap[sale.patient.toString()]) {
-                const p = patientMap[sale.patient.toString()];
-                sale.patient = {
-                    _id: p._id,
-                    patientId: p.patientId, // "P006"
-                    name: `${p.firstname} ${p.lastname}`
-                };
-                sale.patientName = `${p.firstname} ${p.lastname}`;
-            }
-            
-            // Fix Date (Fallback to createdAt if date is missing)
-            if (!sale.date && sale.createdAt) {
-                sale.date = sale.createdAt;
-            }
-        });
-
-        res.json(sales);
-
-    } catch (err) {
-        console.error("GET Sales Error:", err);
-        res.status(500).json({ message: 'Server Error' });
-    }
-});
-
-// ==============================================================================
-// 3. SYNC STATUS (THE LOGIC YOU ASKED FOR)
-// ==============================================================================
-// This route checks the external Billing DB for any 'Pending' sales we have locally.
-// If the external DB says 'Paid', we update our local record.
-router.post('/sync', protect, async (req, res) => {
-    try {
-        if (!ExternalPayment) {
-            return res.status(503).json({ message: "Billing DB connection not configured." });
-        }
-
-        // A. Find all local sales that are currently 'Pending'
-        const pendingSales = await Sale.find({ paymentStatus: 'Pending' });
-        
-        if (pendingSales.length === 0) {
-            return res.json({ message: "No pending sales to sync.", updated: 0 });
-        }
-
-        let updatedCount = 0;
-
-        // B. Loop through them and check the external database
-        for (const sale of pendingSales) {
-            // We search their 'payments' collection for a record that has OUR Sale ID
-            const paymentRecord = await ExternalPayment.findOne({ 
-                pharmacyReferenceId: sale._id.toString() 
-            });
-
-            // C. If found and status is 'Paid' (or whatever they use), update ours
-            if (paymentRecord && (paymentRecord.status === 'Paid' || paymentRecord.status === 'Completed')) {
-                sale.paymentStatus = 'Paid';
-                // Optional: Save their ID for reference
-                sale.billingReference = paymentRecord._id || paymentRecord.transactionId; 
-                await sale.save();
-                updatedCount++;
-            }
-        }
-
         res.json({ message: "Sync complete", updated: updatedCount });
 
     } catch (err) {
@@ -203,7 +122,7 @@ router.post('/sync', protect, async (req, res) => {
 });
 
 // ==============================================================================
-// 4. DISPENSE MEDICINE (Create Sale Only)
+// 4. DISPENSE MEDICINE (Writes directly to EMR Database!)
 // ==============================================================================
 router.post('/dispense/:patientId', protect, async (req, res) => {
     try {
@@ -216,10 +135,9 @@ router.post('/dispense/:patientId', protect, async (req, res) => {
         }
 
         const allPrescriptions = await Prescription.find({ patientId: emrPatient.patientId });
-        // (Assuming you have prescription filtering logic here from previous steps)
-        const pastSales = await Sale.find({ patient: patientId });
-        const dispensedNames = pastSales.flatMap(sale => sale.items.map(i => i.name));
-        const prescriptions = allPrescriptions.filter(p => !dispensedNames.includes(p.medicname));
+        
+        // 🔥 NEW LOGIC: Only target prescriptions that are NOT marked as dispensed
+        const prescriptions = allPrescriptions.filter(p => p.status !== 'Dispensed' && p.status !== 'Completed');
 
         if (!prescriptions || prescriptions.length === 0) {
             return res.status(400).json({ message: 'No fillable prescriptions found.' });
@@ -267,14 +185,12 @@ router.post('/dispense/:patientId', protect, async (req, res) => {
                     total: itemTotal
                 });
 
-                // Auto-order check
                 await checkAndAutoOrder(medicineDoc._id, price);
             }
-            
             if (quantityNeeded > 0) throw new Error(`Insufficient stock for ${medicineDoc.name}`);
         }
 
-        // Create Sale - Default to Pending
+        // Create Sale
         const sale = await Sale.create({
             patient: patientId,
             patientName: `${emrPatient.firstname} ${emrPatient.lastname}`,
@@ -284,6 +200,16 @@ router.post('/dispense/:patientId', protect, async (req, res) => {
             paymentStatus: 'Pending', 
             date: Date.now()
         });
+
+        // 🔥 THE MAGIC SAUCE: DIRECTLY UPDATE THE EMR DATABASE! 🔥
+        const prescriptionIds = prescriptions.map(p => p._id);
+        if (prescriptionIds.length > 0) {
+            await Prescription.updateMany(
+                { _id: { $in: prescriptionIds } },
+                { $set: { status: 'Dispensed' } } // Writes directly to their system!
+            );
+            console.log(`✅ Updated ${prescriptionIds.length} EMR records to 'Dispensed'`);
+        }
 
         console.log(`✅ Sale Created: ${sale._id}. Waiting for Billing System to pick it up.`);
         res.status(200).json({ message: 'Dispensing successful', sale });
@@ -324,27 +250,24 @@ async function checkAndAutoOrder(medicineId, lastSoldPrice = 0) {
     } catch (e) { console.error("Auto-Order Error:", e); }
 }
 
-// In your Node.js backend routes (e.g., sales.js)
 router.post('/dispense-all', protect, async (req, res) => {
     try {
-        // 1. Update ALL prescriptions where status is "Pending" to "Dispensed"
         const result = await Prescription.updateMany(
             { 
-        $or: [
-            { status: "Pending" },        // Update items marked Pending
-            { status: { $exists: false } }, // Update items with NO status field
-            { status: null },             // Update items with null status
-            { status: "" }                // Update items with empty string
-        ]
-    }, 
-    { $set: { status: "Dispensed" } }
+                $or: [
+                    { status: "Pending" },       
+                    { status: { $exists: false } }, 
+                    { status: null },            
+                    { status: "" }                
+                ]
+            }, 
+            { $set: { status: "Dispensed" } }
         );
 
         if (result.matchedCount === 0) {
             return res.status(200).json({ message: "No pending prescriptions found." });
         }
 
-        // 2. Return success
         res.status(200).json({ 
             message: `Successfully dispensed ${result.modifiedCount} prescriptions.` 
         });
@@ -354,4 +277,79 @@ router.post('/dispense-all', protect, async (req, res) => {
         res.status(500).json({ message: 'Server Error during batch dispense' });
     }
 });
+
+// ==============================================================================
+// 5. OTC DISPENSE (Over the Counter / Walk-in)
+// ==============================================================================
+router.post('/otc', protect, async (req, res) => {
+    try {
+        const { items, paymentMethod, amountReceived } = req.body;
+        // items expects an array: [{ medicineId, quantity }]
+        
+        if (!items || items.length === 0) {
+            return res.status(400).json({ message: 'Cart is empty' });
+        }
+
+        let totalAmount = 0;
+        const itemsSold = [];
+
+        // Inventory FEFO Logic
+        for (const reqItem of items) {
+            const medicineDoc = await Medicine.findById(reqItem.medicineId);
+            if (!medicineDoc) throw new Error(`Medicine not found`);
+
+            const batches = await Inventory.find({ 
+                medicine: medicineDoc._id, 
+                quantity: { $gt: 0 },
+                isArchived: false 
+            }).sort({ expiryDate: 1 }); // Oldest expiry first!
+
+            let quantityNeeded = parseInt(reqItem.quantity) || 0;
+            if (batches.length === 0) throw new Error(`No stock for ${medicineDoc.name}`);
+
+            for (let batch of batches) {
+                if (quantityNeeded <= 0) break;
+                
+                let takeAmount = (batch.quantity >= quantityNeeded) ? quantityNeeded : batch.quantity;
+                batch.quantity -= takeAmount;
+                quantityNeeded -= takeAmount;
+                
+                await batch.save(); // Deduct live stock
+
+                const price = batch.sellingPrice || batch.costPrice || 0;
+                const itemTotal = price * takeAmount;
+                totalAmount += itemTotal;
+
+                itemsSold.push({
+                    medicine: medicineDoc._id,
+                    inventory: batch._id,
+                    name: medicineDoc.name,
+                    quantity: takeAmount,
+                    priceAtSale: price,
+                    total: itemTotal
+                });
+
+                await checkAndAutoOrder(medicineDoc._id, price);
+            }
+            if (quantityNeeded > 0) throw new Error(`Insufficient stock for ${medicineDoc.name}`);
+        }
+
+        // Create Sale Record for Walk-in
+        const sale = await Sale.create({
+            patientName: `Walk-in Customer`, // No EMR ID needed!
+            pharmacist: req.user._id,
+            items: itemsSold,
+            totalAmount: totalAmount,
+            paymentStatus: 'Paid', // OTC is paid instantly
+            date: Date.now()
+        });
+
+        res.status(200).json({ message: 'OTC Transaction successful', sale });
+
+    } catch (err) {
+        console.error("OTC Sale Error:", err.message);
+        res.status(500).json({ message: err.message || 'Server Error' });
+    }
+});
+
 export default router;

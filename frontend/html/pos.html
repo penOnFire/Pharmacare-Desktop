@@ -696,63 +696,81 @@ function setCategory(btn, cat) {
     document.querySelectorAll('.category-btn').forEach(b => {
         b.className = 'category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap';
     });
-    btn.className = 'category-btn px-5 py-2 rounded-full bg-teal-600 text-white text-sm font-medium shadow-md whitespace-nowrap';
-    renderProducts();
-}
-
-function filterProducts() { renderProducts(); }
-
-// ── CART ──
-function addToCart(id) {
-    const p = products.find(x => x.id === id);
-    if (!p) return;
-    if (!cart[id]) cart[id] = { product: p, qty: 0 };
-    if (cart[id].qty >= p.stock) { alert('Cannot exceed available stock!'); return; }
-    cart[id].qty++;
-    updateUI();
-}
-
-function updateQty(id, delta) {
-    if (!cart[id]) return;
-    cart[id].qty += delta;
-    if (cart[id].qty <= 0) delete cart[id];
-    updateUI();
-}
-
-function removeFromCart(id) {
-    delete cart[id];
-    updateUI();
-}
-
-function updateUI() {
-    renderProducts();
-    renderCart();
-    updateTotals();
-}
-
-function renderCart() {
-    const container = document.getElementById('cartItems');
-    const items     = Object.values(cart);
-
-    if (!items.length) {
-        container.innerHTML = `<div class="flex flex-col items-center justify-center h-32 text-slate-400 text-sm gap-2">
-            <span class="material-icons-round text-4xl">shopping_basket</span>
-            <p>No items added yet</p>
-        </div>`;
-        document.getElementById('cartCount').textContent = '0 Items';
-        return;
+    
+    function updateDate() {
+        const el = document.getElementById('currentDate');
+        if (el) el.textContent = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
     }
-
-    const total = items.reduce((s, i) => s + i.qty, 0);
-    document.getElementById('cartCount').textContent = `${total} Item${total !== 1 ? 's' : ''}`;
-
-    container.innerHTML = items.map(({ product: p, qty }) => `
-        <div class="flex justify-between items-start group py-2 border-b border-slate-100 dark:border-slate-700 last:border-0">
-            <div class="flex gap-3">
-                <div class="w-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 flex items-center justify-center font-bold text-xs text-teal-600">${qty}x</div>
-                <div>
-                    <h4 class="text-sm font-semibold">${p.name}</h4>
-                    <p class="text-[10px] text-slate-400">₱${p.price.toFixed(2)} / unit</p>
+    
+    // ── INVENTORY FETCH ──
+    async function loadInventory() {
+        const inventoryData = await apiCall('/api/inventory');
+        if (!inventoryData) return;
+    
+        const liveInventory = (Array.isArray(inventoryData) ? inventoryData : (inventoryData.medicines || [])).filter(i => i.status !== 'Archived');
+        const grouped = {};
+        const today = new Date();
+    
+        liveInventory.forEach(item => {
+            if (!item.medicine) return;
+            const isExpired = new Date(item.expiryDate) < today;
+            if (isExpired) return; // Hide expired items from POS!
+    
+            const medObj = typeof item.medicine === 'object' ? item.medicine : { _id: item.medicine, name: item.name, type: 'General', strength: '' };
+            const medId = String(medObj._id);
+            const qty = parseInt(item.quantity || 0);
+            if (qty <= 0) return;
+    
+            const price = parseFloat(item.sellingPrice || item.price || medObj.sellingPrice || 0);
+    
+            if (!grouped[medId]) {
+                grouped[medId] = {
+                    id: medId,
+                    name: `${medObj.name} ${medObj.strength || ''}`.trim(),
+                    category: medObj.type || 'General',
+                    price: price,
+                    stock: 0,
+                    lowStock: false,
+                    catColor: getColorForCategory(medObj.type)
+                };
+            }
+            
+            grouped[medId].stock += qty;
+            const minLevel = parseInt(item.minStockLevel || 10);
+            grouped[medId].lowStock = grouped[medId].stock <= minLevel;
+        });
+    
+        products = Object.values(grouped).sort((a,b) => a.name.localeCompare(b.name));
+        renderProducts();
+    }
+    
+    // ── PRODUCTS ──
+    function renderProducts() {
+        const grid = document.getElementById('productGrid');
+        const query = (document.getElementById('searchInput')?.value || '').toLowerCase();
+        
+        const list = products.filter(p => {
+            const matchCat = activeCategory === 'all' || p.category === activeCategory;
+            const matchSearch = p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query);
+            return matchCat && matchSearch;
+        });
+    
+        if (!list.length) {
+            grid.innerHTML = `<div class="col-span-3 flex flex-col items-center justify-center h-40 text-slate-400 gap-2">
+                <span class="material-icons-round text-4xl">search_off</span>
+                <p class="text-sm">No active medicines found</p>
+            </div>`;
+            return;
+        }
+    
+        grid.innerHTML = list.map(p => {
+            const cc = catColors[p.catColor] || catColors.blue;
+            const inCart = cart[p.id]?.qty || 0;
+            return `
+            <div class="group bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-teal-500 transition-all shadow-sm hover:shadow-md">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="px-2.5 py-1 ${cc.bg} ${cc.text} text-[10px] font-bold uppercase tracking-wider rounded">${p.category}</span>
+                    ${p.lowStock ? `<span class="px-2 py-0.5 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-500 text-[10px] font-bold rounded">Low Stock</span>` : ''}
                 </div>
             </div>
             <div class="text-right">
@@ -797,43 +815,152 @@ function processPayment() {
         Swal.fire({ icon: 'error', title: 'Insufficient Amount', text: `Please enter at least ₱${subtotal.toFixed(2)}.` });
         return;
     }
-
-    const change = Math.max(0, received - subtotal);
-    Swal.fire({
-        icon: 'success',
-        title: 'Payment Successful!',
-        html: `<p class="text-lg font-bold text-teal-600">Total: ₱${subtotal.toFixed(2)}</p>
-               ${activePayment === 'cash' ? `<p class="text-sm text-gray-500 mt-1">Change: ₱${change.toFixed(2)}</p>` : ''}
-               <p class="text-xs text-gray-400 mt-2">Payment via ${activePayment.charAt(0).toUpperCase() + activePayment.slice(1)}</p>`,
-        confirmButtonColor: '#005a32',
-        confirmButtonText: 'New Transaction'
-    }).then(() => {
-        cart = {};
-        document.getElementById('amountReceived').value = '';
+    
+    function setCategory(btn, cat) {
+        activeCategory = cat;
+        document.querySelectorAll('.category-btn').forEach(b => {
+            b.className = 'category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap';
+        });
+        btn.className = 'category-btn px-5 py-2 rounded-full bg-teal-600 text-white text-sm font-medium shadow-md whitespace-nowrap';
+        renderProducts();
+    }
+    
+    function filterProducts() { renderProducts(); }
+    
+    // ── CART ──
+    function addToCart(id) {
+        const p = products.find(x => x.id === id);
+        if (!p) return;
+        if (!cart[id]) cart[id] = { product: p, qty: 0 };
+        if (cart[id].qty >= p.stock) { Swal.fire({icon:'warning', title:'Stock Limit', text:'Cannot exceed available active stock.'}); return; }
+        cart[id].qty++;
         updateUI();
-    });
-}
-
-// ── UTILS ──
-function toggleDarkMode() {
-    document.documentElement.classList.toggle('dark');
-}
-
-function logoutUser() {
-    Swal.fire({
-        title: 'Logout?', icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#005a32',
-        confirmButtonText: 'Yes, logout'
-    }).then(r => {
-        if (r.isConfirmed) {
-            sessionStorage.removeItem('userInfo');
-            sessionStorage.removeItem('token');
-            window.location.href = 'login.html';
+    }
+    
+    function updateQty(id, delta) {
+        if (!cart[id]) return;
+        const p = cart[id].product;
+        if (delta > 0 && cart[id].qty >= p.stock) { Swal.fire({icon:'warning', title:'Stock Limit', text:'Cannot exceed available active stock.'}); return; }
+        cart[id].qty += delta;
+        if (cart[id].qty <= 0) delete cart[id];
+        updateUI();
+    }
+    
+    function removeFromCart(id) { delete cart[id]; updateUI(); }
+    
+    function updateUI() { renderProducts(); renderCart(); updateTotals(); }
+    
+    function renderCart() {
+        const container = document.getElementById('cartItems');
+        const items = Object.values(cart);
+    
+        if (!items.length) {
+            container.innerHTML = `<div class="flex flex-col items-center justify-center h-32 text-slate-400 text-sm gap-2">
+                <span class="material-icons-round text-4xl">shopping_basket</span>
+                <p>No items added yet</p>
+            </div>`;
+            document.getElementById('cartCount').textContent = '0 Items';
+            return;
         }
-    });
-}
-</script>
+    
+        const total = items.reduce((s, i) => s + i.qty, 0);
+        document.getElementById('cartCount').textContent = `${total} Item${total !== 1 ? 's' : ''}`;
+    
+        container.innerHTML = items.map(({ product: p, qty }) => `
+            <div class="flex justify-between items-start group py-2 border-b border-slate-100 dark:border-slate-700 last:border-0">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 flex items-center justify-center font-bold text-xs text-teal-600">${qty}x</div>
+                    <div>
+                        <h4 class="text-sm font-semibold truncate w-36" title="${p.name}">${p.name}</h4>
+                        <p class="text-[10px] text-slate-400">₱${p.price.toFixed(2)} / unit</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm font-bold">₱${(p.price * qty).toFixed(2)}</p>
+                    <button onclick="removeFromCart('${p.id}')" class="text-[10px] text-rose-500 font-medium opacity-0 group-hover:opacity-100 transition-opacity">Remove</button>
+                </div>
+            </div>`).join('');
+    }
+    
+    function updateTotals() {
+        const subtotal = Object.values(cart).reduce((s, i) => s + i.product.price * i.qty, 0);
+        document.getElementById('subtotal').textContent = `₱${subtotal.toFixed(2)}`;
+        document.getElementById('totalAmount').textContent = `₱${subtotal.toFixed(2)}`;
+        document.getElementById('payBtnText').textContent = `Pay ₱${subtotal.toFixed(2)}`;
+        calcChange();
+    }
+    
+    function calcChange() {
+        const subtotal = Object.values(cart).reduce((s, i) => s + i.product.price * i.qty, 0);
+        const received = parseFloat(document.getElementById('amountReceived').value) || 0;
+        const change = Math.max(0, received - subtotal);
+        document.getElementById('changeDue').textContent = `₱${change.toFixed(2)}`;
+    }
+    
+    // ── PAYMENT ──
+    function setPayment(btn, method) {
+        activePayment = method;
+        document.querySelectorAll('.payment-btn').forEach(b => {
+            b.className = 'payment-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-transparent bg-white dark:bg-slate-800 text-slate-400 hover:border-slate-200 transition-all';
+        });
+        btn.className = 'payment-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-teal-600 bg-teal-50 dark:bg-teal-900/20 text-teal-600 transition-all';
+    }
+    
+    async function processPayment() {
+        const items = Object.values(cart);
+        if (!items.length) { Swal.fire({ icon: 'warning', title: 'Empty Cart', text: 'Please add items to proceed.' }); return; }
+    
+        const subtotal = items.reduce((s, i) => s + i.product.price * i.qty, 0);
+        const received = parseFloat(document.getElementById('amountReceived').value) || 0;
+    
+        if (activePayment === 'cash' && received < subtotal) {
+            Swal.fire({ icon: 'error', title: 'Insufficient Amount', text: `Please enter at least ₱${subtotal.toFixed(2)}.` });
+            return;
+        }
+    
+        const change = Math.max(0, received - subtotal);
+    
+        // Construct Backend Payload
+        const payload = {
+            items: items.map(i => ({ medicineId: i.product.id, quantity: i.qty })),
+            paymentMethod: activePayment,
+            amountReceived: received
+        };
+    
+        const res = await apiCall('/api/sales/otc', 'POST', payload);
+        
+        if (res) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Transaction Successful!',
+                html: `<p class="text-lg font-bold text-teal-600">Total: ₱${subtotal.toFixed(2)}</p>
+                       ${activePayment === 'cash' ? `<p class="text-sm text-gray-500 mt-1">Change: ₱${change.toFixed(2)}</p>` : ''}
+                       <p class="text-xs text-gray-400 mt-2">Walk-in Payment via ${activePayment.charAt(0).toUpperCase() + activePayment.slice(1)}</p>`,
+                confirmButtonColor: '#005a32',
+                confirmButtonText: 'New Transaction'
+            }).then(() => {
+                cart = {};
+                document.getElementById('amountReceived').value = '';
+                updateUI();
+                loadInventory(); // Instantly refresh stock count from database!
+            });
+        }
+    }
+    
+    // ── UTILS ──
+    function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
+    function logoutUser() {
+        Swal.fire({
+            title: 'Logout?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#005a32', confirmButtonText: 'Yes, logout'
+        }).then(r => {
+            if (r.isConfirmed) {
+                sessionStorage.removeItem('userInfo');
+                sessionStorage.removeItem('token');
+                window.location.href = 'login.html';
+            }
+        });
+    }
+    </script>
 <script src="../js/windowcontrollerbtn.js"></script>
 </body>
 </html>
