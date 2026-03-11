@@ -1,4 +1,5 @@
 import express from "express";
+import { logActivity } from '../utils/logActivity.js';
 import PDFDocument from "pdfkit";
 import Patient from "../models/Patient.js";
 

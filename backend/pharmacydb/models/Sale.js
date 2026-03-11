@@ -5,18 +5,18 @@ const saleSchema = new mongoose.Schema(
     patient: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Patient',
-      required: false, // 🔥 MADE OPTIONAL FOR OTC / WALK-IN
+      required: true,
     },
     patientName: { 
-      type: String, 
-      required: true 
-    },
+    type: String, 
+    required: true 
+  },
     pharmacist: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
-    prescription: {
+    prescription: { // Optional, for sales linked to a prescription
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Prescription',
     },
@@ -24,7 +24,7 @@ const saleSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    items: [ 
+    items: [ // The embedded array of items sold
       {
         medicine: {
           type: mongoose.Schema.Types.ObjectId,
@@ -41,7 +41,7 @@ const saleSchema = new mongoose.Schema(
           type: Number,
           required: true,
         },
-        priceAtSale: { 
+        priceAtSale: { // Captures the price at the moment of the transaction
           type: Number,
           required: true,
         },
@@ -52,4 +52,5 @@ const saleSchema = new mongoose.Schema(
 );
 
 const Sale = mongoose.model('Sale', saleSchema);
+
 export default Sale;

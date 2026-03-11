@@ -70,6 +70,27 @@
         thead th { position: sticky; top: 0; background-color: white; z-index: 10; }
         .dark thead th { background-color: #1f2937; }
 
+        /* ── NAVBAR CLOCK ── */
+        #navClock {
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+        }
+        #navDate {
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+        }
+
+        /* ── NAVBAR DIVIDER ── */
+        .nav-divider {
+            width: 1px;
+            height: 28px;
+            background: #e5e7eb;
+        }
+        .dark .nav-divider { background: #374151; }
+
         /* ── MODULE TABS — full width, green + red ── */
         .module-tab-bar {
             display: flex;
@@ -260,7 +281,7 @@
 
     <div class="flex h-screen pt-8">
         <aside class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-border-light dark:border-border-dark">
-            <div class="h-16 flex items-center px-6 border-b border-border-light dark:border-border-dark">
+            <div class="h-16 flex items-center px-6">
                 <div class="flex items-center gap-3">
                      <div class="w-12 h-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm">
                         <img src="images/wellserved.png" alt="Well Served Logo" class="w-full h-full object-cover">
@@ -277,7 +298,6 @@
                 <a class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold" href="inventory.html"><span class="material-icons mr-3">inventory_2</span> Inventory</a>
                 <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="patient_records.html"><span class="material-icons mr-3">folder_shared</span> Patient Records</a>
                 <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="pos.html"><span class="material-icons mr-3">shopping_cart</span> Counter Dispensing</a>
-              
                 <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="billing.html"><span class="material-icons mr-3">point_of_sale</span> Sales &amp; Billing</a>
             </nav>
             <div class="p-4 border-t border-border-light dark:border-border-dark">
@@ -288,14 +308,36 @@
         </aside>
 
         <main class="flex-1 flex flex-col">
+
+            <!-- ══════════════════════════════════════════
+                 NAVBAR — copied from dashboard.html
+                 [ Clock+Date ] [ Bell ] [ Name/Role ] [ Avatar ]
+                 ══════════════════════════════════════════ -->
             <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
-                <div class="flex items-center gap-2"></div>
+                <!-- Left: empty spacer -->
+                <div></div>
+
+                <!-- Right: clock · divider · bell · divider · user info · avatar -->
                 <div class="flex items-center gap-4">
+
+                    <!-- Live Clock + Date -->
+                    <div class="text-right">
+                        <div id="navClock" class="text-text-light dark:text-text-dark"></div>
+                        <div id="navDate"  class="text-subtext-light dark:text-subtext-dark uppercase tracking-widest"></div>
+                    </div>
+
+                    <div class="nav-divider"></div>
+
+                    <!-- Notification Bell -->
                     <div class="relative">
-                        <button id="notificationBtn" class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                            <span class="material-icons text-2xl">notifications</span>
-                            <span id="notificationBadge" class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold" style="display:none;">0</span>
+                        <button id="notificationBtn"
+                            class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <span class="material-icons-outlined text-2xl">notifications</span>
+                            <span id="notificationBadge"
+                                class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold"
+                                style="display:none;">0</span>
                         </button>
+
                         <div id="notificationDropdown" class="notif-dropdown">
                             <div class="notif-header">
                                 <h3>Notifications</h3>
@@ -313,7 +355,7 @@
                             <div class="notif-list" id="notifList">
                                 <div style="padding:30px 20px;text-align:center;color:#9ca3af;">
                                     <span class="material-icons" style="font-size:32px;display:block;margin:0 auto 8px;">hourglass_empty</span>
-                                    <p style="font-size:12px;">Loading alerts...</p>
+                                    <p style="font-size:12px;">Loading alerts from inventory...</p>
                                 </div>
                             </div>
                             <div class="notif-footer">
@@ -323,7 +365,18 @@
                             </div>
                         </div>
                     </div>
-                    <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">PH</div>
+
+                    <div class="nav-divider"></div>
+
+                    <!-- User Name + Role -->
+                    <div class="text-right leading-tight">
+                        <div id="navUserName" class="text-sm font-bold text-text-light dark:text-text-dark">User</div>
+                        <div id="navUserRole" class="text-xs text-subtext-light dark:text-subtext-dark">Staff</div>
+                    </div>
+
+                    <!-- Avatar with initial -->
+                    <div id="navAvatar" class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm select-none">U</div>
+
                 </div>
             </header>
 
@@ -496,67 +549,68 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-primary shadow-sm">
-        <div class="flex items-start justify-between">
-            <div>
-                <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide">Total Medicines</p>
-                <p id="suppliesTotalCount" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
-                <div class="flex items-center mt-2 text-sm text-subtext-light dark:text-subtext-dark">
-                    <span class="material-icons text-base">inventory_2</span>
-                    <span class="ml-1">All tracked items</span>
-                </div>
-            </div>
-            <div class="p-3 bg-primary/10 rounded-lg">
-                <span class="material-icons text-primary" style="font-size:28px;">medical_services</span>
-            </div>
-        </div>
-    </div>
-    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-success shadow-sm">
-        <div class="flex items-start justify-between">
-            <div>
-                <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide">In Stock</p>
-                <p id="suppliesInStockCount" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
-                <div class="flex items-center mt-2 text-sm text-success">
-                    <span class="material-icons text-base">check_circle</span>
-                    <span class="ml-1">Adequately stocked</span>
-                </div>
-            </div>
-            <div class="p-3 bg-success/10 rounded-lg">
-                <span class="material-icons text-success" style="font-size:28px;">verified</span>
-            </div>
-        </div>
-    </div>
-    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-warning shadow-sm">
-        <div class="flex items-start justify-between">
-            <div>
-                <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide">Low Stock Alerts</p>
-                <p id="suppliesLowStockCount" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
-                <div class="flex items-center mt-2 text-sm text-warning">
-                    <span class="material-icons text-base">warning</span>
-                    <span class="ml-1">Reorder soon</span>
-                </div>
-            </div>
-            <div class="p-3 bg-warning/10 rounded-lg">
-                <span class="material-icons text-warning" style="font-size:28px;">inventory</span>
-            </div>
-        </div>
-    </div>
-    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-danger shadow-sm">
-        <div class="flex items-start justify-between">
-            <div>
-                <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide">Out of Stock</p>
-                <p id="suppliesOutOfStockCount" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
-                <div class="flex items-center mt-2 text-sm text-danger">
-                    <span class="material-icons text-base">error_outline</span>
-                    <span class="ml-1">Immediate action needed</span>
-                </div>
-            </div>
-            <div class="p-3 bg-danger/10 rounded-lg">
-                <span class="material-icons text-danger" style="font-size:28px;">remove_shopping_cart</span>
-            </div>
-        </div>
-    </div>
-</div>
+                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-primary shadow-sm">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide">Total Medicines</p>
+                                    <p id="suppliesTotalCount" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
+                                    <div class="flex items-center mt-2 text-sm text-subtext-light dark:text-subtext-dark">
+                                        <span class="material-icons text-base">inventory_2</span>
+                                        <span class="ml-1">All tracked items</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-primary/10 rounded-lg">
+                                    <span class="material-icons text-primary" style="font-size:28px;">medical_services</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-success shadow-sm">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide">In Stock</p>
+                                    <p id="suppliesInStockCount" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
+                                    <div class="flex items-center mt-2 text-sm text-success">
+                                        <span class="material-icons text-base">check_circle</span>
+                                        <span class="ml-1">Adequately stocked</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-success/10 rounded-lg">
+                                    <span class="material-icons text-success" style="font-size:28px;">verified</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-warning shadow-sm">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide">Low Stock Alerts</p>
+                                    <p id="suppliesLowStockCount" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
+                                    <div class="flex items-center mt-2 text-sm text-warning">
+                                        <span class="material-icons text-base">warning</span>
+                                        <span class="ml-1">Reorder soon</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-warning/10 rounded-lg">
+                                    <span class="material-icons text-warning" style="font-size:28px;">inventory</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-danger shadow-sm">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide">Out of Stock</p>
+                                    <p id="suppliesOutOfStockCount" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
+                                    <div class="flex items-center mt-2 text-sm text-danger">
+                                        <span class="material-icons text-base">error_outline</span>
+                                        <span class="ml-1">Immediate action needed</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-danger/10 rounded-lg">
+                                    <span class="material-icons text-danger" style="font-size:28px;">remove_shopping_cart</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="bg-surface-light dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-800">
                         <div class="flex flex-col md:flex-row justify-between items-center p-6 gap-4 border-b border-slate-200 dark:border-slate-800">
                             <h2 class="text-lg font-semibold text-text-light dark:text-text-dark">Medicine Back Stock List</h2>
@@ -569,24 +623,21 @@
                                     <option value="Low Stock">Low Stock</option>
                                     <option value="Out of Stock">Out of Stock</option>
                                 </select>
-                                <button onclick="openAddSupplyModal()" class="px-4 py-2 rounded-xl bg-primary text-white text-sm font-medium hover:opacity-90 transition flex items-center gap-2">
-                                    <span class="material-icons text-lg">add</span>
-                                    Add Medicine
-                                </button>
+                                
                             </div>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-sm text-left">
                                 <thead class="text-xs text-text-light dark:text-text-dark uppercase tracking-wider">
-    <tr style="background: linear-gradient(to right, rgba(0,90,50,0.2), rgba(255,255,255,0.5), rgba(214,40,40,0.2));">
-        <th class="px-6 py-4 font-medium">Medicine Name</th>
-        <th class="px-6 py-4 font-medium">Category</th>
-        <th class="px-6 py-4 font-medium text-center">Quantity in Stock</th>
-        <th class="px-6 py-4 font-medium text-center">Reorder Level</th>
-        <th class="px-6 py-4 font-medium text-center">Status</th>
-        <th class="px-6 py-4 font-medium text-center">Actions</th>
-    </tr>
-</thead>
+                                    <tr style="background: linear-gradient(to right, rgba(0,90,50,0.2), rgba(255,255,255,0.5), rgba(214,40,40,0.2));">
+                                        <th class="px-6 py-4 font-medium">Medicine Name</th>
+                                        <th class="px-6 py-4 font-medium">Category</th>
+                                        <th class="px-6 py-4 font-medium text-center">Quantity in Stock</th>
+                                        <th class="px-6 py-4 font-medium text-center">Reorder Level</th>
+                                        <th class="px-6 py-4 font-medium text-center">Status</th>
+                                        
+                                    </tr>
+                                </thead>
                                 <tbody id="suppliesTableBody"></tbody>
                             </table>
                         </div>
@@ -600,6 +651,41 @@
 
 <script>
 const API_BASE_URL = 'http://localhost:5001';
+
+// ══════════════════════════════════════════════════════════
+// LIVE NAVBAR CLOCK — ticks every second
+// ══════════════════════════════════════════════════════════
+function updateNavClock() {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-US', {
+        hour:   '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+    });
+    const dateStr = now.toLocaleDateString('en-US', {
+        month: 'short',
+        day:   'numeric',
+        year:  'numeric'
+    }).toUpperCase();
+    document.getElementById('navClock').textContent = timeStr;
+    document.getElementById('navDate').textContent  = dateStr;
+}
+
+// ── Load user info from session into navbar ──
+function loadNavUserInfo() {
+    try {
+        const raw = sessionStorage.getItem('userInfo');
+        if (!raw) return;
+        const info    = JSON.parse(raw);
+        const name    = info.name || info.firstName || info.username || 'User';
+        const role    = info.role || info.position || '';
+        const initial = name.charAt(0).toUpperCase();
+        document.getElementById('navUserName').textContent = name;
+        document.getElementById('navUserRole').textContent = role;
+        document.getElementById('navAvatar').textContent   = initial;
+    } catch(e) { /* keep defaults */ }
+}
 
 // ══════════════════════════════════════════════════════════
 // SUPPLIES MANAGER
@@ -672,7 +758,7 @@ class SuppliesManager {
         });
 
         if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-500">No supplies found matching your criteria.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-500">No supplies found matching your criteria.</td></tr>`;
             return;
         }
 
@@ -692,16 +778,7 @@ class SuppliesManager {
                     <td class="px-6 py-4 text-center">
                         <span class="px-3 py-1 text-xs font-semibold rounded-full ${statusBg} ${statusText}">${status}</span>
                     </td>
-                    <td class="px-6 py-4 text-center">
-                        <div class="flex items-center justify-center gap-3">
-                            <button onclick="openRestockModal(${item.id})" class="text-primary hover:text-primary/80 font-medium text-sm flex items-center gap-1" title="Restock">
-                                <span class="material-icons text-lg">add_shopping_cart</span> Restock
-                            </button>
-                            <button onclick="openUpdateSupplyModal(${item.id})" class="text-accent hover:text-accent/80 font-medium text-sm flex items-center gap-1" title="Update">
-                                <span class="material-icons text-lg">edit</span> Update
-                            </button>
-                        </div>
-                    </td>
+                    
                 </tr>`;
         }).join('');
     }
@@ -1194,9 +1271,7 @@ class InventoryManager {
         const expiring = this.liveInventory.filter(item => { const d = new Date(item.expiryDate); return d > today && d <= thirtyDays && parseInt(item.quantity || 0) > 0; }).length;
         const expiredWithStock = this.liveInventory.filter(item => new Date(item.expiryDate) < today && parseInt(item.quantity || 0) > 0).length;
         document.getElementById('totalItems').textContent = this.liveInventory.length;
-        // ✅ FIXED — use innerHTML, or just use the ₱ character directly
-// ✅ AFTER
-document.getElementById('totalValue').textContent = `₱${totalVal.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        document.getElementById('totalValue').textContent = `₱${totalVal.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         document.getElementById('lowStockCount').textContent = lowStock;
         document.getElementById('expiringCount').textContent = expiring + expiredWithStock;
         this.updateAlertLists();
@@ -1264,6 +1339,14 @@ document.getElementById('totalValue').textContent = `₱${totalVal.toLocaleStrin
 
 let inventoryManager;
 document.addEventListener('DOMContentLoaded', () => {
+    // ── Live clock ──
+    updateNavClock();
+    setInterval(updateNavClock, 1000);
+
+    // ── Navbar user info ──
+    loadNavUserInfo();
+
+    // ── Inventory manager ──
     inventoryManager = new InventoryManager();
     window.inventoryManager = inventoryManager;
     window.logoutUser = () => inventoryManager.logoutUser();

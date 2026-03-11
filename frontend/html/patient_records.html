@@ -48,7 +48,6 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* Ensure all headings use the reference weight */
 h1, h2, h3 { 
     font-family: 'Inter', sans-serif; 
     font-weight: 700; 
@@ -57,6 +56,27 @@ h1, h2, h3 {
 
         .drag-region { -webkit-app-region: drag; }
         .no-drag { -webkit-app-region: no-drag; }
+
+        /* ── NAVBAR CLOCK ── */
+        #navClock {
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+        }
+        #navDate {
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+        }
+
+        /* ── NAVBAR DIVIDER ── */
+        .nav-divider {
+            width: 1px;
+            height: 28px;
+            background: #e5e7eb;
+        }
+        .dark .nav-divider { background: #374151; }
 
         /* ── FANCY NOTIFICATION DROPDOWN ── */
         @keyframes badge-pop { from { transform: scale(0); } to { transform: scale(1); } }
@@ -181,7 +201,6 @@ h1, h2, h3 {
             background-color: #374151;
         }
 
-        /* --- STATUS COLORS --- */
         .status-badge {
             padding: 0.25rem 0.75rem;
             border-radius: 9999px;
@@ -660,9 +679,9 @@ h1, h2, h3 {
 </div>
 
     <div class="flex h-screen pt-8">
-        <!-- Sidebar with Well Served branding -->
+        <!-- Sidebar -->
         <aside class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-border-light dark:border-border-dark">
-            <div class="h-16 flex items-center px-6 border-b border-border-light dark:border-border-dark">
+            <div class="h-16 flex items-center px-6">
                 <div class="flex items-center gap-3">
                      <div class="w-12 h-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm">
                         <img src="images/wellserved.png" 
@@ -687,38 +706,51 @@ h1, h2, h3 {
                     <span class="material-icons mr-3">folder_shared</span> Patient Records
                 </a>
                 <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="pos.html">
-                <span class="material-icons mr-3">shopping_cart</span> Counter Dispensing
-            </a>
-                
+                    <span class="material-icons mr-3">shopping_cart</span> Counter Dispensing
+                </a>
                 <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="billing.html">
                     <span class="material-icons mr-3">point_of_sale</span> Sales &amp; Billing
                 </a>
             </nav>
-        <div class="p-4 border-t border-border-light dark:border-border-dark">
-            <button onclick="logoutUser()" 
-                class="flex items-center w-full px-4 py-2 gap-3 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors">
-                <span class="material-icons text-red-500">logout</span> Logout
-            </button>
-        </div>
-    </aside>
+            <div class="p-4 border-t border-border-light dark:border-border-dark">
+                <button onclick="logoutUser()" 
+                    class="flex items-center w-full px-4 py-2 gap-3 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors">
+                    <span class="material-icons text-red-500">logout</span> Logout
+                </button>
+            </div>
         </aside>
         
         <main class="flex-1 flex flex-col">
-            <!-- ── HEADER (matches dashboard/inventory) ── -->
+
+            <!-- ══════════════════════════════════════════
+                 NAVBAR — copied from dashboard.html
+                 [ Clock+Date ] [ Bell ] [ Name/Role ] [ Avatar ]
+                 ══════════════════════════════════════════ -->
             <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
-                <div class="flex items-center gap-2">
-                    
-                </div>
+                <!-- Left: empty spacer -->
+                <div></div>
+
+                <!-- Right: clock · divider · bell · divider · user info · avatar -->
                 <div class="flex items-center gap-4">
-                    <!-- Fancy Notification Bell -->
+
+                    <!-- Live Clock + Date -->
+                    <div class="text-right">
+                        <div id="navClock" class="text-text-light dark:text-text-dark"></div>
+                        <div id="navDate"  class="text-subtext-light dark:text-subtext-dark uppercase tracking-widest"></div>
+                    </div>
+
+                    <div class="nav-divider"></div>
+
+                    <!-- Notification Bell -->
                     <div class="relative">
                         <button id="notificationBtn"
-                            class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                            <span class="material-icons text-2xl">notifications</span>
+                            class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <span class="material-icons-outlined text-2xl">notifications</span>
                             <span id="notificationBadge"
                                 class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold"
                                 style="display:none;">0</span>
                         </button>
+
                         <div id="notificationDropdown" class="notif-dropdown">
                             <div class="notif-header">
                                 <h3>Notifications</h3>
@@ -734,9 +766,9 @@ h1, h2, h3 {
                                 <button class="notif-tab-btn" onclick="filterNotifTab(this,'shortage')">Stock</button>
                             </div>
                             <div class="notif-list" id="notifList">
-                                <div style="padding:30px 20px;text-align:center;color:#9ca3af;">
+                                <div class="notif-loading">
                                     <span class="material-icons" style="font-size:32px;display:block;margin:0 auto 8px;">hourglass_empty</span>
-                                    <p style="font-size:12px;">Loading alerts...</p>
+                                    <p style="font-size:12px;">Loading alerts from inventory...</p>
                                 </div>
                             </div>
                             <div class="notif-footer">
@@ -746,10 +778,18 @@ h1, h2, h3 {
                             </div>
                         </div>
                     </div>
-                    <!-- Profile avatar -->
-                    <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">PR</div>
-                    <!-- Logout button -->
-                    
+
+                    <div class="nav-divider"></div>
+
+                    <!-- User Name + Role -->
+                    <div class="text-right leading-tight">
+                        <div id="navUserName" class="text-sm font-bold text-text-light dark:text-text-dark">User</div>
+                        <div id="navUserRole" class="text-xs text-subtext-light dark:text-subtext-dark">Staff</div>
+                    </div>
+
+                    <!-- Avatar with initial -->
+                    <div id="navAvatar" class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm select-none">U</div>
+
                 </div>
             </header>
             
@@ -883,6 +923,41 @@ h1, h2, h3 {
 
     <script>
 const API_BASE_URL = 'http://localhost:5001';
+
+// ══════════════════════════════════════════════════════════
+// LIVE NAVBAR CLOCK — ticks every second
+// ══════════════════════════════════════════════════════════
+function updateNavClock() {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-US', {
+        hour:   '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+    });
+    const dateStr = now.toLocaleDateString('en-US', {
+        month: 'short',
+        day:   'numeric',
+        year:  'numeric'
+    }).toUpperCase();
+    document.getElementById('navClock').textContent = timeStr;
+    document.getElementById('navDate').textContent  = dateStr;
+}
+
+// ── Load user info from session into navbar ──
+function loadNavUserInfo() {
+    try {
+        const raw = sessionStorage.getItem('userInfo');
+        if (!raw) return;
+        const info = JSON.parse(raw);
+        const name    = info.name || info.firstName || info.username || 'User';
+        const role    = info.role || info.position || '';
+        const initial = name.charAt(0).toUpperCase();
+        document.getElementById('navUserName').textContent = name;
+        document.getElementById('navUserRole').textContent = role;
+        document.getElementById('navAvatar').textContent   = initial;
+    } catch(e) { /* keep defaults */ }
+}
 
 // ══════════════════════════════════════════════════════════
 // FANCY NOTIFICATION BELL — live from /api/inventory
@@ -1052,7 +1127,6 @@ async function refreshNotifications() {
 }
 // ══ END FANCY NOTIFICATION SYSTEM ══
 
-// All your existing JavaScript code remains the same
 class PatientManager {
     constructor() {
         this.livePatients = []; 
@@ -1662,6 +1736,20 @@ function toggleNotifications() {}
 function toggleAutoRefresh() {}
 
 document.addEventListener('DOMContentLoaded', function() {
+    // ── Dark mode ──
+    const isDarkMode = sessionStorage.getItem('darkMode') === 'true';
+    document.documentElement.classList.toggle('dark', isDarkMode);
+    const toggle = document.getElementById('darkModeToggle');
+    if (toggle) toggle.checked = isDarkMode;
+
+    // ── Live clock ──
+    updateNavClock();
+    setInterval(updateNavClock, 1000);
+
+    // ── Navbar user info ──
+    loadNavUserInfo();
+
+    // ── Patient manager ──
     patientManager = new PatientManager();
     window.patientManager = patientManager;
     window.filterPatients = () => patientManager.fetchPatients();
@@ -1672,13 +1760,8 @@ document.addEventListener('DOMContentLoaded', function() {
     window.confirmBackToHMS = confirmBackToHMS;
     window.notificationManager = patientManager.notificationManager;
     window.dispenseMedication = () => {};
-    
-    const isDarkMode = sessionStorage.getItem('darkMode') === 'true';
-    document.documentElement.classList.toggle('dark', isDarkMode);
-    const toggle = document.getElementById('darkModeToggle');
-    if (toggle) toggle.checked = isDarkMode;
 
-    // Wire up fancy notification bell
+    // ── Notification bell wiring ──
     const btn      = document.getElementById('notificationBtn');
     const dropdown = document.getElementById('notificationDropdown');
     if (btn && dropdown) {
@@ -1691,7 +1774,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!dropdown.contains(e.target) && e.target !== btn) dropdown.classList.remove('open');
         });
         dropdown.addEventListener('click', e => e.stopPropagation());
-        setTimeout(refreshNotifications, 1000);
+        setTimeout(refreshNotifications, 800);
         setInterval(refreshNotifications, 60000);
     }
     
