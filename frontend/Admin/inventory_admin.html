@@ -34,9 +34,16 @@
         .drag-region { -webkit-app-region: drag; }
         .no-drag     { -webkit-app-region: no-drag; }
 
-        thead th { position: sticky; top: 0; background: transparent !important; z-index: 10; }
-        thead tr { background: linear-gradient(to right, rgba(0,90,50,0.2), rgba(255,255,255,0.5), rgba(214,40,40,0.2)); z-index: 10; }
-        .dark thead tr { background: linear-gradient(to right, rgba(0,90,50,0.3), rgba(15,23,42,0.8), rgba(214,40,40,0.3)); }
+        thead th {
+            background: linear-gradient(to right, #c8e6d4, #f1f5f9, #f8d7d7);
+            background-attachment: fixed;
+        }
+        .dark thead th {
+            background: linear-gradient(to right, #0d3320, #0f172a, #3d0f0f);
+            background-attachment: fixed;
+        }
+        thead tr { background: none; }
+        .dark thead tr { background: none; }
 
         .tab-btn { padding: 8px 16px; border-radius: 6px; font-weight: 500; transition: all 0.2s ease; cursor: pointer; border: none; background: none; }
         .tab-btn.active { background-color: rgba(0,90,50,0.1); color: #005a32; }
@@ -47,14 +54,29 @@
         .low-stock   { background-color: #fef3c7; color: #d97706; }
         .out-of-stock{ background-color: #fee2e2; color: #dc2626; }
         .dark .tab-btn.active { background-color: rgba(0,90,50,0.2); color: #22c55e; }
-        .table-container { max-height: 600px; overflow-y: auto; position: relative; }
+        .table-container { position: relative; }
+        .pagination-bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-top: 1px solid #e5e7eb; background: #fafafa; border-radius: 0 0 12px 12px; }
+        .dark .pagination-bar { background: #111827; border-color: #374151; }
+        .pagination-info { font-size: 13px; color: #6b7280; }
+        .dark .pagination-info { color: #9ca3af; }
+        .pagination-info strong { color: #1f2937; }
+        .dark .pagination-info strong { color: #f9fafb; }
+        .pagination-controls { display: flex; align-items: center; gap: 4px; }
+        .pg-btn { min-width: 32px; height: 32px; padding: 0 8px; border-radius: 6px; border: 1px solid #e5e7eb; background: white; color: #374151; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+        .dark .pg-btn { background: #1f2937; border-color: #374151; color: #d1d5db; }
+        .pg-btn:hover:not(:disabled) { background: #005a32; color: white; border-color: #005a32; }
+        .pg-btn.active { background: #005a32; color: white; border-color: #005a32; font-weight: 700; }
+        .pg-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+        .pg-ellipsis { font-size: 13px; color: #9ca3af; padding: 0 4px; }
+        .rows-per-page { font-size: 12px; color: #6b7280; display: flex; align-items: center; gap: 6px; }
+        .rows-per-page select { border: 1px solid #e5e7eb; border-radius: 6px; padding: 3px 6px; font-size: 12px; background: white; color: #374151; cursor: pointer; }
+        .dark .rows-per-page select { background: #1f2937; border-color: #374151; color: #d1d5db; }
 
         #navClock { font-size: 15px; font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; }
         #navDate  { font-size: 10px; font-weight: 500; letter-spacing: 0.06em; }
         .nav-divider { width: 1px; height: 28px; background: #e5e7eb; }
         .dark .nav-divider { background: #374151; }
 
-        /* ── MODULE TABS ── */
         .module-tab-bar { display: flex; align-items: stretch; background: linear-gradient(to bottom, #ffffff 0%, #f8fafc 100%); border-bottom: 2px solid #e5e7eb; position: relative; }
         .dark .module-tab-bar { background: linear-gradient(to bottom, #1f2937 0%, #111827 100%); border-color: #374151; }
         .module-tab-btn { flex: 1; position: relative; display: flex; align-items: center; justify-content: center; gap: 10px; height: 54px; font-size: 13px; font-weight: 600; letter-spacing: 0.02em; color: #9ca3af; cursor: pointer; border: none; background: none; outline: none; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: color 0.2s ease, background 0.2s ease; white-space: nowrap; font-family: 'Inter', sans-serif; }
@@ -77,7 +99,6 @@
         #moduleTabSupplies.active::after { content: ''; position: absolute; bottom: -2px; left: 16px; right: 16px; height: 3px; background: linear-gradient(to right, #b91c1c, #f87171); border-radius: 3px 3px 0 0; box-shadow: 0 -2px 8px rgba(185,28,28,0.3); }
         #moduleTabSupplies.active .material-icons { color: #b91c1c; }
 
-        /* ── NOTIFICATION DROPDOWN ── */
         @keyframes badge-pop { from { transform: scale(0); } to { transform: scale(1); } }
         #notificationBadge { animation: badge-pop 0.3s cubic-bezier(.34,1.56,.64,1); }
         .notif-dropdown { position: absolute; top: calc(100% + 10px); right: 0; width: 370px; background: #fff; border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.06); border: 1px solid #e5e7eb; z-index: 1000; overflow: hidden; opacity: 0; transform: translateY(-8px) scale(0.97); pointer-events: none; transition: opacity 0.22s ease, transform 0.22s cubic-bezier(.34,1.56,.64,1); transform-origin: top right; }
@@ -164,7 +185,6 @@
     </div>
 
     <div class="flex h-screen pt-8">
-        <!-- ✅ FIXED: Admin Panel Sidebar (was incorrectly showing Pharmacy Assistant sidebar) -->
         <aside class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-border-light dark:border-border-dark flex-shrink-0">
             <div class="h-16 flex items-center px-6">
                 <div class="flex items-center gap-3">
@@ -182,7 +202,6 @@
                 <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="dashboard_admin.html">
                     <span class="material-icons mr-3">dashboard</span> Dashboard
                 </a>
-                <!-- Active page -->
                 <a class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold" href="inventory_admin.html">
                     <span class="material-icons mr-3">inventory_2</span> Inventory
                 </a>
@@ -191,8 +210,8 @@
                 </a>
                 <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="user_management.html">
                     <span class="material-icons mr-3">group</span> User Management
-                    </a>
-                    <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="activitylog_admin.html">
+                </a>
+                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="activitylog_admin.html">
                     <span class="material-icons mr-3">history</span> Activity Log
                 </a>
             </nav>
@@ -202,7 +221,6 @@
         </aside>
 
         <main class="flex-1 flex flex-col overflow-hidden">
-            <!-- Navbar -->
             <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
                 <div></div>
                 <div class="flex items-center gap-4">
@@ -211,7 +229,6 @@
                         <div id="navDate"  class="text-subtext-light dark:text-subtext-dark uppercase tracking-widest"></div>
                     </div>
                     <div class="nav-divider"></div>
-
                     <div class="relative">
                         <button id="notificationBtn"
                             class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
@@ -247,7 +264,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="nav-divider"></div>
                     <div class="text-right leading-tight">
                         <div id="navUserName" class="text-sm font-bold text-text-light dark:text-text-dark">Admin</div>
@@ -258,7 +274,6 @@
             </header>
 
             <div class="flex-1 flex flex-col overflow-hidden">
-                <!-- Module Tab Bar -->
                 <div class="module-tab-bar">
                     <button id="moduleTabInventory" class="module-tab-btn active" onclick="switchModuleTab('inventory')">
                         <span class="material-icons">inventory_2</span><span class="tab-label">Medicine</span>
@@ -268,14 +283,13 @@
                     </button>
                 </div>
 
-                <!-- ══ MEDICINE / INVENTORY PANEL ══ -->
+                <!-- MEDICINE PANEL -->
                 <div id="modulePanelInventory" class="flex-1 p-8 overflow-y-auto">
                     <div class="flex justify-between items-center mb-6">
                         <div>
                             <h1 class="text-3xl font-bold text-text-light dark:text-text-dark">Medicine Inventory</h1>
                             <p class="text-subtext-light dark:text-subtext-dark mt-1">Manage medicine stock and track expiries</p>
                         </div>
-                        
                     </div>
 
                     <div class="flex mb-6 bg-surface-light dark:bg-surface-dark rounded-lg p-1 w-fit border border-slate-200 dark:border-slate-700">
@@ -337,6 +351,11 @@
                                 <tbody id="summaryTableBody"></tbody>
                             </table>
                         </div>
+                        <div class="pagination-bar" id="summaryPaginationBar">
+                            <div class="rows-per-page">Rows per page: <select onchange="summaryRowsPerPage=parseInt(this.value);summaryPage=1;inventoryManager.renderSummary()" id="summaryRppSelect"><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option></select></div>
+                            <div class="pagination-info" id="summaryPaginationInfo"></div>
+                            <div class="pagination-controls" id="summaryPaginationControls"></div>
+                        </div>
                     </div>
 
                     <!-- Batch Table -->
@@ -370,6 +389,11 @@
                                 <tbody id="batchTableBody"></tbody>
                             </table>
                         </div>
+                        <div class="pagination-bar" id="batchPaginationBar">
+                            <div class="rows-per-page">Rows per page: <select onchange="batchRowsPerPage=parseInt(this.value);batchPage=1;inventoryManager.renderBatches()" id="batchRppSelect"><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option></select></div>
+                            <div class="pagination-info" id="batchPaginationInfo"></div>
+                            <div class="pagination-controls" id="batchPaginationControls"></div>
+                        </div>
                     </div>
 
                     <!-- Archive Table -->
@@ -392,17 +416,22 @@
                                 <tbody id="archiveTableBody"></tbody>
                             </table>
                         </div>
+                        <div class="pagination-bar" id="archivePaginationBar">
+                            <div class="rows-per-page">Rows per page: <select onchange="archiveRowsPerPage=parseInt(this.value);archivePage=1;inventoryManager.renderArchive()" id="archiveRppSelect"><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option></select></div>
+                            <div class="pagination-info" id="archivePaginationInfo"></div>
+                            <div class="pagination-controls" id="archivePaginationControls"></div>
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
                         <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"><p class="text-sm text-subtext-light dark:text-subtext-dark font-medium">Total Items</p><p id="totalItems" class="text-3xl font-bold text-text-light dark:text-text-dark mt-2">0</p></div>
-                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"><p class="text-sm text-subtext-light dark:text-subtext-dark font-medium">Total Value</p><p id="totalValue" class="text-3xl font-bold text-text-light dark:text-text-dark mt-2">&#8369;0.00</p></div>
+                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"><p class="text-sm text-subtext-light dark:text-subtext-dark font-medium">Total Value</p><p id="totalValue" class="text-3xl font-bold text-text-light dark:text-text-dark mt-2">₱0.00</p></div>
                         <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"><p class="text-sm text-subtext-light dark:text-subtext-dark font-medium">Low Stock Items</p><p id="lowStockCount" class="text-3xl font-bold text-accent dark:text-amber-400 mt-2">0</p></div>
                         <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"><p class="text-sm text-subtext-light dark:text-subtext-dark font-medium">Expiring Soon</p><p id="expiringCount" class="text-3xl font-bold text-secondary dark:text-red-400 mt-2">0</p></div>
                     </div>
-                </div><!-- end medicine panel -->
+                </div>
 
-                <!-- ══ SUPPLIES PANEL ══ -->
+                <!-- SUPPLIES PANEL -->
                 <div id="modulePanelSupplies" class="flex-1 p-8 overflow-y-auto hidden">
                     <div class="flex justify-between items-center mb-6">
                         <div>
@@ -410,7 +439,6 @@
                             <p class="text-subtext-light dark:text-subtext-dark mt-1">Monitor and manage pharmaceutical back-stock levels</p>
                         </div>
                     </div>
-
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
                         <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-primary shadow-sm">
                             <div class="flex items-start justify-between">
@@ -441,7 +469,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="bg-surface-light dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-800">
                         <div class="flex flex-col md:flex-row justify-between items-center p-6 gap-4 border-b border-slate-200 dark:border-slate-800">
                             <h2 class="text-lg font-semibold text-text-light dark:text-text-dark">Medicine Back Stock List</h2>
@@ -475,7 +502,7 @@
                             </table>
                         </div>
                     </div>
-                </div><!-- end supplies panel -->
+                </div>
             </div>
         </main>
     </div>
@@ -516,7 +543,6 @@
 <script>
 const API_BASE_URL = 'http://localhost:5001';
 
-// ── HELPERS ──
 function getToken() {
     const d = sessionStorage.getItem('token'); if (d) return d;
     const u = sessionStorage.getItem('userInfo');
@@ -546,7 +572,6 @@ function logoutUser() {
     .then(r=>{ if(r.isConfirmed){ sessionStorage.clear(); window.location.href='../html/login.html'; } });
 }
 
-// ── WINDOW CONTROLS ──
 document.getElementById('min-btn').addEventListener('click',()=>{ if(window.electronAPI) window.electronAPI.minimize(); });
 document.getElementById('max-btn').addEventListener('click',()=>{
     if(window.electronAPI) window.electronAPI.maximize();
@@ -577,7 +602,6 @@ class SuppliesManager {
 
     getAll()    { return this.supplies; }
     getById(id) { return this.supplies.find(s => s.id === id); }
-
     add(supply)    { supply.id = this.nextId++; this.supplies.push(supply); this.renderSupplies(); this.updateSuppliesStats(); }
     update(id, updates) {
         const i = this.supplies.findIndex(s => s.id === id);
@@ -645,7 +669,6 @@ function initializeSupplies() {
 function searchSupplies()         { if (suppliesManager) suppliesManager.renderSupplies(); }
 function filterSuppliesByStatus() { if (suppliesManager) suppliesManager.renderSupplies(); }
 
-// ── RESTOCK MODAL ──
 async function openRestockModal(supplyId) {
     const supply = suppliesManager.getById(supplyId);
     if (!supply) return;
@@ -681,12 +704,11 @@ async function openRestockModal(supplyId) {
     }
 }
 
-// ── UPDATE SUPPLY MODAL ──
 async function openUpdateSupplyModal(supplyId) {
     const supply = suppliesManager.getById(supplyId);
     if (!supply) return;
     const categories = ['Antibiotics','Pain Relief','Antihistamine','Gastrointestinal','Diabetes','Cardiovascular'];
-    const categoryOptions = categories.map(cat => `<option value="${cat}" ${cat===supply.category?'selected':''}>${cat}</option>`).join('');
+    const categoryOptions = categories.map(cat => `<option value="${cat}" ${cat===supply.category?'selected':''} >${cat}</option>`).join('');
     const result = await Swal.fire({
         title: `Update ${supply.name}`,
         html: `<div class="text-left space-y-4">
@@ -714,7 +736,6 @@ async function openUpdateSupplyModal(supplyId) {
         if (r.isConfirmed) return { action:'update', value: r.value };
         return null;
     });
-
     if (result?.action === 'delete') {
         const cf = await Swal.fire({ title:'Delete Supply?', text:`This will permanently delete ${supply.name}.`, icon:'warning', showCancelButton:true, confirmButtonColor:'#d62828', confirmButtonText:'Yes, delete it' });
         if (cf.isConfirmed) { suppliesManager.delete(supplyId); Swal.fire({ icon:'success', title:'Deleted!', text:`${supply.name} has been removed.`, confirmButtonColor:'#005a32' }); }
@@ -724,7 +745,6 @@ async function openUpdateSupplyModal(supplyId) {
     }
 }
 
-// ── ADD SUPPLY MODAL ──
 async function openAddSupplyModal() {
     const categories = ['Antibiotics','Pain Relief','Antihistamine','Gastrointestinal','Diabetes','Cardiovascular'];
     const { value: formValues } = await Swal.fire({
@@ -754,7 +774,6 @@ async function openAddSupplyModal() {
     if (formValues) { suppliesManager.add(formValues); Swal.fire({ icon:'success', title:'Added!', text:`${formValues.name} has been added to supplies.`, confirmButtonColor:'#005a32' }); }
 }
 
-// ── MODULE TAB SWITCHER ──
 function switchModuleTab(module) {
     document.getElementById('moduleTabInventory').classList.toggle('active', module==='inventory');
     document.getElementById('moduleTabSupplies').classList.toggle('active',  module==='supplies');
@@ -780,14 +799,14 @@ function generateAlertsFromInventory(inventory) {
                 alerts.push({ id:`exp-${item._id||idx}`, type:'expiry', unread:true, medicineName:medName, title:'Medicine Expired', desc:`${medName} expired on ${expiry.toLocaleDateString('en-PH')}.`, time:'Needs immediate attention', actionLabel:'View Batch', actionClass:'btn-expiry', icon:'event_busy', iconClass:'icon-expiry' });
             } else if (expiry <= thirtyDays) {
                 const d = Math.ceil((expiry - today) / 864e5);
-                alerts.push({ id:`exp-${item._id||idx}`, type:'expiry', unread:true, medicineName:medName, title:'Expiring Soon', desc:`${medName} expires in ${d} day${d===1?'':'s'}.`, time:`${d} days left`, actionLabel:'View Batch', actionClass:'btn-expiry', icon:'schedule', iconClass:'icon-expiry' });
+                alerts.push({ id:`exp-${item._id||idx}`, type:'expiry', unread:true, medicineName:medName, title:'Expiring Soon', desc:`${medName} expires in ${d} day${d===1?'':`s`}.`, time:`${d} days left`, actionLabel:'View Batch', actionClass:'btn-expiry', icon:'schedule', iconClass:'icon-expiry' });
             }
         }
         const qty = parseInt(item.quantity||0), minStock = parseInt(item.minStockLevel||10), isExpired = new Date(item.expiryDate) < today;
         if (!isExpired && qty === 0) {
             alerts.push({ id:`stk-${item._id||idx}`, type:'critical', unread:true, medicineName:medName, title:'Critical: Out of Stock', desc:`${medName} is completely out of stock.`, time:'Immediate action required', actionLabel:'View in Inventory', actionClass:'btn-critical', icon:'warning', iconClass:'icon-critical' });
         } else if (!isExpired && qty <= minStock) {
-            alerts.push({ id:`stk-${item._id||idx}`, type:'shortage', unread:true, medicineName:medName, title:'Low Stock Alert', desc:`${medName} — only ${qty} unit${qty===1?'':'s'} remaining (min: ${minStock}).`, time:'Reorder soon', actionLabel:'View in Inventory', actionClass:'btn-shortage', icon:'inventory_2', iconClass:'icon-shortage' });
+            alerts.push({ id:`stk-${item._id||idx}`, type:'shortage', unread:true, medicineName:medName, title:'Low Stock Alert', desc:`${medName} — only ${qty} unit${qty===1?'':`s`} remaining (min: ${minStock}).`, time:'Reorder soon', actionLabel:'View in Inventory', actionClass:'btn-shortage', icon:'inventory_2', iconClass:'icon-shortage' });
         }
     });
     const order = { critical:0, expiry:1, shortage:2 };
@@ -833,12 +852,15 @@ function handleNotifAction(event, id) {
     const n = notifData.find(n => n.id === id);
     if (!n) return;
     document.getElementById('notificationDropdown').classList.remove('open');
+
     if (n.type === 'expiry') {
         inventoryManager.viewBatchDetails(n.medicineName);
+        setTimeout(() => highlightMedicineRow('batchTableBody', n.medicineName), 300);  // ← added
     } else if (n.type === 'critical' || n.type === 'shortage') {
         inventoryManager.switchTab('summary');
         const s = document.getElementById('summarySearch');
-        if (s) { s.value = n.medicineName; inventoryManager.renderSummary(); }
+        if (s) { s.value = n.medicineName; summaryPage = 1; inventoryManager.renderSummary(); }  // ← added summaryPage = 1
+        setTimeout(() => highlightMedicineRow('summaryTableBody', n.medicineName), 300);  // ← added
     }
 }
 
@@ -861,6 +883,76 @@ async function refreshNotifications() {
         notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
         renderNotifications();
     } catch(e) { console.warn('Notification fetch failed:', e); }
+}
+
+// ── PAGINATION STATE ──
+let summaryPage = 1, summaryRowsPerPage = 10;
+let batchPage   = 1, batchRowsPerPage   = 10;
+let archivePage = 1, archiveRowsPerPage = 10;
+
+function buildPagination(totalItems, currentPage, rowsPerPage, infoId, controlsId, onPageChange) {
+    const totalPages = Math.max(1, Math.ceil(totalItems / rowsPerPage));
+    if (currentPage > totalPages) currentPage = totalPages;
+    const start = totalItems === 0 ? 0 : (currentPage - 1) * rowsPerPage + 1;
+    const end   = Math.min(currentPage * rowsPerPage, totalItems);
+
+    const info = document.getElementById(infoId);
+    const ctrl = document.getElementById(controlsId);
+    if (!info || !ctrl) return currentPage;
+
+    info.innerHTML = `<strong>${start}–${end}</strong> of <strong>${totalItems}</strong>`;
+
+    let btns = '';
+    // Prev
+    btns += `<button class="pg-btn" onclick="${onPageChange}(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}><span class="material-icons" style="font-size:16px;">chevron_left</span></button>`;
+
+    // Page number buttons (Gmail-style: show a window around current page)
+    const pages = [];
+    if (totalPages <= 7) {
+        for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+        pages.push(1);
+        if (currentPage > 3) pages.push('...');
+        for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) pages.push(i);
+        if (currentPage < totalPages - 2) pages.push('...');
+        pages.push(totalPages);
+    }
+
+    pages.forEach(p => {
+        if (p === '...') {
+            btns += `<span class="pg-ellipsis">…</span>`;
+        } else {
+            btns += `<button class="pg-btn ${p === currentPage ? 'active' : ''}" onclick="${onPageChange}(${p})">${p}</button>`;
+        }
+    });
+
+    // Next
+    btns += `<button class="pg-btn" onclick="${onPageChange}(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}><span class="material-icons" style="font-size:16px;">chevron_right</span></button>`;
+
+    ctrl.innerHTML = btns;
+    return currentPage;
+}
+
+function goSummaryPage(p) {
+    const panel = document.getElementById('modulePanelInventory');
+    const scrollY = panel ? panel.scrollTop : 0;
+    summaryPage = p;
+    inventoryManager.renderSummary();
+    if (panel) panel.scrollTop = scrollY;
+}
+function goBatchPage(p) {
+    const panel = document.getElementById('modulePanelInventory');
+    const scrollY = panel ? panel.scrollTop : 0;
+    batchPage = p;
+    inventoryManager.renderBatches();
+    if (panel) panel.scrollTop = scrollY;
+}
+function goArchivePage(p) {
+    const panel = document.getElementById('modulePanelInventory');
+    const scrollY = panel ? panel.scrollTop : 0;
+    archivePage = p;
+    inventoryManager.renderArchive();
+    if (panel) panel.scrollTop = scrollY;
 }
 
 // ══════════════════════════════════════════════════════════
@@ -940,20 +1032,28 @@ class InventoryManager {
         });
         let arr = Object.values(summary);
         if (search) arr = arr.filter(i => i.name.toLowerCase().includes(search));
-        if (!arr.length) { tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-gray-500">No active inventory found.</td></tr>`; return; }
-        arr.forEach(item => {
+        if (!arr.length) { tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-gray-500">No active inventory found.</td></tr>`; buildPagination(0, 1, summaryRowsPerPage, 'summaryPaginationInfo', 'summaryPaginationControls', 'goSummaryPage'); return; }
+        // Apply status filter before pagination count
+        const filtered = sf ? arr.filter(item => {
+            let status = 'In Stock';
+            if (item.totalQty === 0) status = 'Out of Stock';
+            else if (item.totalQty <= item.minStock) status = 'Low Stock';
+            return status === sf;
+        }) : arr;
+        summaryPage = buildPagination(filtered.length, summaryPage, summaryRowsPerPage, 'summaryPaginationInfo', 'summaryPaginationControls', 'goSummaryPage');
+        const pageItems = filtered.slice((summaryPage - 1) * summaryRowsPerPage, summaryPage * summaryRowsPerPage);
+        pageItems.forEach(item => {
             let status = 'In Stock', sc = 'in-stock';
             if (item.totalQty === 0)               { status = 'Out of Stock'; sc = 'out-of-stock'; }
             else if (item.totalQty <= item.minStock) { status = 'Low Stock';   sc = 'low-stock'; }
-            if (sf && status !== sf) return;
             const avg = item.totalQty > 0 ? item.totalValue / item.totalQty : 0;
             tbody.innerHTML += `<tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
                 <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${item.name}</td>
                 <td class="px-6 py-4 text-gray-500">${item.batchCount}</td>
                 <td class="px-6 py-4 font-bold">${item.totalQty}</td>
                 <td class="px-6 py-4 text-gray-500">${this.formatDate(item.earliestExpiry)}</td>
-                <td class="px-6 py-4 text-gray-500">&#8369;${avg.toFixed(2)}</td>
-                <td class="px-6 py-4 text-gray-500">&#8369;${item.totalValue.toFixed(2)}</td>
+                <td class="px-6 py-4 text-gray-500">₱${avg.toFixed(2)}</td>
+                <td class="px-6 py-4 text-gray-500">₱${item.totalValue.toFixed(2)}</td>
                 <td class="px-6 py-4"><span class="status ${sc}">${status}</span></td>
                 <td class="px-6 py-4"><button onclick="inventoryManager.viewBatchDetails('${item.name}')" class="text-primary hover:underline text-sm font-medium">View Batches</button></td>
             </tr>`;
@@ -966,28 +1066,31 @@ class InventoryManager {
         tbody.innerHTML = '';
         let batches = [...this.liveInventory].sort((a,b) => new Date(a.expiryDate)-new Date(b.expiryDate));
         if (search) batches = batches.filter(i => { const n=this._getName(i); return n.toLowerCase().includes(search)||(i.batchNumber||'').toLowerCase().includes(search); });
-        if (!batches.length) { tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-gray-500">No active batches found.</td></tr>`; return; }
-        batches.forEach((item, index) => {
+        if (!batches.length) { tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-gray-500">No active batches found.</td></tr>`; buildPagination(0, 1, batchRowsPerPage, 'batchPaginationInfo', 'batchPaginationControls', 'goBatchPage'); return; }
+        batchPage = buildPagination(batches.length, batchPage, batchRowsPerPage, 'batchPaginationInfo', 'batchPaginationControls', 'goBatchPage');
+        const pageItems = batches.slice((batchPage - 1) * batchRowsPerPage, batchPage * batchRowsPerPage);
+        pageItems.forEach((item, index) => {
+            const globalIndex = (batchPage - 1) * batchRowsPerPage + index;
             const name = this._getName(item), expiry = new Date(item.expiryDate), today = new Date(), daysLeft = Math.ceil((expiry-today)/864e5);
             let dc='text-success', dt=`${daysLeft} days`, sl='<span class="status in-stock">Active</span>';
             if (daysLeft<0)       { dc='text-secondary font-bold'; dt='EXPIRED'; sl='<span class="status out-of-stock">Expired</span>'; }
             else if (daysLeft<30) { dc='text-accent font-bold'; }
-            const isPriority = index < 3;
+            const isPriority = globalIndex < 3;
+            const itemId = item._id || item.id;
             tbody.innerHTML += `<tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
                 <td class="px-6 py-4"><div class="flex items-center gap-2">
-                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-full ${isPriority?'bg-secondary/20 text-secondary':'bg-gray-200 text-gray-600'} text-xs font-bold">${index+1}</span>
-                    ${isPriority?'<span class="material-icons text-xs text-secondary" title="Expiring Soonest">priority_high</span>':''}
-                </div></td>
+                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-full ${isPriority?'bg-secondary/20 text-secondary':'bg-gray-200 text-gray-600'} text-xs font-bold">${globalIndex+1}</span>
+                    ${isPriority?'<span class="material-icons text-xs text-secondary" title="Expiring Soonest">priority_high</span>':''}</div></td>
                 <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${name}</td>
                 <td class="px-6 py-4 text-gray-500">${item.batchNumber||'N/A'}</td>
                 <td class="px-6 py-4 font-bold">${item.quantity}</td>
                 <td class="px-6 py-4 text-gray-500">${this.formatDate(item.expiryDate)}</td>
                 <td class="px-6 py-4 ${dc}">${dt}</td>
-                <td class="px-6 py-4 text-gray-500">&#8369;${parseFloat(this._getPrice(item)||0).toFixed(2)}</td>
+                <td class="px-6 py-4 text-gray-500">₱${parseFloat(this._getPrice(item)||0).toFixed(2)}</td>
                 <td class="px-6 py-4 text-gray-500">${item.supplier||'Unknown'}</td>
                 <td class="px-6 py-4">${sl}</td>
                 <td class="px-6 py-4">
-                    <button onclick="inventoryManager.archiveBatch('${item._id||item.id}')" class="action-btn archive-btn ml-1"><span class="material-icons text-sm">archive</span></button>
+                    <button onclick="inventoryManager.archiveBatch('${itemId}')" class="action-btn archive-btn" title="Move to Archive"><span class="material-icons text-sm">archive</span></button>
                 </td>
             </tr>`;
         });
@@ -999,16 +1102,19 @@ class InventoryManager {
         tbody.innerHTML = '';
         let archives = [...this.archivedInventory];
         if (search) archives = archives.filter(i => this._getName(i).toLowerCase().includes(search));
-        if (!archives.length) { tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-500">Archive is empty.</td></tr>`; return; }
-        archives.forEach(item => {
+        if (!archives.length) { tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-500">Archive is empty.</td></tr>`; buildPagination(0, 1, archiveRowsPerPage, 'archivePaginationInfo', 'archivePaginationControls', 'goArchivePage'); return; }
+        archivePage = buildPagination(archives.length, archivePage, archiveRowsPerPage, 'archivePaginationInfo', 'archivePaginationControls', 'goArchivePage');
+        const pageItems = archives.slice((archivePage - 1) * archiveRowsPerPage, archivePage * archiveRowsPerPage);
+        pageItems.forEach(item => {
+            const itemId = item._id || item.id;
             tbody.innerHTML += `<tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 opacity-75">
                 <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${this._getName(item)}</td>
                 <td class="px-6 py-4 text-gray-500">${item.batchNumber||'N/A'}</td>
                 <td class="px-6 py-4">${item.quantity}</td>
                 <td class="px-6 py-4 text-gray-500">${this.formatDate(item.expiryDate)}</td>
                 <td class="px-6 py-4">
-                    <button onclick="inventoryManager.restoreBatch('${item._id}')" class="action-btn restore-btn"><span class="material-icons text-sm">restore</span> Restore</button>
-                    <button onclick="inventoryManager.deleteBatch('${item._id}')" class="action-btn delete-btn ml-1"><span class="material-icons text-sm">delete_forever</span></button>
+                    <button onclick="inventoryManager.restoreBatch('${itemId}')" class="action-btn restore-btn"><span class="material-icons text-sm">restore</span> Restore</button>
+                    
                 </td>
             </tr>`;
         });
@@ -1066,14 +1172,80 @@ class InventoryManager {
         if (tabName==='archive') this.renderArchive();
     }
 
+    // ── ARCHIVE BATCH (updated: local-first, then auto-navigate to Archive tab) ──
     async archiveBatch(id) {
-        const r = await Swal.fire({title:'Archive Batch?',text:'Move batch to archive.',icon:'question',showCancelButton:true,confirmButtonColor:'#005a32',confirmButtonText:'Yes, archive it'});
-        if (r.isConfirmed) { try { await this.apiCall(`/api/inventory/${id}`,'PATCH',{status:'Archived'}); Swal.fire('Archived','Batch moved to archive.','success'); this.fetchInventory(); } catch(e){ Swal.fire('Error',e.message,'error'); } }
+        const r = await Swal.fire({
+            title: 'Archive Batch?',
+            text: 'This batch will be moved to the Archive tab.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#005a32',
+            confirmButtonText: 'Yes, archive it'
+        });
+        if (!r.isConfirmed) return;
+
+        const idx = this.liveInventory.findIndex(i => (i._id || i.id) === id);
+        if (idx === -1) { Swal.fire('Error', 'Item not found.', 'error'); return; }
+
+        // Move item locally: live → archived
+        const item = { ...this.liveInventory[idx], status: 'Archived' };
+        this.liveInventory.splice(idx, 1);
+        this.archivedInventory.unshift(item);
+        this.renderTables();
+        this.updateDashboardStats();
+
+        // Sync to API silently in the background
+        this.apiCall(`/api/inventory/${id}`, 'PATCH', { status: 'Archived' }).catch(() => {});
+
+        await Swal.fire({
+            icon: 'success',
+            title: 'Archived!',
+            text: 'Batch has been moved to the archive.',
+            confirmButtonColor: '#005a32',
+            timer: 1600,
+            showConfirmButton: false
+        });
+
+        // Navigate straight to the Archive tab
+        this.switchTab('archive');
     }
 
+    // ── RESTORE BATCH (updated: local-first, then auto-navigate to FEFO tab) ──
     async restoreBatch(id) {
-        const r = await Swal.fire({title:'Restore Batch?',icon:'question',showCancelButton:true,confirmButtonColor:'#005a32',confirmButtonText:'Yes, restore it'});
-        if (r.isConfirmed) { try { await this.apiCall(`/api/inventory/${id}`,'PATCH',{status:'In Stock'}); Swal.fire('Restored','Batch moved back to active inventory.','success'); this.fetchInventory(); } catch(e){ Swal.fire('Error',e.message,'error'); } }
+        const r = await Swal.fire({
+            title: 'Restore Batch?',
+            text: 'This batch will be moved back to the FEFO (Batch Details) tab.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#005a32',
+            confirmButtonText: 'Yes, restore it'
+        });
+        if (!r.isConfirmed) return;
+
+        const idx = this.archivedInventory.findIndex(i => (i._id || i.id) === id);
+        if (idx === -1) { Swal.fire('Error', 'Item not found.', 'error'); return; }
+
+        // Move item locally: archived → live
+        const item = { ...this.archivedInventory[idx], status: 'In Stock' };
+        this.archivedInventory.splice(idx, 1);
+        this.liveInventory.push(item);
+        this.renderTables();
+        this.updateDashboardStats();
+
+        // Sync to API silently in the background
+        this.apiCall(`/api/inventory/${id}`, 'PATCH', { status: 'In Stock' }).catch(() => {});
+
+        await Swal.fire({
+            icon: 'success',
+            title: 'Restored!',
+            text: 'Batch has been moved back to active inventory.',
+            confirmButtonColor: '#005a32',
+            timer: 1600,
+            showConfirmButton: false
+        });
+
+        // Navigate straight to the Batch Details (FEFO) tab
+        this.switchTab('batch');
     }
 
     async deleteBatch(id) {
@@ -1160,7 +1332,8 @@ class InventoryManager {
     }
 
     setupModalListeners() {
-        document.getElementById('addMedicineBtn').addEventListener('click', () => this.openMedicineModal());
+        const addBtn = document.getElementById('addMedicineBtn');
+        if (addBtn) addBtn.addEventListener('click', () => this.openMedicineModal());
         document.getElementById('closeModalBtn').addEventListener('click',  () => this.closeMedicineModal());
         document.getElementById('cancelMedicineBtn').addEventListener('click', () => this.closeMedicineModal());
         document.getElementById('saveMedicineBtn').addEventListener('click',   () => this.saveMedicine());
@@ -1168,7 +1341,6 @@ class InventoryManager {
 }
 
 // ── INIT ──
-// (inventory_admin has no fetchDashboardStats — that lives in dashboard_admin.html)
 let inventoryManager;
 document.addEventListener('DOMContentLoaded', () => {
     updateNavClock();
@@ -1180,12 +1352,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.logoutUser            = logoutUser;
     window.switchTab             = t  => inventoryManager.switchTab(t);
-    window.searchSummary         = () => inventoryManager.renderSummary();
-    window.filterSummaryByStatus = () => inventoryManager.renderSummary();
+    window.searchSummary         = () => { summaryPage=1; inventoryManager.renderSummary(); };
+    window.filterSummaryByStatus = () => { summaryPage=1; inventoryManager.renderSummary(); };
     window.exportSummaryData     = () => inventoryManager.exportSummaryData();
-    window.searchBatch           = () => inventoryManager.renderBatches();
+    window.searchBatch           = () => { batchPage=1; inventoryManager.renderBatches(); };
     window.exportBatchData       = () => inventoryManager.exportBatchData();
-    window.searchArchive         = () => inventoryManager.renderArchive();
+    window.searchArchive         = () => { archivePage=1; inventoryManager.renderArchive(); };
     window.viewBatchDetails      = n  => inventoryManager.viewBatchDetails(n);
 
     const btn      = document.getElementById('notificationBtn');

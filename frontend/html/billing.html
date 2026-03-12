@@ -166,6 +166,22 @@
     .status-Paid    { background-color: rgba(34, 197, 94, 0.1); color: rgb(22, 163, 74); }
     .status-Pending { background-color: rgba(245, 158, 11, 0.1); color: rgb(180, 83, 9); }
     .status-Failed  { background-color: rgba(239, 68, 68, 0.1); color: rgb(185, 28, 28); }
+
+    /* ── PAGINATION ── */
+.pagination-bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 6px 2px; flex-wrap: wrap; gap: 8px; }
+.pagination-info { font-size: 13px; color: #6b7280; }
+.pagination-controls { display: flex; align-items: center; gap: 4px; }
+.pg-btn { min-width: 34px; height: 34px; padding: 0 8px; border-radius: 8px; border: 1px solid #e5e7eb; background: #fff; color: #374151; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.dark .pg-btn { background: #1F2937; border-color: #374151; color: #F9FAFB; }
+.pg-btn:hover:not(:disabled):not(.active) { background: #f3f4f6; border-color: #d1d5db; }
+.dark .pg-btn:hover:not(:disabled):not(.active) { background: #374151; }
+.pg-btn.active { background: #005a32; border-color: #005a32; color: #fff; font-weight: 700; }
+.pg-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.pg-ellipsis { font-size: 13px; color: #9ca3af; padding: 0 4px; }
+.rows-per-page { font-size: 13px; color: #6b7280; display: flex; align-items: center; gap: 6px; }
+.rows-per-page select { border: 1px solid #e5e7eb; border-radius: 6px; padding: 4px 8px; font-size: 13px; background: #fff; color: #374151; cursor: pointer; }
+.dark .rows-per-page select { background: #1F2937; border-color: #374151; color: #F9FAFB; }
+
 </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark font-display">
@@ -337,6 +353,17 @@
                         </thead>
                         <tbody id="transactionsTableBody"></tbody>
                     </table>
+                </div>
+                <div class="pagination-bar" id="billingPaginationBar">
+                    <div class="rows-per-page">Rows per page:
+                        <select id="billingRppSelect" onchange="billingRowsPerPage=parseInt(this.value);billingPage=1;billingManager.renderTable(billingManager._lastData)">
+                            <option value="10" selected>10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+                    <div class="pagination-info" id="billingPaginationInfo"></div>
+                    <div class="pagination-controls" id="billingPaginationControls"></div>
                 </div>
                 <div id="noResults" class="hidden text-center py-12 text-subtext-light dark:text-subtext-dark">
                     <span class="material-icons text-5xl mb-2 opacity-50">search_off</span>
@@ -517,10 +544,19 @@
     }
 
     function handleNotifAction(event, id) {
-        event.stopPropagation();
-        markNotifRead(id);
-        window.location.href = 'inventory.html';
+    event.stopPropagation();
+    markNotifRead(id);
+    const n = notifData.find(n => n.id === id);
+    if (!n) return;
+    document.getElementById('notificationDropdown').classList.remove('open');
+
+    if (n.type === 'expiry') {
+        sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'batch', medicine: n.medicineName }));
+    } else if (n.type === 'critical' || n.type === 'shortage') {
+        sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'summary', medicine: n.medicineName }));
     }
+    window.location.href = 'inventory.html';
+}
 
     function filterNotifTab(btn, filter) {
         document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
@@ -551,6 +587,52 @@
             }
         }
     }
+
+    let billingPage = 1, billingRowsPerPage = 10;
+
+function buildBillingPagination(totalItems, currentPage, rowsPerPage) {
+    const totalPages = Math.ceil(totalItems / rowsPerPage);
+    if (currentPage > totalPages) currentPage = totalPages || 1;
+
+    const info = document.getElementById('billingPaginationInfo');
+    const controls = document.getElementById('billingPaginationControls');
+    if (!info || !controls) return currentPage;
+
+    const start = totalItems === 0 ? 0 : (currentPage - 1) * rowsPerPage + 1;
+    const end   = Math.min(currentPage * rowsPerPage, totalItems);
+    info.textContent = totalItems === 0 ? 'No results' : `${start}–${end} of ${totalItems}`;
+
+    let pages = [];
+    if (totalPages <= 7) {
+        for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+        pages = [1];
+        if (currentPage > 3) pages.push('...');
+        for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) pages.push(i);
+        if (currentPage < totalPages - 2) pages.push('...');
+        pages.push(totalPages);
+    }
+
+    controls.innerHTML = `
+        <button class="pg-btn" onclick="goBillingPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+            <span class="material-icons" style="font-size:16px;">chevron_left</span>
+        </button>
+        ${pages.map(p => p === '...'
+            ? `<span class="pg-ellipsis">…</span>`
+            : `<button class="pg-btn ${p === currentPage ? 'active' : ''}" onclick="goBillingPage(${p})">${p}</button>`
+        ).join('')}
+        <button class="pg-btn" onclick="goBillingPage(${currentPage + 1})" ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''}>
+            <span class="material-icons" style="font-size:16px;">chevron_right</span>
+        </button>`;
+
+    return currentPage;
+}
+
+function goBillingPage(p) {
+    billingPage = p;
+    billingManager.renderTable(billingManager._lastData);
+}
+
     // ══ END FANCY NOTIFICATION SYSTEM ══
 
     class BillingManager {
@@ -645,17 +727,24 @@
         }
 
         renderTable(data) {
+            this._lastData = data;
             const tbody = document.getElementById('transactionsTableBody');
             const noResults = document.getElementById('noResults');
 
             if (!data || data.length === 0) {
                 tbody.innerHTML = '';
                 noResults.classList.remove('hidden');
+                document.getElementById('billingPaginationBar').style.display = 'none';
                 return;
             }
             noResults.classList.add('hidden');
+            document.getElementById('billingPaginationBar').style.display = 'flex';
 
-            tbody.innerHTML = data.map(sale => {
+            billingPage = buildBillingPagination(data.length, billingPage, billingRowsPerPage);
+            const start = (billingPage - 1) * billingRowsPerPage;
+            const paged = data.slice(start, start + billingRowsPerPage);
+
+            tbody.innerHTML = paged.map(sale => {
                 const statusClass = `status-${sale.paymentStatus || 'Pending'}`;
 
                 let dateDisplay = "N/A";
@@ -711,6 +800,7 @@
         }
 
         handleSearch(val) {
+            billingPage = 1;
             const lower = val.toLowerCase();
             const filtered = this.salesData.filter(s =>
                 (s.patientName && s.patientName.toLowerCase().includes(lower)) ||
@@ -721,6 +811,7 @@
         }
 
         handleFilter(status) {
+            billingPage = 1;
             if(status === 'all') this.renderTable(this.salesData);
             else {
                 const filtered = this.salesData.filter(s => s.paymentStatus === status);

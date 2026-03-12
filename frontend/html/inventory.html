@@ -66,10 +66,23 @@
         .out-of-stock { background-color: #fee2e2; color: #dc2626; }
         .dark .tab-btn.active { background-color: rgba(0, 90, 50, 0.2); color: #22c55e; }
         .dark { color-scheme: dark; }
-        .table-container { max-height: 600px; overflow-y: auto; position: relative; }
-        thead th { position: sticky; top: 0; background-color: white; z-index: 10; }
-        .dark thead th { background-color: #1f2937; }
-
+        .table-container { position: relative; }
+.pagination-bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-top: 1px solid #e5e7eb; background: #fafafa; border-radius: 0 0 12px 12px; }
+.dark .pagination-bar { background: #111827; border-color: #374151; }
+.pagination-info { font-size: 13px; color: #6b7280; }
+.dark .pagination-info { color: #9ca3af; }
+.pagination-info strong { color: #1f2937; }
+.dark .pagination-info strong { color: #f9fafb; }
+.pagination-controls { display: flex; align-items: center; gap: 4px; }
+.pg-btn { min-width: 32px; height: 32px; padding: 0 8px; border-radius: 6px; border: 1px solid #e5e7eb; background: white; color: #374151; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.dark .pg-btn { background: #1f2937; border-color: #374151; color: #d1d5db; }
+.pg-btn:hover:not(:disabled) { background: #005a32; color: white; border-color: #005a32; }
+.pg-btn.active { background: #005a32; color: white; border-color: #005a32; font-weight: 700; }
+.pg-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.pg-ellipsis { font-size: 13px; color: #9ca3af; padding: 0 4px; }
+.rows-per-page { font-size: 12px; color: #6b7280; display: flex; align-items: center; gap: 6px; }
+.rows-per-page select { border: 1px solid #e5e7eb; border-radius: 6px; padding: 3px 6px; font-size: 12px; background: white; color: #374151; cursor: pointer; }
+.dark .rows-per-page select { background: #1f2937; border-color: #374151; color: #d1d5db; }
         /* ── NAVBAR CLOCK ── */
         #navClock {
             font-size: 15px;
@@ -309,18 +322,11 @@
 
         <main class="flex-1 flex flex-col">
 
-            <!-- ══════════════════════════════════════════
-                 NAVBAR — copied from dashboard.html
-                 [ Clock+Date ] [ Bell ] [ Name/Role ] [ Avatar ]
-                 ══════════════════════════════════════════ -->
             <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
-                <!-- Left: empty spacer -->
                 <div></div>
 
-                <!-- Right: clock · divider · bell · divider · user info · avatar -->
                 <div class="flex items-center gap-4">
 
-                    <!-- Live Clock + Date -->
                     <div class="text-right">
                         <div id="navClock" class="text-text-light dark:text-text-dark"></div>
                         <div id="navDate"  class="text-subtext-light dark:text-subtext-dark uppercase tracking-widest"></div>
@@ -328,7 +334,6 @@
 
                     <div class="nav-divider"></div>
 
-                    <!-- Notification Bell -->
                     <div class="relative">
                         <button id="notificationBtn"
                             class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
@@ -368,31 +373,17 @@
 
                     <div class="nav-divider"></div>
 
-                    <!-- User Name + Role -->
                     <div class="text-right leading-tight">
                         <div id="navUserName" class="text-sm font-bold text-text-light dark:text-text-dark">User</div>
                         <div id="navUserRole" class="text-xs text-subtext-light dark:text-subtext-dark">Staff</div>
                     </div>
 
-                    <!-- Avatar with initial -->
                     <div id="navAvatar" class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm select-none">U</div>
 
                 </div>
             </header>
 
             <div class="flex-1 flex flex-col overflow-hidden">
-
-                <!-- Module tab bar — full width, green + red -->
-                <div class="module-tab-bar">
-                    <button id="moduleTabInventory" class="module-tab-btn active" onclick="switchModuleTab('inventory')">
-                        <span class="material-icons">inventory_2</span>
-                        <span class="tab-label">Medicine</span>
-                    </button>
-                    <button id="moduleTabSupplies" class="module-tab-btn" onclick="switchModuleTab('supplies')">
-                        <span class="material-icons">medical_services</span>
-                        <span class="tab-label">Supplies</span>
-                    </button>
-                </div>
 
                 <!-- Inventory Panel -->
                 <div id="modulePanelInventory" class="flex-1 p-8 overflow-y-auto">
@@ -462,6 +453,11 @@
                                 <tbody id="summaryTableBody"></tbody>
                             </table>
                         </div>
+                        <div class="pagination-bar" id="summaryPaginationBar">
+                            <div class="rows-per-page">Rows per page: <select onchange="summaryRowsPerPage=parseInt(this.value);summaryPage=1;inventoryManager.renderSummary()" id="summaryRppSelect"><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option></select></div>
+                            <div class="pagination-info" id="summaryPaginationInfo"></div>
+                            <div class="pagination-controls" id="summaryPaginationControls"></div>
+                        </div>
                     </div>
 
                     <div id="batchSection" class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 hidden">
@@ -494,6 +490,11 @@
                                 <tbody id="batchTableBody"></tbody>
                             </table>
                         </div>
+                        <div class="pagination-bar" id="batchPaginationBar">
+                            <div class="rows-per-page">Rows per page: <select onchange="batchRowsPerPage=parseInt(this.value);batchPage=1;inventoryManager.renderBatches()" id="batchRppSelect"><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option></select></div>
+                            <div class="pagination-info" id="batchPaginationInfo"></div>
+                            <div class="pagination-controls" id="batchPaginationControls"></div>
+                        </div>
                     </div>
 
                     <div id="archiveSection" class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 hidden">
@@ -514,6 +515,11 @@
                                 </thead>
                                 <tbody id="archiveTableBody"></tbody>
                             </table>
+                        </div>
+                        <div class="pagination-bar" id="archivePaginationBar">
+                            <div class="rows-per-page">Rows per page: <select onchange="archiveRowsPerPage=parseInt(this.value);archivePage=1;inventoryManager.renderArchive()" id="archiveRppSelect"><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option></select></div>
+                            <div class="pagination-info" id="archivePaginationInfo"></div>
+                            <div class="pagination-controls" id="archivePaginationControls"></div>
                         </div>
                     </div>
 
@@ -623,7 +629,6 @@
                                     <option value="Low Stock">Low Stock</option>
                                     <option value="Out of Stock">Out of Stock</option>
                                 </select>
-                                
                             </div>
                         </div>
                         <div class="overflow-x-auto">
@@ -635,7 +640,6 @@
                                         <th class="px-6 py-4 font-medium text-center">Quantity in Stock</th>
                                         <th class="px-6 py-4 font-medium text-center">Reorder Level</th>
                                         <th class="px-6 py-4 font-medium text-center">Status</th>
-                                        
                                     </tr>
                                 </thead>
                                 <tbody id="suppliesTableBody"></tbody>
@@ -778,7 +782,6 @@ class SuppliesManager {
                     <td class="px-6 py-4 text-center">
                         <span class="px-3 py-1 text-xs font-semibold rounded-full ${statusBg} ${statusText}">${status}</span>
                     </td>
-                    
                 </tr>`;
         }).join('');
     }
@@ -810,231 +813,6 @@ function searchSupplies() { if (suppliesManager) suppliesManager.renderSupplies(
 function filterSuppliesByStatus() { if (suppliesManager) suppliesManager.renderSupplies(); }
 
 // ══════════════════════════════════════════════════════════
-// RESTOCK MODAL
-// ══════════════════════════════════════════════════════════
-async function openRestockModal(supplyId) {
-    const supply = suppliesManager.getById(supplyId);
-    if (!supply) return;
-
-    const { value: formValues } = await Swal.fire({
-        title: `Restock ${supply.name}`,
-        html: `
-            <div class="text-left space-y-4">
-                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
-                    <p class="text-sm text-blue-800 dark:text-blue-300">
-                        <strong>Current Stock:</strong> ${supply.quantity} units<br>
-                        <strong>Reorder Level:</strong> ${supply.reorderLevel} units<br>
-                        <strong>Status:</strong> ${suppliesManager.getStatus(supply.quantity, supply.reorderLevel)}
-                    </p>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Quantity Purchased *</label>
-                    <input type="number" id="restockQuantity" class="swal2-input" placeholder="Enter quantity" min="1" value="10" style="margin: 0; width: 100%;">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unit Cost (₱) *</label>
-                    <input type="number" id="restockUnitCost" class="swal2-input" placeholder="Enter unit cost" step="0.01" min="0" value="${supply.unitCost || 0}" style="margin: 0; width: 100%;">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Supplier</label>
-                    <input type="text" id="restockSupplier" class="swal2-input" placeholder="Enter supplier name" style="margin: 0; width: 100%;">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Purchase Date *</label>
-                    <input type="date" id="restockDate" class="swal2-input" value="${new Date().toISOString().split('T')[0]}" style="margin: 0; width: 100%;">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Notes</label>
-                    <textarea id="restockNotes" class="swal2-textarea" placeholder="Additional notes..." style="margin: 0; width: 100%;"></textarea>
-                </div>
-            </div>`,
-        focusConfirm: false,
-        showCancelButton: true,
-        confirmButtonText: 'Restock',
-        confirmButtonColor: '#005a32',
-        cancelButtonText: 'Cancel',
-        width: '600px',
-        preConfirm: () => {
-            const quantity = parseInt(document.getElementById('restockQuantity').value);
-            const unitCost = parseFloat(document.getElementById('restockUnitCost').value);
-            const supplier = document.getElementById('restockSupplier').value;
-            const date = document.getElementById('restockDate').value;
-            const notes = document.getElementById('restockNotes').value;
-            if (!quantity || quantity <= 0) { Swal.showValidationMessage('Please enter a valid quantity'); return false; }
-            if (!unitCost || unitCost < 0) { Swal.showValidationMessage('Please enter a valid unit cost'); return false; }
-            if (!date) { Swal.showValidationMessage('Please select a purchase date'); return false; }
-            return { quantity, unitCost, supplier, date, notes };
-        }
-    });
-
-    if (formValues) {
-        suppliesManager.restock(supplyId, formValues.quantity);
-        if (formValues.unitCost !== supply.unitCost) suppliesManager.update(supplyId, { unitCost: formValues.unitCost });
-        const totalCost = (formValues.quantity * formValues.unitCost).toFixed(2);
-        const newQuantity = supply.quantity;
-        await Swal.fire({
-            icon: 'success',
-            title: 'Restocked Successfully!',
-            html: `
-                <div class="text-left">
-                    <p><strong>Medicine:</strong> ${supply.name}</p>
-                    <p><strong>Quantity Added:</strong> ${formValues.quantity} units</p>
-                    <p><strong>New Total:</strong> ${newQuantity} units</p>
-                    <p><strong>Total Cost:</strong> ₱${totalCost}</p>
-                    ${formValues.supplier ? `<p><strong>Supplier:</strong> ${formValues.supplier}</p>` : ''}
-                </div>`,
-            confirmButtonColor: '#005a32'
-        });
-        console.log('Restock data to send to API:', { supplyId, ...formValues, totalCost: formValues.quantity * formValues.unitCost });
-    }
-}
-
-// ══════════════════════════════════════════════════════════
-// UPDATE SUPPLY MODAL
-// ══════════════════════════════════════════════════════════
-async function openUpdateSupplyModal(supplyId) {
-    const supply = suppliesManager.getById(supplyId);
-    if (!supply) return;
-
-    const categories = ['Antibiotics', 'Pain Relief', 'Antihistamine', 'Gastrointestinal', 'Diabetes', 'Cardiovascular'];
-    const categoryOptions = categories.map(cat => `<option value="${cat}" ${cat === supply.category ? 'selected' : ''}>${cat}</option>`).join('');
-
-    const { value: formValues } = await Swal.fire({
-        title: `Update ${supply.name}`,
-        html: `
-            <div class="text-left space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Medicine Name *</label>
-                    <input type="text" id="updateName" class="swal2-input" value="${supply.name}" style="margin: 0; width: 100%;">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category *</label>
-                    <select id="updateCategory" class="swal2-input" style="margin: 0; width: 100%;">${categoryOptions}</select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Quantity in Stock *</label>
-                    <input type="number" id="updateQuantity" class="swal2-input" value="${supply.quantity}" min="0" style="margin: 0; width: 100%;">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Reorder Level *</label>
-                    <input type="number" id="updateReorderLevel" class="swal2-input" value="${supply.reorderLevel}" min="0" style="margin: 0; width: 100%;">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unit Cost (₱) *</label>
-                    <input type="number" id="updateUnitCost" class="swal2-input" value="${supply.unitCost || 0}" step="0.01" min="0" style="margin: 0; width: 100%;">
-                </div>
-            </div>`,
-        focusConfirm: false,
-        showCancelButton: true,
-        confirmButtonText: 'Update',
-        confirmButtonColor: '#005a32',
-        cancelButtonText: 'Cancel',
-        showDenyButton: true,
-        denyButtonText: 'Delete',
-        denyButtonColor: '#d62828',
-        width: '600px',
-        preConfirm: () => {
-            const name = document.getElementById('updateName').value.trim();
-            const category = document.getElementById('updateCategory').value;
-            const quantity = parseInt(document.getElementById('updateQuantity').value);
-            const reorderLevel = parseInt(document.getElementById('updateReorderLevel').value);
-            const unitCost = parseFloat(document.getElementById('updateUnitCost').value);
-            if (!name) { Swal.showValidationMessage('Please enter a medicine name'); return false; }
-            if (quantity < 0) { Swal.showValidationMessage('Quantity cannot be negative'); return false; }
-            if (reorderLevel < 0) { Swal.showValidationMessage('Reorder level cannot be negative'); return false; }
-            if (unitCost < 0) { Swal.showValidationMessage('Unit cost cannot be negative'); return false; }
-            return { name, category, quantity, reorderLevel, unitCost };
-        }
-    }).then((result) => {
-        if (result.isDenied) return { action: 'delete' };
-        if (result.isConfirmed) return { action: 'update', value: result.value };
-        return null;
-    });
-
-    if (formValues?.action === 'delete') {
-        const confirmDelete = await Swal.fire({
-            title: 'Delete Supply?',
-            text: `This will permanently delete ${supply.name} from supplies.`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d62828',
-            confirmButtonText: 'Yes, delete it',
-            cancelButtonText: 'Cancel'
-        });
-        if (confirmDelete.isConfirmed) {
-            suppliesManager.delete(supplyId);
-            Swal.fire({ icon: 'success', title: 'Deleted!', text: `${supply.name} has been removed from supplies.`, confirmButtonColor: '#005a32' });
-        }
-    } else if (formValues?.action === 'update' && formValues.value) {
-        suppliesManager.update(supplyId, formValues.value);
-        Swal.fire({ icon: 'success', title: 'Updated!', text: `${formValues.value.name} has been updated successfully.`, confirmButtonColor: '#005a32' });
-    }
-}
-
-// ══════════════════════════════════════════════════════════
-// ADD SUPPLY MODAL
-// ══════════════════════════════════════════════════════════
-async function openAddSupplyModal() {
-    const categories = ['Antibiotics', 'Pain Relief', 'Antihistamine', 'Gastrointestinal', 'Diabetes', 'Cardiovascular'];
-    const categoryOptions = categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
-
-    const { value: formValues } = await Swal.fire({
-        title: 'Add New Medicine to Supplies',
-        html: `
-            <div class="text-left space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Medicine Name *</label>
-                    <input type="text" id="addName" class="swal2-input" placeholder="e.g., Aspirin 100mg" style="margin: 0; width: 100%;">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category *</label>
-                    <select id="addCategory" class="swal2-input" style="margin: 0; width: 100%;">
-                        <option value="">-- Select Category --</option>
-                        ${categoryOptions}
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Initial Quantity *</label>
-                    <input type="number" id="addQuantity" class="swal2-input" placeholder="0" min="0" value="0" style="margin: 0; width: 100%;">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Reorder Level *</label>
-                    <input type="number" id="addReorderLevel" class="swal2-input" placeholder="e.g., 50" min="1" value="50" style="margin: 0; width: 100%;">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unit Cost (₱) *</label>
-                    <input type="number" id="addUnitCost" class="swal2-input" placeholder="0.00" step="0.01" min="0" value="0" style="margin: 0; width: 100%;">
-                </div>
-            </div>`,
-        focusConfirm: false,
-        showCancelButton: true,
-        confirmButtonText: 'Add Medicine',
-        confirmButtonColor: '#005a32',
-        cancelButtonText: 'Cancel',
-        width: '600px',
-        preConfirm: () => {
-            const name = document.getElementById('addName').value.trim();
-            const category = document.getElementById('addCategory').value;
-            const quantity = parseInt(document.getElementById('addQuantity').value);
-            const reorderLevel = parseInt(document.getElementById('addReorderLevel').value);
-            const unitCost = parseFloat(document.getElementById('addUnitCost').value);
-            if (!name) { Swal.showValidationMessage('Please enter a medicine name'); return false; }
-            if (!category) { Swal.showValidationMessage('Please select a category'); return false; }
-            if (quantity < 0) { Swal.showValidationMessage('Quantity cannot be negative'); return false; }
-            if (reorderLevel <= 0) { Swal.showValidationMessage('Reorder level must be greater than 0'); return false; }
-            if (unitCost < 0) { Swal.showValidationMessage('Unit cost cannot be negative'); return false; }
-            return { name, category, quantity, reorderLevel, unitCost };
-        }
-    });
-
-    if (formValues) {
-        suppliesManager.add(formValues);
-        Swal.fire({ icon: 'success', title: 'Added!', text: `${formValues.name} has been added to supplies.`, confirmButtonColor: '#005a32' });
-        console.log('New supply to send to API:', formValues);
-    }
-}
-
-// ══════════════════════════════════════════════════════════
 // MODULE TAB SWITCHER
 // ══════════════════════════════════════════════════════════
 function switchModuleTab(module) {
@@ -1043,6 +821,59 @@ function switchModuleTab(module) {
     document.getElementById('modulePanelInventory').classList.toggle('hidden', module !== 'inventory');
     document.getElementById('modulePanelSupplies').classList.toggle('hidden', module !== 'supplies');
     if (module === 'supplies') initializeSupplies();
+}
+
+// ── PAGINATION STATE ──
+let summaryPage = 1, summaryRowsPerPage = 10;
+let batchPage   = 1, batchRowsPerPage   = 10;
+let archivePage = 1, archiveRowsPerPage = 10;
+
+function buildPagination(totalItems, currentPage, rowsPerPage, infoId, controlsId, onPageChange) {
+    const totalPages = Math.max(1, Math.ceil(totalItems / rowsPerPage));
+    if (currentPage > totalPages) currentPage = totalPages;
+    const start = totalItems === 0 ? 0 : (currentPage - 1) * rowsPerPage + 1;
+    const end   = Math.min(currentPage * rowsPerPage, totalItems);
+    const info = document.getElementById(infoId);
+    const ctrl = document.getElementById(controlsId);
+    if (!info || !ctrl) return currentPage;
+    info.innerHTML = `<strong>${start}–${end}</strong> of <strong>${totalItems}</strong>`;
+    let btns = '';
+    btns += `<button class="pg-btn" onclick="${onPageChange}(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}><span class="material-icons" style="font-size:16px;">chevron_left</span></button>`;
+    const pages = [];
+    if (totalPages <= 7) { for (let i = 1; i <= totalPages; i++) pages.push(i); }
+    else {
+        pages.push(1);
+        if (currentPage > 3) pages.push('...');
+        for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) pages.push(i);
+        if (currentPage < totalPages - 2) pages.push('...');
+        pages.push(totalPages);
+    }
+    pages.forEach(p => {
+        if (p === '...') btns += `<span class="pg-ellipsis">…</span>`;
+        else btns += `<button class="pg-btn ${p === currentPage ? 'active' : ''}" onclick="${onPageChange}(${p})">${p}</button>`;
+    });
+    btns += `<button class="pg-btn" onclick="${onPageChange}(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}><span class="material-icons" style="font-size:16px;">chevron_right</span></button>`;
+    ctrl.innerHTML = btns;
+    return currentPage;
+}
+
+function goSummaryPage(p) {
+    const panel = document.getElementById('modulePanelInventory');
+    const scrollY = panel ? panel.scrollTop : 0;
+    summaryPage = p; inventoryManager.renderSummary();
+    if (panel) panel.scrollTop = scrollY;
+}
+function goBatchPage(p) {
+    const panel = document.getElementById('modulePanelInventory');
+    const scrollY = panel ? panel.scrollTop : 0;
+    batchPage = p; inventoryManager.renderBatches();
+    if (panel) panel.scrollTop = scrollY;
+}
+function goArchivePage(p) {
+    const panel = document.getElementById('modulePanelInventory');
+    const scrollY = panel ? panel.scrollTop : 0;
+    archivePage = p; inventoryManager.renderArchive();
+    if (panel) panel.scrollTop = scrollY;
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1061,6 +892,29 @@ class InventoryManager {
         const token = this.getToken();
         if (token) await this.fetchInventory();
         else console.warn("No authentication token found.");
+        this.applyNotifRedirectOnLoad();
+    }
+
+    applyNotifRedirectOnLoad() {
+        try {
+            const raw = sessionStorage.getItem('notifRedirect');
+            if (!raw) return;
+            sessionStorage.removeItem('notifRedirect');
+            const { tab, medicine } = JSON.parse(raw);
+            if (tab === 'batch') {
+                setTimeout(() => {
+                    this.viewBatchDetails(medicine);
+                    setTimeout(() => highlightMedicineRow('batchTableBody', medicine), 300);
+                }, 400);
+            } else if (tab === 'summary') {
+                setTimeout(() => {
+                    this.switchTab('summary');
+                    const s = document.getElementById('summarySearch');
+                    if (s) { s.value = medicine; this.renderSummary(); }
+                    setTimeout(() => highlightMedicineRow('summaryTableBody', medicine), 300);
+                }, 400);
+            }
+        } catch(e) {}
     }
 
     loadDarkModePreference() {
@@ -1094,15 +948,13 @@ class InventoryManager {
         const token = this.getToken();
         const options = { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` } };
         if (body) options.body = JSON.stringify(body);
-        try {
-            const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-            const data = await response.json();
-            if (!response.ok) {
-                if (response.status === 401) console.warn("Session expired");
-                throw new Error(data.message || 'API Error');
-            }
-            return data;
-        } catch (error) { console.error("API Fetch Error:", error); return null; }
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+        const data = await response.json();
+        if (!response.ok) {
+            if (response.status === 401) console.warn("Session expired");
+            throw new Error(data.message || `Error ${response.status}`);
+        }
+        return data;
     }
 
     async fetchInventory() {
@@ -1116,18 +968,98 @@ class InventoryManager {
         }
     }
 
+    // ── ARCHIVE BATCH (DB-first: save to database → update UI on success → revert on failure) ──
     async archiveBatch(id) {
-        if (!id || id === 'undefined' || id === 'null') { Swal.fire('Error', 'Could not find Batch ID.', 'error'); return; }
-        const result = await Swal.fire({ title: 'Archive Batch?', text: 'This will move the batch to archive.', icon: 'question', showCancelButton: true, confirmButtonColor: '#005a32', confirmButtonText: 'Yes, archive it' });
-        if (result.isConfirmed) {
-            const res = await this.apiCall(`/api/medicines/${id}`, 'PUT', { status: 'Archived' });
-            if (res) { Swal.fire('Archived', 'Batch moved to archive.', 'success'); this.fetchInventory(); }
+        const r = await Swal.fire({
+            title: 'Archive Batch?',
+            text: 'This batch will be moved to the Archive tab.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#005a32',
+            confirmButtonText: 'Yes, archive it'
+        });
+        if (!r.isConfirmed) return;
+
+        const idx = this.liveInventory.findIndex(i => (i._id || i.id) === id);
+        if (idx === -1) { Swal.fire('Error', 'Item not found.', 'error'); return; }
+
+        // Show loading state
+        Swal.fire({ title: 'Archiving...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+        try {
+            // Save to database FIRST — UI only updates if this succeeds
+            await this.apiCall(`/api/medicines/${id}`, 'PUT', { status: 'Archived' });
+
+            // Move item locally: live → archived
+            const item = { ...this.liveInventory[idx], status: 'Archived' };
+            this.liveInventory.splice(idx, 1);
+            this.archivedInventory.unshift(item);
+            this.renderTables();
+            this.updateDashboardStats();
+
+            await Swal.fire({
+                icon: 'success',
+                title: 'Archived!',
+                text: 'Batch has been moved to the archive.',
+                confirmButtonColor: '#005a32',
+                timer: 1600,
+                showConfirmButton: false
+            });
+
+            // Navigate straight to the Archive tab
+            this.switchTab('archive');
+
+        } catch (e) {
+            Swal.fire('Archive Failed', e.message || 'Unknown error. Check console.', 'error');
+            console.error('archiveBatch error:', e);
         }
     }
 
+    // ── RESTORE BATCH (DB-first: save to database → update UI on success → revert on failure) ──
     async restoreBatch(id) {
-        const result = await Swal.fire({ title: 'Restore Batch?', icon: 'question', showCancelButton: true, confirmButtonColor: '#005a32', confirmButtonText: 'Yes, restore it' });
-        if (result.isConfirmed) { await this.apiCall(`/api/medicines/${id}`, 'PUT', { status: 'In Stock' }); Swal.fire('Restored', 'Batch moved back to active inventory.', 'success'); this.fetchInventory(); }
+        const r = await Swal.fire({
+            title: 'Restore Batch?',
+            text: 'This batch will be moved back to the FEFO (Batch Details) tab.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#005a32',
+            confirmButtonText: 'Yes, restore it'
+        });
+        if (!r.isConfirmed) return;
+
+        const idx = this.archivedInventory.findIndex(i => (i._id || i.id) === id);
+        if (idx === -1) { Swal.fire('Error', 'Item not found.', 'error'); return; }
+
+        // Show loading state
+        Swal.fire({ title: 'Restoring...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+        try {
+            // Save to database FIRST — UI only updates if this succeeds
+            await this.apiCall(`/api/medicines/${id}`, 'PUT', { status: 'In Stock' });
+
+            // Move item locally: archived → live
+            const item = { ...this.archivedInventory[idx], status: 'In Stock' };
+            this.archivedInventory.splice(idx, 1);
+            this.liveInventory.push(item);
+            this.renderTables();
+            this.updateDashboardStats();
+
+            await Swal.fire({
+                icon: 'success',
+                title: 'Restored!',
+                text: 'Batch has been moved back to active inventory.',
+                confirmButtonColor: '#005a32',
+                timer: 1600,
+                showConfirmButton: false
+            });
+
+            // Navigate straight to the Batch Details (FEFO) tab
+            this.switchTab('batch');
+
+        } catch (e) {
+            Swal.fire('Restore Failed', e.message || 'Unknown error. Check console.', 'error');
+            console.error('restoreBatch error:', e);
+        }
     }
 
     async deleteBatch(id) {
@@ -1156,105 +1088,98 @@ class InventoryManager {
     renderSummary() {
         const tbody = document.getElementById('summaryTableBody');
         const search = document.getElementById('summarySearch').value.toLowerCase();
-        const statusFilter = document.getElementById('summaryStatusFilter').value;
+        const sf     = document.getElementById('summaryStatusFilter').value;
         tbody.innerHTML = '';
-
         const summary = {};
         this.liveInventory.forEach(item => {
-            const name = this._getName(item);
-            const price = parseFloat(this._getPrice(item) || 0);
-            const qty = parseInt(item.quantity || 0);
-            const expiry = item.expiryDate || new Date();
-            const isExpired = new Date(expiry) < new Date();
-            if (!summary[name]) summary[name] = { name, batchCount: 0, totalQty: 0, totalValue: 0, earliestExpiry: expiry, minStock: item.minStockLevel || 10 };
+            const name = this._getName(item), price = parseFloat(this._getPrice(item)||0), qty = parseInt(item.quantity||0), isExp = new Date(item.expiryDate) < new Date();
+            if (!summary[name]) summary[name] = { name, batchCount:0, totalQty:0, totalValue:0, earliestExpiry:item.expiryDate, minStock:item.minStockLevel||10 };
             summary[name].batchCount++;
-            if (!isExpired) { summary[name].totalQty += qty; summary[name].totalValue += (qty * price); }
-            if (new Date(expiry) < new Date(summary[name].earliestExpiry)) summary[name].earliestExpiry = expiry;
+            if (!isExp) { summary[name].totalQty += qty; summary[name].totalValue += qty * price; }
+            if (new Date(item.expiryDate) < new Date(summary[name].earliestExpiry)) summary[name].earliestExpiry = item.expiryDate;
         });
-
-        let summaryArray = Object.values(summary);
-        if (search) summaryArray = summaryArray.filter(item => item.name.toLowerCase().includes(search));
-        if (summaryArray.length === 0) { tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-gray-500">No active inventory found.</td></tr>`; return; }
-
-        summaryArray.forEach(item => {
-            let status = 'In Stock', statusClass = 'in-stock';
-            if (item.totalQty === 0) { status = 'Out of Stock'; statusClass = 'out-of-stock'; }
-            else if (item.totalQty <= item.minStock) { status = 'Low Stock'; statusClass = 'low-stock'; }
-            if (statusFilter && status !== statusFilter) return;
-            const avgPrice = item.totalQty > 0 ? (item.totalValue / item.totalQty) : 0;
-            tbody.innerHTML += `
-                <tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                    <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${item.name}</td>
-                    <td class="px-6 py-4 text-gray-500 dark:text-gray-400">${item.batchCount}</td>
-                    <td class="px-6 py-4 font-bold">${item.totalQty}</td>
-                    <td class="px-6 py-4 text-gray-500 dark:text-gray-400">${this.formatDate(item.earliestExpiry)}</td>
-                    <td class="px-6 py-4 text-gray-500 dark:text-gray-400">&#8369;${avgPrice.toFixed(2)}</td>
-                    <td class="px-6 py-4 text-gray-500 dark:text-gray-400">&#8369;${item.totalValue.toFixed(2)}</td>
-                    <td class="px-6 py-4"><span class="status ${statusClass}">${status}</span></td>
-                    <td class="px-6 py-4"><button onclick="inventoryManager.viewBatchDetails('${item.name}')" class="text-primary hover:underline text-sm font-medium">View Batches</button></td>
-                </tr>`;
+        let arr = Object.values(summary);
+        if (search) arr = arr.filter(i => i.name.toLowerCase().includes(search));
+        if (!arr.length) { tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-gray-500">No active inventory found.</td></tr>`; buildPagination(0, 1, summaryRowsPerPage, 'summaryPaginationInfo', 'summaryPaginationControls', 'goSummaryPage'); return; }
+        const filtered = sf ? arr.filter(item => {
+            let status = 'In Stock';
+            if (item.totalQty === 0) status = 'Out of Stock';
+            else if (item.totalQty <= item.minStock) status = 'Low Stock';
+            return status === sf;
+        }) : arr;
+        summaryPage = buildPagination(filtered.length, summaryPage, summaryRowsPerPage, 'summaryPaginationInfo', 'summaryPaginationControls', 'goSummaryPage');
+        const pageItems = filtered.slice((summaryPage - 1) * summaryRowsPerPage, summaryPage * summaryRowsPerPage);
+        pageItems.forEach(item => {
+            let status = 'In Stock', sc = 'in-stock';
+            if (item.totalQty === 0)                { status = 'Out of Stock'; sc = 'out-of-stock'; }
+            else if (item.totalQty <= item.minStock) { status = 'Low Stock';   sc = 'low-stock'; }
+            const avg = item.totalQty > 0 ? item.totalValue / item.totalQty : 0;
+            tbody.innerHTML += `<tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${item.name}</td>
+                <td class="px-6 py-4 text-gray-500">${item.batchCount}</td>
+                <td class="px-6 py-4 font-bold">${item.totalQty}</td>
+                <td class="px-6 py-4 text-gray-500">${this.formatDate(item.earliestExpiry)}</td>
+                <td class="px-6 py-4 text-gray-500">₱${avg.toFixed(2)}</td>
+                <td class="px-6 py-4 text-gray-500">₱${item.totalValue.toFixed(2)}</td>
+                <td class="px-6 py-4"><span class="status ${sc}">${status}</span></td>
+                <td class="px-6 py-4"><button onclick="inventoryManager.viewBatchDetails('${item.name}')" class="text-primary hover:underline text-sm font-medium">View Batches</button></td>
+            </tr>`;
         });
     }
 
     renderBatches() {
-        const tbody = document.getElementById('batchTableBody');
+        const tbody  = document.getElementById('batchTableBody');
         const search = document.getElementById('batchSearch').value.toLowerCase();
         tbody.innerHTML = '';
-        let batches = [...this.liveInventory];
-        batches.sort((a, b) => new Date(a.expiryDate) - new Date(b.expiryDate));
-        if (search) batches = batches.filter(item => { const name = this._getName(item); return name.toLowerCase().includes(search) || (item.batchNumber || '').toLowerCase().includes(search); });
-        if (batches.length === 0) { tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-gray-500">No active batches found.</td></tr>`; return; }
-
-        batches.forEach((item, index) => {
-            const name = this._getName(item);
-            const rawPrice = this._getPrice(item);
-            const expiry = new Date(item.expiryDate);
-            const today = new Date();
-            const daysLeft = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
-            let dateClass = 'text-success', dayText = `${daysLeft} days`, statusLabel = '<span class="status in-stock">Active</span>';
-            if (daysLeft < 0) { dateClass = 'text-secondary font-bold'; dayText = 'EXPIRED'; statusLabel = '<span class="status out-of-stock">Expired</span>'; }
-            else if (daysLeft < 30) { dateClass = 'text-accent font-bold'; }
-            const dispenseOrder = index + 1;
-            const isPriority = dispenseOrder <= 3;
-            tbody.innerHTML += `
-                <tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                    <td class="px-6 py-4"><div class="flex items-center gap-2">
-                        <span class="inline-flex items-center justify-center w-6 h-6 rounded-full ${isPriority ? 'bg-secondary/20 text-secondary' : 'bg-gray-200 text-gray-600'} text-xs font-bold">${dispenseOrder}</span>
-                        ${isPriority ? '<span class="material-icons text-xs text-secondary" title="Expiring Soonest">priority_high</span>' : ''}
-                    </div></td>
-                    <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${name}</td>
-                    <td class="px-6 py-4 text-gray-500 dark:text-gray-400">${item.batchNumber || 'N/A'}</td>
-                    <td class="px-6 py-4 text-text-light dark:text-text-dark font-bold">${item.quantity}</td>
-                    <td class="px-6 py-4 text-gray-500 dark:text-gray-400">${this.formatDate(item.expiryDate)}</td>
-                    <td class="px-6 py-4 ${dateClass}">${dayText}</td>
-                    <td class="px-6 py-4 text-gray-500 dark:text-gray-400">&#8369;${parseFloat(rawPrice || 0).toFixed(2)}</td>
-                    <td class="px-6 py-4 text-gray-500 dark:text-gray-400">${item.supplier || 'Unknown'}</td>
-                    <td class="px-6 py-4">${statusLabel}</td>
-                    <td class="px-6 py-4"><button onclick="inventoryManager.archiveBatch('${item._id || item.id}')" class="text-gray-400 hover:text-accent transition-colors" title="Archive"><span class="material-icons text-sm">archive</span></button></td>
-                </tr>`;
+        let batches = [...this.liveInventory].sort((a,b) => new Date(a.expiryDate)-new Date(b.expiryDate));
+        if (search) batches = batches.filter(i => { const n=this._getName(i); return n.toLowerCase().includes(search)||(i.batchNumber||'').toLowerCase().includes(search); });
+        if (!batches.length) { tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-gray-500">No active batches found.</td></tr>`; buildPagination(0, 1, batchRowsPerPage, 'batchPaginationInfo', 'batchPaginationControls', 'goBatchPage'); return; }
+        batchPage = buildPagination(batches.length, batchPage, batchRowsPerPage, 'batchPaginationInfo', 'batchPaginationControls', 'goBatchPage');
+        const pageItems = batches.slice((batchPage - 1) * batchRowsPerPage, batchPage * batchRowsPerPage);
+        pageItems.forEach((item, index) => {
+            const globalIndex = (batchPage - 1) * batchRowsPerPage + index;
+            const name = this._getName(item), expiry = new Date(item.expiryDate), today = new Date(), daysLeft = Math.ceil((expiry-today)/864e5);
+            let dc='text-success', dt=`${daysLeft} days`, sl='<span class="status in-stock">Active</span>';
+            if (daysLeft<0)       { dc='text-secondary font-bold'; dt='EXPIRED'; sl='<span class="status out-of-stock">Expired</span>'; }
+            else if (daysLeft<30) { dc='text-accent font-bold'; }
+            const isPriority = globalIndex < 3;
+            tbody.innerHTML += `<tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                <td class="px-6 py-4"><div class="flex items-center gap-2">
+                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-full ${isPriority?'bg-secondary/20 text-secondary':'bg-gray-200 text-gray-600'} text-xs font-bold">${globalIndex+1}</span>
+                    ${isPriority?'<span class="material-icons text-xs text-secondary" title="Expiring Soonest">priority_high</span>':''}</div></td>
+                <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${name}</td>
+                <td class="px-6 py-4 text-gray-500">${item.batchNumber||'N/A'}</td>
+                <td class="px-6 py-4 font-bold">${item.quantity}</td>
+                <td class="px-6 py-4 text-gray-500">${this.formatDate(item.expiryDate)}</td>
+                <td class="px-6 py-4 ${dc}">${dt}</td>
+                <td class="px-6 py-4 text-gray-500">₱${parseFloat(this._getPrice(item)||0).toFixed(2)}</td>
+                <td class="px-6 py-4 text-gray-500">${item.supplier||'Unknown'}</td>
+                <td class="px-6 py-4">${sl}</td>
+                <td class="px-6 py-4"><button onclick="inventoryManager.archiveBatch('${item._id||item.id}')" class="text-gray-400 hover:text-accent transition-colors" title="Archive"><span class="material-icons text-sm">archive</span></button></td>
+            </tr>`;
         });
     }
 
     renderArchive() {
-        const tbody = document.getElementById('archiveTableBody');
+        const tbody  = document.getElementById('archiveTableBody');
         const search = document.getElementById('archiveSearch').value.toLowerCase();
         tbody.innerHTML = '';
         let archives = [...this.archivedInventory];
-        if (search) archives = archives.filter(item => this._getName(item).toLowerCase().includes(search));
-        if (archives.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-500">Archive is empty.</td></tr>`; return; }
-        archives.forEach(item => {
-            const name = this._getName(item);
-            tbody.innerHTML += `
-                <tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 opacity-75">
-                    <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${name}</td>
-                    <td class="px-6 py-4 text-gray-500 dark:text-gray-400">${item.batchNumber || 'N/A'}</td>
-                    <td class="px-6 py-4">${item.quantity}</td>
-                    <td class="px-6 py-4 text-gray-500 dark:text-gray-400">${this.formatDate(item.expiryDate)}</td>
-                    <td class="px-6 py-4"><div class="flex items-center gap-2">
-                        <button onclick="inventoryManager.restoreBatch('${item._id}')" class="text-success hover:text-success/80" title="Restore"><span class="material-icons text-sm">restore</span></button>
-                        <button onclick="inventoryManager.deleteBatch('${item._id}')" class="text-secondary hover:text-secondary/80" title="Delete Permanently"><span class="material-icons text-sm">delete_forever</span></button>
-                    </div></td>
-                </tr>`;
+        if (search) archives = archives.filter(i => this._getName(i).toLowerCase().includes(search));
+        if (!archives.length) { tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-500">Archive is empty.</td></tr>`; buildPagination(0, 1, archiveRowsPerPage, 'archivePaginationInfo', 'archivePaginationControls', 'goArchivePage'); return; }
+        archivePage = buildPagination(archives.length, archivePage, archiveRowsPerPage, 'archivePaginationInfo', 'archivePaginationControls', 'goArchivePage');
+        const pageItems = archives.slice((archivePage - 1) * archiveRowsPerPage, archivePage * archiveRowsPerPage);
+        pageItems.forEach(item => {
+            tbody.innerHTML += `<tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 opacity-75">
+                <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${this._getName(item)}</td>
+                <td class="px-6 py-4 text-gray-500">${item.batchNumber||'N/A'}</td>
+                <td class="px-6 py-4">${item.quantity}</td>
+                <td class="px-6 py-4 text-gray-500">${this.formatDate(item.expiryDate)}</td>
+                <td class="px-6 py-4"><div class="flex items-center gap-2">
+                    <button onclick="inventoryManager.restoreBatch('${item._id}')" class="text-success hover:text-success/80" title="Restore"><span class="material-icons text-sm">restore</span></button>
+                    <button onclick="inventoryManager.deleteBatch('${item._id}')" class="text-secondary hover:text-secondary/80" title="Delete Permanently"><span class="material-icons text-sm">delete_forever</span></button>
+                </div></td>
+            </tr>`;
         });
     }
 
@@ -1351,12 +1276,12 @@ document.addEventListener('DOMContentLoaded', () => {
     window.inventoryManager = inventoryManager;
     window.logoutUser = () => inventoryManager.logoutUser();
     window.switchTab = (t) => inventoryManager.switchTab(t);
-    window.searchSummary = () => inventoryManager.renderSummary();
-    window.filterSummaryByStatus = () => inventoryManager.renderSummary();
+    window.searchSummary = () => { summaryPage = 1; inventoryManager.renderSummary(); };
+    window.filterSummaryByStatus = () => { summaryPage = 1; inventoryManager.renderSummary(); };
     window.exportSummaryData = () => inventoryManager.exportSummaryData();
-    window.searchBatch = () => inventoryManager.renderBatches();
+    window.searchBatch = () => { batchPage = 1; inventoryManager.renderBatches(); };
     window.exportBatchData = () => inventoryManager.exportBatchData();
-    window.searchArchive = () => inventoryManager.renderArchive();
+    window.searchArchive = () => { archivePage = 1; inventoryManager.renderArchive(); };
     window.viewBatchDetails = (name) => inventoryManager.viewBatchDetails(name);
 });
 
@@ -1439,12 +1364,46 @@ function handleNotifAction(event, id) {
     const n = notifData.find(n => n.id === id);
     if (!n) return;
     document.getElementById('notificationDropdown').classList.remove('open');
-    if (n.type === 'expiry') { inventoryManager.viewBatchDetails(n.medicineName); }
-    else if (n.type === 'critical' || n.type === 'shortage') {
+
+    if (n.type === 'expiry') {
+        inventoryManager.viewBatchDetails(n.medicineName);
+        setTimeout(() => highlightMedicineRow('batchTableBody', n.medicineName), 300);
+    } else if (n.type === 'critical' || n.type === 'shortage') {
         inventoryManager.switchTab('summary');
-        const summarySearch = document.getElementById('summarySearch');
-        if (summarySearch) { summarySearch.value = n.medicineName; inventoryManager.renderSummary(); }
+        const s = document.getElementById('summarySearch');
+        if (s) { s.value = n.medicineName; summaryPage = 1; inventoryManager.renderSummary(); }
+        setTimeout(() => highlightMedicineRow('summaryTableBody', n.medicineName), 300);
     }
+}
+
+function highlightMedicineRow(tbodyId, medicineName) {
+    const tbody = document.getElementById(tbodyId);
+    if (!tbody) return;
+    const nameLower = medicineName.toLowerCase();
+    let targetRow = null;
+    for (const row of tbody.querySelectorAll('tr')) {
+        const firstCell = row.querySelector('td');
+        if (firstCell && firstCell.textContent.toLowerCase().includes(nameLower)) { targetRow = row; break; }
+    }
+    if (!targetRow) return;
+    if (!document.getElementById('notifHighlightStyle')) {
+        const style = document.createElement('style');
+        style.id = 'notifHighlightStyle';
+        style.textContent = `
+            @keyframes notifRowPulse {
+                0%   { background-color: rgba(245,158,11,0.35); outline: 2px solid #f59e0b; }
+                60%  { background-color: rgba(245,158,11,0.20); outline: 2px solid #f59e0b; }
+                100% { background-color: transparent;           outline: 2px solid transparent; }
+            }
+            .notif-row-highlight { animation: notifRowPulse 2.2s ease-out forwards; border-radius: 6px; }
+        `;
+        document.head.appendChild(style);
+    }
+    targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    targetRow.classList.remove('notif-row-highlight');
+    void targetRow.offsetWidth;
+    targetRow.classList.add('notif-row-highlight');
+    targetRow.addEventListener('animationend', () => targetRow.classList.remove('notif-row-highlight'), { once: true });
 }
 
 function filterNotifTab(btn, filter) {

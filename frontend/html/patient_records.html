@@ -889,32 +889,7 @@ h1, h2, h3 {
                     </div>
                 </div>
 
-                <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-2 border-primary/30 dark:border-primary/40 shadow-sm">
-                    <h3 class="font-semibold text-xl text-primary dark:text-green-400 mb-4 flex items-center gap-2">
-                        <span class="material-icons">bolt</span>
-                        Quick Actions
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <button onclick="dispenseMedication()" class="flex items-center gap-3 p-5 bg-gradient-to-r from-primary to-primary/80 text-white rounded-lg hover:from-primary/90 hover:to-primary/70 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-                            <div class="p-3 bg-white/20 rounded-lg">
-                                <span class="material-icons text-2xl">local_pharmacy</span>
-                            </div>
-                            <div class="text-left">
-                                <p class="font-semibold text-lg">Dispense Medication</p>
-                                <p class="text-sm opacity-90">Process patient prescriptions</p>
-                            </div>
-                        </button>
-                        <button onclick="generateReport()" class="flex items-center gap-3 p-5 bg-gradient-to-r from-secondary to-secondary/80 text-white rounded-lg hover:from-secondary/90 hover:to-secondary/70 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-                            <div class="p-3 bg-white/20 rounded-lg">
-                                <span class="material-icons text-2xl">description</span>
-                            </div>
-                            <div class="text-left">
-                                <p class="font-semibold text-lg">Generate Report</p>
-                                <p class="text-sm opacity-90">Create patient summary</p>
-                            </div>
-                        </button>
-                    </div>
-                </div>
+                
             </main>
         </main>
     </div>
@@ -1093,6 +1068,15 @@ function markAllRead() {
 function handleNotifAction(event, id) {
     event.stopPropagation();
     markNotifRead(id);
+    const n = notifData.find(n => n.id === id);
+    if (!n) return;
+    document.getElementById('notificationDropdown').classList.remove('open');
+
+    if (n.type === 'expiry') {
+        sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'batch', medicine: n.medicineName }));
+    } else if (n.type === 'critical' || n.type === 'shortage') {
+        sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'summary', medicine: n.medicineName }));
+    }
     window.location.href = 'inventory.html';
 }
 
