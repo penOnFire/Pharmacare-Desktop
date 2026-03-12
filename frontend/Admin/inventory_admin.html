@@ -9,6 +9,10 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- ── EXPORT LIBRARIES (matching sales-reports.html) ── -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -171,6 +175,23 @@
         .sidebar-logout-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 16px; border: none; background: none; cursor: pointer; border-radius: 8px; color: #d62828; font-size: 14px; font-weight: 600; transition: background 0.15s; text-align: left; }
         .sidebar-logout-btn:hover { background: #fef2f2; }
         .sidebar-logout-btn .material-icons { font-size: 20px; color: #d62828; }
+
+        /* ── EXPORT DROPDOWN (matching sales-reports.html) ── */
+        .export-options {
+            display: none; position: absolute; top: 100%; right: 0; width: 150px;
+            background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); z-index: 1000; margin-top: 0.5rem;
+        }
+        .dark .export-options { background: #1f2937; border-color: #374151; }
+        .export-option {
+            padding: 0.75rem 1rem; cursor: pointer; border-bottom: 1px solid #f3f4f6;
+            display: flex; align-items: center; gap: 0.5rem; font-size: 14px;
+            color: #374151; transition: background 0.15s;
+        }
+        .dark .export-option { color: #d1d5db; border-color: #374151; }
+        .export-option:hover { background-color: #f9fafb; }
+        .dark .export-option:hover { background-color: #111827; }
+        .export-option:last-child { border-bottom: none; }
     </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
@@ -331,7 +352,19 @@
                                     <option value="Low Stock">Low Stock</option>
                                     <option value="Out of Stock">Out of Stock</option>
                                 </select>
-                                <button onclick="exportSummaryData()" class="border border-primary px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/10 transition-colors text-primary"><span class="material-icons">download</span> Export</button>
+                                <!-- ── SUMMARY EXPORT DROPDOWN ── -->
+                                <div class="relative" id="summaryExportWrap">
+                                    <button id="summaryExportBtn"
+                                        class="border border-primary px-4 py-2 rounded-lg flex items-center gap-1 hover:bg-primary/10 transition-colors text-primary font-semibold text-sm">
+                                        <span class="material-icons text-sm">download</span> Export
+                                        <span class="material-icons text-sm">arrow_drop_down</span>
+                                    </button>
+                                    <div id="summaryExportOptions" class="export-options">
+                                        <div class="export-option" onclick="exportInventoryData('pdf','summary')"><span class="material-icons text-sm">picture_as_pdf</span> PDF</div>
+                                        <div class="export-option" onclick="exportInventoryData('excel','summary')"><span class="material-icons text-sm">table_chart</span> Excel</div>
+                                        <div class="export-option" onclick="exportInventoryData('csv','summary')"><span class="material-icons text-sm">grid_on</span> CSV</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="table-container">
@@ -367,7 +400,19 @@
                             </div>
                             <div class="flex items-center gap-4">
                                 <input id="batchSearch" onkeyup="searchBatch()" class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Search batches..." type="text"/>
-                                <button onclick="exportBatchData()" class="border border-primary px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/10 transition-colors text-primary"><span class="material-icons">download</span> Export</button>
+                                <!-- ── BATCH EXPORT DROPDOWN ── -->
+                                <div class="relative" id="batchExportWrap">
+                                    <button id="batchExportBtn"
+                                        class="border border-primary px-4 py-2 rounded-lg flex items-center gap-1 hover:bg-primary/10 transition-colors text-primary font-semibold text-sm">
+                                        <span class="material-icons text-sm">download</span> Export
+                                        <span class="material-icons text-sm">arrow_drop_down</span>
+                                    </button>
+                                    <div id="batchExportOptions" class="export-options">
+                                        <div class="export-option" onclick="exportInventoryData('pdf','batch')"><span class="material-icons text-sm">picture_as_pdf</span> PDF</div>
+                                        <div class="export-option" onclick="exportInventoryData('excel','batch')"><span class="material-icons text-sm">table_chart</span> Excel</div>
+                                        <div class="export-option" onclick="exportInventoryData('csv','batch')"><span class="material-icons text-sm">grid_on</span> CSV</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="table-container">
@@ -581,6 +626,183 @@ document.getElementById('close-btn').addEventListener('click',()=>{
     Swal.fire({title:'Close Application?',icon:'question',showCancelButton:true,confirmButtonColor:'#005a32',confirmButtonText:'Yes, close'})
     .then(r=>{if(r.isConfirmed){sessionStorage.clear();window.location.href='../html/login.html';}});
 });
+
+// ══════════════════════════════════════════════════════════
+// EXPORT HELPERS  (matching sales-reports.html pattern)
+// ══════════════════════════════════════════════════════════
+
+function formatPeso(amount) {
+    if (isNaN(amount) || amount === null) return '₱0.00';
+    return '₱' + parseFloat(amount).toLocaleString('en-PH', { minimumFractionDigits: 2 });
+}
+
+/**
+ * exportInventoryData(type, source)
+ *   type   — 'pdf' | 'excel' | 'csv'
+ *   source — 'summary' | 'batch'
+ */
+function exportInventoryData(type, source) {
+    // Close the dropdown
+    document.getElementById('summaryExportOptions').style.display = 'none';
+    document.getElementById('batchExportOptions').style.display   = 'none';
+
+    if (!inventoryManager) return Swal.fire('Not Ready', 'Inventory is still loading.', 'warning');
+
+    const timestamp = new Date().toISOString().split('T')[0];
+
+    if (source === 'summary') {
+        // Build full summary data (all pages, not just current page)
+        const today   = new Date();
+        const summary = {};
+        inventoryManager.liveInventory.forEach(item => {
+            const name   = inventoryManager._getName(item);
+            const price  = parseFloat(inventoryManager._getPrice(item) || 0);
+            const qty    = parseInt(item.quantity || 0);
+            const isExp  = new Date(item.expiryDate) < today;
+            if (!summary[name]) summary[name] = { name, batchCount:0, totalQty:0, totalValue:0, earliestExpiry:item.expiryDate, minStock:item.minStockLevel||10 };
+            summary[name].batchCount++;
+            if (!isExp) { summary[name].totalQty += qty; summary[name].totalValue += qty * price; }
+            if (new Date(item.expiryDate) < new Date(summary[name].earliestExpiry)) summary[name].earliestExpiry = item.expiryDate;
+        });
+        const rows = Object.values(summary).map(item => {
+            let status = 'In Stock';
+            if (item.totalQty === 0)              status = 'Out of Stock';
+            else if (item.totalQty <= item.minStock) status = 'Low Stock';
+            const avg = item.totalQty > 0 ? item.totalValue / item.totalQty : 0;
+            return {
+                'Medicine Name':   item.name,
+                'Total Batches':   item.batchCount,
+                'Total Quantity':  item.totalQty,
+                'Earliest Expiry': inventoryManager.formatDate(item.earliestExpiry),
+                'Avg Price':       parseFloat(avg.toFixed(2)),
+                'Total Value':     parseFloat(item.totalValue.toFixed(2)),
+                'Status':          status,
+            };
+        });
+
+        if (!rows.length) return Swal.fire('Empty', 'No inventory data to export.', 'info');
+        const filename = `WellServed_Inventory_Summary_${timestamp}`;
+
+        if (type === 'pdf') {
+            _exportInventoryPDF(filename, 'Medicine Inventory — Total Summary',
+                ['Medicine Name','Total Batches','Total Quantity','Earliest Expiry','Avg Price','Total Value','Status'],
+                rows.map(r => [r['Medicine Name'], r['Total Batches'], r['Total Quantity'], r['Earliest Expiry'], formatPeso(r['Avg Price']), formatPeso(r['Total Value']), r['Status']])
+            );
+        } else {
+            _exportSheet(rows, filename, 'Summary', type);
+        }
+
+    } else if (source === 'batch') {
+        const today   = new Date();
+        const batches = [...inventoryManager.liveInventory].sort((a,b) => new Date(a.expiryDate)-new Date(b.expiryDate));
+        const rows = batches.map((item, i) => {
+            const expiry   = new Date(item.expiryDate);
+            const daysLeft = Math.ceil((expiry - today) / 864e5);
+            return {
+                '#':           i + 1,
+                'Medicine':    inventoryManager._getName(item),
+                'Batch No.':   item.batchNumber || 'N/A',
+                'Quantity':    item.quantity,
+                'Expiry Date': inventoryManager.formatDate(item.expiryDate),
+                'Days Left':   daysLeft < 0 ? 'EXPIRED' : daysLeft,
+                'Price':       parseFloat(parseFloat(inventoryManager._getPrice(item)||0).toFixed(2)),
+                'Supplier':    item.supplier || 'Unknown',
+                'Status':      daysLeft < 0 ? 'Expired' : 'Active',
+            };
+        });
+
+        if (!rows.length) return Swal.fire('Empty', 'No batch data to export.', 'info');
+        const filename = `WellServed_Inventory_Batches_FEFO_${timestamp}`;
+
+        if (type === 'pdf') {
+            _exportInventoryPDF(filename, 'Medicine Inventory — Batch Details (FEFO)',
+                ['#','Medicine','Batch No.','Qty','Expiry','Days Left','Price','Supplier','Status'],
+                rows.map(r => [r['#'], r['Medicine'], r['Batch No.'], r['Quantity'], r['Expiry Date'], r['Days Left'], formatPeso(r['Price']), r['Supplier'], r['Status']])
+            );
+        } else {
+            _exportSheet(rows, filename, 'Batches FEFO', type);
+        }
+    }
+}
+
+function _exportInventoryPDF(filename, title, headers, bodyRows) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape' });
+
+    // Header bar
+    doc.setFillColor(0, 90, 50);
+    doc.rect(0, 0, 297, 20, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(15);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Well Served Pharmacy', 14, 13);
+
+    // Sub-title and meta
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(title, 14, 28);
+    doc.text(`Generated: ${new Date().toLocaleString('en-PH')}`, 14, 34);
+    doc.text(`Total Records: ${bodyRows.length}`, 14, 40);
+
+    doc.autoTable({
+        head:       [headers],
+        body:       bodyRows,
+        startY:     46,
+        theme:      'grid',
+        headStyles: { fillColor: [0, 90, 50], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+        bodyStyles: { fontSize: 8 },
+        alternateRowStyles: { fillColor: [245, 250, 247] },
+        styles: { overflow: 'linebreak', cellPadding: 3 },
+    });
+
+    // Footer
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(150);
+        doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.getWidth() - 30, doc.internal.pageSize.getHeight() - 8);
+    }
+
+    doc.save(`${filename}.pdf`);
+    Swal.fire({ icon:'success', title:'PDF Exported', text:`${filename}.pdf downloaded.`, timer:1800, showConfirmButton:false });
+}
+
+function _exportSheet(rows, filename, sheetName, type) {
+    const ws = XLSX.utils.json_to_sheet(rows);
+    // Auto-size columns
+    const colWidths = Object.keys(rows[0]).map(key => ({ wch: Math.max(key.length, ...rows.map(r => String(r[key]).length)) + 2 }));
+    ws['!cols'] = colWidths;
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+    const ext  = type === 'csv' ? 'csv' : 'xlsx';
+    XLSX.writeFile(wb, `${filename}.${ext}`);
+    Swal.fire({ icon:'success', title:'Exported', text:`${filename}.${ext} downloaded.`, timer:1800, showConfirmButton:false });
+}
+
+// Wire up export dropdown toggles (close others when opening one)
+function _setupExportDropdowns() {
+    [
+        ['summaryExportBtn', 'summaryExportOptions'],
+        ['batchExportBtn',   'batchExportOptions'],
+    ].forEach(([btnId, menuId]) => {
+        const btn  = document.getElementById(btnId);
+        const menu = document.getElementById(menuId);
+        if (!btn || !menu) return;
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = menu.style.display === 'block';
+            // Close all first
+            document.querySelectorAll('.export-options').forEach(m => m.style.display = 'none');
+            menu.style.display = isOpen ? 'none' : 'block';
+        });
+    });
+    // Close all on outside click
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.export-options').forEach(m => m.style.display = 'none');
+    });
+}
 
 // ══════════════════════════════════════════════════════════
 // SUPPLIES MANAGER
@@ -852,15 +1074,14 @@ function handleNotifAction(event, id) {
     const n = notifData.find(n => n.id === id);
     if (!n) return;
     document.getElementById('notificationDropdown').classList.remove('open');
-
     if (n.type === 'expiry') {
         inventoryManager.viewBatchDetails(n.medicineName);
-        setTimeout(() => highlightMedicineRow('batchTableBody', n.medicineName), 300);  // ← added
+        setTimeout(() => highlightMedicineRow('batchTableBody', n.medicineName), 300);
     } else if (n.type === 'critical' || n.type === 'shortage') {
         inventoryManager.switchTab('summary');
         const s = document.getElementById('summarySearch');
-        if (s) { s.value = n.medicineName; summaryPage = 1; inventoryManager.renderSummary(); }  // ← added summaryPage = 1
-        setTimeout(() => highlightMedicineRow('summaryTableBody', n.medicineName), 300);  // ← added
+        if (s) { s.value = n.medicineName; summaryPage = 1; inventoryManager.renderSummary(); }
+        setTimeout(() => highlightMedicineRow('summaryTableBody', n.medicineName), 300);
     }
 }
 
@@ -895,65 +1116,33 @@ function buildPagination(totalItems, currentPage, rowsPerPage, infoId, controlsI
     if (currentPage > totalPages) currentPage = totalPages;
     const start = totalItems === 0 ? 0 : (currentPage - 1) * rowsPerPage + 1;
     const end   = Math.min(currentPage * rowsPerPage, totalItems);
-
     const info = document.getElementById(infoId);
     const ctrl = document.getElementById(controlsId);
     if (!info || !ctrl) return currentPage;
-
     info.innerHTML = `<strong>${start}–${end}</strong> of <strong>${totalItems}</strong>`;
-
     let btns = '';
-    // Prev
     btns += `<button class="pg-btn" onclick="${onPageChange}(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}><span class="material-icons" style="font-size:16px;">chevron_left</span></button>`;
-
-    // Page number buttons (Gmail-style: show a window around current page)
     const pages = [];
-    if (totalPages <= 7) {
-        for (let i = 1; i <= totalPages; i++) pages.push(i);
-    } else {
+    if (totalPages <= 7) { for (let i = 1; i <= totalPages; i++) pages.push(i); }
+    else {
         pages.push(1);
         if (currentPage > 3) pages.push('...');
         for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) pages.push(i);
         if (currentPage < totalPages - 2) pages.push('...');
         pages.push(totalPages);
     }
-
     pages.forEach(p => {
-        if (p === '...') {
-            btns += `<span class="pg-ellipsis">…</span>`;
-        } else {
-            btns += `<button class="pg-btn ${p === currentPage ? 'active' : ''}" onclick="${onPageChange}(${p})">${p}</button>`;
-        }
+        if (p === '...') { btns += `<span class="pg-ellipsis">…</span>`; }
+        else { btns += `<button class="pg-btn ${p === currentPage ? 'active' : ''}" onclick="${onPageChange}(${p})">${p}</button>`; }
     });
-
-    // Next
     btns += `<button class="pg-btn" onclick="${onPageChange}(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}><span class="material-icons" style="font-size:16px;">chevron_right</span></button>`;
-
     ctrl.innerHTML = btns;
     return currentPage;
 }
 
-function goSummaryPage(p) {
-    const panel = document.getElementById('modulePanelInventory');
-    const scrollY = panel ? panel.scrollTop : 0;
-    summaryPage = p;
-    inventoryManager.renderSummary();
-    if (panel) panel.scrollTop = scrollY;
-}
-function goBatchPage(p) {
-    const panel = document.getElementById('modulePanelInventory');
-    const scrollY = panel ? panel.scrollTop : 0;
-    batchPage = p;
-    inventoryManager.renderBatches();
-    if (panel) panel.scrollTop = scrollY;
-}
-function goArchivePage(p) {
-    const panel = document.getElementById('modulePanelInventory');
-    const scrollY = panel ? panel.scrollTop : 0;
-    archivePage = p;
-    inventoryManager.renderArchive();
-    if (panel) panel.scrollTop = scrollY;
-}
+function goSummaryPage(p) { const panel=document.getElementById('modulePanelInventory'); const sy=panel?panel.scrollTop:0; summaryPage=p; inventoryManager.renderSummary(); if(panel)panel.scrollTop=sy; }
+function goBatchPage(p)   { const panel=document.getElementById('modulePanelInventory'); const sy=panel?panel.scrollTop:0; batchPage=p;   inventoryManager.renderBatches(); if(panel)panel.scrollTop=sy; }
+function goArchivePage(p) { const panel=document.getElementById('modulePanelInventory'); const sy=panel?panel.scrollTop:0; archivePage=p; inventoryManager.renderArchive(); if(panel)panel.scrollTop=sy; }
 
 // ══════════════════════════════════════════════════════════
 // INVENTORY MANAGER
@@ -1033,7 +1222,6 @@ class InventoryManager {
         let arr = Object.values(summary);
         if (search) arr = arr.filter(i => i.name.toLowerCase().includes(search));
         if (!arr.length) { tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-gray-500">No active inventory found.</td></tr>`; buildPagination(0, 1, summaryRowsPerPage, 'summaryPaginationInfo', 'summaryPaginationControls', 'goSummaryPage'); return; }
-        // Apply status filter before pagination count
         const filtered = sf ? arr.filter(item => {
             let status = 'In Stock';
             if (item.totalQty === 0) status = 'Out of Stock';
@@ -1114,7 +1302,6 @@ class InventoryManager {
                 <td class="px-6 py-4 text-gray-500">${this.formatDate(item.expiryDate)}</td>
                 <td class="px-6 py-4">
                     <button onclick="inventoryManager.restoreBatch('${itemId}')" class="action-btn restore-btn"><span class="material-icons text-sm">restore</span> Restore</button>
-                    
                 </td>
             </tr>`;
         });
@@ -1172,79 +1359,33 @@ class InventoryManager {
         if (tabName==='archive') this.renderArchive();
     }
 
-    // ── ARCHIVE BATCH (updated: local-first, then auto-navigate to Archive tab) ──
     async archiveBatch(id) {
-        const r = await Swal.fire({
-            title: 'Archive Batch?',
-            text: 'This batch will be moved to the Archive tab.',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#005a32',
-            confirmButtonText: 'Yes, archive it'
-        });
+        const r = await Swal.fire({ title:'Archive Batch?', text:'This batch will be moved to the Archive tab.', icon:'question', showCancelButton:true, confirmButtonColor:'#005a32', confirmButtonText:'Yes, archive it' });
         if (!r.isConfirmed) return;
-
         const idx = this.liveInventory.findIndex(i => (i._id || i.id) === id);
         if (idx === -1) { Swal.fire('Error', 'Item not found.', 'error'); return; }
-
-        // Move item locally: live → archived
         const item = { ...this.liveInventory[idx], status: 'Archived' };
         this.liveInventory.splice(idx, 1);
         this.archivedInventory.unshift(item);
         this.renderTables();
         this.updateDashboardStats();
-
-        // Sync to API silently in the background
         this.apiCall(`/api/inventory/${id}`, 'PATCH', { status: 'Archived' }).catch(() => {});
-
-        await Swal.fire({
-            icon: 'success',
-            title: 'Archived!',
-            text: 'Batch has been moved to the archive.',
-            confirmButtonColor: '#005a32',
-            timer: 1600,
-            showConfirmButton: false
-        });
-
-        // Navigate straight to the Archive tab
+        await Swal.fire({ icon:'success', title:'Archived!', text:'Batch has been moved to the archive.', confirmButtonColor:'#005a32', timer:1600, showConfirmButton:false });
         this.switchTab('archive');
     }
 
-    // ── RESTORE BATCH (updated: local-first, then auto-navigate to FEFO tab) ──
     async restoreBatch(id) {
-        const r = await Swal.fire({
-            title: 'Restore Batch?',
-            text: 'This batch will be moved back to the FEFO (Batch Details) tab.',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#005a32',
-            confirmButtonText: 'Yes, restore it'
-        });
+        const r = await Swal.fire({ title:'Restore Batch?', text:'This batch will be moved back to the FEFO (Batch Details) tab.', icon:'question', showCancelButton:true, confirmButtonColor:'#005a32', confirmButtonText:'Yes, restore it' });
         if (!r.isConfirmed) return;
-
         const idx = this.archivedInventory.findIndex(i => (i._id || i.id) === id);
         if (idx === -1) { Swal.fire('Error', 'Item not found.', 'error'); return; }
-
-        // Move item locally: archived → live
         const item = { ...this.archivedInventory[idx], status: 'In Stock' };
         this.archivedInventory.splice(idx, 1);
         this.liveInventory.push(item);
         this.renderTables();
         this.updateDashboardStats();
-
-        // Sync to API silently in the background
         this.apiCall(`/api/inventory/${id}`, 'PATCH', { status: 'In Stock' }).catch(() => {});
-
-        await Swal.fire({
-            icon: 'success',
-            title: 'Restored!',
-            text: 'Batch has been moved back to active inventory.',
-            confirmButtonColor: '#005a32',
-            timer: 1600,
-            showConfirmButton: false
-        });
-
-        // Navigate straight to the Batch Details (FEFO) tab
+        await Swal.fire({ icon:'success', title:'Restored!', text:'Batch has been moved back to active inventory.', confirmButtonColor:'#005a32', timer:1600, showConfirmButton:false });
         this.switchTab('batch');
     }
 
@@ -1252,9 +1393,6 @@ class InventoryManager {
         const r = await Swal.fire({title:'Delete Permanently?',text:'This cannot be undone!',icon:'warning',showCancelButton:true,confirmButtonColor:'#d62828',confirmButtonText:'Yes, delete it'});
         if (r.isConfirmed) { try { await this.apiCall(`/api/inventory/${id}`,'DELETE'); Swal.fire('Deleted','Record removed.','success'); this.fetchInventory(); } catch(e){ Swal.fire('Error',e.message,'error'); } }
     }
-
-    exportSummaryData() { Swal.fire({ title:'Export Summary', text:'Downloading inventory summary as CSV...', icon:'success', timer:2000, showConfirmButton:false }); }
-    exportBatchData()   { Swal.fire({ title:'Export Batches', text:'Downloading batch details as CSV...', icon:'success', timer:2000, showConfirmButton:false }); }
 
     async openMedicineModal(editId=null) {
         document.getElementById('medicineModal').classList.remove('hidden');
@@ -1354,11 +1492,10 @@ document.addEventListener('DOMContentLoaded', () => {
     window.switchTab             = t  => inventoryManager.switchTab(t);
     window.searchSummary         = () => { summaryPage=1; inventoryManager.renderSummary(); };
     window.filterSummaryByStatus = () => { summaryPage=1; inventoryManager.renderSummary(); };
-    window.exportSummaryData     = () => inventoryManager.exportSummaryData();
     window.searchBatch           = () => { batchPage=1; inventoryManager.renderBatches(); };
-    window.exportBatchData       = () => inventoryManager.exportBatchData();
     window.searchArchive         = () => { archivePage=1; inventoryManager.renderArchive(); };
     window.viewBatchDetails      = n  => inventoryManager.viewBatchDetails(n);
+    window.exportInventoryData   = exportInventoryData;
 
     const btn      = document.getElementById('notificationBtn');
     const dropdown = document.getElementById('notificationDropdown');
@@ -1367,6 +1504,9 @@ document.addEventListener('DOMContentLoaded', () => {
     dropdown.addEventListener('click', e => e.stopPropagation());
     setTimeout(refreshNotifications, 1200);
     setInterval(refreshNotifications, 60000);
+
+    // Wire up export dropdowns
+    _setupExportDropdowns();
 });
 </script>
 <script src="../js/windowcontrollerbtn.js"></script>
