@@ -124,27 +124,52 @@ router.put('/profile', protect, async (req, res) => {
 // @route   POST /api/users
 router.post('/', protect, admin, async (req, res) => {
   try {
-    const { adminPassword, newUserData } = req.body; 
-    const data = newUserData || req.body; 
-    const passwordToCheck = adminPassword || req.body.adminPassword;
+    // Extract data
+    const data = req.body.newUserData || req.body; 
+    const passwordToCheck = req.body.adminPassword || data.adminPassword;
 
-    await verifyAdminPassword(req.user._id, passwordToCheck).catch(() => {
-        throw new Error('Invalid admin password');
-    });
+    if (!passwordToCheck) {
+        return res.status(401).json({ message: 'Admin password is required for confirmation' });
+    }
+
+    // 1. Correctly Verify Admin Password
+    const adminUser = await User.findById(req.user._id);
+    if (!adminUser) return res.status(404).json({ message: 'Admin user not found' });
+    
+    const isMatch = await adminUser.matchPassword(passwordToCheck);
+    if (!isMatch) {
+        return res.status(401).json({ message: 'Incorrect admin password' });
+    }
 
     const { name, email, password, role, status } = data;
-    if (await User.findOne({ email })) return res.status(400).json({ message: 'User exists' });
+    
+    // 2. Validate Role
+    const validRoles = ['admin', 'pharmacist', 'pharmacy assistant'];
+    if (!validRoles.includes(role)) {
+        return res.status(400).json({ message: `Invalid role selected: ${role}` });
+    }
 
+    // 3. Check if email exists
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+        return res.status(400).json({ message: 'User already exists with this email' });
+    }
+
+    // 4. Create User
     const nextId = await getNextSequenceValue('userId');
     const user = await User.create({ 
       userId: formatUserId(nextId),
-      name, email, password, role, 
+      name, 
+      email, 
+      password, 
+      role, 
       status: status || 'active' 
     });
     
     res.status(201).json(user);
   } catch (err) {
-    res.status(err.message === 'Invalid admin password' ? 401 : 500).json({ message: err.message });
+    console.error("User Creation Error:", err);
+    res.status(500).json({ message: err.message || 'Server Error' });
   }
 });
 

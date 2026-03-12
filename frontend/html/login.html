@@ -663,16 +663,20 @@ body {
     });
 
     function redirectUser(role) {
-        if (role === 'admin') {
-// THIS IS CORRECT
-        window.location.href = '../Admin/dashboard_admin.html';
-        } else if (role === 'pharmacist') {
+        // Just to be extra safe, force the role to lowercase so it always matches
+        const safeRole = role ? role.toLowerCase() : '';
+
+        if (safeRole === 'admin') {
+            window.location.href = '../Admin/dashboard_admin.html';
+        } 
+        else if (safeRole === 'pharmacist') {
             window.location.href = 'dashboard.html'; 
         } 
-        else if (role === 'pharmacy_assistant') {
-        window.location.href = '../assistant/dashboard_pharmasst.html'; // 👈 add this
-    } 
+        else if (safeRole === 'pharmacy assistant') { // 🔥 Replaced underscore with a space!
+            window.location.href = '../assistant/dashboard_pharmasst.html'; 
+        } 
         else {
+            console.warn("Unknown role detected:", role);
             window.location.href = '../html/index.html'; 
         }
     }

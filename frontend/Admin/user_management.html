@@ -340,7 +340,7 @@
                     <div class="form-group"><label>Email</label><input type="email" id="addEmail" placeholder="employee@wellserved.com" required></div>
                     <div class="grid grid-cols-2 gap-4">
                         <!-- ── CHANGE 1: Added Pharmacy Assistant option to Add User role dropdown ── -->
-                        <div class="form-group"><label>Role</label><select id="addRole" required><option value="pharmacist">Pharmacist</option><option value="admin">Admin</option><option value="pharmacy_assistant">Pharmacy Assistant</option></select></div>
+                        <div class="form-group"><label>Role</label><select id="addRole" required><option value="pharmacist">Pharmacist</option><option value="admin">Admin</option><option value="pharmacy assistant">Pharmacy Assistant</option></select></div>
                         <div class="form-group"><label>Status</label><select id="addStatus" required><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
                     </div>
                     <div class="form-group"><label>Default Password</label><input type="password" id="addPassword" value="WellServed123" required><p class="text-xs text-subtext-light mt-1">Default: WellServed123</p></div>
@@ -365,7 +365,7 @@
                     <div class="form-group"><label>Email</label><input type="email" id="editEmail" required></div>
                     <div class="grid grid-cols-2 gap-4">
                         <!-- ── CHANGE 2: Added Pharmacy Assistant option to Edit User role dropdown ── -->
-                        <div class="form-group"><label>Role</label><select id="editRole" required><option value="pharmacist">Pharmacist</option><option value="admin">Admin</option><option value="pharmacy_assistant">Pharmacy Assistant</option></select></div>
+                        <div class="form-group"><label>Role</label><select id="editRole" required><option value="pharmacist">Pharmacist</option><option value="admin">Admin</option><option value="pharmacy assistant">Pharmacy Assistant</option></select></div>
                         <div class="form-group"><label>Status</label><select id="editStatus" required><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
                     </div>
                     <div class="form-group"><label>Reset Password (Optional)</label><input type="password" id="editPassword" placeholder="Leave blank to keep current"></div>
@@ -671,12 +671,8 @@
 
         // ── CHANGE 3: Added formatRole() helper to display readable role labels in the table ──
         formatRole(role) {
-            const labels = {
-                admin: 'Admin',
-                pharmacist: 'Pharmacist',
-                pharmacy_assistant: 'Pharmacy Assistant'
-            };
-            return labels[role] || role;
+            // The database now stores exactly 'Admin', 'Pharmacist', or 'Pharmacy Assistant'
+            return role;
         }
 
         renderUserTable(users) {
@@ -746,7 +742,7 @@
         updateStats() {
             document.getElementById('totalUsers').textContent  = this.users.length;
             // ── CHANGE 4: Active count now includes pharmacy_assistant alongside pharmacist ──
-            document.getElementById('activeUsers').textContent = this.users.filter(u => u.status === 'active' && (u.role === 'pharmacist' || u.role === 'pharmacy_assistant')).length;
+            document.getElementById('activeUsers').textContent = this.users.filter(u => u.status === 'active' && (u.role === 'pharmacist' || u.role === 'pharmacy assistant')).length;
             document.getElementById('adminUsers').textContent  = this.users.filter(u => u.role === 'admin').length;
         }
 
@@ -776,21 +772,41 @@
         async handleAdminConfirm() {
             const password = document.getElementById('adminPasswordConfirm').value;
             if (!password) { document.getElementById('adminPasswordError').textContent = 'Password required'; return; }
+            
+            // Clear previous errors
+            document.getElementById('adminPasswordError').textContent = '';
+            
             try {
                 if (this.actionInProgress === 'create') {
-                    const userData = { name: document.getElementById('addName').value, email: document.getElementById('addEmail').value, role: document.getElementById('addRole').value, status: document.getElementById('addStatus').value, password: document.getElementById('addPassword').value };
+                    const userData = { 
+                        name: document.getElementById('addName').value, 
+                        email: document.getElementById('addEmail').value, 
+                        role: document.getElementById('addRole').value, 
+                        status: document.getElementById('addStatus').value, 
+                        password: document.getElementById('addPassword').value 
+                    };
                     await this.apiCall('POST', '/api/users', { ...userData, adminPassword: password });
                     this.showToast('User created successfully!', 'success');
                 } else if (this.actionInProgress === 'update') {
-                    const userData = { name: document.getElementById('editUsername').value, email: document.getElementById('editEmail').value, role: document.getElementById('editRole').value, status: document.getElementById('editStatus').value, password: document.getElementById('editPassword').value || undefined };
+                    const userData = { 
+                        name: document.getElementById('editUsername').value, 
+                        email: document.getElementById('editEmail').value, 
+                        role: document.getElementById('editRole').value, 
+                        status: document.getElementById('editStatus').value, 
+                        password: document.getElementById('editPassword').value || undefined 
+                    };
                     await this.apiCall('PUT', `/api/users/${this.targetUserId}`, { ...userData, adminPassword: password });
                     this.showToast('User updated successfully!', 'success');
                 } else if (this.actionInProgress === 'delete') {
                     await this.apiCall('DELETE', `/api/users/${this.targetUserId}`, { adminPassword: password });
                     this.showToast('User deleted.', 'success');
                 }
-                this.closeAllModals(); this.fetchUsers();
-            } catch (error) { document.getElementById('adminPasswordError').textContent = 'Incorrect Password'; }
+                this.closeAllModals(); 
+                this.fetchUsers();
+            } catch (error) { 
+                // 🔥 FIX: Show the REAL error message instead of hiding it!
+                document.getElementById('adminPasswordError').textContent = error.message || 'An error occurred'; 
+            }
         }
 
         handleSearch(e) {
