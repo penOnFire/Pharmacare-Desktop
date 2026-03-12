@@ -534,14 +534,15 @@
     }
 
     function markNotifRead(id) {
-        const n = notifData.find(n => n.id === id);
-        if (n) { n.unread = false; renderNotifications(); }
-    }
+    const n = notifData.find(n => n.id === id);
+    if (n) { n.unread = false; saveReadNotifId(id); renderNotifications(); }
+}
 
-    function markAllRead() {
-        notifData.forEach(n => n.unread = false);
-        renderNotifications();
-    }
+function markAllRead() {
+    notifData.forEach(n => n.unread = false);
+    saveAllReadNotifIds();
+    renderNotifications();
+}
 
     function handleNotifAction(event, id) {
     event.stopPropagation();
@@ -565,29 +566,45 @@
         renderNotifications();
     }
 
-    async function refreshNotifications() {
-        const token = getNotifToken();
-        if (!token) return;
-        try {
-            const res = await fetch(`${API_BASE_URL}/api/inventory`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const raw       = await res.json();
-            const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
-            const previouslyRead = new Set(notifData.filter(n => !n.unread).map(n => n.id));
-            notifData = generateAlertsFromInventory(inventory).slice(0, 15);
-            notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
-            renderNotifications();
-        } catch (e) {
-            console.warn('Notification fetch failed:', e);
-            if (!notifData.length) {
-                const list = document.getElementById('notifList');
-                if (list) list.innerHTML = `<div class="notif-empty"><span class="material-icons">cloud_off</span><p>Could not load alerts.</p></div>`;
-            }
+    function getReadNotifIds() {
+    try { return new Set(JSON.parse(sessionStorage.getItem('readNotifIds') || '[]')); }
+    catch(e) { return new Set(); }
+}
+
+function saveReadNotifId(id) {
+    const ids = getReadNotifIds();
+    ids.add(id);
+    sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
+}
+
+function saveAllReadNotifIds() {
+    const ids = getReadNotifIds();
+    notifData.forEach(n => ids.add(n.id));
+    sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
+}
+
+async function refreshNotifications() {
+    const token = getNotifToken();
+    if (!token) return;
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/inventory`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const raw       = await res.json();
+        const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
+        const readIds = getReadNotifIds();
+        notifData = generateAlertsFromInventory(inventory).slice(0, 15);
+        notifData.forEach(n => { if (readIds.has(n.id)) n.unread = false; });
+        renderNotifications();
+    } catch (e) {
+        console.warn('Notification fetch failed:', e);
+        if (!notifData.length) {
+            const list = document.getElementById('notifList');
+            if (list) list.innerHTML = `<div class="notif-empty"><span class="material-icons">cloud_off</span><p>Could not load alerts.</p></div>`;
         }
     }
-
+}
     let billingPage = 1, billingRowsPerPage = 10;
 
 function buildBillingPagination(totalItems, currentPage, rowsPerPage) {
@@ -799,25 +816,42 @@ function goBillingPage(p) {
             }).join('');
         }
 
-        handleSearch(val) {
-            billingPage = 1;
-            const lower = val.toLowerCase();
-            const filtered = this.salesData.filter(s =>
-                (s.patientName && s.patientName.toLowerCase().includes(lower)) ||
-                s._id.includes(lower) ||
-                s.items.some(i => i.name.toLowerCase().includes(lower))
-            );
-            this.renderTable(filtered);
-        }
+        getItemName(item) {
+    if (item.name && item.name !== 'Unknown') return item.name;
+    if (item.medicine && item.medicine.name) return item.medicine.name;
+    return '';
+}
 
-        handleFilter(status) {
-            billingPage = 1;
-            if(status === 'all') this.renderTable(this.salesData);
-            else {
-                const filtered = this.salesData.filter(s => s.paymentStatus === status);
-                this.renderTable(filtered);
-            }
-        }
+applyFilters() {
+    billingPage = 1;
+    const searchVal = (document.getElementById('tableSearchInput')?.value || '').toLowerCase();
+    const statusVal = document.getElementById('statusFilter')?.value || 'all';
+
+    let filtered = this.salesData;
+
+    if (searchVal) {
+        filtered = filtered.filter(s =>
+            (s.patientName && s.patientName.toLowerCase().includes(searchVal)) ||
+            (s._id && s._id.toLowerCase().includes(searchVal)) ||
+            (s.items && s.items.some(i => this.getItemName(i).toLowerCase().includes(searchVal)))
+        );
+    }
+
+    if (statusVal !== 'all') {
+        filtered = filtered.filter(s => (s.paymentStatus || 'Pending') === statusVal);
+    }
+
+    this.renderTable(filtered);
+}
+
+        handleSearch(val) {
+    this.applyFilters();
+}
+
+        // AFTER
+handleFilter(status) {
+    this.applyFilters();
+}
 
         viewDetails(id) {
             const sale = this.salesData.find(s => s._id === id);
