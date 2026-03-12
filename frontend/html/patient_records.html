@@ -815,13 +815,13 @@ h1, h2, h3 {
                                     class="w-full bg-background-light dark:bg-background-dark border-2 border-primary/30 dark:border-primary/40 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-text-light dark:text-text-dark" 
                                     placeholder="Search by patient name or ID..." 
                                     type="text"
-                                    oninput="filterPatients()"
+                                   
                                 />
                             </div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium mb-2 text-primary dark:text-green-400">Status</label>
-                            <select id="statusFilter" onchange="filterPatients()" class="w-full bg-background-light dark:bg-background-dark border-2 border-primary/30 dark:border-primary/40 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-text-light dark:text-text-dark">
+                            <select id="statusFilter"  class="w-full bg-background-light dark:bg-background-dark border-2 border-primary/30 dark:border-primary/40 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-text-light dark:text-text-dark">
                                 <option value="all">All Status</option>
                                 <option value="pending">Pending</option>
                                 <option value="active">Active</option>
@@ -830,7 +830,7 @@ h1, h2, h3 {
                         </div>
                         <div>
                             <label class="block text-sm font-medium mb-2 text-primary dark:text-green-400">Date Range</label>
-                            <select id="dateFilter" onchange="filterPatients()" class="w-full bg-background-light dark:bg-background-dark border-2 border-primary/30 dark:border-primary/40 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-text-light dark:text-text-dark">
+                            <select id="dateFilter"  class="w-full bg-background-light dark:bg-background-dark border-2 border-primary/30 dark:border-primary/40 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-text-light dark:text-text-dark">
                                 <option value="all">All Dates</option>
                                 <option value="today">Today</option>
                                 <option value="week">This Week</option>
@@ -1057,11 +1057,12 @@ function updateNotifBadge() {
 
 function markNotifRead(id) {
     const n = notifData.find(n => n.id === id);
-    if (n) { n.unread = false; renderNotifications(); }
+    if (n) { n.unread = false; saveReadNotifId(id); renderNotifications(); }
 }
 
 function markAllRead() {
     notifData.forEach(n => n.unread = false);
+    saveAllReadNotifIds();
     renderNotifications();
 }
 
@@ -1087,6 +1088,23 @@ function filterNotifTab(btn, filter) {
     renderNotifications();
 }
 
+function getReadNotifIds() {
+    try { return new Set(JSON.parse(sessionStorage.getItem('readNotifIds') || '[]')); }
+    catch(e) { return new Set(); }
+}
+
+function saveReadNotifId(id) {
+    const ids = getReadNotifIds();
+    ids.add(id);
+    sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
+}
+
+function saveAllReadNotifIds() {
+    const ids = getReadNotifIds();
+    notifData.forEach(n => ids.add(n.id));
+    sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
+}
+
 async function refreshNotifications() {
     const token = getNotifToken();
     if (!token) return;
@@ -1097,9 +1115,9 @@ async function refreshNotifications() {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const raw       = await res.json();
         const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
-        const previouslyRead = new Set(notifData.filter(n => !n.unread).map(n => n.id));
+        const readIds = getReadNotifIds();
         notifData = generateAlertsFromInventory(inventory).slice(0, 15);
-        notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
+        notifData.forEach(n => { if (readIds.has(n.id)) n.unread = false; });
         renderNotifications();
     } catch (e) {
         console.warn('Notification fetch failed:', e);
@@ -1191,32 +1209,82 @@ class PatientManager {
         return data;
     }
 
-    async fetchPatients() {
-        const token = this.getToken();
-        if (!token) return;
+    // AFTER
+async fetchPatients() {
+    const token = this.getToken();
+    if (!token) return;
 
-        const searchInput = document.getElementById('patientSearch');
-        const statusSelect = document.getElementById('statusFilter');
-        const dateSelect = document.getElementById('dateFilter');
+    const searchTerm = (document.getElementById('patientSearch')?.value || '').toLowerCase().trim();
+    const statusTerm = document.getElementById('statusFilter')?.value || 'all';
+    const dateTerm   = document.getElementById('dateFilter')?.value  || 'all';
 
-        const searchTerm = searchInput ? searchInput.value : '';
-        const statusTerm = statusSelect ? statusSelect.value : 'all';
-        const dateTerm = dateSelect ? dateSelect.value : 'all';
-        
-        const params = new URLSearchParams();
-        if (searchTerm) params.append('search', searchTerm);
-        if (statusTerm !== 'all') params.append('status', statusTerm);
-        if (dateTerm !== 'all') params.append('date', dateTerm);
+    const params = new URLSearchParams();
+    if (searchTerm)           params.append('search', searchTerm);
+    if (statusTerm !== 'all') params.append('status', statusTerm);
+    if (dateTerm   !== 'all') params.append('date',   dateTerm);
 
+    try {
         const url = `/api/patients?${params.toString()}`;
+        const allPatients = await this.apiCall('GET', url, token);
 
-        try {
-            this.livePatients = await this.apiCall('GET', url, token);
-            this.updatePatientDisplay(this.livePatients);
-        } catch (error) {
-            console.error(error);
+        // Client-side safety net in case the API ignores some params
+        let filtered = Array.isArray(allPatients) ? allPatients : [];
+
+        if (searchTerm) {
+            filtered = filtered.filter(p =>
+                (p.name       && p.name.toLowerCase().includes(searchTerm)) ||
+                (p.patientId  && p.patientId.toLowerCase().includes(searchTerm))
+            );
         }
+
+        if (statusTerm !== 'all') {
+            filtered = filtered.filter(p =>
+                (p.status || '').toLowerCase() === statusTerm.toLowerCase()
+            );
+        }
+
+        if (dateTerm !== 'all') {
+    const now   = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+    const todayEnd   = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+
+    filtered = filtered.filter(p => {
+        if (!p.consultationDate) return false;
+        const d = new Date(p.consultationDate);
+        if (isNaN(d.getTime())) return false;
+
+        if (dateTerm === 'today') {
+            return d >= todayStart && d <= todayEnd;
+        }
+        if (dateTerm === 'week') {
+            const weekStart = new Date(todayStart);
+            weekStart.setDate(todayStart.getDate() - 7);
+            return d >= weekStart && d <= todayEnd;
+        }
+        if (dateTerm === 'month') {
+            const monthStart = new Date(todayStart);
+            monthStart.setDate(todayStart.getDate() - 30);
+            return d >= monthStart && d <= todayEnd;
+        }
+        if (dateTerm === 'last-year') {
+            const yearStart = new Date(todayStart);
+            yearStart.setFullYear(todayStart.getFullYear() - 1);
+            yearStart.setMonth(0); yearStart.setDate(1); yearStart.setHours(0,0,0,0);
+            const yearEnd = new Date(todayStart);
+            yearEnd.setFullYear(todayStart.getFullYear() - 1);
+            yearEnd.setMonth(11); yearEnd.setDate(31); yearEnd.setHours(23,59,59,999);
+            return d >= yearStart && d <= yearEnd;
+        }
+        return true;
+    });
+}
+
+        this.livePatients = filtered;
+        this.updatePatientDisplay(filtered);
+    } catch (error) {
+        console.error('fetchPatients error:', error);
     }
+}
     
     async dispenseMedication(patientId) {
         const token = this.getToken();

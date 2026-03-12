@@ -204,8 +204,8 @@
             <div class="flex items-center gap-3">
                 <span class="material-icons text-primary">shopping_cart</span>
                 <div>
-                    <h2 class="font-bold text-text-light dark:text-text-dark leading-tight">New Transaction</h2>
-                    <p class="text-xs text-subtext-light dark:text-subtext-dark">Select items and proceed to payment</p>
+                    <h2 class="font-bold text-text-light dark:text-text-dark leading-tight">Dispense Medicine</h2>
+                    <p class="text-xs text-subtext-light dark:text-subtext-dark">Select items to dispense</p>
                 </div>
             </div>
 
@@ -327,7 +327,7 @@
                                 </div>
                             </div>
 
-                            <!-- Order Summary & Payment -->
+                            <!-- Order Summary & Dispense -->
                             <div class="p-5 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700 space-y-4">
                                 <div class="space-y-2">
                                     <div class="flex justify-between text-sm">
@@ -344,22 +344,10 @@
                                     </div>
                                 </div>
 
-                                
-
                                 <div class="space-y-3">
-                                    <div class="relative">
-                                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₱</span>
-                                        <input id="amountReceived" oninput="calcChange()" type="number"
-                                            class="w-full pl-8 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-teal-500 focus:border-teal-500 text-sm font-semibold"
-                                            placeholder="Enter Amount Received"/>
-                                    </div>
-                                    <div class="flex justify-between items-center text-xs font-medium px-1">
-                                        <span class="text-slate-500">Change Due:</span>
-                                        <span id="changeDue" class="text-teal-600 font-bold">₱0.00</span>
-                                    </div>
-                                    <button onclick="processPayment()"
+                                    <button onclick="processDispense()"
                                         class="w-full py-4 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-teal-500/20 transition-all active:scale-[0.98] transform flex items-center justify-center gap-2">
-                                        <span id="payBtnText">Dispense ₱0.00</span>
+                                        <span id="dispenseBtnText">Dispense Medicine</span>
                                         <span class="material-icons-round">arrow_forward</span>
                                     </button>
                                 </div>
@@ -496,10 +484,35 @@
         if (pill)  pill.textContent = count > 0 ? `${count} new` : 'All clear';
     }
 
-    function markNotifRead(id) { const n = notifData.find(n => n.id === id); if (n) { n.unread = false; renderNotifications(); } }
-    function markAllRead() { notifData.forEach(n => n.unread = false); renderNotifications(); }
-    function handleNotifAction(event, id) { event.stopPropagation(); markNotifRead(id); window.location.href = 'inventory.html'; }
+    function getReadNotifIds() {
+    try { return new Set(JSON.parse(sessionStorage.getItem('readNotifIds') || '[]')); }
+    catch(e) { return new Set(); }
+}
 
+function saveReadNotifId(id) {
+    const ids = getReadNotifIds();
+    ids.add(id);
+    sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
+}
+
+function saveAllReadNotifIds() {
+    const ids = getReadNotifIds();
+    notifData.forEach(n => ids.add(n.id));
+    sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
+}
+
+function markNotifRead(id) {
+    const n = notifData.find(n => n.id === id);
+    if (n) { n.unread = false; saveReadNotifId(id); renderNotifications(); }
+}
+
+function markAllRead() {
+    notifData.forEach(n => n.unread = false);
+    saveAllReadNotifIds();
+    renderNotifications();
+}
+
+function handleNotifAction(event, id) { event.stopPropagation(); markNotifRead(id); window.location.href = 'inventory.html'; }
     function filterNotifTab(btn, filter) {
         document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
@@ -507,26 +520,27 @@
         renderNotifications();
     }
 
-    async function refreshNotifications() {
-        const token = getNotifToken();
-        if (!token) return;
-        try {
-            const res = await fetch(`${API_BASE_URL}/api/inventory`, { headers: { 'Authorization': `Bearer ${token}` } });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const raw       = await res.json();
-            const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
-            const previouslyRead = new Set(notifData.filter(n => !n.unread).map(n => n.id));
-            notifData = generateAlertsFromInventory(inventory).slice(0, 15);
-            notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
-            renderNotifications();
-        } catch (e) {
-            console.warn('Notification fetch failed:', e);
-            if (!notifData.length) {
-                const list = document.getElementById('notifList');
-                if (list) list.innerHTML = `<div class="notif-empty"><span class="material-icons">cloud_off</span><p>Could not load alerts.</p></div>`;
-            }
+    // AFTER
+async function refreshNotifications() {
+    const token = getNotifToken();
+    if (!token) return;
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/inventory`, { headers: { 'Authorization': `Bearer ${token}` } });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const raw       = await res.json();
+        const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
+        const readIds = getReadNotifIds();
+        notifData = generateAlertsFromInventory(inventory).slice(0, 15);
+        notifData.forEach(n => { if (readIds.has(n.id)) n.unread = false; });
+        renderNotifications();
+    } catch (e) {
+        console.warn('Notification fetch failed:', e);
+        if (!notifData.length) {
+            const list = document.getElementById('notifList');
+            if (list) list.innerHTML = `<div class="notif-empty"><span class="material-icons">cloud_off</span><p>Could not load alerts.</p></div>`;
         }
     }
+}
 
     // ── AUTH & API CALL ──
     function getToken() {
@@ -564,7 +578,6 @@
     let products = [];
     let cart = {};
     let activeCategory = 'all';
-    let activePayment = 'cash';
 
     const catColors = {
         blue:   { bg: 'bg-blue-50 dark:bg-blue-900/30',     text: 'text-blue-600 dark:text-blue-400' },
@@ -776,44 +789,27 @@
         const subtotal = Object.values(cart).reduce((s, i) => s + i.product.price * i.qty, 0);
         document.getElementById('subtotal').textContent = `₱${subtotal.toFixed(2)}`;
         document.getElementById('totalAmount').textContent = `₱${subtotal.toFixed(2)}`;
-        document.getElementById('payBtnText').textContent = `Pay ₱${subtotal.toFixed(2)}`;
-        calcChange();
+        document.getElementById('dispenseBtnText').textContent = `Dispense Medicine`;
     }
 
-    function calcChange() {
-        const subtotal = Object.values(cart).reduce((s, i) => s + i.product.price * i.qty, 0);
-        const received = parseFloat(document.getElementById('amountReceived').value) || 0;
-        const change = Math.max(0, received - subtotal);
-        document.getElementById('changeDue').textContent = `₱${change.toFixed(2)}`;
-    }
-
-    // ── PAYMENT ──
-    function setPayment(btn, method) {
-        activePayment = method;
-        document.querySelectorAll('.payment-btn').forEach(b => {
-            b.className = 'payment-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-transparent bg-white dark:bg-slate-800 text-slate-400 hover:border-slate-200 transition-all';
-        });
-        btn.className = 'payment-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-teal-600 bg-teal-50 dark:bg-teal-900/20 text-teal-600 transition-all';
-    }
-
-    async function processPayment() {
+    // ── DISPENSE MEDICINE (No payment processing) ──
+    async function processDispense() {
         const items = Object.values(cart);
-        if (!items.length) { Swal.fire({ icon: 'warning', title: 'Empty Cart', text: 'Please add items to proceed.' }); return; }
-
-        const subtotal = items.reduce((s, i) => s + i.product.price * i.qty, 0);
-        const received = parseFloat(document.getElementById('amountReceived').value) || 0;
-
-        if (activePayment === 'cash' && received < subtotal) {
-            Swal.fire({ icon: 'error', title: 'Insufficient Amount', text: `Please enter at least ₱${subtotal.toFixed(2)}.` });
-            return;
+        if (!items.length) { 
+            Swal.fire({ 
+                icon: 'warning', 
+                title: 'Empty Order', 
+                text: 'Please add items to dispense.' 
+            }); 
+            return; 
         }
 
-        const change = Math.max(0, received - subtotal);
+        const subtotal = items.reduce((s, i) => s + i.product.price * i.qty, 0);
 
         const payload = {
             items: items.map(i => ({ medicineId: i.product.id, quantity: i.qty })),
-            paymentMethod: activePayment,
-            amountReceived: received
+            paymentMethod: 'dispense', // Changed to 'dispense' to indicate this is a dispensing transaction
+            amountReceived: subtotal // Automatically set to the total amount
         };
 
         const res = await apiCall('/api/sales/otc', 'POST', payload);
@@ -821,15 +817,13 @@
         if (res) {
             Swal.fire({
                 icon: 'success',
-                title: 'Transaction Successful!',
+                title: 'Dispensed Successfully!',
                 html: `<p class="text-lg font-bold text-teal-600">Total: ₱${subtotal.toFixed(2)}</p>
-                       ${activePayment === 'cash' ? `<p class="text-sm text-gray-500 mt-1">Change: ₱${change.toFixed(2)}</p>` : ''}
-                       <p class="text-xs text-gray-400 mt-2">Walk-in Payment via ${activePayment.charAt(0).toUpperCase() + activePayment.slice(1)}</p>`,
+                       <p class="text-sm text-gray-500 mt-1">Medicine has been dispensed</p>`,
                 confirmButtonColor: '#005a32',
-                confirmButtonText: 'New Transaction'
+                confirmButtonText: 'New Dispense'
             }).then(() => {
                 cart = {};
-                document.getElementById('amountReceived').value = '';
                 updateUI();
                 loadInventory();
             });

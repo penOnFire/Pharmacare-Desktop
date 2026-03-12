@@ -414,8 +414,33 @@
         if (pill)  pill.textContent = count > 0 ? `${count} new` : 'All clear';
     }
 
-    function markNotifRead(id) { const n = notifData.find(n => n.id === id); if (n) { n.unread = false; renderNotifications(); } }
-    function markAllRead()     { notifData.forEach(n => n.unread = false); renderNotifications(); }
+    function getReadNotifIds() {
+    try { return new Set(JSON.parse(sessionStorage.getItem('readNotifIds') || '[]')); }
+    catch(e) { return new Set(); }
+}
+
+function saveReadNotifId(id) {
+    const ids = getReadNotifIds();
+    ids.add(id);
+    sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
+}
+
+function saveAllReadNotifIds() {
+    const ids = getReadNotifIds();
+    notifData.forEach(n => ids.add(n.id));
+    sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
+}
+
+function markNotifRead(id) {
+    const n = notifData.find(n => n.id === id);
+    if (n) { n.unread = false; saveReadNotifId(id); renderNotifications(); }
+}
+
+function markAllRead() {
+    notifData.forEach(n => n.unread = false);
+    saveAllReadNotifIds();
+    renderNotifications();
+}
 
     function handleNotifAction(event, id) {
         event.stopPropagation(); markNotifRead(id);
@@ -431,21 +456,21 @@
     }
 
     async function refreshNotifications() {
-        const token = getToken(); if (!token) return;
-        try {
-            const res = await fetch(`${API_BASE_URL}/api/inventory`, { headers: { 'Authorization': `Bearer ${token}` } });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const raw = await res.json();
-            const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
-            const previouslyRead = new Set(notifData.filter(n => !n.unread).map(n => n.id));
-            notifData = generateAlertsFromInventory(inventory).slice(0, 15);
-            notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
-            renderNotifications();
-        } catch(e) {
-            console.warn('Notification fetch failed:', e);
-            if (!notifData.length) document.getElementById('notifList').innerHTML = `<div class="notif-empty"><span class="material-icons">cloud_off</span><p>Could not load alerts. Check server connection.</p></div>`;
-        }
+    const token = getToken(); if (!token) return;
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/inventory`, { headers: { 'Authorization': `Bearer ${token}` } });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const raw = await res.json();
+        const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
+        const readIds = getReadNotifIds();
+        notifData = generateAlertsFromInventory(inventory).slice(0, 15);
+        notifData.forEach(n => { if (readIds.has(n.id)) n.unread = false; });
+        renderNotifications();
+    } catch(e) {
+        console.warn('Notification fetch failed:', e);
+        if (!notifData.length) document.getElementById('notifList').innerHTML = `<div class="notif-empty"><span class="material-icons">cloud_off</span><p>Could not load alerts. Check server connection.</p></div>`;
     }
+}
 
     // ══════════════════════════════════════════════════════════
     // FETCH TOTAL USERS

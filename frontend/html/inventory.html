@@ -9,6 +9,8 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -1258,9 +1260,133 @@ class InventoryManager {
         return new Date(dateString).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' });
     }
 
-    exportSummaryData() { Swal.fire({ title: 'Export Summary', text: 'Downloading inventory summary as CSV...', icon: 'success', timer: 2000, showConfirmButton: false }); }
-    exportBatchData() { Swal.fire({ title: 'Export Batches', text: 'Downloading batch details as CSV...', icon: 'success', timer: 2000, showConfirmButton: false }); }
+    // BEFORE (3 methods: exportSummaryData, exportBatchData, _printPDF)
+// — delete all three and replace with these:
+
+exportSummaryData() {
+    if (!inventoryManager) return;
+    const today = new Date();
+    const timestamp = new Date().toISOString().split('T')[0];
+    const summary = {};
+    this.liveInventory.forEach(item => {
+        const name  = this._getName(item);
+        const price = parseFloat(this._getPrice(item) || 0);
+        const qty   = parseInt(item.quantity || 0);
+        const isExp = new Date(item.expiryDate) < today;
+        if (!summary[name]) summary[name] = { name, batchCount:0, totalQty:0, totalValue:0, earliestExpiry:item.expiryDate, minStock:item.minStockLevel||10 };
+        summary[name].batchCount++;
+        if (!isExp) { summary[name].totalQty += qty; summary[name].totalValue += qty * price; }
+        if (new Date(item.expiryDate) < new Date(summary[name].earliestExpiry)) summary[name].earliestExpiry = item.expiryDate;
+    });
+
+    const rows = Object.values(summary).map(item => {
+        let status = 'In Stock';
+        if (item.totalQty === 0)               status = 'Out of Stock';
+        else if (item.totalQty <= item.minStock) status = 'Low Stock';
+        const avg = item.totalQty > 0 ? item.totalValue / item.totalQty : 0;
+        return [
+            item.name,
+            item.batchCount,
+            item.totalQty,
+            this.formatDate(item.earliestExpiry),
+            '₱' + avg.toFixed(2),
+            '₱' + item.totalValue.toFixed(2),
+            status
+        ];
+    });
+
+    if (!rows.length) return Swal.fire('Empty', 'No inventory data to export.', 'info');
+
+    this._exportPDF(
+        `WellServed_Inventory_Summary_${timestamp}`,
+        'Medicine Inventory — Total Summary',
+        ['Medicine Name','Total Batches','Total Quantity','Earliest Expiry','Avg Price','Total Value','Status'],
+        rows
+    );
 }
+
+exportBatchData() {
+    const today = new Date();
+    const timestamp = new Date().toISOString().split('T')[0];
+    const batches = [...this.liveInventory].sort((a, b) => new Date(a.expiryDate) - new Date(b.expiryDate));
+
+    const rows = batches.map((item, i) => {
+        const daysLeft = Math.ceil((new Date(item.expiryDate) - today) / 864e5);
+        let status = 'Active';
+        if (daysLeft < 0)       status = 'Expired';
+        else if (daysLeft <= 30) status = `Expiring (${daysLeft}d)`;
+        return [
+            i + 1,
+            this._getName(item),
+            item.batchNumber || 'N/A',
+            item.quantity,
+            this.formatDate(item.expiryDate),
+            daysLeft < 0 ? 'EXPIRED' : daysLeft,
+            '₱' + parseFloat(this._getPrice(item) || 0).toFixed(2),
+            item.supplier || 'Unknown',
+            status
+        ];
+    });
+
+    if (!rows.length) return Swal.fire('Empty', 'No batch data to export.', 'info');
+
+    this._exportPDF(
+        `WellServed_Inventory_Batches_FEFO_${timestamp}`,
+        'Medicine Inventory — Batch Details (FEFO)',
+        ['#','Medicine','Batch No.','Qty','Expiry','Days Left','Price','Supplier','Status'],
+        rows
+    );
+}
+
+_exportPDF(filename, title, headers, bodyRows) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape' });
+
+    // Green header bar
+    doc.setFillColor(0, 90, 50);
+    doc.rect(0, 0, 297, 20, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(15);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Well Served Pharmacy', 14, 13);
+
+    // Meta info
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(title, 14, 28);
+    doc.text(`Generated: ${new Date().toLocaleString('en-PH')}`, 14, 34);
+    doc.text(`Total Records: ${bodyRows.length}`, 14, 40);
+
+    doc.autoTable({
+        head:       [headers],
+        body:       bodyRows,
+        startY:     46,
+        theme:      'grid',
+        headStyles: { fillColor: [0, 90, 50], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+        bodyStyles: { fontSize: 8 },
+        alternateRowStyles: { fillColor: [245, 250, 247] },
+        styles: { overflow: 'linebreak', cellPadding: 3 },
+    });
+
+    // Page numbers
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(150);
+        doc.text(
+            `Page ${i} of ${pageCount}`,
+            doc.internal.pageSize.getWidth() - 30,
+            doc.internal.pageSize.getHeight() - 8
+        );
+    }
+
+    doc.save(`${filename}.pdf`);
+    Swal.fire({ icon:'success', title:'PDF Exported', text:`${filename}.pdf downloaded.`, timer:1800, showConfirmButton:false });
+}
+}
+
 
 let inventoryManager;
 document.addEventListener('DOMContentLoaded', () => {
@@ -1355,8 +1481,16 @@ function updateNotifBadge() {
     if (pill) pill.textContent = count > 0 ? `${count} new` : 'All clear';
 }
 
-function markNotifRead(id) { const n = notifData.find(n => n.id === id); if (n) { n.unread = false; renderNotifications(); } }
-function markAllRead() { notifData.forEach(n => n.unread = false); renderNotifications(); }
+function markNotifRead(id) {
+    const n = notifData.find(n => n.id === id);
+    if (n) { n.unread = false; saveReadNotifId(id); renderNotifications(); }
+}
+
+function markAllRead() {
+    notifData.forEach(n => n.unread = false);
+    saveAllReadNotifIds();
+    renderNotifications();
+}
 
 function handleNotifAction(event, id) {
     event.stopPropagation();
@@ -1413,6 +1547,23 @@ function filterNotifTab(btn, filter) {
     renderNotifications();
 }
 
+function getReadNotifIds() {
+    try { return new Set(JSON.parse(sessionStorage.getItem('readNotifIds') || '[]')); }
+    catch(e) { return new Set(); }
+}
+
+function saveReadNotifId(id) {
+    const ids = getReadNotifIds();
+    ids.add(id);
+    sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
+}
+
+function saveAllReadNotifIds() {
+    const ids = getReadNotifIds();
+    notifData.forEach(n => ids.add(n.id));
+    sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
+}
+
 async function refreshNotifications() {
     const token = inventoryManager ? inventoryManager.getToken() : null;
     if (!token) return;
@@ -1421,9 +1572,9 @@ async function refreshNotifications() {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const raw = await res.json();
         const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
-        const previouslyRead = new Set(notifData.filter(n => !n.unread).map(n => n.id));
+        const readIds = getReadNotifIds();
         notifData = generateAlertsFromInventory(inventory).slice(0, 15);
-        notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
+        notifData.forEach(n => { if (readIds.has(n.id)) n.unread = false; });
         renderNotifications();
     } catch (e) { console.warn('Notification fetch failed:', e); }
 }

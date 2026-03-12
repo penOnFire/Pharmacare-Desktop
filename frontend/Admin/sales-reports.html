@@ -11,7 +11,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <script>
         tailwind.config = {
@@ -128,18 +127,6 @@
         #navDate  { font-size: 10px; font-weight: 500; letter-spacing: 0.06em; }
         .nav-divider { width: 1px; height: 28px; background: #e5e7eb; }
         .dark .nav-divider { background: #374151; }
-
-        .export-options {
-            display: none; position: absolute; top: 100%; right: 0; width: 150px;
-            background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); z-index: 1000; margin-top: 0.5rem;
-        }
-        .export-option {
-            padding: 0.75rem 1rem; cursor: pointer; border-bottom: 1px solid #f3f4f6;
-            display: flex; align-items: center; gap: 0.5rem; font-size: 14px;
-        }
-        .export-option:hover { background-color: #f9fafb; }
-        .export-option:last-child { border-bottom: none; }
 
         .sidebar-logout-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 16px; border: none; background: none; cursor: pointer; border-radius: 8px; color: #d62828; font-size: 14px; font-weight: 600; transition: background 0.15s; text-align: left; }
         .sidebar-logout-btn:hover { background: #fef2f2; }
@@ -279,18 +266,13 @@
                             <option value="90">Last 3 months</option>
                             <option value="365">Last year</option>
                         </select>
-                        <div class="relative">
-                            <button id="exportBtn" class="flex items-center gap-1 bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors">
-                                <span class="material-icons text-sm">download</span>
-                                Export
-                                <span class="material-icons text-sm">arrow_drop_down</span>
-                            </button>
-                            <div id="exportOptions" class="export-options">
-                                <div class="export-option" onclick="exportReport('pdf')"><span class="material-icons text-sm">picture_as_pdf</span> PDF</div>
-                                <div class="export-option" onclick="exportReport('excel')"><span class="material-icons text-sm">table_chart</span> Excel</div>
-                                <div class="export-option" onclick="exportReport('csv')"><span class="material-icons text-sm">grid_on</span> CSV</div>
-                            </div>
-                        </div>
+                        <!-- ── EXPORT PDF BUTTON (no dropdown) ── -->
+                        <button id="exportPdfBtn"
+                            onclick="exportFullReportPDF()"
+                            class="flex items-center gap-1 bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors">
+                            <span class="material-icons text-sm">picture_as_pdf</span>
+                            Export PDF
+                        </button>
                     </div>
                 </div>
 
@@ -594,26 +576,25 @@
         if (pill)  pill.textContent = count > 0 ? `${count} new` : 'All clear';
     }
 
-    function markNotifRead(id) {
-        const n = notifData.find(n => n.id === id);
-        if (n) { n.unread = false; renderNotifications(); }
+    // AFTER
+function markNotifRead(id) {
+    const n = notifData.find(n => n.id === id);
+    if (n) {
+        n.unread = false;
+        const readIds = JSON.parse(sessionStorage.getItem('readNotifIds') || '[]');
+        if (!readIds.includes(id)) { readIds.push(id); sessionStorage.setItem('readNotifIds', JSON.stringify(readIds)); }
+        renderNotifications();
     }
+}
 
-    function markAllRead() { notifData.forEach(n => n.unread = false); renderNotifications(); }
-
-    // Redirect to inventory_admin with sessionStorage hint (same as dashboard_admin)
-    function handleNotifAction(event, id) {
-        event.stopPropagation();
-        markNotifRead(id);
-        const n = notifData.find(n => n.id === id);
-        if (!n) return;
-        if (n.type === 'expiry') {
-            sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'batch', medicine: n.medicineName }));
-        } else if (n.type === 'critical' || n.type === 'shortage') {
-            sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'summary', medicine: n.medicineName }));
-        }
-        window.location.href = 'inventory_admin.html';
-    }
+    // AFTER
+function markAllRead() {
+    notifData.forEach(n => n.unread = false);
+    const readIds = notifData.map(n => n.id);
+    const existing = JSON.parse(sessionStorage.getItem('readNotifIds') || '[]');
+    sessionStorage.setItem('readNotifIds', JSON.stringify([...new Set([...existing, ...readIds])]));
+    renderNotifications();
+}
 
     function filterNotifTab(btn, filter) {
         document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
@@ -629,9 +610,13 @@
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const raw       = await res.json();
             const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
-            const previouslyRead = new Set(notifData.filter(n => !n.unread).map(n => n.id));
-            notifData = generateAlertsFromInventory(inventory).slice(0, 15);
-            notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
+            // AFTER
+const previouslyRead = new Set([
+    ...notifData.filter(n => !n.unread).map(n => n.id),
+    ...JSON.parse(sessionStorage.getItem('readNotifIds') || '[]')
+]);
+notifData = generateAlertsFromInventory(inventory).slice(0, 15);
+notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
             renderNotifications();
         } catch(e) {
             console.warn('Notification fetch failed:', e);
@@ -816,10 +801,6 @@
 
         setupEventListeners() {
             document.getElementById('timeRange').addEventListener('change', (e) => this.updateSalesData(e.target.value));
-            const exportBtn = document.getElementById('exportBtn');
-            const exportOptions = document.getElementById('exportOptions');
-            exportBtn.addEventListener('click', (e) => { e.stopPropagation(); exportOptions.style.display = exportOptions.style.display === 'block' ? 'none' : 'block'; });
-            document.addEventListener('click', () => { exportOptions.style.display = 'none'; });
         }
 
         formatPeso(amount) { if (isNaN(amount) || amount === null) return '₱0.00'; return '₱' + amount.toLocaleString('en-PH', { minimumFractionDigits: 2 }); }
@@ -829,32 +810,119 @@
             if (!this.currentStats) return Swal.fire('No Data', 'Please wait for data to load.', 'warning');
             const timestamp = new Date().toISOString().split('T')[0];
             let filename = `WellServed_${timestamp}`, dataToExport = [], sheetName = 'Data';
+            
             if (type === 'medicines')     { filename += '_TopMedicines'; sheetName = 'Top Medicines'; dataToExport = this.currentStats.topMedicines.map(m => ({ Medicine: m.name, 'Qty Sold': m.qtySold, Revenue: m.revenue, Growth: `${m.growth.toFixed(1)}%` })); }
             else if (type === 'weekly')   { filename += '_WeeklyPerf'; sheetName = 'Weekly Sales'; dataToExport = this.currentStats.weeklySales.map(w => ({ Period: w.period, Revenue: w.revenue, Transactions: w.transactions, 'Avg Order': w.avgOrder })); }
             else if (type === 'pharmacist') { filename += '_PharmPerf'; sheetName = 'Pharmacist'; dataToExport = this.currentStats.pharmacistPerformance.map(p => ({ Pharmacist: p.name, Transactions: p.transactions, Revenue: p.revenue, 'Avg Order': p.avgOrder, Rating: p.performance })); }
             else if (type === 'trend')    { filename += '_Trend'; sheetName = 'Sales Trend'; dataToExport = this.currentStats.chartData.salesTrend.labels.map((l, i) => ({ Date: l, Revenue: this.currentStats.chartData.salesTrend.data[i] })); }
             else if (type === 'medicine-dist') { filename += '_Dist'; sheetName = 'Distribution'; dataToExport = this.currentStats.chartData.distChart.labels.map((l, i) => ({ Medicine: l, 'Quantity Sold': this.currentStats.chartData.distChart.data[i] })); }
-            else if (type === 'pdf')  return this.generatePDF(filename);
-            else if (['excel','csv'].includes(type)) { filename += '_All'; dataToExport = this.salesTransactions.map(s => ({ Date: s.date, Medicine: s.medicineName, Category: s.category, Quantity: s.quantity, Revenue: s.revenue, Pharmacist: s.pharmacist })); }
-            if (!dataToExport.length) return Swal.fire('Empty', 'No data for this export.', 'info');
+            
+            // Create Excel file for table exports
             const ws = XLSX.utils.json_to_sheet(dataToExport);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, sheetName);
-            XLSX.writeFile(wb, `${filename}.${type === 'csv' ? 'csv' : 'xlsx'}`);
-            Swal.fire({ icon:'success', title:'Exported', text:`${filename} downloaded.`, timer:1500, showConfirmButton:false });
+            XLSX.writeFile(wb, `${filename}.xlsx`);
+            Swal.fire({ icon:'success', title:'Exported', text:`${filename}.xlsx downloaded.`, timer:1500, showConfirmButton:false });
+        }
+    }
+
+    // Global function for PDF export (called by the main Export PDF button)
+    function exportFullReportPDF() {
+        if (!salesManager || !salesManager.currentStats) {
+            Swal.fire('No Data', 'Please wait for data to load.', 'warning');
+            return;
         }
 
-        generatePDF(filename) {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            doc.setFillColor(0,90,50); doc.rect(0,0,210,20,'F');
-            doc.setTextColor(255,255,255); doc.setFontSize(16); doc.text("Well Served Sales Report",14,13);
-            doc.setTextColor(0,0,0); doc.setFontSize(10);
-            doc.text(`Generated: ${new Date().toLocaleString()}`,14,30);
-            doc.text(`Total Revenue: ${document.getElementById('totalRevenue').textContent}`,14,36);
-            doc.autoTable({ head:[["Date","Medicine","Category","Qty","Revenue","Pharmacist"]], body: this.salesTransactions.map(s => [s.date, s.medicineName, s.category, s.quantity, this.formatPeso(s.revenue), s.pharmacist]), startY:45, theme:'grid', headStyles:{fillColor:[0,90,50]}, styles:{fontSize:8} });
-            doc.save(`${filename}.pdf`);
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('p', 'mm', 'a4');
+        const timestamp = new Date().toISOString().split('T')[0];
+        const filename = `WellServed_Sales_Report_${timestamp}`;
+        const stats = salesManager.currentStats;
+
+        // Header
+        doc.setFillColor(0, 90, 50);
+        doc.rect(0, 0, 210, 20, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Well Served Pharmacy - Sales Report', 14, 13);
+
+        // Report info
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Generated: ${new Date().toLocaleString('en-PH')}`, 14, 30);
+        doc.text(`Period: Last ${document.getElementById('timeRange').value} days`, 14, 36);
+
+        // Summary stats
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Executive Summary', 14, 48);
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Total Revenue: ${salesManager.formatPeso(stats.summary.totalRevenue)}`, 14, 56);
+        doc.text(`Total Transactions: ${stats.summary.totalTransactions}`, 14, 62);
+        doc.text(`Average Order Value: ${salesManager.formatPeso(stats.summary.avgOrderValue)}`, 14, 68);
+        doc.text(`Top Selling Medicine: ${stats.summary.topMedicineName} (${stats.summary.topMedicineQty} units)`, 14, 74);
+
+        // Top Medicines Table
+        doc.autoTable({
+            head: [['Medicine', 'Qty Sold', 'Revenue', 'Growth']],
+            body: stats.topMedicines.map(m => [
+                m.name,
+                m.qtySold,
+                salesManager.formatPeso(m.revenue),
+                `${m.growth.toFixed(1)}%`
+            ]),
+            startY: 85,
+            theme: 'grid',
+            headStyles: { fillColor: [0, 90, 50], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+            bodyStyles: { fontSize: 8 },
+            styles: { cellPadding: 3 }
+        });
+
+        // Weekly Performance
+        doc.autoTable({
+            head: [['Period', 'Revenue', 'Transactions', 'Avg Order']],
+            body: stats.weeklySales.map(w => [
+                w.period,
+                salesManager.formatPeso(w.revenue),
+                w.transactions,
+                salesManager.formatPeso(w.avgOrder)
+            ]),
+            theme: 'grid',
+            headStyles: { fillColor: [0, 90, 50], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+            bodyStyles: { fontSize: 8 },
+            styles: { cellPadding: 3 }
+        });
+
+        // Pharmacist Performance
+        doc.autoTable({
+            head: [['Pharmacist', 'Transactions', 'Revenue', 'Avg Order', 'Performance']],
+            body: stats.pharmacistPerformance.map(p => [
+                p.name,
+                p.transactions,
+                salesManager.formatPeso(p.revenue),
+                salesManager.formatPeso(p.avgOrder),
+                p.performance
+            ]),
+            theme: 'grid',
+            headStyles: { fillColor: [0, 90, 50], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+            bodyStyles: { fontSize: 8 },
+            styles: { cellPadding: 3 }
+        });
+
+        // Footer
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+            doc.setFontSize(8);
+            doc.setTextColor(150);
+            doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.getWidth() - 30, doc.internal.pageSize.getHeight() - 10);
         }
+
+        doc.save(`${filename}.pdf`);
+        Swal.fire({ icon:'success', title:'PDF Exported', text:`${filename}.pdf downloaded.`, timer:1800, showConfirmButton:false });
     }
 
     // ── INIT ──
@@ -879,7 +947,9 @@
         // Sales manager
         salesManager = new SalesDataManager();
         window.salesManager = salesManager;
-        window.exportReport = (t) => salesManager.exportData(t);
+
+        // Make PDF export function globally available
+        window.exportFullReportPDF = exportFullReportPDF;
 
         // Load notifications
         setTimeout(refreshNotifications, 800);
