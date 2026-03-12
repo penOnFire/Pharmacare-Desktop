@@ -737,6 +737,8 @@
     function startAutoRefresh() { autoRefreshInterval = setInterval(() => { fetchDashboardStats(); loadTopSellingData(); }, 30000); }
     function logoutUser() { Swal.fire({title:"Logout?",icon:"warning",showCancelButton:true,confirmButtonColor:"#005a32",confirmButtonText:"Yes, logout"}).then(r=>{if(r.isConfirmed){sessionStorage.clear();window.location.href='login.html';}}); }
 </script>
+<script src="../audio/audio-system.js"></script>
+<script src="../audio/audio-manager.js"></script>
 <script src="../js/windowcontrollerbtn.js"></script>
 </body>
 </html>
