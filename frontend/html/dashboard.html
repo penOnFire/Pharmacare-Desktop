@@ -597,12 +597,19 @@
     function markAllRead() { notifData.forEach(n => n.unread = false); renderNotifications(); }
 
     function handleNotifAction(event, id) {
-        event.stopPropagation(); markNotifRead(id);
-        const n = notifData.find(n => n.id === id); if (!n) return;
-        if (n.type === 'expiry') { sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'batch', medicine: n.medicineName })); } 
-        else if (n.type === 'critical' || n.type === 'shortage') { sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'summary', medicine: n.medicineName })); }
-        window.location.href = 'inventory.html';
+    event.stopPropagation();
+    markNotifRead(id);
+    const n = notifData.find(n => n.id === id);
+    if (!n) return;
+    document.getElementById('notificationDropdown').classList.remove('open');
+
+    if (n.type === 'expiry') {
+        sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'batch', medicine: n.medicineName }));
+    } else if (n.type === 'critical' || n.type === 'shortage') {
+        sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'summary', medicine: n.medicineName }));
     }
+    window.location.href = 'inventory.html';
+}
 
     function filterNotifTab(btn, filter) {
         document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));

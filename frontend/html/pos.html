@@ -220,21 +220,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Payment Method -->
-                                <div class="grid grid-cols-3 gap-2">
-                                    <button onclick="setPayment(this,'cash')" class="payment-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-teal-600 bg-teal-50 dark:bg-teal-900/20 text-teal-600 transition-all" data-method="cash">
-                                        <span class="material-icons-round mb-1">payments</span>
-                                        <span class="text-[10px] font-bold">Cash</span>
-                                    </button>
-                                    <button onclick="setPayment(this,'card')" class="payment-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-transparent bg-white dark:bg-slate-800 text-slate-400 hover:border-slate-200 dark:hover:border-slate-600 transition-all" data-method="card">
-                                        <span class="material-icons-round mb-1">credit_card</span>
-                                        <span class="text-[10px] font-bold">Card</span>
-                                    </button>
-                                    <button onclick="setPayment(this,'ewallet')" class="payment-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-transparent bg-white dark:bg-slate-800 text-slate-400 hover:border-slate-200 dark:hover:border-slate-600 transition-all" data-method="ewallet">
-                                        <span class="material-icons-round mb-1">account_balance_wallet</span>
-                                        <span class="text-[10px] font-bold">E-Wallet</span>
-                                    </button>
-                                </div>
+                                
 
                                 <div class="space-y-3">
                                     <div class="relative">
@@ -249,7 +235,7 @@
                                     </div>
                                     <button onclick="processPayment()"
                                         class="w-full py-4 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-teal-500/20 transition-all active:scale-[0.98] transform flex items-center justify-center gap-2">
-                                        <span id="payBtnText">Pay ₱0.00</span>
+                                        <span id="payBtnText">Dispense ₱0.00</span>
                                         <span class="material-icons-round">arrow_forward</span>
                                     </button>
                                 </div>
@@ -265,7 +251,159 @@
 
 <script>
     const API_BASE_URL = 'http://localhost:5001';
-    
+
+    // ══════════════════════════════════════════════════════════
+    // LIVE NAVBAR CLOCK — ticks every second
+    // ══════════════════════════════════════════════════════════
+    function updateNavClock() {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('en-US', {
+            hour:   '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+        });
+        const dateStr = now.toLocaleDateString('en-US', {
+            month: 'short',
+            day:   'numeric',
+            year:  'numeric'
+        }).toUpperCase();
+        document.getElementById('navClock').textContent = timeStr;
+        document.getElementById('navDate').textContent  = dateStr;
+    }
+
+    // ── Load user info from session into navbar ──
+    function loadNavUserInfo() {
+        try {
+            const raw = sessionStorage.getItem('userInfo');
+            if (!raw) return;
+            const info    = JSON.parse(raw);
+            const name    = info.name || info.firstName || info.username || 'User';
+            const role    = info.role || info.position || '';
+            const initial = name.charAt(0).toUpperCase();
+            document.getElementById('navUserName').textContent = name;
+            document.getElementById('navUserRole').textContent = role;
+            document.getElementById('navAvatar').textContent   = initial;
+        } catch(e) { /* keep defaults */ }
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // FANCY NOTIFICATION BELL — live from /api/inventory
+    // ══════════════════════════════════════════════════════════
+    let notifData         = [];
+    let activeNotifFilter = 'all';
+
+    function getNotifToken() {
+        const direct = sessionStorage.getItem('token');
+        if (direct) return direct;
+        const userInfo = sessionStorage.getItem('userInfo');
+        if (userInfo) { try { return JSON.parse(userInfo).token || null; } catch(e) {} }
+        return null;
+    }
+
+    function generateAlertsFromInventory(inventory) {
+        const alerts     = [];
+        const today      = new Date();
+        const thirtyDays = new Date();
+        thirtyDays.setDate(today.getDate() + 30);
+
+        inventory.forEach((item, idx) => {
+            const medName = item.medicine?.name || item.name || 'Unknown Medicine';
+
+            if (item.expiryDate) {
+                const expiry = new Date(item.expiryDate);
+                if (expiry < today) {
+                    alerts.push({ id: `exp-${item._id || idx}`, type: 'expiry', unread: true, medicineName: medName, title: 'Medicine Expired', desc: `${medName} expired on ${expiry.toLocaleDateString('en-PH')}.`, time: 'Needs immediate attention', actionLabel: 'View Inventory', actionClass: 'btn-expiry', icon: 'event_busy', iconClass: 'icon-expiry' });
+                } else if (expiry <= thirtyDays) {
+                    const d = Math.ceil((expiry - today) / 864e5);
+                    alerts.push({ id: `exp-${item._id || idx}`, type: 'expiry', unread: true, medicineName: medName, title: 'Expiring Soon', desc: `${medName} expires in ${d} day${d === 1 ? '' : 's'}.`, time: `${d} days left`, actionLabel: 'View Inventory', actionClass: 'btn-expiry', icon: 'schedule', iconClass: 'icon-expiry' });
+                }
+            }
+
+            const qty      = parseInt(item.quantity || 0);
+            const minStock = parseInt(item.minStockLevel || 10);
+            const isExpired = new Date(item.expiryDate) < today;
+
+            if (!isExpired && qty === 0) {
+                alerts.push({ id: `stk-${item._id || idx}`, type: 'critical', unread: true, medicineName: medName, title: 'Critical: Out of Stock', desc: `${medName} is completely out of stock.`, time: 'Immediate action required', actionLabel: 'View Inventory', actionClass: 'btn-critical', icon: 'warning', iconClass: 'icon-critical' });
+            } else if (!isExpired && qty <= minStock) {
+                alerts.push({ id: `stk-${item._id || idx}`, type: 'shortage', unread: true, medicineName: medName, title: 'Low Stock Alert', desc: `${medName} — only ${qty} unit${qty === 1 ? '' : 's'} remaining (min: ${minStock}).`, time: 'Reorder soon', actionLabel: 'View Inventory', actionClass: 'btn-shortage', icon: 'inventory_2', iconClass: 'icon-shortage' });
+            }
+        });
+
+        const order = { critical: 0, expiry: 1, shortage: 2 };
+        alerts.sort((a, b) => (order[a.type] ?? 9) - (order[b.type] ?? 9));
+        return alerts;
+    }
+
+    function renderNotifications() {
+        const list     = document.getElementById('notifList');
+        const filtered = activeNotifFilter === 'all' ? notifData : notifData.filter(n => n.type === activeNotifFilter);
+
+        if (!filtered.length) {
+            const msg = activeNotifFilter === 'all' ? 'All clear — no alerts right now!' : 'No notifications in this category.';
+            list.innerHTML = '<div class="notif-empty"><span class="material-icons">notifications_none</span><p>' + msg + '</p></div>';
+            updateNotifBadge();
+            return;
+        }
+
+        list.innerHTML = filtered.map(n => `
+            <div class="notif-item ${n.type} ${n.unread ? 'unread' : ''}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
+                <div class="notif-icon-wrap ${n.iconClass}"><span class="material-icons">${n.icon}</span></div>
+                <div class="notif-body">
+                    <div class="notif-title">${n.title}</div>
+                    <div class="notif-desc">${n.desc}</div>
+                    <div class="notif-time">${n.time}</div>
+                    <div class="notif-action">
+                        <button class="notif-action-btn ${n.actionClass}" onclick="handleNotifAction(event,'${n.id}')">${n.actionLabel}</button>
+                    </div>
+                </div>
+                ${n.unread ? '<div class="unread-dot"></div>' : ''}
+            </div>`).join('');
+
+        updateNotifBadge();
+    }
+
+    function updateNotifBadge() {
+        const count = notifData.filter(n => n.unread).length;
+        const badge = document.getElementById('notificationBadge');
+        const pill  = document.getElementById('unreadPill');
+        if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none'; }
+        if (pill)  pill.textContent = count > 0 ? `${count} new` : 'All clear';
+    }
+
+    function markNotifRead(id) { const n = notifData.find(n => n.id === id); if (n) { n.unread = false; renderNotifications(); } }
+    function markAllRead() { notifData.forEach(n => n.unread = false); renderNotifications(); }
+    function handleNotifAction(event, id) { event.stopPropagation(); markNotifRead(id); window.location.href = 'inventory.html'; }
+
+    function filterNotifTab(btn, filter) {
+        document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeNotifFilter = filter;
+        renderNotifications();
+    }
+
+    async function refreshNotifications() {
+        const token = getNotifToken();
+        if (!token) return;
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/inventory`, { headers: { 'Authorization': `Bearer ${token}` } });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const raw       = await res.json();
+            const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
+            const previouslyRead = new Set(notifData.filter(n => !n.unread).map(n => n.id));
+            notifData = generateAlertsFromInventory(inventory).slice(0, 15);
+            notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
+            renderNotifications();
+        } catch (e) {
+            console.warn('Notification fetch failed:', e);
+            if (!notifData.length) {
+                const list = document.getElementById('notifList');
+                if (list) list.innerHTML = `<div class="notif-empty"><span class="material-icons">cloud_off</span><p>Could not load alerts.</p></div>`;
+            }
+        }
+    }
+
     // ── AUTH & API CALL ──
     function getToken() {
         const directToken = sessionStorage.getItem('token');
