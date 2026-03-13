@@ -639,14 +639,17 @@
             const price = parseFloat(item.sellingPrice || item.price || medObj.sellingPrice || 0);
 
             if (!grouped[medId]) {
+                const actualCategory = medObj.category || 'General'; 
+                
                 grouped[medId] = {
                     id: medId,
                     name: `${medObj.name} ${medObj.strength || ''}`.trim(),
-                    category: medObj.type || 'General',
+                    category: actualCategory, 
+                    type: medObj.type || 'N/A', // 🔥 NEW: Grab the Tablet/Capsule/Syrup type!
                     price: price,
                     stock: 0,
                     lowStock: false,
-                    catColor: getColorForCategory(medObj.type)
+                    catColor: getColorForCategory(actualCategory) 
                 };
             }
 
@@ -684,8 +687,11 @@
             return `
             <div class="group bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-teal-500 transition-all shadow-sm hover:shadow-md">
                 <div class="flex justify-between items-start mb-4">
-                    <span class="px-2.5 py-1 ${cc.bg} ${cc.text} text-[10px] font-bold uppercase tracking-wider rounded">${p.category}</span>
-                    ${p.lowStock ? `<span class="px-2 py-0.5 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-500 text-[10px] font-bold rounded">Low Stock</span>` : ''}
+                    <div class="flex gap-1.5 flex-wrap">
+                        <span class="px-2.5 py-1 ${cc.bg} ${cc.text} text-[10px] font-bold uppercase tracking-wider rounded">${p.category}</span>
+                        <span class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wider rounded">${p.type}</span>
+                    </div>
+                    ${p.lowStock ? `<span class="px-2 py-0.5 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-500 text-[10px] font-bold rounded shrink-0">Low Stock</span>` : ''}
                 </div>
                 <h3 class="text-base font-bold mb-1 truncate" title="${p.name}">${p.name}</h3>
                 <p class="text-xs text-slate-400 mb-5">Available Stock: ${p.stock} units</p>

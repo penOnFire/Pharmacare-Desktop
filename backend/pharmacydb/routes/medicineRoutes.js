@@ -19,11 +19,12 @@ router.get('/', protect, async (req, res) => {
 // @desc    Add a new medicine
 router.post('/', protect, async (req, res) => {
   try {
-    const { name, genericName, type, strength, supplier, requiresPrescription } = req.body;
+    const { name, genericName, category, type, strength, supplier, requiresPrescription } = req.body;
 
     const newMedicine = new Medicine({
       name,
       genericName,
+      category,
       type,
       strength: strength || '500mg', // Default if not provided
       supplier, 

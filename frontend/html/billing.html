@@ -745,7 +745,15 @@ function goBillingPage(p) {
             const paged = data.slice(start, start + billingRowsPerPage);
 
             tbody.innerHTML = paged.map(sale => {
-                const statusClass = `status-${sale.paymentStatus || 'Pending'}`;
+                // 🔥 NEW: Grab any status, normalize it, and force "completed" to be "Paid"
+                let currentStatus = sale.paymentStatus || 'Pending';
+                
+                if (currentStatus.toLowerCase() === 'paid' || currentStatus.toLowerCase() === 'completed') {
+                    currentStatus = 'Paid';
+                }
+
+                // This must result in "status-Paid" to trigger your CSS colors
+                const statusClass = `status-${currentStatus}`;
 
                 let dateDisplay = "N/A";
                 const rawDate = sale.date || sale.createdAt;
@@ -788,7 +796,7 @@ function goBillingPage(p) {
                     <td class="px-6 py-4"><div class="w-64">${medicineHtml}</div></td>
                     <td class="px-6 py-4 font-bold text-text-light dark:text-text-dark">₱${amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
                     <td class="px-6 py-4">
-                        <span class="status-badge ${statusClass}">${sale.paymentStatus || 'Pending'}</span>
+                        <span class="status-badge ${statusClass}">${currentStatus}</span>
                     </td>
                     <td class="px-6 py-4 text-center">
                         <button onclick="billingManager.viewDetails('${sale._id}')" class="text-primary hover:text-primary/80 font-medium text-sm flex items-center justify-center gap-1 mx-auto">

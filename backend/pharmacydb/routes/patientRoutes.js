@@ -108,18 +108,27 @@ router.get('/', protect, async (req, res) => {
     if (req.query.date && req.query.date !== 'all') {
         const now = new Date();
         formattedPatients = formattedPatients.filter(p => {
-            const d = new Date(p.lastActivity); 
-            if (req.query.date === 'today') return d.toDateString() === now.toDateString();
+            // 🔥 Switched back to filtering by consultationDate
+            if (!p.consultationDate) return false; 
+            
+            const d = new Date(p.consultationDate); 
+            
+            if (req.query.date === 'today') {
+                return d.toDateString() === now.toDateString();
+            }
             if (req.query.date === 'week') {
-                const weekAgo = new Date(); weekAgo.setDate(now.getDate() - 7);
+                const weekAgo = new Date(); 
+                weekAgo.setDate(now.getDate() - 7);
                 return d >= weekAgo;
             }
             if (req.query.date === 'month') {
-                const monthAgo = new Date(); monthAgo.setDate(now.getDate() - 30);
+                const monthAgo = new Date(); 
+                monthAgo.setDate(now.getDate() - 30);
                 return d >= monthAgo;
             }
             if (req.query.date === 'last-year') {
-                const yearAgo = new Date(); yearAgo.setFullYear(now.getFullYear() - 1);
+                const yearAgo = new Date(); 
+                yearAgo.setFullYear(now.getFullYear() - 1);
                 return d >= yearAgo;
             }
             return true;
