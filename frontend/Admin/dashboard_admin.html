@@ -362,7 +362,30 @@
     // ══════════════════════════════════════════════════════════
     // NOTIFICATION SYSTEM
     // ══════════════════════════════════════════════════════════
+// ── 1. ADDED: The Web Audio Synthesizer ──
+    function playNotificationSound() {
+        try {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.value = 800; // Pitch
+            oscillator.type = 'sine';         // Wave shape
+            gainNode.gain.value = 0.3;        // Volume
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.2); // Beeps for 0.2 seconds
+        } catch (err) {
+            console.log("Audio not available");
+        }
+    }
+
+    // ── 2. ADDED: Unread Memory Tracker ──
     let notifData = [], activeNotifFilter = 'all';
+    let previousUnreadCount = parseInt(sessionStorage.getItem('lastUnreadCount')) || 0;
 
     function generateAlertsFromInventory(inventory) {
         const alerts = [], today = new Date(), thirtyDays = new Date();
@@ -451,6 +474,7 @@ function markAllRead() {
     }
 
     function filterNotifTab(btn, filter) {
+        if (typeof window.playSystemSound === 'function') window.playSystemSound('default');
         document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active'); activeNotifFilter = filter; renderNotifications();
     }
@@ -623,6 +647,8 @@ function markAllRead() {
         setInterval(fetchDashboardStats, 30000);
     });
 </script>
+<script src="../audio/audio-system.js"></script>
+<script src="../audio/audio-manager.js"></script>
 <script src="../js/windowcontrollerbtn.js"></script>
 </body>
 </html>
