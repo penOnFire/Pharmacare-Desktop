@@ -174,6 +174,24 @@
         .sidebar-logout-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 16px; border: none; background: none; cursor: pointer; border-radius: 8px; color: #d62828; font-size: 14px; font-weight: 600; transition: background 0.15s; text-align: left; }
         .sidebar-logout-btn:hover { background: #fef2f2; }
         .sidebar-logout-btn .material-icons { font-size: 20px; color: #d62828; }
+
+     /* ── EXPORT DROPDOWN ── */
+.export-wrap { position: relative; display: inline-block; }
+.export-menu { display: none; position: absolute; top: calc(100% + 6px); right: 0; min-width: 190px; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.12); z-index: 200; overflow: hidden; }
+.dark .export-menu { background: #1f2937; border-color: #374151; }
+.export-menu.open { display: block; }
+.export-menu-divider { height: 1px; background: #f0f0f0; margin: 4px 0; }
+.dark .export-menu-divider { background: #374151; }
+.export-check-row { display: flex; align-items: center; gap: 8px; padding: 6px 4px; font-size: 13px; font-weight: 500; color: #374151; cursor: pointer; border-radius: 6px; transition: background 0.12s; }
+.dark .export-check-row { color: #d1d5db; }
+.export-check-row:hover { background: #f0fdf4; }
+.dark .export-check-row:hover { background: #064e3b; }
+.export-check-row input[type="checkbox"] { width: 15px; height: 15px; accent-color: #005a32; cursor: pointer; }
+.export-check-row .material-icons { font-size: 16px; }
+.export-apply-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px; background: #005a32; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+.export-apply-btn:hover { background: #004526; }
+.export-apply-btn .material-icons { font-size: 16px; }
+
     </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
@@ -335,11 +353,24 @@
                                     <option value="Out of Stock">Out of Stock</option>
                                 </select>
                                 <!-- ── SUMMARY EXPORT BUTTON (PDF only) ── -->
-                                <button id="summaryExportBtn"
-                                    onclick="exportInventoryData('summary')"
-                                    class="border border-primary px-4 py-2 rounded-lg flex items-center gap-1 hover:bg-primary/10 transition-colors text-primary font-semibold text-sm">
-                                    <span class="material-icons text-sm">picture_as_pdf</span> Export PDF
-                                </button>
+                               <div class="export-wrap">
+    <button onclick="toggleExportMenu('summaryExportMenu')" class="border border-primary px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/10 transition-colors text-primary font-semibold text-sm">
+        <span class="material-icons text-sm">print</span> Export / Print
+        <span class="material-icons text-sm">arrow_drop_down</span>
+    </button>
+    <div id="summaryExportMenu" class="export-menu" style="min-width:220px; padding: 12px 14px;">
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Include in print</p>
+        <label class="export-check-row"><input type="checkbox" value="in-stock" checked> <span style="color:#16a34a" class="material-icons">check_circle</span> In Stock</label>
+        <label class="export-check-row"><input type="checkbox" value="low-stock"> <span style="color:#d97706" class="material-icons">warning</span> Low Stock</label>
+        <label class="export-check-row"><input type="checkbox" value="out-of-stock"> <span style="color:#dc2626" class="material-icons">remove_shopping_cart</span> Out of Stock</label>
+        <label class="export-check-row"><input type="checkbox" value="expiring"> <span style="color:#8b5a2b" class="material-icons">schedule</span> Expiring Soon (≤30d)</label>
+        <label class="export-check-row"><input type="checkbox" value="expired"> <span style="color:#dc2626" class="material-icons">event_busy</span> Expired</label>
+        <div class="export-menu-divider" style="margin: 10px 0;"></div>
+        <button onclick="exportInventoryData('summary', getChecked('summaryExportMenu'))" class="export-apply-btn">
+            <span class="material-icons">print</span> Print / Export
+        </button>
+    </div>
+</div>
                             </div>
                         </div>
                         <div class="table-container">
@@ -376,11 +407,22 @@
                             <div class="flex items-center gap-4">
                                 <input id="batchSearch" onkeyup="searchBatch()" class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Search batches..." type="text"/>
                                 <!-- ── BATCH EXPORT BUTTON (PDF only) ── -->
-                                <button id="batchExportBtn"
-                                    onclick="exportInventoryData('batch')"
-                                    class="border border-primary px-4 py-2 rounded-lg flex items-center gap-1 hover:bg-primary/10 transition-colors text-primary font-semibold text-sm">
-                                    <span class="material-icons text-sm">picture_as_pdf</span> Export PDF
-                                </button>
+                                <div class="export-wrap">
+    <button onclick="toggleExportMenu('batchExportMenu')" class="border border-primary px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/10 transition-colors text-primary font-semibold text-sm">
+        <span class="material-icons text-sm">print</span> Export / Print
+        <span class="material-icons text-sm">arrow_drop_down</span>
+    </button>
+    <div id="batchExportMenu" class="export-menu" style="min-width:220px; padding: 12px 14px;">
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Include in print</p>
+        <label class="export-check-row"><input type="checkbox" value="active" checked> <span style="color:#16a34a" class="material-icons">check_circle</span> Active</label>
+        <label class="export-check-row"><input type="checkbox" value="expiring"> <span style="color:#8b5a2b" class="material-icons">schedule</span> Expiring Soon (≤30d)</label>
+        <label class="export-check-row"><input type="checkbox" value="expired"> <span style="color:#dc2626" class="material-icons">event_busy</span> Expired</label>
+        <div class="export-menu-divider" style="margin: 10px 0;"></div>
+        <button onclick="exportInventoryData('batch', getChecked('batchExportMenu'))" class="export-apply-btn">
+            <span class="material-icons">print</span> Print / Export
+        </button>
+    </div>
+</div>
                             </div>
                         </div>
                         <div class="table-container">
@@ -608,75 +650,96 @@ function formatPeso(amount) {
  * exportInventoryData(source)
  *   source — 'summary' | 'batch'
  */
-function exportInventoryData(source) {
-    if (!inventoryManager) return Swal.fire('Not Ready', 'Inventory is still loading.', 'warning');
+function toggleExportMenu(menuId, forceClose = false) {
+    document.querySelectorAll('.export-menu.open').forEach(m => { if (m.id !== menuId) m.classList.remove('open'); });
+    const menu = document.getElementById(menuId);
+    if (!menu) return;
+    if (forceClose) { menu.classList.remove('open'); return; }
+    menu.classList.toggle('open');
+}
 
+function getChecked(menuId) {
+    return [...document.querySelectorAll(`#${menuId} input[type="checkbox"]:checked`)].map(cb => cb.value);
+}
+
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.export-wrap')) {
+        document.querySelectorAll('.export-menu.open').forEach(m => m.classList.remove('open'));
+    }
+});
+
+function exportInventoryData(source, filters = []) {
+    if (!inventoryManager) return Swal.fire('Not Ready', 'Inventory is still loading.', 'warning');
+    if (!filters.length)   return Swal.fire('Nothing selected', 'Please check at least one filter.', 'info');
+
+    toggleExportMenu(source === 'summary' ? 'summaryExportMenu' : 'batchExportMenu', true);
+
+    const today     = new Date();
+    const thirtyDays = new Date(); thirtyDays.setDate(today.getDate() + 30);
     const timestamp = new Date().toISOString().split('T')[0];
 
     if (source === 'summary') {
-        // Build full summary data (all pages, not just current page)
-        const today   = new Date();
         const summary = {};
         inventoryManager.liveInventory.forEach(item => {
-            const name   = inventoryManager._getName(item);
-            const price  = parseFloat(inventoryManager._getPrice(item) || 0);
-            const qty    = parseInt(item.quantity || 0);
-            const isExp  = new Date(item.expiryDate) < today;
-            if (!summary[name]) summary[name] = { name, batchCount:0, totalQty:0, totalValue:0, earliestExpiry:item.expiryDate, minStock:item.minStockLevel||10 };
+            const name  = inventoryManager._getName(item);
+            const price = parseFloat(inventoryManager._getPrice(item) || 0);
+            const qty   = parseInt(item.quantity || 0);
+            const isExp = new Date(item.expiryDate) < today;
+            if (!summary[name]) summary[name] = { name, batchCount:0, totalQty:0, totalValue:0, earliestExpiry:item.expiryDate, minStock:item.minStockLevel||10, hasExpired:false, hasExpiring:false };
             summary[name].batchCount++;
             if (!isExp) { summary[name].totalQty += qty; summary[name].totalValue += qty * price; }
             if (new Date(item.expiryDate) < new Date(summary[name].earliestExpiry)) summary[name].earliestExpiry = item.expiryDate;
+            if (isExp && qty > 0) summary[name].hasExpired = true;
+            const daysLeft = Math.ceil((new Date(item.expiryDate) - today) / 864e5);
+            if (daysLeft >= 0 && daysLeft <= 30 && qty > 0) summary[name].hasExpiring = true;
         });
-        const rows = Object.values(summary).map(item => {
+
+        const arr = Object.values(summary).filter(item => filters.some(f => {
+            if (f === 'in-stock')     return item.totalQty > item.minStock;
+            if (f === 'low-stock')    return item.totalQty > 0 && item.totalQty <= item.minStock;
+            if (f === 'out-of-stock') return item.totalQty === 0;
+            if (f === 'expiring')     return item.hasExpiring;
+            if (f === 'expired')      return item.hasExpired;
+            return false;
+        }));
+
+        if (!arr.length) return Swal.fire('No Data', 'No medicines match the selected filters.', 'info');
+
+        const filterLabel = filters.map(f => ({'in-stock':'In Stock','low-stock':'Low Stock','out-of-stock':'Out of Stock','expiring':'Expiring Soon','expired':'Expired'}[f])).join(', ');
+        const rows = arr.map(item => {
             let status = 'In Stock';
-            if (item.totalQty === 0)              status = 'Out of Stock';
+            if (item.totalQty === 0)               status = 'Out of Stock';
             else if (item.totalQty <= item.minStock) status = 'Low Stock';
             const avg = item.totalQty > 0 ? item.totalValue / item.totalQty : 0;
-            return {
-                'Medicine Name':   item.name,
-                'Total Batches':   item.batchCount,
-                'Total Quantity':  item.totalQty,
-                'Earliest Expiry': inventoryManager.formatDate(item.earliestExpiry),
-                'Avg Price':       parseFloat(avg.toFixed(2)),
-                'Total Value':     parseFloat(item.totalValue.toFixed(2)),
-                'Status':          status,
-            };
+            return [item.name, item.batchCount, item.totalQty, inventoryManager.formatDate(item.earliestExpiry), formatPeso(avg), formatPeso(item.totalValue), status];
         });
 
-        if (!rows.length) return Swal.fire('Empty', 'No inventory data to export.', 'info');
-        const filename = `WellServed_Inventory_Summary_${timestamp}`;
-
-        _exportInventoryPDF(filename, 'Medicine Inventory — Total Summary',
-            ['Medicine Name','Total Batches','Total Quantity','Earliest Expiry','Avg Price','Total Value','Status'],
-            rows.map(r => [r['Medicine Name'], r['Total Batches'], r['Total Quantity'], r['Earliest Expiry'], formatPeso(r['Avg Price']), formatPeso(r['Total Value']), r['Status']])
-        );
+        _exportInventoryPDF(`WellServed_Summary_${timestamp}`, `Medicine Inventory — ${filterLabel}`,
+            ['Medicine Name','Total Batches','Total Quantity','Earliest Expiry','Avg Price','Total Value','Status'], rows);
 
     } else if (source === 'batch') {
-        const today   = new Date();
-        const batches = [...inventoryManager.liveInventory].sort((a,b) => new Date(a.expiryDate)-new Date(b.expiryDate));
-        const rows = batches.map((item, i) => {
-            const expiry   = new Date(item.expiryDate);
-            const daysLeft = Math.ceil((expiry - today) / 864e5);
-            return {
-                '#':           i + 1,
-                'Medicine':    inventoryManager._getName(item),
-                'Batch No.':   item.batchNumber || 'N/A',
-                'Quantity':    item.quantity,
-                'Expiry Date': inventoryManager.formatDate(item.expiryDate),
-                'Days Left':   daysLeft < 0 ? 'EXPIRED' : daysLeft,
-                'Price':       parseFloat(parseFloat(inventoryManager._getPrice(item)||0).toFixed(2)),
-                'Supplier':    item.supplier || 'Unknown',
-                'Status':      daysLeft < 0 ? 'Expired' : 'Active',
-            };
+        const source_data = [...inventoryManager.liveInventory].sort((a,b) => new Date(a.expiryDate) - new Date(b.expiryDate));
+
+        const batches = source_data.filter(item => {
+            const daysLeft = Math.ceil((new Date(item.expiryDate) - today) / 864e5);
+            return filters.some(f => {
+                if (f === 'active')   return daysLeft > 30;
+                if (f === 'expiring') return daysLeft >= 0 && daysLeft <= 30;
+                if (f === 'expired')  return daysLeft < 0;
+                return false;
+            });
         });
 
-        if (!rows.length) return Swal.fire('Empty', 'No batch data to export.', 'info');
-        const filename = `WellServed_Inventory_Batches_FEFO_${timestamp}`;
+        if (!batches.length) return Swal.fire('No Data', 'No batches match the selected filters.', 'info');
 
-        _exportInventoryPDF(filename, 'Medicine Inventory — Batch Details (FEFO)',
-            ['#','Medicine','Batch No.','Qty','Expiry','Days Left','Price','Supplier','Status'],
-            rows.map(r => [r['#'], r['Medicine'], r['Batch No.'], r['Quantity'], r['Expiry Date'], r['Days Left'], formatPeso(r['Price']), r['Supplier'], r['Status']])
-        );
+        const filterLabel = filters.map(f => ({'active':'Active','expiring':'Expiring Soon','expired':'Expired'}[f])).join(', ');
+        const rows = batches.map((item, i) => {
+            const daysLeft = Math.ceil((new Date(item.expiryDate) - today) / 864e5);
+            return [i+1, inventoryManager._getName(item), item.batchNumber||'N/A', item.quantity, inventoryManager.formatDate(item.expiryDate), daysLeft < 0 ? 'EXPIRED' : daysLeft, formatPeso(inventoryManager._getPrice(item)||0), item.supplier||'Unknown', daysLeft < 0 ? 'Expired' : daysLeft <= 30 ? `Expiring (${daysLeft}d)` : 'Active'];
+        });
+
+        _exportInventoryPDF(`WellServed_Batches_${timestamp}`, `Batch Details (FEFO) — ${filterLabel}`,
+            ['#','Medicine','Batch No.','Qty','Expiry','Days Left','Price','Supplier','Status'], rows);
     }
 }
 
@@ -720,8 +783,10 @@ function _exportInventoryPDF(filename, title, headers, bodyRows) {
         doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.getWidth() - 30, doc.internal.pageSize.getHeight() - 8);
     }
 
-    doc.save(`${filename}.pdf`);
-    Swal.fire({ icon:'success', title:'PDF Exported', text:`${filename}.pdf downloaded.`, timer:1800, showConfirmButton:false });
+    doc.autoPrint();
+const blobUrl = doc.output('bloburl');
+const printWin = window.open(blobUrl, '_blank');
+if (!printWin) Swal.fire('Popup Blocked', 'Please allow popups for this page to print.', 'warning');
 }
 
 // ══════════════════════════════════════════════════════════
@@ -921,7 +986,21 @@ function switchModuleTab(module) {
     document.getElementById('moduleTabSupplies').classList.toggle('active',  module==='supplies');
     document.getElementById('modulePanelInventory').classList.toggle('hidden', module!=='inventory');
     document.getElementById('modulePanelSupplies').classList.toggle('hidden',  module!=='supplies');
-    if (module === 'supplies') initializeSupplies();
+
+    if (module === 'supplies') {
+        // Clear summary search on the way OUT
+        const s = document.getElementById('summarySearch');
+        if (s) { s.value = ''; summaryPage = 1; }
+        initializeSupplies();
+    }
+
+    if (module === 'inventory') {
+        // Re-render with cleared search on the way IN
+        const s = document.getElementById('summarySearch');
+        if (s) s.value = '';
+        summaryPage = 1;
+        if (inventoryManager) inventoryManager.renderSummary();
+    }
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1010,6 +1089,10 @@ function handleNotifAction(event, id) {
     const n = notifData.find(n => n.id === id);
     if (!n) return;
     document.getElementById('notificationDropdown').classList.remove('open');
+
+    // Always switch back to the Medicine module first
+    switchModuleTab('inventory');
+
     if (n.type === 'expiry') {
         inventoryManager.viewBatchDetails(n.medicineName);
         setTimeout(() => highlightMedicineRow('batchTableBody', n.medicineName), 300);
@@ -1019,6 +1102,36 @@ function handleNotifAction(event, id) {
         if (s) { s.value = n.medicineName; summaryPage = 1; inventoryManager.renderSummary(); }
         setTimeout(() => highlightMedicineRow('summaryTableBody', n.medicineName), 300);
     }
+}
+
+function highlightMedicineRow(tbodyId, medicineName) {
+    const tbody = document.getElementById(tbodyId);
+    if (!tbody) return;
+    const nameLower = medicineName.toLowerCase();
+    let targetRow = null;
+    for (const row of tbody.querySelectorAll('tr')) {
+        const firstCell = row.querySelector('td');
+        if (firstCell && firstCell.textContent.toLowerCase().includes(nameLower)) { targetRow = row; break; }
+    }
+    if (!targetRow) return;
+    if (!document.getElementById('notifHighlightStyle')) {
+        const style = document.createElement('style');
+        style.id = 'notifHighlightStyle';
+        style.textContent = `
+            @keyframes notifRowPulse {
+                0%   { background-color: rgba(245,158,11,0.35); outline: 2px solid #f59e0b; }
+                60%  { background-color: rgba(245,158,11,0.20); outline: 2px solid #f59e0b; }
+                100% { background-color: transparent;           outline: 2px solid transparent; }
+            }
+            .notif-row-highlight { animation: notifRowPulse 2.2s ease-out forwards; border-radius: 6px; }
+        `;
+        document.head.appendChild(style);
+    }
+    targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    targetRow.classList.remove('notif-row-highlight');
+    void targetRow.offsetWidth;
+    targetRow.classList.add('notif-row-highlight');
+    targetRow.addEventListener('animationend', () => targetRow.classList.remove('notif-row-highlight'), { once: true });
 }
 
 function filterNotifTab(btn, filter) {
@@ -1105,14 +1218,25 @@ class InventoryManager {
     }
 
     applyNotifRedirectOnLoad() {
-        try {
-            const raw = sessionStorage.getItem('notifRedirect'); if (!raw) return;
-            sessionStorage.removeItem('notifRedirect');
-            const { tab, medicine } = JSON.parse(raw);
-            if (tab === 'batch') { setTimeout(() => this.viewBatchDetails(medicine), 400); }
-            else if (tab === 'summary') { setTimeout(() => { this.switchTab('summary'); const s=document.getElementById('summarySearch'); if(s){s.value=medicine; this.renderSummary();} }, 400); }
-        } catch(e) {}
-    }
+    try {
+        const raw = sessionStorage.getItem('notifRedirect'); if (!raw) return;
+        sessionStorage.removeItem('notifRedirect');
+        const { tab, medicine } = JSON.parse(raw);
+        if (tab === 'batch') {
+            setTimeout(() => {
+                this.viewBatchDetails(medicine);
+                setTimeout(() => highlightMedicineRow('batchTableBody', medicine), 300);
+            }, 400);
+        } else if (tab === 'summary') {
+            setTimeout(() => {
+                this.switchTab('summary');
+                const s = document.getElementById('summarySearch');
+                if (s) { s.value = medicine; this.renderSummary(); }
+                setTimeout(() => highlightMedicineRow('summaryTableBody', medicine), 300);
+            }, 400);
+        }
+    } catch(e) {}
+}
 
     async fetchInventory() {
         try {
@@ -1288,15 +1412,21 @@ class InventoryManager {
     viewBatchDetails(medicineName) { this.switchTab('batch'); const s=document.getElementById('batchSearch'); if(s){s.value=medicineName; this.renderBatches();} }
 
     switchTab(tabName) {
-        this.currentTab = tabName;
-        ['summary','batch','archive'].forEach(t => {
-            document.getElementById(t+'Tab').classList.toggle('active', t===tabName);
-            document.getElementById(t+'Section').classList.toggle('hidden', t!==tabName);
-        });
-        if (tabName==='summary') this.renderSummary();
-        if (tabName==='batch')   { document.getElementById('batchSearch').value=''; this.renderBatches(); }
-        if (tabName==='archive') this.renderArchive();
+    this.currentTab = tabName;
+    ['summary','batch','archive'].forEach(t => {
+        document.getElementById(t+'Tab').classList.toggle('active', t===tabName);
+        document.getElementById(t+'Section').classList.toggle('hidden', t!==tabName);
+    });
+    if (tabName==='summary') this.renderSummary();
+    if (tabName==='batch')   { document.getElementById('batchSearch').value=''; this.renderBatches(); }
+    if (tabName==='archive') this.renderArchive();
+
+    // Clear summary search whenever leaving it
+    if (tabName !== 'summary') {
+        const s = document.getElementById('summarySearch');
+        if (s) { s.value = ''; summaryPage = 1; }
     }
+}
 
     async archiveBatch(id) {
         const r = await Swal.fire({ title:'Archive Batch?', text:'This batch will be moved to the Archive tab.', icon:'question', showCancelButton:true, confirmButtonColor:'#005a32', confirmButtonText:'Yes, archive it' });

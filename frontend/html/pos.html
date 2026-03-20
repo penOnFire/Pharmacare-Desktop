@@ -512,13 +512,20 @@ function markAllRead() {
     renderNotifications();
 }
 
-function handleNotifAction(event, id) { event.stopPropagation(); markNotifRead(id); window.location.href = 'inventory.html'; }
-    function filterNotifTab(btn, filter) {
-        document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        activeNotifFilter = filter;
-        renderNotifications();
+function handleNotifAction(event, id) {
+    event.stopPropagation();
+    markNotifRead(id);
+    const n = notifData.find(n => n.id === id);
+    if (n) {
+        if (n.type === 'expiry') {
+            sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'batch', medicine: n.medicineName }));
+        } else if (n.type === 'critical' || n.type === 'shortage') {
+            sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'summary', medicine: n.medicineName }));
+        }
     }
+    document.getElementById('notificationDropdown').classList.remove('open');
+    window.location.href = 'inventory.html';
+}
 
     // AFTER
 async function refreshNotifications() {

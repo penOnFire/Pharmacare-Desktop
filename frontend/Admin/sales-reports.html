@@ -235,9 +235,7 @@
                                 <a href="inventory_admin.html" class="view-all-link">
                                     View inventory <span class="material-icons">arrow_forward</span>
                                 </a>
-                                <button class="notif-settings-btn">
-                                    <span class="material-icons">settings</span> Settings
-                                </button>
+                               
                             </div>
                         </div>
                     </div>
@@ -536,6 +534,22 @@
         alerts.sort((a, b) => (order[a.type] ?? 9) - (order[b.type] ?? 9));
         return alerts;
     }
+
+    function handleNotifAction(event, id) {
+    event.stopPropagation();
+    markNotifRead(id);
+    const n = notifData.find(n => n.id === id);
+    if (!n) return;
+    document.getElementById('notificationDropdown').classList.remove('open');
+
+    if (n.type === 'expiry') {
+        sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'batch', medicine: n.medicineName }));
+    } else if (n.type === 'critical' || n.type === 'shortage') {
+        sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'summary', medicine: n.medicineName }));
+    }
+
+    window.location.href = 'inventory_admin.html';
+}
 
     function renderNotifications() {
         const list     = document.getElementById('notifList');

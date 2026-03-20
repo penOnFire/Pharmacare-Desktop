@@ -1219,9 +1219,9 @@ async fetchPatients() {
     const dateTerm   = document.getElementById('dateFilter')?.value  || 'all';
 
     const params = new URLSearchParams();
-    if (searchTerm)           params.append('search', searchTerm);
-    if (statusTerm !== 'all') params.append('status', statusTerm);
-    if (dateTerm   !== 'all') params.append('date',   dateTerm);
+if (searchTerm)           params.append('search', searchTerm);
+if (statusTerm !== 'all') params.append('status', statusTerm);
+// ← date param removed — let client handle it to avoid server mismatch
 
     try {
         const url = `/api/patients?${params.toString()}`;
@@ -1244,35 +1244,34 @@ async fetchPatients() {
         }
 
         if (dateTerm !== 'all') {
-    const now   = new Date();
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
-    const todayEnd   = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+    const now = new Date();
+    // Normalize to local midnight — avoids UTC off-by-one in PH (UTC+8)
+    const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
     filtered = filtered.filter(p => {
         if (!p.consultationDate) return false;
-        const d = new Date(p.consultationDate);
-        if (isNaN(d.getTime())) return false;
+        const raw = new Date(p.consultationDate);
+        if (isNaN(raw.getTime())) return false;
+        // Strip time from the record's date so comparison is date-only
+        const d = new Date(raw.getFullYear(), raw.getMonth(), raw.getDate());
 
         if (dateTerm === 'today') {
-            return d >= todayStart && d <= todayEnd;
+            return d.getTime() === todayLocal.getTime();
         }
         if (dateTerm === 'week') {
-            const weekStart = new Date(todayStart);
-            weekStart.setDate(todayStart.getDate() - 7);
-            return d >= weekStart && d <= todayEnd;
+            const weekStart = new Date(todayLocal);
+            weekStart.setDate(todayLocal.getDate() - 7);
+            return d >= weekStart && d <= todayLocal;
         }
         if (dateTerm === 'month') {
-            const monthStart = new Date(todayStart);
-            monthStart.setDate(todayStart.getDate() - 30);
-            return d >= monthStart && d <= todayEnd;
-        }
+    // Current calendar month: March 1 – March 31
+    const monthStart = new Date(todayLocal.getFullYear(), todayLocal.getMonth(), 1);
+    const monthEnd   = new Date(todayLocal.getFullYear(), todayLocal.getMonth() + 1, 0);
+    return d >= monthStart && d <= monthEnd;
+}
         if (dateTerm === 'last-year') {
-            const yearStart = new Date(todayStart);
-            yearStart.setFullYear(todayStart.getFullYear() - 1);
-            yearStart.setMonth(0); yearStart.setDate(1); yearStart.setHours(0,0,0,0);
-            const yearEnd = new Date(todayStart);
-            yearEnd.setFullYear(todayStart.getFullYear() - 1);
-            yearEnd.setMonth(11); yearEnd.setDate(31); yearEnd.setHours(23,59,59,999);
+            const yearStart = new Date(todayLocal.getFullYear() - 1, 0, 1);
+            const yearEnd   = new Date(todayLocal.getFullYear() - 1, 11, 31);
             return d >= yearStart && d <= yearEnd;
         }
         return true;
