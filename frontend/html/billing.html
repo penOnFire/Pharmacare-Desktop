@@ -325,18 +325,28 @@
                 </div>
             </div>
 
-            <div class="bg-surface-light dark:bg-surface-dark p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center space-x-4 mb-6">
-                <div class="relative flex-1">
-                    <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-subtext-light dark:text-subtext-dark">search</span>
-                    <input id="tableSearchInput" oninput="billingManager.handleSearch(this.value)" class="w-full bg-background-light dark:bg-background-dark border-none rounded-lg pl-10 pr-4 py-2.5 text-sm focus:ring-primary focus:border-primary text-text-light dark:text-text-dark" placeholder="Search by Patient Name or ID..." type="text"/>
-                </div>
-                <select id="statusFilter" onchange="billingManager.handleFilter(this.value)" class="px-4 py-2.5 text-sm font-medium border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-primary/5 dark:hover:bg-primary/20 transition-colors bg-surface-light dark:bg-surface-dark focus:ring-primary text-text-light dark:text-text-dark">
-                    <option value="all">All Status</option>
-                    <option value="Paid">Paid</option>
-                    <option value="Pending">Pending</option>
-                </select>
-            </div>
-
+            <div class="bg-surface-light dark:bg-surface-dark p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-wrap items-center gap-3 mb-6">
+    <div class="relative flex-1 min-w-[200px]">
+        <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-subtext-light dark:text-subtext-dark">search</span>
+        <input id="tableSearchInput" oninput="billingManager.handleSearch(this.value)" class="w-full bg-background-light dark:bg-background-dark border-none rounded-lg pl-10 pr-4 py-2.5 text-sm focus:ring-primary focus:border-primary text-text-light dark:text-text-dark" placeholder="Search by Patient Name or ID..." type="text"/>
+    </div>
+    <select id="statusFilter" onchange="billingManager.applyFilters()" class="px-4 py-2.5 text-sm font-medium border border-slate-200 dark:border-slate-700 rounded-lg bg-surface-light dark:bg-surface-dark focus:ring-primary text-text-light dark:text-text-dark">
+        <option value="all">All Status</option>
+        <option value="Paid">Paid</option>
+        <option value="Pending">Pending</option>
+    </select>
+    <select id="dateRangeFilter" onchange="billingManager.applyFilters()" class="px-4 py-2.5 text-sm font-medium border border-slate-200 dark:border-slate-700 rounded-lg bg-surface-light dark:bg-surface-dark focus:ring-primary text-text-light dark:text-text-dark">
+        <option value="all">All Dates</option>
+        <option value="today">Today</option>
+        <option value="week">This Week</option>
+        <option value="month">This Month</option>
+        <option value="last-month">Last Month</option>
+        <option value="year">This Year</option>
+    </select>
+    <button onclick="billingManager.clearFilters()" class="flex items-center gap-1 px-4 py-2.5 text-sm font-medium border border-slate-200 dark:border-slate-700 rounded-lg bg-surface-light dark:bg-surface-dark hover:bg-red-50 dark:hover:bg-red-900/20 text-subtext-light hover:text-red-500 transition-colors">
+        <span class="material-icons text-base">filter_alt_off</span> Clear
+    </button>
+</div>
             <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
                 <h2 class="text-xl font-semibold text-text-light dark:text-text-dark mb-4">Sales Transactions</h2>
                 <div class="overflow-x-auto">
@@ -834,6 +844,7 @@ applyFilters() {
     billingPage = 1;
     const searchVal = (document.getElementById('tableSearchInput')?.value || '').toLowerCase();
     const statusVal = document.getElementById('statusFilter')?.value || 'all';
+    const dateVal   = document.getElementById('dateRangeFilter')?.value || 'all';
 
     let filtered = this.salesData;
 
@@ -847,6 +858,44 @@ applyFilters() {
 
     if (statusVal !== 'all') {
         filtered = filtered.filter(s => (s.paymentStatus || 'Pending') === statusVal);
+    }
+
+    if (dateVal !== 'all') {
+        const now = new Date();
+        const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        filtered = filtered.filter(s => {
+            const raw = new Date(s.date || s.createdAt);
+            if (isNaN(raw.getTime())) return false;
+            // Normalize to local midnight — avoids UTC off-by-one (same fix as patient records)
+            const d = new Date(raw.getFullYear(), raw.getMonth(), raw.getDate());
+
+            if (dateVal === 'today') {
+                return d.getTime() === todayLocal.getTime();
+            }
+            if (dateVal === 'week') {
+                const weekStart = new Date(todayLocal);
+                weekStart.setDate(todayLocal.getDate() - 7);
+                return d >= weekStart && d <= todayLocal;
+            }
+            if (dateVal === 'month') {
+                // Current calendar month: e.g. March 1 – March 31
+                const monthStart = new Date(todayLocal.getFullYear(), todayLocal.getMonth(), 1);
+                const monthEnd   = new Date(todayLocal.getFullYear(), todayLocal.getMonth() + 1, 0);
+                return d >= monthStart && d <= monthEnd;
+            }
+            if (dateVal === 'last-month') {
+                const lmStart = new Date(todayLocal.getFullYear(), todayLocal.getMonth() - 1, 1);
+                const lmEnd   = new Date(todayLocal.getFullYear(), todayLocal.getMonth(), 0);
+                return d >= lmStart && d <= lmEnd;
+            }
+            if (dateVal === 'year') {
+                const yearStart = new Date(todayLocal.getFullYear(), 0, 1);
+                const yearEnd   = new Date(todayLocal.getFullYear(), 11, 31);
+                return d >= yearStart && d <= yearEnd;
+            }
+            return true;
+        });
     }
 
     this.renderTable(filtered);
@@ -939,6 +988,13 @@ handleFilter(status) {
         // ── Navbar user info ──
         loadNavUserInfo();
 
+        clearFilters() ;{
+    document.getElementById('tableSearchInput').value = '';
+    document.getElementById('statusFilter').value = 'all';
+    document.getElementById('dateRangeFilter').value = 'all';
+    this.applyFilters();
+}
+
         // ── Notification bell wiring ──
         const btn      = document.getElementById('notificationBtn');
         const dropdown = document.getElementById('notificationDropdown');
@@ -956,6 +1012,9 @@ handleFilter(status) {
             setInterval(refreshNotifications, 60000);
         }
     });
+
+
+    
 </script>
 <script src="../audio/audio-system.js"></script>
 <script src="../audio/audio-manager.js"></script>
