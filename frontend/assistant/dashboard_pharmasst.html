@@ -210,7 +210,6 @@
                 <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="inventory_pharmasst.html">
                     <span class="material-icons mr-3">inventory_2</span> Inventory
                 </a>
-                
                 <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="pos_pharmasst.html">
                     <span class="material-icons mr-3">shopping_cart</span> Counter Dispensing
                 </a>
@@ -228,15 +227,9 @@
         
         <main class="flex-1 flex flex-col">
 
-            <!-- ══════════════════════════════════════════
-                 UPDATED NAVBAR — matches screenshot layout
-                 [ Clock+Date ] [ Bell ] [ Name/Role ] [ Avatar ]
-                 ══════════════════════════════════════════ -->
             <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
-                <!-- Left: empty spacer (kept for layout) -->
                 <div></div>
 
-                <!-- Right: clock · divider · bell · divider · user info · avatar -->
                 <div class="flex items-center gap-4">
 
                     <!-- Live Clock + Date -->
@@ -278,7 +271,7 @@
                                 </div>
                             </div>
                             <div class="notif-footer">
-                                <a href="inventory.html" class="view-all-link">
+                                <a href="inventory_pharmasst.html" class="view-all-link">
                                     View inventory <span class="material-icons">arrow_forward</span>
                                 </a>
                             </div>
@@ -381,7 +374,6 @@
                 <!-- Charts Section -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8" id="chartsSection">
 
-                    <!-- Daily Sales Trend -->
                     <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
                         <div class="flex items-center gap-3 mb-4">
                             <span class="material-icons text-primary">ssid_chart</span>
@@ -392,7 +384,6 @@
                         </div>
                     </div>
 
-                    <!-- Stock Distribution -->
                     <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
                         <div class="flex items-center gap-3 mb-4">
                             <span class="material-icons text-primary">bar_chart</span>
@@ -403,7 +394,6 @@
                         </div>
                     </div>
 
-                    <!-- Top Selling Medicines -->
                     <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
                         <div class="flex items-center justify-between mb-4">
                             <div class="flex items-center gap-3">
@@ -424,7 +414,6 @@
                     <h2 class="text-2xl font-bold text-text-light dark:text-text-dark mb-4">Module Summary Reports</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-                        <!-- Inventory Summary -->
                         <div class="module-summary bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center gap-3">
@@ -455,7 +444,6 @@
                             </div>
                         </div>
 
-                        <!-- Prescriptions Summary -->
                         <div class="module-summary bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center gap-3">
@@ -486,7 +474,6 @@
                             </div>
                         </div>
 
-                        <!-- Sales Summary -->
                         <div class="module-summary bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center gap-3">
@@ -550,32 +537,18 @@
         return null;
     }
 
-    // ══════════════════════════════════════════════════════════
-    //  LIVE NAVBAR CLOCK  — ticks every second
-    // ══════════════════════════════════════════════════════════
+    // ── LIVE NAVBAR CLOCK ──
     function updateNavClock() {
         const now = new Date();
-
-        // Time: "12:28:05 AM"
-        const timeStr = now.toLocaleTimeString('en-US', {
-            hour:   '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: true
+        document.getElementById('navClock').textContent = now.toLocaleTimeString('en-US', {
+            hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
         });
-
-        // Date: "FEB 26, 2026"
-        const dateStr = now.toLocaleDateString('en-US', {
-            month: 'short',
-            day:   'numeric',
-            year:  'numeric'
-        }).toUpperCase();  // e.g. "FEB 26, 2026"
-
-        document.getElementById('navClock').textContent = timeStr;
-        document.getElementById('navDate').textContent  = dateStr;
+        document.getElementById('navDate').textContent = now.toLocaleDateString('en-US', {
+            month: 'short', day: 'numeric', year: 'numeric'
+        }).toUpperCase();
     }
 
-    // ── Load user info from session into navbar ──
+    // ── NAVBAR USER INFO ──
     function loadNavUserInfo() {
         try {
             const raw = sessionStorage.getItem('userInfo');
@@ -584,16 +557,36 @@
             const name = info.name || info.firstName || info.username || 'User';
             const role = info.role || info.position || '';
             const initial = name.charAt(0).toUpperCase();
-
             document.getElementById('navUserName').textContent = name;
             document.getElementById('navUserRole').textContent = role;
             document.getElementById('navAvatar').textContent   = initial;
-        } catch(e) { /* keep defaults */ }
+        } catch(e) {}
     }
 
-    // ── NOTIFICATIONS ──
+    // ══════════════════════════════════════════════════════════
+    // NOTIFICATIONS — synced with sessionStorage (same as all
+    // other modules: inventory, POS, billing)
+    // ══════════════════════════════════════════════════════════
     let notifData         = [];
     let activeNotifFilter = 'all';
+
+    // ── FIX 1: Persistent read-state helpers ──
+    function getReadNotifIds() {
+        try { return new Set(JSON.parse(sessionStorage.getItem('readNotifIds') || '[]')); }
+        catch(e) { return new Set(); }
+    }
+
+    function saveReadNotifId(id) {
+        const ids = getReadNotifIds();
+        ids.add(id);
+        sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
+    }
+
+    function saveAllReadNotifIds() {
+        const ids = getReadNotifIds();
+        notifData.forEach(n => ids.add(n.id));
+        sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
+    }
 
     function generateAlertsFromInventory(inventory) {
         const alerts     = [];
@@ -632,8 +625,9 @@
 
             const qty      = parseInt(item.quantity || 0);
             const minStock = parseInt(item.minStockLevel || 10);
+            const isExpired = new Date(item.expiryDate) < today;
 
-            if (qty === 0) {
+            if (!isExpired && qty === 0) {
                 alerts.push({
                     id: `stk-${item._id || idx}`, type: 'critical', unread: true,
                     medicineName: medName,
@@ -643,7 +637,7 @@
                     actionLabel: 'Go to Inventory', actionClass: 'btn-critical',
                     icon: 'warning', iconClass: 'icon-critical'
                 });
-            } else if (qty <= minStock) {
+            } else if (!isExpired && qty <= minStock) {
                 alerts.push({
                     id: `stk-${item._id || idx}`, type: 'shortage', unread: true,
                     medicineName: medName,
@@ -705,13 +699,16 @@
         if (pill)  pill.textContent = count > 0 ? `${count} new` : 'All clear';
     }
 
+    // ── FIX 2: markNotifRead now persists to sessionStorage ──
     function markNotifRead(id) {
         const n = notifData.find(n => n.id === id);
-        if (n) { n.unread = false; renderNotifications(); }
+        if (n) { n.unread = false; saveReadNotifId(id); renderNotifications(); }
     }
 
+    // ── FIX 3: markAllRead now persists to sessionStorage ──
     function markAllRead() {
         notifData.forEach(n => n.unread = false);
+        saveAllReadNotifIds();
         renderNotifications();
     }
 
@@ -725,7 +722,7 @@
         } else if (n.type === 'critical' || n.type === 'shortage') {
             sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'summary', medicine: n.medicineName }));
         }
-        window.location.href = 'inventory.html';
+        window.location.href = 'inventory_pharmasst.html';
     }
 
     function filterNotifTab(btn, filter) {
@@ -735,6 +732,7 @@
         renderNotifications();
     }
 
+    // ── FIX 4: refreshNotifications merges sessionStorage + in-memory read IDs ──
     async function refreshNotifications() {
         const token = getToken();
         if (!token) return;
@@ -745,7 +743,13 @@
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const raw       = await res.json();
             const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
-            const previouslyRead = new Set(notifData.filter(n => !n.unread).map(n => n.id));
+
+            // Merge both in-memory unread state AND persisted sessionStorage read IDs
+            const previouslyRead = new Set([
+                ...notifData.filter(n => !n.unread).map(n => n.id),
+                ...JSON.parse(sessionStorage.getItem('readNotifIds') || '[]')
+            ]);
+
             notifData = generateAlertsFromInventory(inventory).slice(0, 15);
             notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
             renderNotifications();
@@ -787,7 +791,6 @@
         loadDarkModePreference();
         loadNavUserInfo();
 
-        // Start live clock immediately, tick every second
         updateNavClock();
         setInterval(updateNavClock, 1000);
 
@@ -1043,9 +1046,8 @@
             confirmButtonText: "Yes, logout"
         }).then(r => {
             if (r.isConfirmed) {
-                sessionStorage.removeItem('userInfo');
-                sessionStorage.removeItem('token');
-                window.location.href = 'login.html';
+                sessionStorage.clear();
+                window.location.href = '../html/login.html';
             }
         });
     }

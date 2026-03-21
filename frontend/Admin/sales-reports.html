@@ -131,6 +131,23 @@
         .sidebar-logout-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 16px; border: none; background: none; cursor: pointer; border-radius: 8px; color: #d62828; font-size: 14px; font-weight: 600; transition: background 0.15s; text-align: left; }
         .sidebar-logout-btn:hover { background: #fef2f2; }
         .sidebar-logout-btn .material-icons { font-size: 20px; color: #d62828; }
+
+        /* ── EXPORT DROPDOWN ── */
+        .export-wrap { position: relative; display: inline-block; }
+        .export-menu { display: none; position: absolute; top: calc(100% + 6px); right: 0; min-width: 220px; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.12); z-index: 200; overflow: hidden; padding: 12px 14px; }
+        .dark .export-menu { background: #1f2937; border-color: #374151; }
+        .export-menu.open { display: block; }
+        .export-menu-divider { height: 1px; background: #f0f0f0; margin: 10px 0; }
+        .dark .export-menu-divider { background: #374151; }
+        .export-check-row { display: flex; align-items: center; gap: 8px; padding: 6px 4px; font-size: 13px; font-weight: 500; color: #374151; cursor: pointer; border-radius: 6px; transition: background 0.12s; }
+        .dark .export-check-row { color: #d1d5db; }
+        .export-check-row:hover { background: #f0fdf4; }
+        .dark .export-check-row:hover { background: #064e3b; }
+        .export-check-row input[type="checkbox"] { width: 15px; height: 15px; accent-color: #005a32; cursor: pointer; }
+        .export-check-row .material-icons { font-size: 16px; }
+        .export-apply-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px; background: #005a32; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+        .export-apply-btn:hover { background: #004526; }
+        .export-apply-btn .material-icons { font-size: 16px; }
     </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark font-sans">
@@ -264,13 +281,25 @@
                             <option value="90">Last 3 months</option>
                             <option value="365">Last year</option>
                         </select>
-                        <!-- ── EXPORT PDF BUTTON (no dropdown) ── -->
-                        <button id="exportPdfBtn"
-                            onclick="exportFullReportPDF()"
-                            class="flex items-center gap-1 bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors">
-                            <span class="material-icons text-sm">picture_as_pdf</span>
-                            Export PDF
-                        </button>
+                        <!-- ── EXPORT DROPDOWN ── -->
+                        <div class="export-wrap">
+                            <button onclick="toggleExportMenu('salesExportMenu')"
+                                class="border border-primary px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/10 transition-colors text-primary font-semibold text-sm">
+                                <span class="material-icons text-sm">picture_as_pdf</span> Export / Print
+                                <span class="material-icons text-sm">arrow_drop_down</span>
+                            </button>
+                            <div id="salesExportMenu" class="export-menu">
+                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Include in report</p>
+                                <label class="export-check-row"><input type="checkbox" value="summary" checked> <span style="color:#16a34a" class="material-icons">bar_chart</span> Executive Summary</label>
+                                <label class="export-check-row"><input type="checkbox" value="medicines" checked> <span style="color:#005a32" class="material-icons">medication</span> Top Selling Medicines</label>
+                                <label class="export-check-row"><input type="checkbox" value="weekly" checked> <span style="color:#2563eb" class="material-icons">calendar_today</span> Weekly Performance</label>
+                                <label class="export-check-row"><input type="checkbox" value="pharmacist" checked> <span style="color:#7c3aed" class="material-icons">people</span> Pharmacist Performance</label>
+                                <div class="export-menu-divider"></div>
+                                <button onclick="exportFullReportPDF(getChecked('salesExportMenu'))" class="export-apply-btn">
+                                    <span class="material-icons">print</span> Print / Export PDF
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -841,103 +870,128 @@ notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
     }
 
     // Global function for PDF export (called by the main Export PDF button)
-    function exportFullReportPDF() {
+    function exportFullReportPDF(filters = ['summary','medicines','weekly','pharmacist']) {
         if (!salesManager || !salesManager.currentStats) {
             Swal.fire('No Data', 'Please wait for data to load.', 'warning');
             return;
         }
+        if (!filters.length) {
+            Swal.fire('Nothing selected', 'Please check at least one section.', 'info');
+            return;
+        }
+
+        toggleExportMenu('salesExportMenu'); // close dropdown
 
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF('p', 'mm', 'a4');
         const timestamp = new Date().toISOString().split('T')[0];
-        const filename = `WellServed_Sales_Report_${timestamp}`;
-        const stats = salesManager.currentStats;
+        const filename  = `WellServed_Sales_Report_${timestamp}`;
+        const stats     = salesManager.currentStats;
+        const timeLabel = { '7':'Last 7 Days', '30':'Last 30 Days', '90':'Last 3 Months', '365':'Last Year' }[document.getElementById('timeRange').value] || 'Custom Range';
+        const sectionLabels = { summary:'Executive Summary', medicines:'Top Selling Medicines', weekly:'Weekly Performance', pharmacist:'Pharmacist Performance' };
+        const included = filters.map(f => sectionLabels[f]).filter(Boolean).join(', ');
 
-        // Header
+        // Header bar
         doc.setFillColor(0, 90, 50);
         doc.rect(0, 0, 210, 20, 'F');
         doc.setTextColor(255, 255, 255);
         doc.setFontSize(16);
         doc.setFont('helvetica', 'bold');
-        doc.text('Well Served Pharmacy - Sales Report', 14, 13);
+        doc.text('Well Served Pharmacy — Sales Report', 14, 13);
 
-        // Report info
+        // Meta
         doc.setTextColor(0, 0, 0);
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'normal');
-        doc.text(`Generated: ${new Date().toLocaleString('en-PH')}`, 14, 30);
-        doc.text(`Period: Last ${document.getElementById('timeRange').value} days`, 14, 36);
-
-        // Summary stats
-        doc.setFontSize(11);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Executive Summary', 14, 48);
         doc.setFontSize(9);
         doc.setFont('helvetica', 'normal');
-        doc.text(`Total Revenue: ${salesManager.formatPeso(stats.summary.totalRevenue)}`, 14, 56);
-        doc.text(`Total Transactions: ${stats.summary.totalTransactions}`, 14, 62);
-        doc.text(`Average Order Value: ${salesManager.formatPeso(stats.summary.avgOrderValue)}`, 14, 68);
-        doc.text(`Top Selling Medicine: ${stats.summary.topMedicineName} (${stats.summary.topMedicineQty} units)`, 14, 74);
+        doc.text(`Generated: ${new Date().toLocaleString('en-PH')}`, 14, 28);
+        doc.text(`Period: ${timeLabel}`, 14, 34);
+        doc.text(`Sections: ${included}`, 14, 40);
 
-        // Top Medicines Table
-        doc.autoTable({
-            head: [['Medicine', 'Qty Sold', 'Revenue', 'Growth']],
-            body: stats.topMedicines.map(m => [
-                m.name,
-                m.qtySold,
-                salesManager.formatPeso(m.revenue),
-                `${m.growth.toFixed(1)}%`
-            ]),
-            startY: 85,
-            theme: 'grid',
-            headStyles: { fillColor: [0, 90, 50], textColor: 255, fontStyle: 'bold', fontSize: 8 },
-            bodyStyles: { fontSize: 8 },
-            styles: { cellPadding: 3 }
-        });
+        let startY = 50;
+
+        // Executive Summary
+        if (filters.includes('summary')) {
+            doc.setFontSize(11); doc.setFont('helvetica', 'bold');
+            doc.text('Executive Summary', 14, startY); startY += 8;
+            doc.setFontSize(9); doc.setFont('helvetica', 'normal');
+            doc.text(`Total Revenue: ${salesManager.formatPeso(stats.summary.totalRevenue)}`, 14, startY); startY += 6;
+            doc.text(`Total Transactions: ${stats.summary.totalTransactions}`, 14, startY); startY += 6;
+            doc.text(`Average Order Value: ${salesManager.formatPeso(stats.summary.avgOrderValue)}`, 14, startY); startY += 6;
+            doc.text(`Top Selling Medicine: ${stats.summary.topMedicineName} (${stats.summary.topMedicineQty} units)`, 14, startY); startY += 10;
+        }
+
+        // Top Medicines
+        if (filters.includes('medicines')) {
+            doc.autoTable({
+                head: [['Medicine', 'Qty Sold', 'Revenue', 'Growth']],
+                body: stats.topMedicines.map(m => [m.name, m.qtySold, salesManager.formatPeso(m.revenue), `${m.growth.toFixed(1)}%`]),
+                startY,
+                theme: 'grid',
+                headStyles: { fillColor: [0, 90, 50], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+                bodyStyles: { fontSize: 8 },
+                styles: { cellPadding: 3 },
+                didDrawPage: (d) => { startY = d.cursor.y + 8; }
+            });
+            startY = doc.lastAutoTable.finalY + 8;
+        }
 
         // Weekly Performance
-        doc.autoTable({
-            head: [['Period', 'Revenue', 'Transactions', 'Avg Order']],
-            body: stats.weeklySales.map(w => [
-                w.period,
-                salesManager.formatPeso(w.revenue),
-                w.transactions,
-                salesManager.formatPeso(w.avgOrder)
-            ]),
-            theme: 'grid',
-            headStyles: { fillColor: [0, 90, 50], textColor: 255, fontStyle: 'bold', fontSize: 8 },
-            bodyStyles: { fontSize: 8 },
-            styles: { cellPadding: 3 }
-        });
+        if (filters.includes('weekly')) {
+            doc.autoTable({
+                head: [['Period', 'Revenue', 'Transactions', 'Avg Order']],
+                body: stats.weeklySales.map(w => [w.period, salesManager.formatPeso(w.revenue), w.transactions, salesManager.formatPeso(w.avgOrder)]),
+                startY,
+                theme: 'grid',
+                headStyles: { fillColor: [0, 90, 50], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+                bodyStyles: { fontSize: 8 },
+                styles: { cellPadding: 3 }
+            });
+            startY = doc.lastAutoTable.finalY + 8;
+        }
 
         // Pharmacist Performance
-        doc.autoTable({
-            head: [['Pharmacist', 'Transactions', 'Revenue', 'Avg Order', 'Performance']],
-            body: stats.pharmacistPerformance.map(p => [
-                p.name,
-                p.transactions,
-                salesManager.formatPeso(p.revenue),
-                salesManager.formatPeso(p.avgOrder),
-                p.performance
-            ]),
-            theme: 'grid',
-            headStyles: { fillColor: [0, 90, 50], textColor: 255, fontStyle: 'bold', fontSize: 8 },
-            bodyStyles: { fontSize: 8 },
-            styles: { cellPadding: 3 }
-        });
+        if (filters.includes('pharmacist')) {
+            doc.autoTable({
+                head: [['Pharmacist', 'Transactions', 'Revenue', 'Avg Order', 'Performance']],
+                body: stats.pharmacistPerformance.map(p => [p.name, p.transactions, salesManager.formatPeso(p.revenue), salesManager.formatPeso(p.avgOrder), p.performance]),
+                startY,
+                theme: 'grid',
+                headStyles: { fillColor: [0, 90, 50], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+                bodyStyles: { fontSize: 8 },
+                styles: { cellPadding: 3 }
+            });
+        }
 
         // Footer
         const pageCount = doc.internal.getNumberOfPages();
         for (let i = 1; i <= pageCount; i++) {
             doc.setPage(i);
-            doc.setFontSize(8);
-            doc.setTextColor(150);
+            doc.setFontSize(8); doc.setTextColor(150);
             doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.getWidth() - 30, doc.internal.pageSize.getHeight() - 10);
         }
 
-        doc.save(`${filename}.pdf`);
-        Swal.fire({ icon:'success', title:'PDF Exported', text:`${filename}.pdf downloaded.`, timer:1800, showConfirmButton:false });
+        doc.autoPrint();
+        const blobUrl = doc.output('bloburl');
+        const printWin = window.open(blobUrl, '_blank');
+        if (!printWin) Swal.fire('Popup Blocked', 'Please allow popups for this page to print.', 'warning');
     }
+
+    // ── EXPORT DROPDOWN HELPERS ──
+    function toggleExportMenu(menuId) {
+        document.querySelectorAll('.export-menu.open').forEach(m => { if (m.id !== menuId) m.classList.remove('open'); });
+        const menu = document.getElementById(menuId);
+        if (menu) menu.classList.toggle('open');
+    }
+
+    function getChecked(menuId) {
+        return [...document.querySelectorAll(`#${menuId} input[type="checkbox"]:checked`)].map(cb => cb.value);
+    }
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.export-wrap')) {
+            document.querySelectorAll('.export-menu.open').forEach(m => m.classList.remove('open'));
+        }
+    });
 
     // ── INIT ──
     let salesManager;
