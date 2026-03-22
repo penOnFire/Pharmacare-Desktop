@@ -982,6 +982,7 @@ notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
         const menu = document.getElementById(menuId);
         if (menu) menu.classList.toggle('open');
     }
+    //testinggg langss tong comment na to di mapull ni rona e
 
     function getChecked(menuId) {
         return [...document.querySelectorAll(`#${menuId} input[type="checkbox"]:checked`)].map(cb => cb.value);
