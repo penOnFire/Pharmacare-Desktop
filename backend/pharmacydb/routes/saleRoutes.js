@@ -11,6 +11,7 @@ import SystemSettings from '../models/SystemSettings.js';
 
 const router = express.Router();
 
+console.log("🛠️  DEBUG: BILLING_MONGO_URI is:", process.env.BILLING_MONGO_URI ? "FOUND ✅" : "MISSING ❌");
 // ==============================================================================
 // 1. SETUP SECONDARY CONNECTION TO BILLING DB (READ-ONLY)
 // ==============================================================================
@@ -34,46 +35,49 @@ if (billingDbUri) {
 }
 
 // ==============================================================================
-// 2. GET ALL SALES (History)
+// 2. GET ALL SALES (History with Auto-Sync)
 // ==============================================================================
-router.get('/', protect, async (req, res) => {
+router.get('/', async (req, res) => {
     try {
-        const sales = await Sale.find({})
-            .populate('pharmacist', 'name')
-            .populate({ path: 'items.medicine', select: 'name strength' })
-            .sort({ date: -1 })
-            .lean(); 
+        const sales = await Sale.find().sort({ createdAt: -1 });
+        const salesData = sales.map(sale => sale.toObject());
 
-        const patientIds = sales
-            .map(s => s.patient)
-            .filter(id => id && mongoose.Types.ObjectId.isValid(id));
+        if (ExternalPayment) {
+            // Grab all completed payments from the Billing DB
+            const allPayments = await ExternalPayment.find({
+                status: { $in: ["completed", "Completed", "paid", "Paid"] }
+            }).lean();
 
-        const patients = await Patient.find({ _id: { $in: patientIds } })
-            .select('firstname lastname patientId')
-            .lean();
+            for (let sale of salesData) {
+                if (sale.paymentStatus === 'Pending') {
+                    const myAmount = Number(sale.totalAmount);
+                    const myName = (sale.patientName || 'Walk-in').toLowerCase().trim();
 
-        const patientMap = {};
-        patients.forEach(p => { patientMap[p._id.toString()] = p; });
+                    // 🔍 Try to find a match in their DB
+                    const match = allPayments.find(p => {
+                        const theirAmount = Number(p.amount);
+                        const theirName = (p.patientName || 'Walk-in').toLowerCase().trim();
 
-        sales.forEach(sale => {
-            if (sale.patient && patientMap[sale.patient.toString()]) {
-                const p = patientMap[sale.patient.toString()];
-                sale.patient = {
-                    _id: p._id,
-                    patientId: p.patientId, 
-                    name: `${p.firstname} ${p.lastname}`
-                };
-                sale.patientName = `${p.firstname} ${p.lastname}`;
+                        // Match if price is within 1 peso AND the name is similar
+                        const priceMatch = Math.abs(theirAmount - myAmount) < 1.0;
+                        const nameMatch = theirName.includes(myName) || myName.includes(theirName);
+
+                        return priceMatch && nameMatch;
+                    });
+
+                    if (match) {
+                        console.log(`✅ Auto-Sync: Match found for ${sale.patientName} (₱${myAmount})`);
+                        sale.paymentStatus = 'Paid';
+                        // Save it so your DB remembers it for next time
+                        await Sale.findByIdAndUpdate(sale._id, { paymentStatus: 'Paid' });
+                    }
+                }
             }
-            if (!sale.date && sale.createdAt) {
-                sale.date = sale.createdAt;
-            }
-        });
-
-        res.json(sales);
-    } catch (err) {
-        console.error("GET Sales Error:", err);
-        res.status(500).json({ message: 'Server Error' });
+        }
+        res.status(200).json(salesData);
+    } catch (error) {
+        console.error("Billing View Error:", error);
+        res.status(500).json({ message: error.message });
     }
 });
 

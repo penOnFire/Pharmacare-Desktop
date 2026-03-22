@@ -866,7 +866,7 @@ h1, h2, h3 {
                                     <th class="text-left py-3 px-4  text-subtext-light dark:text-subtext-dark font-medium">Patient Name</th>
                                     <th class="text-left py-3 px-4 text-subtext-light dark:text-subtext-dark font-medium">Patient ID</th>
                                     <th class="text-left py-3 px-4  text-subtext-light dark:text-subtext-dark font-medium">Gender</th>
-                                    <th class="text-left py-3 px-4  text-subtext-light dark:text-subtext-dark font-medium">Consultation Date</th>
+                                    <th class="text-left py-3 px-4  text-subtext-light dark:text-subtext-dark font-medium">Prescribed Date</th>
                                     <th class="text-left py-3 px-4  text-subtext-light dark:text-subtext-dark font-medium">Status</th>
                                     <th class="text-left py-3 px-4  text-subtext-light dark:text-subtext-dark font-medium">View Details</th>
                                 </tr>
@@ -1314,7 +1314,6 @@ if (statusTerm !== 'all') params.append('status', statusTerm);
                 const prescriptions = await this.apiCall('GET', `/api/prescriptions/bypatient/${patientId}`, token);
                 const saleResult = await this.apiCall('POST', `/api/sales/dispense/${patientId}`, token);
                 
-                this.saveToLocalHistoryFromSale(patient, prescriptions);
                 this.displayDispensedHistory();
                 
                 Swal.fire({
@@ -1582,43 +1581,74 @@ if (statusTerm !== 'all') params.append('status', statusTerm);
         sessionStorage.setItem('dispensedMedicines', JSON.stringify(history));
     }
 
-    displayDispensedHistory() {
+    async displayDispensedHistory() {
         const container = document.getElementById('dispensedMedicinesList');
         if (!container) return;
 
-        const history = JSON.parse(sessionStorage.getItem('dispensedMedicines') || '[]');
+        // Show a loading state while fetching from the database
+        container.innerHTML = '<p class="text-subtext-light dark:text-subtext-dark text-sm p-4">Loading global history...</p>';
 
-        if (history.length === 0) {
-            container.innerHTML = '<p class="text-subtext-light dark:text-subtext-dark text-sm">No recent dispensing history found.</p>';
-            return;
+        try {
+            const token = this.getToken();
+            if (!token) return;
+
+            // Fetch global sales history directly from the backend
+            const sales = await this.apiCall('GET', '/api/sales', token);
+            
+            // 🔥 NEW: Sort the sales array so the newest dates are at the very top!
+            const sortedSales = sales.sort((a, b) => {
+                const dateA = new Date(a.date || a.createdAt);
+                const dateB = new Date(b.date || b.createdAt);
+                return dateB - dateA; // This puts newest (largest) date first
+            });
+
+            // NOW grab only the 10 most recent dispenses from the sorted list
+            const recentSales = sortedSales.slice(0, 10);
+
+            if (recentSales.length === 0) {
+                container.innerHTML = '<p class="text-subtext-light dark:text-subtext-dark text-sm p-4">No recent dispensing history found in the database.</p>';
+                return;
+            }
+
+            let html = '';
+            recentSales.forEach(sale => {
+                const dateObj = new Date(sale.date || sale.createdAt);
+                const dateStr = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+                // Safely handle EMR patients vs Walk-in customers
+                const patientName = sale.patient ? sale.patient.name : sale.patientName;
+                const patientId = sale.patient ? sale.patient.patientId : 'Walk-in';
+
+                // Map the sold items to HTML
+                const medsHtml = sale.items.map(item => {
+                    const medName = item.name || 'Unknown';
+                    const dosage = (item.medicine && item.medicine.strength) ? item.medicine.strength : 'N/A';
+                    return `
+                    <div class="flex justify-between text-sm mt-1">
+                        <span class="font-medium text-text-light dark:text-text-dark">${medName} <span class="text-xs text-gray-500">(${dosage})</span></span>
+                        <span class="text-gray-600 dark:text-gray-400">Qty: ${item.quantity}</span>
+                    </div>
+                    `;
+                }).join('');
+
+                html += `
+                    <div class="dispensed-medicine-item">
+                        <div class="dispensed-medicine-header">
+                            <h4 class="font-bold text-primary text-lg">${patientName} <span class="text-sm text-gray-500 font-normal">(${patientId})</span></h4>
+                            <span class="text-xs text-gray-400">${dateStr}</span>
+                        </div>
+                        <div class="mt-2 pl-2 border-l-2 border-primary/20">
+                            ${medsHtml}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        } catch (error) {
+            console.error("Failed to load dispensing history from database:", error);
+            container.innerHTML = '<p class="text-red-500 text-sm p-4">Error loading history from server.</p>';
         }
-
-        let html = '';
-        history.forEach(record => {
-            const dateObj = new Date(record.date);
-            const dateStr = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-
-            const medsHtml = record.medicines.map(m => `
-                <div class="flex justify-between text-sm mt-1">
-                    <span class="font-medium text-text-light dark:text-text-dark">${m.name} <span class="text-xs text-gray-500">(${m.dosage})</span></span>
-                    <span class="text-gray-600 dark:text-gray-400">Qty: ${m.quantity}</span>
-                </div>
-            `).join('');
-
-            html += `
-                <div class="dispensed-medicine-item">
-                    <div class="dispensed-medicine-header">
-                        <h4 class="font-bold text-primary text-lg">${record.patientName} <span class="text-sm text-gray-500 font-normal">(${record.patientId})</span></h4>
-                        <span class="text-xs text-gray-400">${dateStr}</span>
-                    </div>
-                    <div class="mt-2 pl-2 border-l-2 border-primary/20">
-                        ${medsHtml}
-                    </div>
-                </div>
-            `;
-        });
-
-        container.innerHTML = html;
     }
 
     setupEventListeners() {

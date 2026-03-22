@@ -504,6 +504,7 @@
                                 <thead class="text-xs text-text-light dark:text-text-dark uppercase tracking-wider">
                                     <tr style="background: linear-gradient(to right, rgba(0,90,50,0.2), rgba(255,255,255,0.5), rgba(214,40,40,0.2));">
                                         <th class="px-6 py-4 font-medium">Medicine Name</th>
+                                        <th class="px-6 py-4 font-medium">Category</th>
                                         <th class="px-6 py-4 font-medium">Total Batches</th>
                                         <th class="px-6 py-4 font-medium">Total Quantity</th>
                                         <th class="px-6 py-4 font-medium">Earliest Expiry</th>
@@ -555,6 +556,7 @@
                                     <tr style="background: linear-gradient(to right, rgba(0,90,50,0.2), rgba(255,255,255,0.5), rgba(214,40,40,0.2));">
                                         <th class="px-6 py-4 font-medium">Dispense Order</th>
                                         <th class="px-6 py-4 font-medium">Medicine Name</th>
+                                        <th class="px-6 py-4 font-medium">Category</th>
                                         <th class="px-6 py-4 font-medium">Batch No.</th>
                                         <th class="px-6 py-4 font-medium">Quantity</th>
                                         <th class="px-6 py-4 font-medium">Expiry Date</th>
@@ -1012,115 +1014,109 @@ class InventoryManager {
     }
 
     async fetchInventory() {
-        const data = await this.apiCall('/api/inventory');
-        if (data) {
-            const allItems = Array.isArray(data) ? data : (data.medicines || data.data || []);
-            this.liveInventory = allItems.filter(item => item.status !== 'Archived');
-            this.archivedInventory = allItems.filter(item => item.status === 'Archived');
+        try {
+            // 1. Fetch Active Inventory
+            const liveData = await this.apiCall('/api/inventory');
+            this.liveInventory = Array.isArray(liveData) ? liveData : (liveData.medicines || liveData.data || []);
+
+            // 2. Fetch Archived Inventory (🔥 This is what was missing!)
+            const archivedData = await this.apiCall('/api/inventory/archived');
+            this.archivedInventory = Array.isArray(archivedData) ? archivedData : (archivedData.medicines || archivedData.data || []);
+
             this.renderTables();
             this.updateDashboardStats();
+        } catch (error) {
+            console.error("Failed to fetch inventory data:", error);
+            Swal.fire('Sync Error', 'Could not load inventory data from the server.', 'error');
         }
     }
 
     // ── ARCHIVE BATCH (DB-first: save to database → update UI on success → revert on failure) ──
     async archiveBatch(id) {
-        const r = await Swal.fire({
-            title: 'Archive Batch?',
-            text: 'This batch will be moved to the Archive tab.',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#005a32',
-            confirmButtonText: 'Yes, archive it'
+        if (!id || id === 'undefined' || id === 'null') return;
+        const result = await Swal.fire({ 
+            title: 'Archive Batch?', 
+            text: 'This batch will be moved to the Archive tab.', 
+            icon: 'question', 
+            showCancelButton: true, 
+            confirmButtonColor: '#005a32', 
+            confirmButtonText: 'Yes, archive it' 
         });
-        if (!r.isConfirmed) return;
-
-        const idx = this.liveInventory.findIndex(i => (i._id || i.id) === id);
-        if (idx === -1) { Swal.fire('Error', 'Item not found.', 'error'); return; }
-
-        // Show loading state
-        Swal.fire({ title: 'Archiving...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-
-        try {
-            // Save to database FIRST — UI only updates if this succeeds
-            await this.apiCall(`/api/medicines/${id}`, 'PUT', { status: 'Archived' });
-
-            // Move item locally: live → archived
-            const item = { ...this.liveInventory[idx], status: 'Archived' };
-            this.liveInventory.splice(idx, 1);
-            this.archivedInventory.unshift(item);
-            this.renderTables();
-            this.updateDashboardStats();
-
-            await Swal.fire({
-                icon: 'success',
-                title: 'Archived!',
-                text: 'Batch has been moved to the archive.',
-                confirmButtonColor: '#005a32',
-                timer: 1600,
-                showConfirmButton: false
-            });
-
-            // Navigate straight to the Archive tab
-            this.switchTab('archive');
-
-        } catch (e) {
-            Swal.fire('Archive Failed', e.message || 'Unknown error. Check console.', 'error');
-            console.error('archiveBatch error:', e);
+        
+        if (result.isConfirmed) {
+            try {
+                // 🔥 FIX: Added "/archive" to the URL!
+                await this.apiCall(`/api/inventory/${id}/archive`, 'PATCH');
+                
+                Swal.fire({
+                    icon: 'success', 
+                    title: 'Archived!', 
+                    text: 'Batch has been moved to the archive.', 
+                    confirmButtonColor: '#005a32', 
+                    timer: 1600, 
+                    showConfirmButton: false 
+                });
+                
+                this.fetchInventory(); // Instantly reload tables
+            } catch (error) {
+                Swal.fire('Archive Failed', error.message, 'error');
+            }
         }
     }
 
-    // ── RESTORE BATCH (DB-first: save to database → update UI on success → revert on failure) ──
     async restoreBatch(id) {
-        const r = await Swal.fire({
-            title: 'Restore Batch?',
-            text: 'This batch will be moved back to the FEFO (Batch Details) tab.',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#005a32',
-            confirmButtonText: 'Yes, restore it'
+        if (!id || id === 'undefined' || id === 'null') return;
+        const result = await Swal.fire({ 
+            title: 'Restore Batch?', 
+            text: 'This batch will be moved back to the active inventory.', 
+            icon: 'question', 
+            showCancelButton: true, 
+            confirmButtonColor: '#005a32', 
+            confirmButtonText: 'Yes, restore it' 
         });
-        if (!r.isConfirmed) return;
-
-        const idx = this.archivedInventory.findIndex(i => (i._id || i.id) === id);
-        if (idx === -1) { Swal.fire('Error', 'Item not found.', 'error'); return; }
-
-        // Show loading state
-        Swal.fire({ title: 'Restoring...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-
-        try {
-            // Save to database FIRST — UI only updates if this succeeds
-            await this.apiCall(`/api/medicines/${id}`, 'PUT', { status: 'In Stock' });
-
-            // Move item locally: archived → live
-            const item = { ...this.archivedInventory[idx], status: 'In Stock' };
-            this.archivedInventory.splice(idx, 1);
-            this.liveInventory.push(item);
-            this.renderTables();
-            this.updateDashboardStats();
-
-            await Swal.fire({
-                icon: 'success',
-                title: 'Restored!',
-                text: 'Batch has been moved back to active inventory.',
-                confirmButtonColor: '#005a32',
-                timer: 1600,
-                showConfirmButton: false
-            });
-
-            // Navigate straight to the Batch Details (FEFO) tab
-            this.switchTab('batch');
-
-        } catch (e) {
-            Swal.fire('Restore Failed', e.message || 'Unknown error. Check console.', 'error');
-            console.error('restoreBatch error:', e);
+        
+        if (result.isConfirmed) { 
+            try {
+                // 🔥 FIX: Added "/restore" to the URL!
+                await this.apiCall(`/api/inventory/${id}/restore`, 'PATCH');
+                
+                Swal.fire({
+                    icon: 'success', 
+                    title: 'Restored!', 
+                    text: 'Batch has been moved back to active inventory.', 
+                    confirmButtonColor: '#005a32', 
+                    timer: 1600, 
+                    showConfirmButton: false 
+                });
+                
+                this.fetchInventory();
+            } catch (error) {
+                Swal.fire('Restore Failed', error.message, 'error');
+            }
         }
     }
 
     async deleteBatch(id) {
-        Swal.fire({ title: "Delete Permanently?", text: "This cannot be undone!", icon: "warning", showCancelButton: true, confirmButtonColor: "#d62828", confirmButtonText: "Yes, delete it" })
-            .then(async (result) => {
-                if (result.isConfirmed) { await this.apiCall(`/api/medicines/${id}`, 'DELETE'); Swal.fire('Deleted', 'Record has been removed.', 'success'); this.fetchInventory(); }
-            });
+        if (!id || id === 'undefined' || id === 'null') return;
+        const result = await Swal.fire({ 
+            title: "Delete Permanently?", 
+            text: "This cannot be undone!", 
+            icon: "warning", 
+            showCancelButton: true, 
+            confirmButtonColor: "#d62828",
+            confirmButtonText: "Yes, delete it"
+        });
+        
+        if (result.isConfirmed) { 
+            try {
+                // 🔥 FIX: Targeting /api/inventory
+                await this.apiCall(`/api/inventory/${id}`, 'DELETE');
+                Swal.fire('Deleted', 'Record permanently removed.', 'success'); 
+                this.fetchInventory(); 
+            } catch (error) {
+                Swal.fire('Delete Failed', error.message, 'error');
+            }
+        }
     }
 
     renderTables() { this.renderSummary(); this.renderBatches(); }
@@ -1147,7 +1143,11 @@ class InventoryManager {
         const summary = {};
         this.liveInventory.forEach(item => {
             const name = this._getName(item), price = parseFloat(this._getPrice(item)||0), qty = parseInt(item.quantity||0), isExp = new Date(item.expiryDate) < new Date();
-            if (!summary[name]) summary[name] = { name, batchCount:0, totalQty:0, totalValue:0, earliestExpiry:item.expiryDate, minStock:item.minStockLevel||10 };
+            // 🔥 Extract Category from the populated medicine object
+            const category = (item.medicine && item.medicine.category) ? item.medicine.category : (item.category || 'N/A');
+
+            // Add 'category' to the summary object
+            if (!summary[name]) summary[name] = { name, category, batchCount:0, totalQty:0, totalValue:0, earliestExpiry:item.expiryDate, minStock:item.minStockLevel||10 };
             summary[name].batchCount++;
             if (!isExp) { summary[name].totalQty += qty; summary[name].totalValue += qty * price; }
             if (new Date(item.expiryDate) < new Date(summary[name].earliestExpiry)) summary[name].earliestExpiry = item.expiryDate;
@@ -1170,7 +1170,7 @@ class InventoryManager {
             const avg = item.totalQty > 0 ? item.totalValue / item.totalQty : 0;
             tbody.innerHTML += `<tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
                 <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${item.name}</td>
-                <td class="px-6 py-4 text-gray-500">${item.batchCount}</td>
+                <td class="px-6 py-4 text-gray-500">${item.category}</td> <td class="px-6 py-4 text-gray-500">${item.batchCount}</td>
                 <td class="px-6 py-4 font-bold">${item.totalQty}</td>
                 <td class="px-6 py-4 text-gray-500">${this.formatDate(item.earliestExpiry)}</td>
                 <td class="px-6 py-4 text-gray-500">₱${avg.toFixed(2)}</td>
@@ -1193,6 +1193,9 @@ class InventoryManager {
         pageItems.forEach((item, index) => {
             const globalIndex = (batchPage - 1) * batchRowsPerPage + index;
             const name = this._getName(item), expiry = new Date(item.expiryDate), today = new Date(), daysLeft = Math.ceil((expiry-today)/864e5);
+            // 🔥 Extract Category for Batch Table
+            const category = (item.medicine && item.medicine.category) ? item.medicine.category : (item.category || 'N/A');
+
             let dc='text-success', dt=`${daysLeft} days`, sl='<span class="status in-stock">Active</span>';
             if (daysLeft<0)       { dc='text-secondary font-bold'; dt='EXPIRED'; sl='<span class="status out-of-stock">Expired</span>'; }
             else if (daysLeft<30) { dc='text-accent font-bold'; }
@@ -1202,7 +1205,7 @@ class InventoryManager {
                     <span class="inline-flex items-center justify-center w-6 h-6 rounded-full ${isPriority?'bg-secondary/20 text-secondary':'bg-gray-200 text-gray-600'} text-xs font-bold">${globalIndex+1}</span>
                     ${isPriority?'<span class="material-icons text-xs text-secondary" title="Expiring Soonest">priority_high</span>':''}</div></td>
                 <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${name}</td>
-                <td class="px-6 py-4 text-gray-500">${item.batchNumber||'N/A'}</td>
+                <td class="px-6 py-4 text-gray-500">${category}</td> <td class="px-6 py-4 text-gray-500">${item.batchNumber||'N/A'}</td>
                 <td class="px-6 py-4 font-bold">${item.quantity}</td>
                 <td class="px-6 py-4 text-gray-500">${this.formatDate(item.expiryDate)}</td>
                 <td class="px-6 py-4 ${dc}">${dt}</td>
@@ -1231,7 +1234,6 @@ class InventoryManager {
                 <td class="px-6 py-4 text-gray-500">${this.formatDate(item.expiryDate)}</td>
                 <td class="px-6 py-4"><div class="flex items-center gap-2">
                     <button onclick="inventoryManager.restoreBatch('${item._id}')" class="text-success hover:text-success/80" title="Restore"><span class="material-icons text-sm">restore</span></button>
-                    <button onclick="inventoryManager.deleteBatch('${item._id}')" class="text-secondary hover:text-secondary/80" title="Delete Permanently"><span class="material-icons text-sm">delete_forever</span></button>
                 </div></td>
             </tr>`;
         });
