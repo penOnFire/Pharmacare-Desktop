@@ -851,11 +851,11 @@ function setCategory(btn, cat) {
                         <p class="text-[10px] text-slate-400">₱${p.price.toFixed(2)} / unit</p>
                     </div>
                 </div>
-                <div class="flex flex-col items-end gap-1">
+                <div class="flex items-center gap-1.5">
+    <p class="text-sm font-bold">₱${(p.price * qty).toFixed(2)}</p>
     <button onclick="removeFromCart('${p.id}')" class="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-400 hover:bg-rose-100 hover:text-rose-500 flex items-center justify-center transition-colors flex-shrink-0">
         <span class="material-icons" style="font-size:12px;">close</span>
     </button>
-    <p class="text-sm font-bold">₱${(p.price * qty).toFixed(2)}</p>
 </div>
             </div>`).join('');
     }

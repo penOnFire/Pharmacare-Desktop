@@ -307,6 +307,17 @@
                         placeholder="Search by Patient Name, ID, or Medicine..." type="text"/>
                 </div>
 
+                
+                <!-- Date Filter -->
+                <select id="dateRangeFilter" onchange="billingManager.applyFilters()" class="px-4 py-2.5 text-sm font-medium border border-slate-200 dark:border-slate-700 rounded-lg bg-surface-light dark:bg-surface-dark focus:ring-primary text-text-light dark:text-text-dark">
+                    <option value="all">All Dates</option>
+                    <option value="today">Today</option>
+                    <option value="week">This Week</option>
+                    <option value="month">This Month</option>
+                    <option value="last-month">Last Month</option>
+                    <option value="year">This Year</option>
+                </select>
+
                 <!-- Custom Status Filter Dropdown -->
                 <div class="sf-wrap" id="sfWrap">
                     <!-- Trigger button -->
@@ -588,66 +599,97 @@
 
         // ── Single source of truth — applies BOTH filters together ──
         applyFilters() {
-            let data = this.salesData;
+            let filtered = this.salesData;
 
-            // 1. Status filter — case-insensitive so "paid"/"Paid"/"PAID" all match
             if (this.activeStatus !== 'all') {
                 const target = this.activeStatus.toLowerCase();
-                data = data.filter(s => {
-                    const ps = (s.paymentStatus || '').trim().toLowerCase();
-                    return ps === target;
+                filtered = filtered.filter(s => {
+                    let raw = (s.paymentStatus || 'Pending').trim().toLowerCase();
+                    if (raw === 'completed') raw = 'paid';
+                    return raw === target;
                 });
             }
 
-            // 2. Search filter (on top of status result)
             if (this.activeSearch) {
                 const lower = this.activeSearch.toLowerCase();
-                data = data.filter(s =>
+                filtered = filtered.filter(s =>
                     (s.patientName && s.patientName.toLowerCase().includes(lower)) ||
                     (s._id && s._id.toLowerCase().includes(lower)) ||
                     (s.items && s.items.some(i => (i.name || '').toLowerCase().includes(lower)))
                 );
             }
 
-            this.renderTable(data);
+            const dateVal = document.getElementById('dateRangeFilter')?.value || 'all';
+            if (dateVal !== 'all') {
+                const now = new Date();
+                const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                filtered = filtered.filter(s => {
+                    const raw = new Date(s.date || s.createdAt);
+                    if (isNaN(raw.getTime())) return false;
+                    const d = new Date(raw.getFullYear(), raw.getMonth(), raw.getDate());
+                    if (dateVal === 'today') return d.getTime() === todayLocal.getTime();
+                    if (dateVal === 'week') {
+                        const weekStart = new Date(todayLocal);
+                        weekStart.setDate(todayLocal.getDate() - 7);
+                        return d >= weekStart && d <= todayLocal;
+                    }
+                    if (dateVal === 'month') {
+                        const monthStart = new Date(todayLocal.getFullYear(), todayLocal.getMonth(), 1);
+                        const monthEnd   = new Date(todayLocal.getFullYear(), todayLocal.getMonth() + 1, 0);
+                        return d >= monthStart && d <= monthEnd;
+                    }
+                    if (dateVal === 'last-month') {
+                        const lmStart = new Date(todayLocal.getFullYear(), todayLocal.getMonth() - 1, 1);
+                        const lmEnd   = new Date(todayLocal.getFullYear(), todayLocal.getMonth(), 0);
+                        return d >= lmStart && d <= lmEnd;
+                    }
+                    if (dateVal === 'year') {
+                        const yearStart = new Date(todayLocal.getFullYear(), 0, 1);
+                        const yearEnd   = new Date(todayLocal.getFullYear(), 11, 31);
+                        return d >= yearStart && d <= yearEnd;
+                    }
+                    return true;
+                });
+            }
+
+            this.renderTable(filtered);
         }
 
         renderTable(data) {
             const tbody     = document.getElementById('transactionsTableBody');
             const noResults = document.getElementById('noResults');
             const countEl   = document.getElementById('recordCount');
+            if (countEl) countEl.textContent = `${(data || []).length} record${(data || []).length !== 1 ? 's' : ''}`;
 
             if (!data || data.length === 0) {
                 tbody.innerHTML = '';
                 noResults.classList.remove('hidden');
-                if (countEl) countEl.textContent = '0 records';
                 return;
             }
             noResults.classList.add('hidden');
-            if (countEl) countEl.textContent = `${data.length} record${data.length!==1?'s':''}`;
 
             tbody.innerHTML = data.map(sale => {
-                // Normalize to Title Case so CSS badge classes always match
                 const rawPs = (sale.paymentStatus || 'Pending').trim();
                 const ps    = rawPs.charAt(0).toUpperCase() + rawPs.slice(1).toLowerCase();
-                const statusClass = `status-${ps}`;
-                const statusIcon  = ps==='Paid'?'check_circle': ps==='Failed'?'cancel':'schedule';
+                const normalizedPs  = (ps === 'Completed') ? 'Paid' : ps;
+                const statusClass   = `status-${normalizedPs}`;
+                const statusIcon    = normalizedPs === 'Paid' ? 'check_circle' : normalizedPs === 'Failed' ? 'cancel' : 'schedule';
 
                 let dateDisplay = "N/A";
                 const rawDate = sale.date || sale.createdAt;
-                if (rawDate) { const d=new Date(rawDate); if(!isNaN(d.getTime())) dateDisplay=d.toLocaleDateString(); }
+                if (rawDate) { const d = new Date(rawDate); if (!isNaN(d.getTime())) dateDisplay = d.toLocaleDateString(); }
 
                 const pName = sale.patientName || "Walk-in";
                 let pIdDisplay = "Guest";
                 if (sale.patient && sale.patient.patientId) pIdDisplay = sale.patient.patientId;
-                else if (typeof sale.patient === 'string') pIdDisplay = sale.patient.substring(0,6).toUpperCase();
+                else if (typeof sale.patient === 'string') pIdDisplay = sale.patient.substring(0, 6).toUpperCase();
 
                 let medicineHtml = '<span class="text-gray-400 italic">No items</span>';
                 if (sale.items && sale.items.length > 0) {
                     const opts = sale.items.map(item => {
                         let name = item.name;
-                        if ((!name||name==="Unknown") && item.medicine?.name) name = item.medicine.name;
-                        return `<option>${name||"Unknown Medicine"} (x${item.quantity})</option>`;
+                        if ((!name || name === "Unknown") && item.medicine?.name) name = item.medicine.name;
+                        return `<option>${name || "Unknown Medicine"} (x${item.quantity})</option>`;
                     }).join('');
                     medicineHtml = `<select class="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">${opts}</select>`;
                 }
@@ -662,11 +704,11 @@
                         <div class="text-xs text-subtext-light dark:text-subtext-dark bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded w-fit mt-1">${pIdDisplay}</div>
                     </td>
                     <td class="px-6 py-4"><div class="w-64">${medicineHtml}</div></td>
-                    <td class="px-6 py-4 font-bold text-text-light dark:text-text-dark">₱${amount.toLocaleString(undefined,{minimumFractionDigits:2})}</td>
+                    <td class="px-6 py-4 font-bold text-text-light dark:text-text-dark">₱${amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
                     <td class="px-6 py-4">
                         <span class="status-badge ${statusClass}">
                             <span class="material-icons">${statusIcon}</span>
-                            ${ps}
+                            ${normalizedPs}
                         </span>
                     </td>
                     <td class="px-6 py-4 text-center">
@@ -691,9 +733,9 @@
                 html:`<div class="text-left space-y-3 mb-2">
                     <div class="bg-gray-50 p-3 rounded text-sm">
                         <p><strong>Ref ID:</strong> ${sale._id}</p>
-                        <p><strong>Date:</strong> ${new Date(sale.date).toLocaleString()}</p>
-                        <p><strong>Patient:</strong> ${sale.patientName||'Walk-in'}</p>
-                        <p><strong>Status:</strong> <span class="font-bold">${sale.paymentStatus}</span></p>
+                        <p><strong>Date:</strong> ${sale.date || sale.createdAt ? new Date(sale.date || sale.createdAt).toLocaleString() : 'N/A'}</p>
+                        <p><strong>Patient:</strong> ${sale.patientName || 'Walk-in'}</p>
+                        <p><strong>Status:</strong> <span class="font-bold">${sale.paymentStatus || 'Pending'}</span></p>
                     </div>
                     <div class="mt-2"><p class="font-semibold text-sm mb-1">Items Purchased:</p>${itemsHtml}</div>
                     <div class="border-t pt-3 mt-2 flex justify-between font-bold text-lg text-primary">
