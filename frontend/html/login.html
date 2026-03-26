@@ -1,537 +1,642 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Pharmacy Management Login</title>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
-<link rel="stylesheet" href="../css/styles.css"/>
-<link rel="stylesheet" href="../css/scrollbar.css"/>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Pharmacy Management Login</title>
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../css/scrollbar.css" />
 
-<script>
-tailwind.config = {
-    theme: {
-        extend: {
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
             colors: {
-                primary: "#358E83",
-                "background-light": "#F0FDF4",
-                "surface-light": "#FFFFFF",
-                "text-light": "#333333",
-                "muted-light": "#6B7280",
-                "border-light": "#E5E7EB"
-            }
+              primary: "#358E83",
+              "background-light": "#F0FDF4",
+              "surface-light": "#FFFFFF",
+              "text-light": "#333333",
+              "muted-light": "#6B7280",
+              "border-light": "#E5E7EB",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      .drag-region {
+        -webkit-app-region: drag;
+      }
+
+      /* This makes the buttons clickable again */
+      .no-drag {
+        -webkit-app-region: no-drag;
+      }
+
+      body {
+        background-color: #f0fdf4;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .login-container {
+        width: 100%;
+        max-width: 1200px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        position: relative;
+      }
+
+      .close-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+        background: white;
+        border: none;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        z-index: 1;
+        transition: all 0.3s ease;
+      }
+
+      .close-btn:hover {
+        background: #f8fafc;
+        transform: scale(1.05);
+      }
+
+      .container-content {
+        display: flex;
+        min-height: 650px;
+      }
+
+      /* LEFT SIDE - WELCOME SECTION */
+      .welcome-section {
+        flex: 1;
+        background: linear-gradient(135deg, #358e83, #2a7168);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 60px 50px;
+      }
+
+      .welcome-content {
+        max-width: 450px;
+        width: 100%;
+      }
+
+      .welcome-content h1 {
+        font-size: 36px;
+        font-weight: 700;
+        margin-bottom: 24px;
+        line-height: 1.3;
+        text-align: center;
+      }
+
+      .welcome-content p {
+        font-size: 18px;
+        line-height: 1.6;
+        opacity: 0.9;
+        text-align: center;
+        margin: 0 auto;
+      }
+
+      /* RIGHT SIDE - LOGIN SECTION */
+      .login-section {
+        flex: 1;
+        padding: 60px 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .login-content {
+        width: 100%;
+        max-width: 400px;
+      }
+
+      .login-header {
+        margin-bottom: 40px;
+      }
+
+      .login-header h2 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 8px;
+      }
+
+      .login-header p {
+        color: #6b7280;
+        font-size: 14px;
+      }
+
+      .form-group {
+        margin-bottom: 24px;
+      }
+
+      .form-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 8px;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: #f8fafc;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+
+      .form-control:focus {
+        outline: none;
+        border-color: #358e83;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(53, 142, 131, 0.1);
+      }
+
+      .form-control.is-invalid {
+        border-color: #ef4444;
+      }
+
+      .password-input {
+        position: relative;
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #6b7280;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+      }
+
+      .toggle-password:hover {
+        background: #f3f4f6;
+        color: #374151;
+      }
+
+      .btn-primary {
+        width: 100%;
+        padding: 14px 20px;
+        background: #358e83;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary:hover {
+        background: #2a7168;
+        transform: translateY(-1px);
+      }
+
+      .attempts-counter {
+        text-align: right;
+        margin-top: 12px;
+        font-size: 12px;
+        color: #6b7280;
+      }
+
+      .forgot-password {
+        text-align: center;
+        margin-top: 24px;
+      }
+
+      .forgot-password a {
+        color: #358e83;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: color 0.3s ease;
+      }
+
+      .forgot-password a:hover {
+        color: #2a7168;
+        text-decoration: underline;
+      }
+
+      .footer {
+        margin-top: 40px;
+        padding-top: 24px;
+        border-top: 1px solid #e5e7eb;
+        text-align: center;
+      }
+
+      .footer p {
+        color: #6b7280;
+        font-size: 12px;
+        margin-bottom: 8px;
+      }
+
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .footer-links a {
+        color: #6b7280;
+        text-decoration: none;
+        font-size: 12px;
+        transition: color 0.3s ease;
+        cursor: pointer;
+      }
+
+      .footer-links a:hover {
+        color: #358e83;
+      }
+
+      /* Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        backdrop-filter: blur(2px);
+      }
+
+      .modal-content {
+        background: white;
+        border-radius: 12px;
+        max-width: 500px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+        box-shadow:
+          0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 24px 24px 0;
+        margin-bottom: 16px;
+      }
+
+      .modal-header h3 {
+        font-size: 20px;
+        font-weight: 700;
+        color: #333;
+      }
+
+      .modal-close {
+        background: none;
+        border: none;
+        color: #6b7280;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-close:hover {
+        background: #f3f4f6;
+        color: #374151;
+      }
+
+      .modal-body {
+        padding: 0 24px 24px;
+        color: #6b7280;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .modal-body strong {
+        color: #333;
+      }
+      .modal-body ul {
+        margin-left: 20px;
+        margin-top: 8px;
+      }
+
+      @media (max-width: 768px) {
+        .container-content {
+          flex-direction: column;
         }
-    }
-}
-</script>
-<style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
-
-
-.drag-region {
-            -webkit-app-region: drag;
+        .welcome-section,
+        .login-section {
+          padding: 40px 30px;
         }
-        
-        /* This makes the buttons clickable again */
-        .no-drag {
-            -webkit-app-region: no-drag;
+        .welcome-content h1 {
+          font-size: 28px;
         }
+        .login-header h2 {
+          font-size: 24px;
+        }
+      }
+    </style>
+  </head>
 
-
-body {
-    background-color: #F0FDF4;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-
-.login-container {
-    width: 100%;
-    max-width: 1200px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    position: relative;
-}
-
-.close-btn {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 40px;
-    height: 40px;
-    background: white;
-    border: none;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1;
-    transition: all 0.3s ease;
-}
-
-.close-btn:hover {
-    background: #f8fafc;
-    transform: scale(1.05);
-}
-
-.container-content {
-    display: flex;
-    min-height: 650px;
-}
-
-/* LEFT SIDE - WELCOME SECTION */
-.welcome-section {
-    flex: 1;
-    background: linear-gradient(135deg, #358E83, #2a7168);
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 60px 50px;
-}
-
-.welcome-content {
-    max-width: 450px;
-    width: 100%;
-}
-
-.welcome-content h1 {
-    font-size: 36px;
-    font-weight: 700;
-    margin-bottom: 24px;
-    line-height: 1.3;
-    text-align: center;
-}
-
-.welcome-content p {
-    font-size: 18px;
-    line-height: 1.6;
-    opacity: 0.9;
-    text-align: center;
-    margin: 0 auto;
-}
-
-/* RIGHT SIDE - LOGIN SECTION */
-.login-section {
-    flex: 1;
-    padding: 60px 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.login-content {
-    width: 100%;
-    max-width: 400px;
-}
-
-.login-header {
-    margin-bottom: 40px;
-}
-
-.login-header h2 {
-    font-size: 28px;
-    font-weight: 700;
-    color: #333;
-    margin-bottom: 8px;
-}
-
-.login-header p {
-    color: #6B7280;
-    font-size: 14px;
-}
-
-.form-group {
-    margin-bottom: 24px;
-}
-
-.form-label {
-    display: block;
-    font-size: 14px;
-    font-weight: 500;
-    color: #333;
-    margin-bottom: 8px;
-}
-
-.form-control {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid #E5E7EB;
-    border-radius: 8px;
-    background: #F8FAFC;
-    font-size: 14px;
-    transition: all 0.3s ease;
-}
-
-.form-control:focus {
-    outline: none;
-    border-color: #358E83;
-    background: white;
-    box-shadow: 0 0 0 3px rgba(53, 142, 131, 0.1);
-}
-
-.form-control.is-invalid {
-    border-color: #EF4444;
-}
-
-.password-input {
-    position: relative;
-}
-
-.toggle-password {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: #6B7280;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-}
-
-.toggle-password:hover {
-    background: #F3F4F6;
-    color: #374151;
-}
-
-.btn-primary {
-    width: 100%;
-    padding: 14px 20px;
-    background: #358E83;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-    background: #2a7168;
-    transform: translateY(-1px);
-}
-
-.attempts-counter {
-    text-align: right;
-    margin-top: 12px;
-    font-size: 12px;
-    color: #6B7280;
-}
-
-.forgot-password {
-    text-align: center;
-    margin-top: 24px;
-}
-
-.forgot-password a {
-    color: #358E83;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    transition: color 0.3s ease;
-}
-
-.forgot-password a:hover {
-    color: #2a7168;
-    text-decoration: underline;
-}
-
-.footer {
-    margin-top: 40px;
-    padding-top: 24px;
-    border-top: 1px solid #E5E7EB;
-    text-align: center;
-}
-
-.footer p {
-    color: #6B7280;
-    font-size: 12px;
-    margin-bottom: 8px;
-}
-
-.footer-links {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-}
-
-.footer-links a {
-    color: #6B7280;
-    text-decoration: none;
-    font-size: 12px;
-    transition: color 0.3s ease;
-    cursor: pointer;
-}
-
-.footer-links a:hover {
-    color: #358E83;
-}
-
-/* Modal Styles */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    backdrop-filter: blur(2px);
-}
-
-.modal-content {
-    background: white;
-    border-radius: 12px;
-    max-width: 500px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    position: relative;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 24px 24px 0;
-    margin-bottom: 16px;
-}
-
-.modal-header h3 {
-    font-size: 20px;
-    font-weight: 700;
-    color: #333;
-}
-
-.modal-close {
-    background: none;
-    border: none;
-    color: #6B7280;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-close:hover {
-    background: #F3F4F6;
-    color: #374151;
-}
-
-.modal-body {
-    padding: 0 24px 24px;
-    color: #6B7280;
-    font-size: 14px;
-    line-height: 1.6;
-}
-
-.modal-body strong { color: #333; }
-.modal-body ul { margin-left: 20px; margin-top: 8px; }
-
-@media (max-width: 768px) {
-    .container-content { flex-direction: column; }
-    .welcome-section, .login-section { padding: 40px 30px; }
-    .welcome-content h1 { font-size: 28px; }
-    .login-header h2 { font-size: 24px; }
-}
-</style>
-</head>
-
-<body>
-
-<!-- Title Bar-->
-<header id="title-bar" class="drag-region fixed top-0 left-0 w-full h-8 bg-white flex justify-between items-stretch z-40 border-b border-gray-200 select-none">
-    
-    <div class="flex items-center pl-4 gap-2 text-gray-600">
+  <body>
+    <!-- Title Bar-->
+    <header
+      id="title-bar"
+      class="drag-region fixed top-0 left-0 w-full h-8 bg-white flex justify-between items-stretch z-40 border-b border-gray-200 select-none"
+    >
+      <div class="flex items-center pl-4 gap-2 text-gray-600">
         <span class="text-xs font-semibold">IHMS Pharmacy</span>
-    </div>
+      </div>
 
-    <div class="no-drag flex items-center relative z-50"> 
-        
-        <button id="min-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200">
-            <span class="material-icons-outlined text-sm text-gray-600">remove</span>
-        </button>
-        
-        <button id="max-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200">
-            <span class="material-icons-outlined text-sm text-gray-600">crop_square</span>
-        </button>
-        
-        <button id="close-btn" class="h-full w-12 flex justify-center items-center hover:bg-red-500 hover:text-white transition-colors duration-200 group">
-            <span class="material-icons-outlined text-sm text-gray-600 group-hover:text-white">close</span>
+      <div class="no-drag flex items-center relative z-50">
+        <button
+          id="min-btn"
+          class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200"
+        >
+          <span class="material-icons-outlined text-sm text-gray-600"
+            >remove</span
+          >
         </button>
 
-    </div>
-</header>
+        <button
+          id="max-btn"
+          class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200"
+        >
+          <span class="material-icons-outlined text-sm text-gray-600"
+            >crop_square</span
+          >
+        </button>
 
-<div class="h-8"></div>
+        <button
+          id="close-btn"
+          class="h-full w-12 flex justify-center items-center hover:bg-red-500 hover:text-white transition-colors duration-200 group"
+        >
+          <span
+            class="material-icons-outlined text-sm text-gray-600 group-hover:text-white"
+            >close</span
+          >
+        </button>
+      </div>
+    </header>
 
-<div class="login-container">
-    <button onclick="goToMainIndex()" class="close-btn" title="Close">
+    <div class="h-8"></div>
+
+    <div class="login-container">
+      <button onclick="goToMainIndex()" class="close-btn" title="Close">
         <span class="material-icons">close</span>
-    </button>
+      </button>
 
-    <div class="container-content">
+      <div class="container-content">
         <div class="welcome-section">
-            <div class="welcome-content">
-                <h1>Welcome to Pharmacy TLC WELL SERVE</h1>
-                <p>Your dedicated portal for efficient and secure pharmacy management. Streamline your workflow and enhance patient care.</p>
-            </div>
+          <div class="welcome-content">
+            <h1>Welcome to Pharmacy TLC WELL SERVE</h1>
+            <p>
+              Your dedicated portal for efficient and secure pharmacy
+              management. Streamline your workflow and enhance patient care.
+            </p>
+          </div>
         </div>
 
         <div class="login-section">
-            <div class="login-content">
-                <div class="login-header">
-                    <h2>Pharmacy Management</h2>
-                    <p>Enter your credentials to access the pharmacy management system.</p>
-                </div>
-
-                <div id="loginFormSection">
-                    <div id="loginForm">
-                        <div class="form-group">
-                            <label class="form-label">Department</label>
-                            <div class="form-control" style="background: #F3F4F6; color: #6B7280;">
-                                Pharmacy Management
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="email" class="form-label">Email Address</label>
-                            <input id="email" type="email" placeholder="Enter your email" required class="form-control">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="password" class="form-label">Password</label>
-                            <div class="password-input">
-                                <input id="password" type="password" placeholder="Enter your password" required class="form-control">
-                                <button type="button" id="togglePassword" class="toggle-password">
-                                    <span id="toggleIcon" class="material-icons">visibility</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div id="errorBox" style="color: #EF4444; font-size: 14px; margin-bottom: 16px;"></div>
-
-                        <button type="button" id="loginBtn" class="btn-primary">Sign In</button>
-                    </div>
-
-                    <div class="attempts-counter">
-                        Attempts remaining: <span id="attemptsCount">3</span>
-                    </div>
-
-                    <div class="forgot-password">
-                        <a href="#">Forgot Password?</a>
-                    </div>
-                </div>
-
-                <div class="footer">
-                    <p>© TLC Well Serve Infirmary & Drugstore Inc.</p>
-                    <div class="footer-links">
-                        <a onclick="showPrivacyPolicy()">Privacy Policy</a>
-                        <span>|</span>
-                        <a onclick="showTermsOfUse()">Terms of Use</a>
-                    </div>
-                </div>
+          <div class="login-content">
+            <div class="login-header">
+              <h2>Pharmacy Management</h2>
+              <p>
+                Enter your credentials to access the pharmacy management system.
+              </p>
             </div>
-        </div>
-    </div>
-</div>
 
-<div id="changePasswordModal" class="modal">
-    <div class="modal-content" style="max-width: 400px;">
-        <div class="modal-header">
-            <h3 style="color: #F59E0B;">Update Password Required</h3>
-        </div>
-        <div class="modal-body">
-            <p style="margin-bottom: 20px;">
-                You are using a temporary password. For security reasons, please set a new password to continue.
-            </p>
-            <form id="changePasswordForm">
+            <div id="loginFormSection">
+              <div id="loginForm">
                 <div class="form-group">
-                    <label class="form-label">New Password</label>
-                    <input type="password" id="newPassword" class="form-control" required minlength="6">
+                  <label class="form-label">Department</label>
+                  <div
+                    class="form-control"
+                    style="background: #f3f4f6; color: #6b7280"
+                  >
+                    Pharmacy Management
+                  </div>
                 </div>
+
                 <div class="form-group">
-                    <label class="form-label">Confirm Password</label>
-                    <input type="password" id="confirmPassword" class="form-control" required minlength="6">
+                  <label for="email" class="form-label">Email Address</label>
+                  <input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    required
+                    class="form-control"
+                  />
                 </div>
-                <div id="passwordErrorBox" style="color: #EF4444; font-size: 13px; margin-bottom: 16px;"></div>
-                <button type="submit" class="btn-primary" style="background-color: #F59E0B;">Update & Login</button>
-            </form>
-        </div>
-    </div>
-</div>
 
-<div id="privacyModal" class="modal">
-    <div class="modal-content">
+                <div class="form-group">
+                  <label for="password" class="form-label">Password</label>
+                  <div class="password-input">
+                    <input
+                      id="password"
+                      type="password"
+                      placeholder="Enter your password"
+                      required
+                      class="form-control"
+                    />
+                    <button
+                      type="button"
+                      id="togglePassword"
+                      class="toggle-password"
+                    >
+                      <span id="toggleIcon" class="material-icons"
+                        >visibility</span
+                      >
+                    </button>
+                  </div>
+                </div>
+
+                <div
+                  id="errorBox"
+                  style="color: #ef4444; font-size: 14px; margin-bottom: 16px"
+                ></div>
+
+                <button type="button" id="loginBtn" class="btn-primary">
+                  Sign In
+                </button>
+              </div>
+
+              <div class="attempts-counter">
+                Attempts remaining: <span id="attemptsCount">3</span>
+              </div>
+
+              <div class="forgot-password">
+                <a href="#">Forgot Password?</a>
+              </div>
+            </div>
+
+            <div class="footer">
+              <p>© TLC Well Serve Infirmary & Drugstore Inc.</p>
+              <div class="footer-links">
+                <a onclick="showPrivacyPolicy()">Privacy Policy</a>
+                <span>|</span>
+                <a onclick="showTermsOfUse()">Terms of Use</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="changePasswordModal" class="modal">
+      <div class="modal-content" style="max-width: 400px">
         <div class="modal-header">
-            <h3>Privacy Policy</h3>
-            <button class="modal-close" onclick="closeModal()">
-                <span class="material-icons">close</span>
-            </button>
+          <h3 style="color: #f59e0b">Update Password Required</h3>
         </div>
         <div class="modal-body">
-            <p><strong>Last Updated:</strong> January 1, 2025</p>
-            <p>This Privacy Policy describes how Pharmacy HIMS collects, uses, and discloses your personal information.</p>
-            <p style="font-weight: 600; color: #333; margin-top: 16px;">Information We Collect:</p>
-            <ul>
-                <li>Email address and login credentials</li>
-                <li>Professional information and credentials</li>
-                <li>System usage data and access logs</li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-<div id="termsModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Terms of Use</h3>
-            <button class="modal-close" onclick="closeModal()">
-                <span class="material-icons">close</span>
+          <p style="margin-bottom: 20px">
+            You are using a temporary password. For security reasons, please set
+            a new password to continue.
+          </p>
+          <form id="changePasswordForm">
+            <div class="form-group">
+              <label class="form-label">New Password</label>
+              <input
+                type="password"
+                id="newPassword"
+                class="form-control"
+                required
+                minlength="6"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirm Password</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                class="form-control"
+                required
+                minlength="6"
+              />
+            </div>
+            <div
+              id="passwordErrorBox"
+              style="color: #ef4444; font-size: 13px; margin-bottom: 16px"
+            ></div>
+            <button
+              type="submit"
+              class="btn-primary"
+              style="background-color: #f59e0b"
+            >
+              Update & Login
             </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="privacyModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Privacy Policy</h3>
+          <button class="modal-close" onclick="closeModal()">
+            <span class="material-icons">close</span>
+          </button>
         </div>
         <div class="modal-body">
-            <p><strong>Last Updated:</strong> January 1, 2025</p>
-            <p>By accessing and using Pharmacy HIMS, you agree to these Terms of Use.</p>
+          <p><strong>Last Updated:</strong> January 1, 2025</p>
+          <p>
+            This Privacy Policy describes how Pharmacy HIMS collects, uses, and
+            discloses your personal information.
+          </p>
+          <p style="font-weight: 600; color: #333; margin-top: 16px">
+            Information We Collect:
+          </p>
+          <ul>
+            <li>Email address and login credentials</li>
+            <li>Professional information and credentials</li>
+            <li>System usage data and access logs</li>
+          </ul>
         </div>
+      </div>
     </div>
-</div>
 
-<script>
-    const API_BASE_URL = 'http://localhost:5001/api/users';
+    <div id="termsModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Terms of Use</h3>
+          <button class="modal-close" onclick="closeModal()">
+            <span class="material-icons">close</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Last Updated:</strong> January 1, 2025</p>
+          <p>
+            By accessing and using Pharmacy HIMS, you agree to these Terms of
+            Use.
+          </p>
+        </div>
+      </div>
+    </div>
+    <script src="../config.js"></script>
+    <script>
+      API_BASE_URL = `${API_BASE_URL}/api/users`;
 
-    document.addEventListener("DOMContentLoaded", () => {
+      document.addEventListener("DOMContentLoaded", () => {
         const loginBtn = document.getElementById("loginBtn");
         const emailInput = document.getElementById("email");
         const passwordInput = document.getElementById("password");
@@ -542,155 +647,163 @@ body {
 
         // 1. Password Toggle
         togglePassword.addEventListener("click", () => {
-            const isHidden = passwordInput.type === "password";
-            passwordInput.type = isHidden ? "text" : "password";
-            toggleIcon.textContent = isHidden ? "visibility_off" : "visibility";
+          const isHidden = passwordInput.type === "password";
+          passwordInput.type = isHidden ? "text" : "password";
+          toggleIcon.textContent = isHidden ? "visibility_off" : "visibility";
         });
 
         // 2. Clear errors on input
         function clearErrors() {
-            emailInput.classList.remove("is-invalid");
-            passwordInput.classList.remove("is-invalid");
-            errorBox.textContent = "";
+          emailInput.classList.remove("is-invalid");
+          passwordInput.classList.remove("is-invalid");
+          errorBox.textContent = "";
         }
-        emailInput.addEventListener('input', clearErrors);
-        passwordInput.addEventListener('input', clearErrors);
+        emailInput.addEventListener("input", clearErrors);
+        passwordInput.addEventListener("input", clearErrors);
 
         // 3. Main Login Function
         async function handleLogin() {
-            const email = emailInput.value.trim();
-            const password = passwordInput.value.trim();
+          const email = emailInput.value.trim();
+          const password = passwordInput.value.trim();
 
-            if (!email || !password) {
-                errorBox.textContent = "Please fill in all fields.";
-                return;
+          if (!email || !password) {
+            errorBox.textContent = "Please fill in all fields.";
+            return;
+          }
+
+          loginBtn.textContent = "Signing in...";
+          loginBtn.disabled = true;
+
+          try {
+            const response = await fetch(`${API_BASE_URL}/login`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+            loginBtn.textContent = "Sign In";
+            loginBtn.disabled = false;
+
+            if (response.ok) {
+              // Save User Data
+              sessionStorage.setItem("userInfo", JSON.stringify(data));
+              if (data.token) sessionStorage.setItem("token", data.token);
+
+              // --- CHECK FORCE PASSWORD CHANGE ---
+              if (data.mustChangePassword) {
+                // Open the Change Password Modal
+                document.getElementById("changePasswordModal").style.display =
+                  "flex";
+              } else {
+                // Normal Redirect
+                redirectUser(data.role);
+              }
+            } else if (response.status === 403) {
+              // Account Locked
+              errorBox.innerHTML = `<span style="color: #DC2626; font-weight: bold;">Login Failed</span><br>${data.message}`;
+              emailInput.classList.add("is-invalid");
+              passwordInput.classList.add("is-invalid");
+              attemptsContainer.style.display = "none";
+            } else {
+              // Invalid Credentials
+              errorBox.textContent = data.message || "Invalid credentials.";
+              emailInput.classList.add("is-invalid");
+              passwordInput.classList.add("is-invalid");
             }
-
-            loginBtn.textContent = "Signing in...";
-            loginBtn.disabled = true;
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
-
-                const data = await response.json();
-                loginBtn.textContent = "Sign In";
-                loginBtn.disabled = false;
-
-                if (response.ok) {
-                    // Save User Data
-                    sessionStorage.setItem('userInfo', JSON.stringify(data));
-                    if (data.token) sessionStorage.setItem('token', data.token);
-
-                    // --- CHECK FORCE PASSWORD CHANGE ---
-                    if (data.mustChangePassword) {
-                        // Open the Change Password Modal
-                        document.getElementById('changePasswordModal').style.display = 'flex';
-                    } else {
-                        // Normal Redirect
-                        redirectUser(data.role);
-                    }
-                } 
-                else if (response.status === 403) {
-                    // Account Locked
-                    errorBox.innerHTML = `<span style="color: #DC2626; font-weight: bold;">Login Failed</span><br>${data.message}`;
-                    emailInput.classList.add("is-invalid");
-                    passwordInput.classList.add("is-invalid");
-                    attemptsContainer.style.display = 'none';
-                } 
-                else {
-                    // Invalid Credentials
-                    errorBox.textContent = data.message || "Invalid credentials.";
-                    emailInput.classList.add("is-invalid");
-                    passwordInput.classList.add("is-invalid");
-                }
-
-            } catch (error) {
-                console.error("Login Error:", error);
-                loginBtn.textContent = "Sign In";
-                loginBtn.disabled = false;
-                errorBox.textContent = "Cannot connect to server. Is the backend running?";
-            }
+          } catch (error) {
+            console.error("Login Error:", error);
+            loginBtn.textContent = "Sign In";
+            loginBtn.disabled = false;
+            errorBox.textContent =
+              "Cannot connect to server. Is the backend running?";
+          }
         }
 
         // 4. Handle Password Update (New Feature)
-        document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
+        document
+          .getElementById("changePasswordForm")
+          .addEventListener("submit", async (e) => {
             e.preventDefault();
-            const newPass = document.getElementById('newPassword').value;
-            const confirmPass = document.getElementById('confirmPassword').value;
-            const errBox = document.getElementById('passwordErrorBox');
-            
+            const newPass = document.getElementById("newPassword").value;
+            const confirmPass =
+              document.getElementById("confirmPassword").value;
+            const errBox = document.getElementById("passwordErrorBox");
+
             if (newPass !== confirmPass) {
-                errBox.textContent = "Passwords do not match.";
-                return;
+              errBox.textContent = "Passwords do not match.";
+              return;
             }
-            
-            const userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
-            
+
+            const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+
             try {
-                const response = await fetch(`${API_BASE_URL}/profile`, {
-                    method: 'PUT',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${userInfo.token}`
-                    },
-                    body: JSON.stringify({ password: newPass })
-                });
+              const response = await fetch(`${API_BASE_URL}/profile`, {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${userInfo.token}`,
+                },
+                body: JSON.stringify({ password: newPass }),
+              });
 
-                const data = await response.json();
+              const data = await response.json();
 
-                if (response.ok) {
-                    // Update stored info (flag reset)
-                    sessionStorage.setItem('userInfo', JSON.stringify(data));
-                    alert("Password updated successfully!");
-                    redirectUser(data.role);
-                } else {
-                    errBox.textContent = data.message || "Update failed.";
-                }
+              if (response.ok) {
+                // Update stored info (flag reset)
+                sessionStorage.setItem("userInfo", JSON.stringify(data));
+                alert("Password updated successfully!");
+                redirectUser(data.role);
+              } else {
+                errBox.textContent = data.message || "Update failed.";
+              }
             } catch (error) {
-                errBox.textContent = "Server error occurred.";
+              errBox.textContent = "Server error occurred.";
             }
-        });
+          });
 
         // 5. Event Listeners
         loginBtn.addEventListener("click", handleLogin);
-        passwordInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleLogin();
+        passwordInput.addEventListener("keypress", (e) => {
+          if (e.key === "Enter") handleLogin();
         });
-    });
+      });
 
-    function redirectUser(role) {
+      function redirectUser(role) {
         // Just to be extra safe, force the role to lowercase so it always matches
-        const safeRole = role ? role.toLowerCase() : '';
+        const safeRole = role ? role.toLowerCase() : "";
 
-        if (safeRole === 'admin') {
-            window.location.href = '../Admin/dashboard_admin.html';
-        } 
-        else if (safeRole === 'pharmacist') {
-            window.location.href = 'dashboard.html'; 
-        } 
-        else if (safeRole === 'pharmacy assistant') { // 🔥 Replaced underscore with a space!
-            window.location.href = '../assistant/dashboard_pharmasst.html'; 
-        } 
-        else {
-            console.warn("Unknown role detected:", role);
-            window.location.href = '../html/index.html'; 
+        if (safeRole === "admin") {
+          window.location.href = "../Admin/dashboard_admin.html";
+        } else if (safeRole === "pharmacist") {
+          window.location.href = "dashboard.html";
+        } else if (safeRole === "pharmacy assistant") {
+          // 🔥 Replaced underscore with a space!
+          window.location.href = "../assistant/dashboard_pharmasst.html";
+        } else {
+          console.warn("Unknown role detected:", role);
+          window.location.href = "../html/index.html";
         }
-    }
+      }
 
-    // Modal Logic
-    function showPrivacyPolicy() { document.getElementById('privacyModal').style.display = 'flex'; }
-    function showTermsOfUse() { document.getElementById('termsModal').style.display = 'flex'; }
-    function closeModal() {
-        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
-    }
-    function goToMainIndex() { window.location.href = '../html/index.html'; }
-</script>
-<script src="../audio/audio-system.js"></script>
-<script src="../audio/audio-manager.js"></script>
-<script src="../js/windowcontrollerbtn.js"></script>
-</body>
+      // Modal Logic
+      function showPrivacyPolicy() {
+        document.getElementById("privacyModal").style.display = "flex";
+      }
+      function showTermsOfUse() {
+        document.getElementById("termsModal").style.display = "flex";
+      }
+      function closeModal() {
+        document
+          .querySelectorAll(".modal")
+          .forEach((m) => (m.style.display = "none"));
+      }
+      function goToMainIndex() {
+        window.location.href = "../html/index.html";
+      }
+    </script>
+    <script src="../audio/audio-system.js"></script>
+    <script src="../audio/audio-manager.js"></script>
+    <script src="../js/windowcontrollerbtn.js"></script>
+  </body>
 </html>
