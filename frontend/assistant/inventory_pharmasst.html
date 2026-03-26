@@ -222,8 +222,8 @@
         </div>
     </div>
 
-    <div class="flex h-screen pt-8">
-        <aside class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-border-light dark:border-border-dark flex-shrink-0">
+    <div class="flex h-screen pt-8 overflow-hidden">
+    <aside class="hidden md:flex w-64 bg-surface-light dark:bg-surface-dark flex-col border-r border-border-light dark:border-border-dark flex-shrink-0">
             <div class="h-16 flex items-center px-6">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm">
@@ -250,7 +250,7 @@
         </aside>
 
         <main class="flex-1 flex flex-col overflow-hidden">
-            <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
+            <header class="min-h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-4 md:px-6 border-b border-slate-200 dark:border-slate-800 flex-shrink-0 flex-wrap gap-2 py-2">
                 <div></div>
                 <div class="flex items-center gap-4">
                     <div class="text-right">
@@ -303,7 +303,7 @@
             </header>
 
             <div class="flex-1 flex flex-col overflow-hidden">
-                <div class="module-tab-bar">
+                <div class="module-tab-bar overflow-x-auto">
                     <button id="moduleTabInventory" class="module-tab-btn active" onclick="switchModuleTab('inventory')">
                         <span class="material-icons">inventory_2</span><span class="tab-label">Medicine</span>
                     </button>
@@ -313,7 +313,7 @@
                 </div>
 
                 <!-- MEDICINE PANEL -->
-                <div id="modulePanelInventory" class="flex-1 p-8 overflow-y-auto">
+                <div id="modulePanelInventory" class="flex-1 p-4 md:p-8 overflow-y-auto overflow-x-hidden">
                     <div class="flex justify-between items-center mb-6">
                         <div>
                             <h1 class="text-3xl font-bold text-text-light dark:text-text-dark">Medicine Inventory</h1>
@@ -327,7 +327,7 @@
                         <button id="archiveTab" class="tab-btn" onclick="switchTab('archive')">Archive</button>
                     </div>
 
-                    <div id="alertsSection" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div id="alertsSection" class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
                         <div class="bg-[rgba(0,90,50,0.1)] dark:bg-[rgba(0,90,50,0.2)] border-l-4 border-[rgb(0,90,50)] p-6 rounded-lg">
                             <div class="flex items-start gap-4">
                                 <span class="material-icons text-[rgb(0,90,50)] mt-1">warning_amber</span>
@@ -350,9 +350,9 @@
 
                     <!-- Summary Table -->
                     <div id="summarySection" class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
-                        <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center flex-wrap gap-3">
-                            <h2 class="text-xl font-semibold text-text-light dark:text-text-dark">Total Medicine Inventory</h2>
-                            <div class="flex items-center gap-3 flex-wrap">
+                        <div class="p-4 md:p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+    <h2 class="text-lg md:text-xl font-semibold text-text-light dark:text-text-dark">Total Medicine Inventory</h2>
+    <div class="flex items-center gap-2 flex-wrap">
                                 <input id="summarySearch" onkeyup="searchSummary()" class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm" placeholder="Search medicines..." type="text"/>
                                 <select id="summaryStatusFilter" onchange="filterSummaryByStatus()" class="border border-border-light dark:border-border-dark rounded-lg px-4 py-2 bg-background-light dark:bg-background-dark text-sm">
                                     <option value="">All Status</option>
@@ -381,8 +381,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="table-container">
-                            <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+                        <div class="table-container overflow-x-auto w-full">
+    <table class="min-w-[700px] w-full text-left text-sm text-gray-500 dark:text-gray-400">
                                 <thead class="text-xs text-text-light dark:text-text-dark uppercase tracking-wider">
                                     <tr>
                                         <th class="px-6 py-4 font-medium">Medicine Name</th>
@@ -439,8 +439,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="table-container">
-                            <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+                        <div class="table-container overflow-x-auto w-full">
+    <table class="min-w-[700px] w-full text-left text-sm text-gray-500 dark:text-gray-400">
                                 <thead class="text-xs text-text-light dark:text-text-dark uppercase tracking-wider">
                                     <tr>
                                         <th class="px-6 py-4 font-medium">Order</th>
@@ -477,15 +477,14 @@
                             <h2 class="text-xl font-semibold text-text-light dark:text-text-dark">Archived Medicines</h2>
                             <input id="archiveSearch" onkeyup="searchArchive()" class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm" placeholder="Search archive..." type="text"/>
                         </div>
-                        <div class="table-container">
-                            <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+                        <div class="table-container overflow-x-auto w-full">
+    <table class="min-w-[900px] w-full text-left text-sm text-gray-500 dark:text-gray-400">
                                 <thead class="text-xs text-text-light dark:text-text-dark uppercase tracking-wider">
                                     <tr>
                                         <th class="px-6 py-4 font-medium">Medicine Name</th>
                                         <th class="px-6 py-4 font-medium">Batch Number</th>
                                         <th class="px-6 py-4 font-medium">Quantity</th>
                                         <th class="px-6 py-4 font-medium">Expiry Date</th>
-                                        <th class="px-6 py-4 font-medium">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="archiveTableBody"></tbody>
@@ -1353,7 +1352,7 @@ class InventoryManager {
         tbody.innerHTML = '';
         let archives = [...this.archivedInventory];
         if (search) archives = archives.filter(i => this._getName(i).toLowerCase().includes(search));
-        if (!archives.length) { tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-500">Archive is empty.</td></tr>`; buildPagination(0, 1, archiveRowsPerPage, 'archivePaginationInfo', 'archivePaginationControls', 'goArchivePage'); return; }
+        if (!archives.length) { tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-gray-500">Archive is empty.</td></tr>`; buildPagination(0, 1, archiveRowsPerPage, 'archivePaginationInfo', 'archivePaginationControls', 'goArchivePage'); return; }
 
         archivePage = buildPagination(archives.length, archivePage, archiveRowsPerPage, 'archivePaginationInfo', 'archivePaginationControls', 'goArchivePage');
         const pageItems = archives.slice((archivePage - 1) * archiveRowsPerPage, archivePage * archiveRowsPerPage);
@@ -1361,17 +1360,11 @@ class InventoryManager {
         pageItems.forEach(item => {
             const itemId = item._id || item.id;
             tbody.innerHTML += `<tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 opacity-75">
-                <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${this._getName(item)}</td>
-                <td class="px-6 py-4 text-gray-500">${item.batchNumber||'N/A'}</td>
-                <td class="px-6 py-4">${item.quantity}</td>
-                <td class="px-6 py-4 text-gray-500">${this.formatDate(item.expiryDate)}</td>
-                <td class="px-6 py-4">
-                    <div class="flex items-center gap-2">
-                        <button onclick="inventoryManager.restoreBatch('${itemId}')" class="action-btn restore-btn" title="Restore"><span class="material-icons text-sm">restore</span> Restore</button>
-                        <button onclick="inventoryManager.deleteBatch('${itemId}')" class="action-btn delete-btn" title="Delete Permanently"><span class="material-icons text-sm">delete_forever</span></button>
-                    </div>
-                </td>
-            </tr>`;
+    <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${this._getName(item)}</td>
+    <td class="px-6 py-4 text-gray-500">${item.batchNumber||'N/A'}</td>
+    <td class="px-6 py-4">${item.quantity}</td>
+    <td class="px-6 py-4 text-gray-500">${this.formatDate(item.expiryDate)}</td>
+</tr>`;
         });
     }
 
