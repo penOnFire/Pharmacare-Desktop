@@ -1,1037 +1,1669 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Patient Records - Well Served Pharmacy</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
-    <link rel="stylesheet" href="../css/styles.css"/>
-    <link rel="stylesheet" href="../css/scrollbar.css"/>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../css/scrollbar.css" />
     <script>
-       tailwind.config = {
+      tailwind.config = {
         darkMode: "class",
         theme: {
-            extend: {
-                colors: {
-                    primary: "#005a32",
-                    secondary: "#d62828",
-                    accent: "#8b5a2b",
-                    "background-light": "#f1f5f9",
-                    "background-dark": "#0f172a",
-                    "surface-light": "#FFFFFF",
-                    "surface-dark": "#1F2937",
-                    "text-light": "#1F2937",
-                    "text-dark": "#F9FAFB",
-                    "subtext-light": "#6B7280",
-                    "subtext-dark": "#9CA3AF",
-                    "border-light": "#E5E7EB",
-                    "border-dark": "#374151",
-                },
-                fontFamily: { 
-                    sans: ["Inter", "sans-serif"],
-                    display: ["Inter", "sans-serif"] 
-                },
+          extend: {
+            colors: {
+              primary: "#005a32",
+              secondary: "#d62828",
+              accent: "#8b5a2b",
+              "background-light": "#f1f5f9",
+              "background-dark": "#0f172a",
+              "surface-light": "#FFFFFF",
+              "surface-dark": "#1F2937",
+              "text-light": "#1F2937",
+              "text-dark": "#F9FAFB",
+              "subtext-light": "#6B7280",
+              "subtext-dark": "#9CA3AF",
+              "border-light": "#E5E7EB",
+              "border-dark": "#374151",
             },
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+              display: ["Inter", "sans-serif"],
+            },
+          },
         },
-    };
+      };
     </script>
     <style type="text/tailwindcss">
-        body { 
-    font-family: 'Inter', sans-serif; 
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
+      body {
+        font-family: "Inter", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
 
-h1, h2, h3 { 
-    font-family: 'Inter', sans-serif; 
-    font-weight: 700; 
-    letter-spacing: -0.025em; 
-}
+      h1,
+      h2,
+      h3 {
+        font-family: "Inter", sans-serif;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+      }
 
-        .drag-region { -webkit-app-region: drag; }
-        .no-drag { -webkit-app-region: no-drag; }
+      .drag-region {
+        -webkit-app-region: drag;
+      }
+      .no-drag {
+        -webkit-app-region: no-drag;
+      }
 
-        /* ── NAVBAR CLOCK ── */
-        #navClock {
-            font-size: 15px;
-            font-weight: 700;
-            line-height: 1.2;
-            letter-spacing: -0.01em;
-        }
-        #navDate {
-            font-size: 10px;
-            font-weight: 500;
-            letter-spacing: 0.06em;
-        }
+      /* ── NAVBAR CLOCK ── */
+      #navClock {
+        font-size: 15px;
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: -0.01em;
+      }
+      #navDate {
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+      }
 
-        /* ── NAVBAR DIVIDER ── */
-        .nav-divider {
-            width: 1px;
-            height: 28px;
-            background: #e5e7eb;
-        }
-        .dark .nav-divider { background: #374151; }
+      /* ── NAVBAR DIVIDER ── */
+      .nav-divider {
+        width: 1px;
+        height: 28px;
+        background: #e5e7eb;
+      }
+      .dark .nav-divider {
+        background: #374151;
+      }
 
-        /* ── FANCY NOTIFICATION DROPDOWN ── */
-        @keyframes badge-pop { from { transform: scale(0); } to { transform: scale(1); } }
-        #notificationBadge { animation: badge-pop 0.3s cubic-bezier(.34,1.56,.64,1); }
+      /* ── FANCY NOTIFICATION DROPDOWN ── */
+      @keyframes badge-pop {
+        from {
+          transform: scale(0);
+        }
+        to {
+          transform: scale(1);
+        }
+      }
+      #notificationBadge {
+        animation: badge-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
 
-        .notif-dropdown {
-            position: absolute;
-            top: calc(100% + 10px);
-            right: 0;
-            width: 370px;
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.06);
-            border: 1px solid #e5e7eb;
-            z-index: 1000;
-            overflow: hidden;
-            opacity: 0;
-            transform: translateY(-8px) scale(0.97);
-            pointer-events: none;
-            transition: opacity 0.22s ease, transform 0.22s cubic-bezier(.34,1.56,.64,1);
-            transform-origin: top right;
-        }
-        .dark .notif-dropdown { background: #1F2937; border-color: #374151; }
-        .notif-dropdown.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
+      .notif-dropdown {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        width: 370px;
+        background: #fff;
+        border-radius: 14px;
+        box-shadow:
+          0 20px 50px rgba(0, 0, 0, 0.14),
+          0 4px 12px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e5e7eb;
+        z-index: 1000;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(-8px) scale(0.97);
+        pointer-events: none;
+        transition:
+          opacity 0.22s ease,
+          transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+        transform-origin: top right;
+      }
+      .dark .notif-dropdown {
+        background: #1f2937;
+        border-color: #374151;
+      }
+      .notif-dropdown.open {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: all;
+      }
 
-        .notif-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 14px; border-bottom: 1px solid #f0f0f0; }
-        .dark .notif-header { border-color: #374151; }
-        .notif-header h3 { font-size: 15px; font-weight: 700; color: #111827; }
-        .dark .notif-header h3 { color: #F9FAFB; }
-        .notif-header-meta { display: flex; align-items: center; gap: 10px; }
-        .unread-count-pill { background: #005a32; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
-        .mark-all-btn { font-size: 11px; color: #005a32; font-weight: 600; background: none; border: none; cursor: pointer; padding: 2px 4px; border-radius: 4px; transition: background 0.15s; }
-        .mark-all-btn:hover { background: #f0fdf4; }
+      .notif-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 18px 14px;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      .dark .notif-header {
+        border-color: #374151;
+      }
+      .notif-header h3 {
+        font-size: 15px;
+        font-weight: 700;
+        color: #111827;
+      }
+      .dark .notif-header h3 {
+        color: #f9fafb;
+      }
+      .notif-header-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .unread-count-pill {
+        background: #005a32;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 99px;
+      }
+      .mark-all-btn {
+        font-size: 11px;
+        color: #005a32;
+        font-weight: 600;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 2px 4px;
+        border-radius: 4px;
+        transition: background 0.15s;
+      }
+      .mark-all-btn:hover {
+        background: #f0fdf4;
+      }
 
-        .notif-tabs { display: flex; gap: 4px; padding: 10px 14px; background: #fafafa; border-bottom: 1px solid #f0f0f0; }
-        .dark .notif-tabs { background: #111827; border-color: #374151; }
-        .notif-tab-btn { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 99px; border: 1px solid transparent; cursor: pointer; background: none; color: #6b7280; transition: all 0.15s; }
-        .notif-tab-btn.active { background: #005a32; color: #fff; border-color: #005a32; }
-        .notif-tab-btn:not(.active):hover { background: #f3f4f6; border-color: #e5e7eb; color: #374151; }
+      .notif-tabs {
+        display: flex;
+        gap: 4px;
+        padding: 10px 14px;
+        background: #fafafa;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      .dark .notif-tabs {
+        background: #111827;
+        border-color: #374151;
+      }
+      .notif-tab-btn {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 99px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        background: none;
+        color: #6b7280;
+        transition: all 0.15s;
+      }
+      .notif-tab-btn.active {
+        background: #005a32;
+        color: #fff;
+        border-color: #005a32;
+      }
+      .notif-tab-btn:not(.active):hover {
+        background: #f3f4f6;
+        border-color: #e5e7eb;
+        color: #374151;
+      }
 
-        .notif-list { max-height: 360px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #e5e7eb transparent; }
-        .notif-list::-webkit-scrollbar { width: 4px; }
-        .notif-list::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 2px; }
+      .notif-list {
+        max-height: 360px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #e5e7eb transparent;
+      }
+      .notif-list::-webkit-scrollbar {
+        width: 4px;
+      }
+      .notif-list::-webkit-scrollbar-thumb {
+        background: #e5e7eb;
+        border-radius: 2px;
+      }
 
-        .notif-item { display: flex; gap: 12px; align-items: flex-start; padding: 13px 16px; border-bottom: 1px solid #f5f5f5; cursor: pointer; position: relative; transition: background 0.15s; }
-        .dark .notif-item { border-color: #374151; }
-        .notif-item:last-child { border-bottom: none; }
-        .notif-item:hover { background: #f9fafb; }
-        .dark .notif-item:hover { background: #111827; }
-        .notif-item.unread { background: #ffffff; }
-        .dark .notif-item.unread { background: #1F2937; }
-        .notif-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 0 2px 2px 0; }
-        .notif-item.critical::before { background: #EF4444; }
-        .notif-item.expiry::before   { background: #8b5a2b; }
-        .notif-item.shortage::before { background: #358E83; }
+      .notif-item {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        padding: 13px 16px;
+        border-bottom: 1px solid #f5f5f5;
+        cursor: pointer;
+        position: relative;
+        transition: background 0.15s;
+      }
+      .dark .notif-item {
+        border-color: #374151;
+      }
+      .notif-item:last-child {
+        border-bottom: none;
+      }
+      .notif-item:hover {
+        background: #f9fafb;
+      }
+      .dark .notif-item:hover {
+        background: #111827;
+      }
+      .notif-item.unread {
+        background: #ffffff;
+      }
+      .dark .notif-item.unread {
+        background: #1f2937;
+      }
+      .notif-item::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        border-radius: 0 2px 2px 0;
+      }
+      .notif-item.critical::before {
+        background: #ef4444;
+      }
+      .notif-item.expiry::before {
+        background: #8b5a2b;
+      }
+      .notif-item.shortage::before {
+        background: #358e83;
+      }
 
-        .notif-icon-wrap { flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-        .notif-icon-wrap .material-icons { font-size: 20px; }
-        .icon-critical { background: #fef2f2; } .icon-critical .material-icons { color: #EF4444; }
-        .icon-expiry   { background: #fdf6ec; } .icon-expiry   .material-icons { color: #8b5a2b; }
-        .icon-shortage { background: #f0fdfa; } .icon-shortage .material-icons { color: #358E83; }
+      .notif-icon-wrap {
+        flex-shrink: 0;
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .notif-icon-wrap .material-icons {
+        font-size: 20px;
+      }
+      .icon-critical {
+        background: #fef2f2;
+      }
+      .icon-critical .material-icons {
+        color: #ef4444;
+      }
+      .icon-expiry {
+        background: #fdf6ec;
+      }
+      .icon-expiry .material-icons {
+        color: #8b5a2b;
+      }
+      .icon-shortage {
+        background: #f0fdfa;
+      }
+      .icon-shortage .material-icons {
+        color: #358e83;
+      }
 
-        .notif-body { flex: 1; min-width: 0; }
-        .notif-title { font-size: 13px; font-weight: 600; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .dark .notif-title { color: #F9FAFB; }
-        .notif-desc  { font-size: 12px; color: #6b7280; margin-top: 2px; line-height: 1.4; }
-        .notif-time  { font-size: 10px; color: #9ca3af; margin-top: 6px; }
-        .notif-action { margin-top: 8px; }
-        .notif-action-btn { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 6px; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 0.04em; transition: opacity 0.15s, transform 0.1s; }
-        .notif-action-btn:active { transform: scale(0.96); }
-        .notif-action-btn:hover  { opacity: 0.88; }
-        .btn-critical { background: #EF4444; color: #fff; }
-        .btn-expiry   { background: #8b5a2b; color: #fff; }
-        .btn-shortage { background: #005a32; color: #fff; }
+      .notif-body {
+        flex: 1;
+        min-width: 0;
+      }
+      .notif-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #111827;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .dark .notif-title {
+        color: #f9fafb;
+      }
+      .notif-desc {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 2px;
+        line-height: 1.4;
+      }
+      .notif-time {
+        font-size: 10px;
+        color: #9ca3af;
+        margin-top: 6px;
+      }
+      .notif-action {
+        margin-top: 8px;
+      }
+      .notif-action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 5px 12px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        transition:
+          opacity 0.15s,
+          transform 0.1s;
+      }
+      .notif-action-btn:active {
+        transform: scale(0.96);
+      }
+      .notif-action-btn:hover {
+        opacity: 0.88;
+      }
+      .btn-critical {
+        background: #ef4444;
+        color: #fff;
+      }
+      .btn-expiry {
+        background: #8b5a2b;
+        color: #fff;
+      }
+      .btn-shortage {
+        background: #005a32;
+        color: #fff;
+      }
 
-        .unread-dot { flex-shrink: 0; width: 7px; height: 7px; border-radius: 50%; background: #005a32; margin-top: 5px; }
-        .notif-empty { padding: 40px 20px; text-align: center; color: #9ca3af; }
-        .notif-empty .material-icons { font-size: 40px; margin-bottom: 8px; display: block; }
-        .notif-empty p { font-size: 13px; }
-        .notif-footer { border-top: 1px solid #f0f0f0; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; }
-        .dark .notif-footer { border-color: #374151; }
-        .view-all-link { font-size: 12px; font-weight: 600; color: #005a32; text-decoration: none; display: flex; align-items: center; gap: 4px; }
-        .view-all-link:hover { text-decoration: underline; }
-        .view-all-link .material-icons { font-size: 14px; }
-        /* ── END NOTIFICATION STYLES ── */
+      .unread-dot {
+        flex-shrink: 0;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #005a32;
+        margin-top: 5px;
+      }
+      .notif-empty {
+        padding: 40px 20px;
+        text-align: center;
+        color: #9ca3af;
+      }
+      .notif-empty .material-icons {
+        font-size: 40px;
+        margin-bottom: 8px;
+        display: block;
+      }
+      .notif-empty p {
+        font-size: 13px;
+      }
+      .notif-footer {
+        border-top: 1px solid #f0f0f0;
+        padding: 12px 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .dark .notif-footer {
+        border-color: #374151;
+      }
+      .view-all-link {
+        font-size: 12px;
+        font-weight: 600;
+        color: #005a32;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .view-all-link:hover {
+        text-decoration: underline;
+      }
+      .view-all-link .material-icons {
+        font-size: 14px;
+      }
+      /* ── END NOTIFICATION STYLES ── */
 
-        .search-results {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            max-height: 300px;
-            overflow-y: auto;
-            z-index: 1000;
-        }
-        
-        .dark .search-results {
-            background: #1f2937;
-            border-color: #4b5563;
-        }
-        
-        .search-result-item {
-            padding: 0.75rem 1rem;
-            cursor: pointer;
-            border-bottom: 1px solid #f3f4f6;
-        }
-        
-        .dark .search-result-item {
-            border-bottom-color: #374151;
-        }
-        
-        .search-result-item:hover {
-            background-color: #f9fafb;
-        }
-        
-        .dark .search-result-item:hover {
-            background-color: #374151;
-        }
+      .search-results {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        max-height: 300px;
+        overflow-y: auto;
+        z-index: 1000;
+      }
 
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-block;
-        }
+      .dark .search-results {
+        background: #1f2937;
+        border-color: #4b5563;
+      }
 
-        .status-pending {
-            background-color: rgba(245, 158, 11, 0.15);
-            color: #b45309;
-            border: 1px solid rgba(245, 158, 11, 0.2);
-        }
-        .dark .status-pending {
-            background-color: rgba(120, 53, 15, 0.4);
-            color: #fbbf24;
-            border-color: rgba(245, 158, 11, 0.3);
-        }
+      .search-result-item {
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        border-bottom: 1px solid #f3f4f6;
+      }
 
-        .status-completed {
-            background-color: rgba(16, 185, 129, 0.15);
-            color: #047857;
-            border: 1px solid rgba(16, 185, 129, 0.2);
-        }
-        .dark .status-completed {
-            background-color: rgba(6, 78, 59, 0.4);
-            color: #34d399;
-            border-color: rgba(16, 185, 129, 0.3);
-        }
+      .dark .search-result-item {
+        border-bottom-color: #374151;
+      }
 
-        .status-neutral {
-            background-color: rgba(148, 163, 184, 0.15);
-            color: #475569;
-            border: 1px solid rgba(148, 163, 184, 0.2);
-        }
-        .dark .status-neutral {
-            background-color: rgba(30, 41, 59, 0.4);
-            color: #94a3b8;
-            border-color: rgba(148, 163, 184, 0.3);
-        }
+      .search-result-item:hover {
+        background-color: #f9fafb;
+      }
 
-        .patient-card {
-            transition: all 0.3s ease;
-            border: 2px solid #e5e7eb;
-        }
+      .dark .search-result-item:hover {
+        background-color: #374151;
+      }
 
-        .patient-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0, 90, 50, 0.15);
-            border-color: #005a32;
-        }
+      .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-block;
+      }
 
-        .dark .patient-card {
-            border-color: #4b5563;
-            background: #1f2937;
-        }
+      .status-pending {
+        background-color: rgba(245, 158, 11, 0.15);
+        color: #b45309;
+        border: 1px solid rgba(245, 158, 11, 0.2);
+      }
+      .dark .status-pending {
+        background-color: rgba(120, 53, 15, 0.4);
+        color: #fbbf24;
+        border-color: rgba(245, 158, 11, 0.3);
+      }
 
-        .dark .patient-card:hover {
-            box-shadow: 0 12px 24px rgba(34, 197, 94, 0.2);
-            border-color: #22C55E;
-        }
+      .status-completed {
+        background-color: rgba(16, 185, 129, 0.15);
+        color: #047857;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+      }
+      .dark .status-completed {
+        background-color: rgba(6, 78, 59, 0.4);
+        color: #34d399;
+        border-color: rgba(16, 185, 129, 0.3);
+      }
 
-        .medicine-card {
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            transition: all 0.3s ease;
-        }
+      .status-neutral {
+        background-color: rgba(148, 163, 184, 0.15);
+        color: #475569;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+      }
+      .dark .status-neutral {
+        background-color: rgba(30, 41, 59, 0.4);
+        color: #94a3b8;
+        border-color: rgba(148, 163, 184, 0.3);
+      }
 
-        .dark .medicine-card {
-            border-color: #4b5563;
-            background: #1f2937;
-        }
+      .patient-card {
+        transition: all 0.3s ease;
+        border: 2px solid #e5e7eb;
+      }
 
-        .medicine-card:hover {
-            border-color: #005a32;
-            box-shadow: 0 4px 12px rgba(0, 90, 50, 0.15);
-            transform: translateY(-2px);
-        }
+      .patient-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 90, 50, 0.15);
+        border-color: #005a32;
+      }
 
-        .dark .medicine-card:hover {
-            border-color: #22C55E;
-            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
-        }
+      .dark .patient-card {
+        border-color: #4b5563;
+        background: #1f2937;
+      }
 
-        .allergy-alert {
-            background-color: #fee;
-            border: 2px solid #d62828;
-            border-radius: 0.5rem;
-        }
+      .dark .patient-card:hover {
+        box-shadow: 0 12px 24px rgba(34, 197, 94, 0.2);
+        border-color: #22c55e;
+      }
 
-        .dark .allergy-alert {
-            background-color: rgba(214, 40, 40, 0.15);
-            border-color: #d62828;
-        }
+      .medicine-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+      }
 
-        .patient-details-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
+      .dark .medicine-card {
+        border-color: #4b5563;
+        background: #1f2937;
+      }
 
-        .detail-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
+      .medicine-card:hover {
+        border-color: #005a32;
+        box-shadow: 0 4px 12px rgba(0, 90, 50, 0.15);
+        transform: translateY(-2px);
+      }
 
-        .detail-label {
-            font-size: 0.875rem;
-            color: #6b7280;
-            font-weight: 500;
-        }
+      .dark .medicine-card:hover {
+        border-color: #22c55e;
+        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+      }
 
-        .detail-value {
-            font-size: 1rem;
-            color: #111827;
-            font-weight: 600;
-        }
+      .allergy-alert {
+        background-color: #fee;
+        border: 2px solid #d62828;
+        border-radius: 0.5rem;
+      }
 
-        .dark .detail-label { color: #9ca3af; }
-        .dark .detail-value { color: #f9fafb; }
-        
-        .patient-details-modal {
-            max-width: 700px !important;
-            padding: 0 !important;
-        }
-        
-        .patient-details-content {
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        
-        .doctor-highlight {
-            background-color: #e0f2fe;
-            border-left: 4px solid #005a32;
-            padding: 1rem;
-            border-radius: 0.5rem;
-        }
-        
-        .dark .doctor-highlight {
-            background-color: #1e3a5f;
-            border-left-color: #22C55E;
-        }
+      .dark .allergy-alert {
+        background-color: rgba(214, 40, 40, 0.15);
+        border-color: #d62828;
+      }
 
-        .dark { color-scheme: dark; }
+      .patient-details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
 
-        .settings-dropdown {
-            display: none;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            width: 320px;
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.75rem;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            margin-top: 0.5rem;
-        }
+      .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
 
-        .dark .settings-dropdown { background: #1f2937; border-color: #4b5563; }
+      .detail-label {
+        font-size: 0.875rem;
+        color: #6b7280;
+        font-weight: 500;
+      }
 
-        .settings-section {
-            padding: 1rem;
-            border-bottom: 1px solid #f3f4f6;
-        }
+      .detail-value {
+        font-size: 1rem;
+        color: #111827;
+        font-weight: 600;
+      }
 
-        .dark .settings-section { border-bottom-color: #374151; }
-        .settings-section:last-child { border-bottom: none; }
+      .dark .detail-label {
+        color: #9ca3af;
+      }
+      .dark .detail-value {
+        color: #f9fafb;
+      }
 
-        .settings-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.75rem;
-        }
+      .patient-details-modal {
+        max-width: 700px !important;
+        padding: 0 !important;
+      }
 
-        .settings-item:last-child { margin-bottom: 0; }
+      .patient-details-content {
+        max-height: 80vh;
+        overflow-y: auto;
+      }
 
-        .settings-label {
-            flex: 1;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
+      .doctor-highlight {
+        background-color: #e0f2fe;
+        border-left: 4px solid #005a32;
+        padding: 1rem;
+        border-radius: 0.5rem;
+      }
 
-        .dark .settings-label { color: #f9fafb; }
+      .dark .doctor-highlight {
+        background-color: #1e3a5f;
+        border-left-color: #22c55e;
+      }
 
-        .settings-value {
-            font-size: 0.875rem;
-            color: #6b7280;
-        }
+      .dark {
+        color-scheme: dark;
+      }
 
-        .dark .settings-value { color: #d1d5db; }
+      .settings-dropdown {
+        display: none;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 320px;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.75rem;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        margin-top: 0.5rem;
+      }
 
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 44px;
-            height: 24px;
-        }
+      .dark .settings-dropdown {
+        background: #1f2937;
+        border-color: #4b5563;
+      }
 
-        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+      .settings-section {
+        padding: 1rem;
+        border-bottom: 1px solid #f3f4f6;
+      }
 
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #d1d5db;
-            transition: .4s;
-            border-radius: 24px;
-        }
+      .dark .settings-section {
+        border-bottom-color: #374151;
+      }
+      .settings-section:last-child {
+        border-bottom: none;
+      }
 
-        .dark .toggle-slider { background-color: #4b5563; }
+      .settings-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+      }
 
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
+      .settings-item:last-child {
+        margin-bottom: 0;
+      }
 
-        input:checked + .toggle-slider { background-color: #005a32; }
-        .dark input:checked + .toggle-slider { background-color: #22C55E; }
-        input:checked + .toggle-slider:before { transform: translateX(20px); }
+      .settings-label {
+        flex: 1;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
 
-        .settings-button {
-            width: 100%;
-            padding: 0.5rem 1rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.5rem;
-            background: white;
-            font-size: 0.875rem;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+      .dark .settings-label {
+        color: #f9fafb;
+      }
 
-        .dark .settings-button { background: #374151; border-color: #4b5563; color: #f9fafb; }
-        .settings-button:hover { background: #f9fafb; }
-        .dark .settings-button:hover { background: #4b5563; }
+      .settings-value {
+        font-size: 0.875rem;
+        color: #6b7280;
+      }
 
-        .dispensing-step { display: none; }
-        .dispensing-step.active { display: block; }
-        
-        .quantity-input {
-            width: 80px;
-            text-align: center;
-            border: 1px solid #d1d5db;
-            border-radius: 0.375rem;
-            padding: 0.5rem;
-        }
-        
-        .dark .quantity-input { background-color: #374151; border-color: #4b5563; color: #f9fafb; }
-        
-        .batch-info {
-            background-color: #f8fafc;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            border-left: 4px solid #005a32;
-        }
-        
-        .dark .batch-info { background-color: #1e293b; border-left-color: #22C55E; }
-        
-        .allergy-warning {
-            background-color: #fef2f2;
-            border: 1px solid #fecaca;
-            border-radius: 0.5rem;
-            padding: 1rem;
-        }
-        
-        .dark .allergy-warning { background-color: #7f1d1d; border-color: #dc2626; }
-        
-        .medicine-item {
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-        
-        .dark .medicine-item { border-color: #4b5563; background: #1f2937; }
+      .dark .settings-value {
+        color: #d1d5db;
+      }
 
-        .dark .text-text-light { color: #f9fafb; }
-        .dark .text-subtext-light { color: #d1d5db; }
+      .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 24px;
+      }
 
-        .toast-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 10000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-width: 400px;
-        }
-        
-        .toast {
-            padding: 16px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            animation: slideIn 0.3s ease-out;
-            max-width: 400px;
-            background-color: #ffffff;
-            color: #000000;
-            border-left: 4px solid #000000;
-        }
-        
-        .toast.success { background-color: #f8f9fa; border-left-color: #28a745; }
-        .toast.error   { background-color: #f8f9fa; border-left-color: #dc3545; }
-        .toast.warning { background-color: #f8f9fa; border-left-color: #ffc107; }
-        .toast.info    { background-color: #f8f9fa; border-left-color: #007bff; }
-        
-        .toast .highlight {
-            font-weight: bold;
-            background-color: #e9ecef;
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to   { transform: translateX(0); opacity: 1; }
-        }
-        
-        @keyframes slideOut {
-            from { transform: translateX(0); opacity: 1; }
-            to   { transform: translateX(100%); opacity: 0; }
-        }
-        
-        .toast.hiding { animation: slideOut 0.3s ease-in forwards; }
-        
-        .btn-disabled {
-            background-color: #9CA3AF !important;
-            color: #6B7280 !important;
-            cursor: not-allowed !important;
-            opacity: 0.6;
-        }
-        
-        .dark .btn-disabled { background-color: #4B5563 !important; color: #9CA3AF !important; }
-        
-        .notification-item {
-            padding: 12px 16px;
-            border-bottom: 1px solid #e5e7eb;
-            background-color: #ffffff;
-        }
-        
-        .dark .notification-item { background-color: #1f2937; border-bottom-color: #374151; color: #f9fafb; }
-        
-        .notification-item.unread { background-color: #f8f9fa; border-left: 4px solid #000000; }
-        .dark .notification-item.unread { background-color: #2d3748; border-left-color: #ffffff; }
-        
-        .notification-item .highlight {
-            font-weight: bold;
-            background-color: #e9ecef;
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-        
-        .dark .notification-item .highlight { background-color: #4b5563; color: #ffffff; }
-        
-        .dispensed-medicines-section {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background-color: #f8f9fa;
-            border-radius: 0.5rem;
-            border: 1px solid #e5e7eb;
-        }
-        
-        .dark .dispensed-medicines-section { background-color: #1f2937; border-color: #374151; }
-        
-        .dispensed-medicine-item {
-            padding: 1rem;
-            margin-bottom: 1rem;
-            background-color: #ffffff;
-            border-radius: 0.5rem;
-            border: 1px solid #e5e7eb;
-            border-left: 4px solid #005a32;
-            transition: all 0.2s;
-        }
-        
-        .dark .dispensed-medicine-item { background-color: #374151; border-color: #4b5563; border-left-color: #22C55E; }
-        
-        .dispensed-medicine-item:hover {
-            box-shadow: 0 4px 12px rgba(0, 90, 50, 0.1);
-            transform: translateX(4px);
-        }
-        
-        .dark .dispensed-medicine-item:hover { box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15); }
-        
-        .dispensed-medicine-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        
-        .dark .dispensed-medicine-header { border-bottom-color: #4b5563; }
-        
-        .dispensed-medicine-patient { font-weight: bold; font-size: 1.1rem; }
-        .dispensed-medicine-date { color: #6b7280; font-size: 0.875rem; }
-        .dark .dispensed-medicine-date { color: #9ca3af; }
-        
-        .dispensed-medicine-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-        }
-        
-        .dispensed-medicine-name { font-weight: bold; grid-column: 1 / -1; margin-bottom: 0.25rem; }
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
 
-        #tableView {
-            max-height: 300px;
-            overflow-y: auto;
-            position: relative;
-            border-bottom: 1px solid #e5e7eb;
+      .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #d1d5db;
+        transition: 0.4s;
+        border-radius: 24px;
+      }
+
+      .dark .toggle-slider {
+        background-color: #4b5563;
+      }
+
+      .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+
+      input:checked + .toggle-slider {
+        background-color: #005a32;
+      }
+      .dark input:checked + .toggle-slider {
+        background-color: #22c55e;
+      }
+      input:checked + .toggle-slider:before {
+        transform: translateX(20px);
+      }
+
+      .settings-button {
+        width: 100%;
+        padding: 0.5rem 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        background: white;
+        font-size: 0.875rem;
+        text-align: left;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .dark .settings-button {
+        background: #374151;
+        border-color: #4b5563;
+        color: #f9fafb;
+      }
+      .settings-button:hover {
+        background: #f9fafb;
+      }
+      .dark .settings-button:hover {
+        background: #4b5563;
+      }
+
+      .dispensing-step {
+        display: none;
+      }
+      .dispensing-step.active {
+        display: block;
+      }
+
+      .quantity-input {
+        width: 80px;
+        text-align: center;
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        padding: 0.5rem;
+      }
+
+      .dark .quantity-input {
+        background-color: #374151;
+        border-color: #4b5563;
+        color: #f9fafb;
+      }
+
+      .batch-info {
+        background-color: #f8fafc;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        border-left: 4px solid #005a32;
+      }
+
+      .dark .batch-info {
+        background-color: #1e293b;
+        border-left-color: #22c55e;
+      }
+
+      .allergy-warning {
+        background-color: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 0.5rem;
+        padding: 1rem;
+      }
+
+      .dark .allergy-warning {
+        background-color: #7f1d1d;
+        border-color: #dc2626;
+      }
+
+      .medicine-item {
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .dark .medicine-item {
+        border-color: #4b5563;
+        background: #1f2937;
+      }
+
+      .dark .text-text-light {
+        color: #f9fafb;
+      }
+      .dark .text-subtext-light {
+        color: #d1d5db;
+      }
+
+      .toast-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 400px;
+      }
+
+      .toast {
+        padding: 16px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        animation: slideIn 0.3s ease-out;
+        max-width: 400px;
+        background-color: #ffffff;
+        color: #000000;
+        border-left: 4px solid #000000;
+      }
+
+      .toast.success {
+        background-color: #f8f9fa;
+        border-left-color: #28a745;
+      }
+      .toast.error {
+        background-color: #f8f9fa;
+        border-left-color: #dc3545;
+      }
+      .toast.warning {
+        background-color: #f8f9fa;
+        border-left-color: #ffc107;
+      }
+      .toast.info {
+        background-color: #f8f9fa;
+        border-left-color: #007bff;
+      }
+
+      .toast .highlight {
+        font-weight: bold;
+        background-color: #e9ecef;
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
         }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
 
-       #tableView thead th {
-    position: sticky;
-    top: 0;
-    background: transparent !important;
-    z-index: 10;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
+      @keyframes slideOut {
+        from {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+      }
 
-#tableView thead tr {
-    background: linear-gradient(to right, rgba(0,90,50,0.2), rgba(255,255,255,0.5), rgba(214,40,40,0.2));
-}
+      .toast.hiding {
+        animation: slideOut 0.3s ease-in forwards;
+      }
 
-.dark #tableView thead tr {
-    background: linear-gradient(to right, rgba(0,90,50,0.3), rgba(15,23,42,0.8), rgba(214,40,40,0.3));
-}
-        #dispensedMedicinesList { max-height: 300px; overflow-y: auto; padding-right: 8px; }
+      .btn-disabled {
+        background-color: #9ca3af !important;
+        color: #6b7280 !important;
+        cursor: not-allowed !important;
+        opacity: 0.6;
+      }
 
-        #tableView::-webkit-scrollbar,
-        #dispensedMedicinesList::-webkit-scrollbar { width: 8px; height: 8px; }
-        
-        #tableView::-webkit-scrollbar-track,
-        #dispensedMedicinesList::-webkit-scrollbar-track { background: transparent; }
-        
-        #tableView::-webkit-scrollbar-thumb,
-        #dispensedMedicinesList::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
+      .dark .btn-disabled {
+        background-color: #4b5563 !important;
+        color: #9ca3af !important;
+      }
 
-        .dark #tableView::-webkit-scrollbar-thumb,
-        .dark #dispensedMedicinesList::-webkit-scrollbar-thumb { background-color: #4b5563; }
+      .notification-item {
+        padding: 12px 16px;
+        border-bottom: 1px solid #e5e7eb;
+        background-color: #ffffff;
+      }
+
+      .dark .notification-item {
+        background-color: #1f2937;
+        border-bottom-color: #374151;
+        color: #f9fafb;
+      }
+
+      .notification-item.unread {
+        background-color: #f8f9fa;
+        border-left: 4px solid #000000;
+      }
+      .dark .notification-item.unread {
+        background-color: #2d3748;
+        border-left-color: #ffffff;
+      }
+
+      .notification-item .highlight {
+        font-weight: bold;
+        background-color: #e9ecef;
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+
+      .dark .notification-item .highlight {
+        background-color: #4b5563;
+        color: #ffffff;
+      }
+
+      .dispensed-medicines-section {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background-color: #f8f9fa;
+        border-radius: 0.5rem;
+        border: 1px solid #e5e7eb;
+      }
+
+      .dark .dispensed-medicines-section {
+        background-color: #1f2937;
+        border-color: #374151;
+      }
+
+      .dispensed-medicine-item {
+        padding: 1rem;
+        margin-bottom: 1rem;
+        background-color: #ffffff;
+        border-radius: 0.5rem;
+        border: 1px solid #e5e7eb;
+        border-left: 4px solid #005a32;
+        transition: all 0.2s;
+      }
+
+      .dark .dispensed-medicine-item {
+        background-color: #374151;
+        border-color: #4b5563;
+        border-left-color: #22c55e;
+      }
+
+      .dispensed-medicine-item:hover {
+        box-shadow: 0 4px 12px rgba(0, 90, 50, 0.1);
+        transform: translateX(4px);
+      }
+
+      .dark .dispensed-medicine-item:hover {
+        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
+      }
+
+      .dispensed-medicine-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .dark .dispensed-medicine-header {
+        border-bottom-color: #4b5563;
+      }
+
+      .dispensed-medicine-patient {
+        font-weight: bold;
+        font-size: 1.1rem;
+      }
+      .dispensed-medicine-date {
+        color: #6b7280;
+        font-size: 0.875rem;
+      }
+      .dark .dispensed-medicine-date {
+        color: #9ca3af;
+      }
+
+      .dispensed-medicine-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+      }
+
+      .dispensed-medicine-name {
+        font-weight: bold;
+        grid-column: 1 / -1;
+        margin-bottom: 0.25rem;
+      }
+
+      #tableView {
+        max-height: 300px;
+        overflow-y: auto;
+        position: relative;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      #tableView thead th {
+        position: sticky;
+        top: 0;
+        background: transparent !important;
+        z-index: 10;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      #tableView thead tr {
+        background: linear-gradient(
+          to right,
+          rgba(0, 90, 50, 0.2),
+          rgba(255, 255, 255, 0.5),
+          rgba(214, 40, 40, 0.2)
+        );
+      }
+
+      .dark #tableView thead tr {
+        background: linear-gradient(
+          to right,
+          rgba(0, 90, 50, 0.3),
+          rgba(15, 23, 42, 0.8),
+          rgba(214, 40, 40, 0.3)
+        );
+      }
+      #dispensedMedicinesList {
+        max-height: 300px;
+        overflow-y: auto;
+        padding-right: 8px;
+      }
+
+      #tableView::-webkit-scrollbar,
+      #dispensedMedicinesList::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      #tableView::-webkit-scrollbar-track,
+      #dispensedMedicinesList::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      #tableView::-webkit-scrollbar-thumb,
+      #dispensedMedicinesList::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1;
+        border-radius: 4px;
+      }
+
+      .dark #tableView::-webkit-scrollbar-thumb,
+      .dark #dispensedMedicinesList::-webkit-scrollbar-thumb {
+        background-color: #4b5563;
+      }
     </style>
-</head>
-<body class="bg-background-light dark:bg-background-dark font-sans text-text-light dark:text-text-dark">
-
-<!--Title Bar-->
-<div id="title-bar" class="drag-region fixed top-0 left-0 w-full h-8 bg-white flex justify-between items-stretch z-40 border-b border-gray-200 select-none">
-    <div class="flex items-center pl-4 gap-2 text-gray-600">
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark font-sans text-text-light dark:text-text-dark"
+  >
+    <!--Title Bar-->
+    <div
+      id="title-bar"
+      class="drag-region fixed top-0 left-0 w-full h-8 bg-white flex justify-between items-stretch z-40 border-b border-gray-200 select-none"
+    >
+      <div class="flex items-center pl-4 gap-2 text-gray-600">
         <span class="text-xs font-semibold">IHMS Pharmacy</span>
+      </div>
+      <div class="no-drag flex items-center relative z-50">
+        <button
+          id="min-btn"
+          class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200"
+        >
+          <span class="material-icons-outlined text-sm text-gray-600"
+            >remove</span
+          >
+        </button>
+        <button
+          id="max-btn"
+          class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200"
+        >
+          <span class="material-icons-outlined text-sm text-gray-600"
+            >crop_square</span
+          >
+        </button>
+        <button
+          id="close-btn"
+          class="h-full w-12 flex justify-center items-center hover:bg-red-500 hover:text-white transition-colors duration-200 group"
+        >
+          <span
+            class="material-icons-outlined text-sm text-gray-600 group-hover:text-white"
+            >close</span
+          >
+        </button>
+      </div>
     </div>
-    <div class="no-drag flex items-center relative z-50"> 
-        <button id="min-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200">
-            <span class="material-icons-outlined text-sm text-gray-600">remove</span>
-        </button>
-        <button id="max-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200">
-            <span class="material-icons-outlined text-sm text-gray-600">crop_square</span>
-        </button>
-        <button id="close-btn" class="h-full w-12 flex justify-center items-center hover:bg-red-500 hover:text-white transition-colors duration-200 group">
-            <span class="material-icons-outlined text-sm text-gray-600 group-hover:text-white">close</span>
-        </button>
-    </div>
-</div>
 
     <div class="flex h-screen pt-8">
-        <!-- Sidebar -->
-        <aside class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-border-light dark:border-border-dark">
-            <div class="h-16 flex items-center px-6">
-                <div class="flex items-center gap-3">
-                     <div class="w-12 h-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm">
-                        <img src="images/wellserved.png" 
-                        alt="Well Served Logo" 
-                        class="w-full h-full object-cover">
-                    </div>
-                    <div>
-                        <h1 class="font-bold text-primary dark:text-green-400 leading-tight">Well Served</h1>
-                        <p class="text-[10px] uppercase tracking-wider text-accent dark:text-amber-600 font-semibold">Since 1994</p>
-                    </div>
-                </div>
+      <!-- Sidebar -->
+      <aside
+        class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-border-light dark:border-border-dark"
+      >
+        <div class="h-16 flex items-center px-6">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-12 h-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm"
+            >
+              <img
+                src="images/wellserved.png"
+                alt="Well Served Logo"
+                class="w-full h-full object-cover"
+              />
             </div>
-            <nav class="flex-1 px-4 py-6 space-y-2">
-                <div class="px-2 text-sm font-semibold text-subtext-light dark:text-subtext-dark">Pharmacy</div>
-                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="dashboard.html">
-                    <span class="material-icons mr-3">dashboard</span> Dashboard
-                </a>
-                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="inventory.html">
-                    <span class="material-icons mr-3">inventory_2</span> Inventory
-                </a>
-                <a class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold" href="patient_records.html">
-                    <span class="material-icons mr-3">folder_shared</span> Patient Records
-                </a>
-                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="pos.html">
-                    <span class="material-icons mr-3">shopping_cart</span> Counter Dispensing
-                </a>
-                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="billing.html">
-                    <span class="material-icons mr-3">point_of_sale</span> Sales &amp; Billing
-                </a>
-            </nav>
-            <div class="p-4 border-t border-border-light dark:border-border-dark">
-                <button onclick="logoutUser()" 
-                    class="flex items-center w-full px-4 py-2 gap-3 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors">
-                    <span class="material-icons text-red-500">logout</span> Logout
-                </button>
+            <div>
+              <h1
+                class="font-bold text-primary dark:text-green-400 leading-tight"
+              >
+                Well Served
+              </h1>
+              <p
+                class="text-[10px] uppercase tracking-wider text-accent dark:text-amber-600 font-semibold"
+              >
+                Since 1994
+              </p>
             </div>
-        </aside>
-        
-        <main class="flex-1 flex flex-col">
+          </div>
+        </div>
+        <nav class="flex-1 px-4 py-6 space-y-2">
+          <div
+            class="px-2 text-sm font-semibold text-subtext-light dark:text-subtext-dark"
+          >
+            Pharmacy
+          </div>
+          <a
+            class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md"
+            href="dashboard.html"
+          >
+            <span class="material-icons mr-3">dashboard</span> Dashboard
+          </a>
+          <a
+            class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md"
+            href="inventory.html"
+          >
+            <span class="material-icons mr-3">inventory_2</span> Inventory
+          </a>
+          <a
+            class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold"
+            href="patient_records.html"
+          >
+            <span class="material-icons mr-3">folder_shared</span> Patient
+            Records
+          </a>
+          <a
+            class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md"
+            href="pos.html"
+          >
+            <span class="material-icons mr-3">shopping_cart</span> Counter
+            Dispensing
+          </a>
+          <a
+            class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md"
+            href="billing.html"
+          >
+            <span class="material-icons mr-3">point_of_sale</span> Sales &amp;
+            Billing
+          </a>
+        </nav>
+        <div class="p-4 border-t border-border-light dark:border-border-dark">
+          <button
+            onclick="logoutUser()"
+            class="flex items-center w-full px-4 py-2 gap-3 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
+          >
+            <span class="material-icons text-red-500">logout</span> Logout
+          </button>
+        </div>
+      </aside>
 
-            <!-- ══════════════════════════════════════════
+      <main class="flex-1 flex flex-col">
+        <!-- ══════════════════════════════════════════
                  NAVBAR — copied from dashboard.html
                  [ Clock+Date ] [ Bell ] [ Name/Role ] [ Avatar ]
                  ══════════════════════════════════════════ -->
-            <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
-                <!-- Left: empty spacer -->
-                <div></div>
+        <header
+          class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800"
+        >
+          <!-- Left: empty spacer -->
+          <div></div>
 
-                <!-- Right: clock · divider · bell · divider · user info · avatar -->
-                <div class="flex items-center gap-4">
+          <!-- Right: clock · divider · bell · divider · user info · avatar -->
+          <div class="flex items-center gap-4">
+            <!-- Live Clock + Date -->
+            <div class="text-right">
+              <div
+                id="navClock"
+                class="text-text-light dark:text-text-dark"
+              ></div>
+              <div
+                id="navDate"
+                class="text-subtext-light dark:text-subtext-dark uppercase tracking-widest"
+              ></div>
+            </div>
 
-                    <!-- Live Clock + Date -->
-                    <div class="text-right">
-                        <div id="navClock" class="text-text-light dark:text-text-dark"></div>
-                        <div id="navDate"  class="text-subtext-light dark:text-subtext-dark uppercase tracking-widest"></div>
-                    </div>
+            <div class="nav-divider"></div>
 
-                    <div class="nav-divider"></div>
+            <!-- Notification Bell -->
+            <div class="relative">
+              <button
+                id="notificationBtn"
+                class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                <span class="material-icons-outlined text-2xl"
+                  >notifications</span
+                >
+                <span
+                  id="notificationBadge"
+                  class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold"
+                  style="display: none"
+                  >0</span
+                >
+              </button>
 
-                    <!-- Notification Bell -->
-                    <div class="relative">
-                        <button id="notificationBtn"
-                            class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                            <span class="material-icons-outlined text-2xl">notifications</span>
-                            <span id="notificationBadge"
-                                class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold"
-                                style="display:none;">0</span>
-                        </button>
-
-                        <div id="notificationDropdown" class="notif-dropdown">
-                            <div class="notif-header">
-                                <h3>Notifications</h3>
-                                <div class="notif-header-meta">
-                                    <span class="unread-count-pill" id="unreadPill">Loading...</span>
-                                    <button class="mark-all-btn" onclick="markAllRead()">Mark all read</button>
-                                </div>
-                            </div>
-                            <div class="notif-tabs">
-                                <button class="notif-tab-btn active" onclick="filterNotifTab(this,'all')">All</button>
-                                <button class="notif-tab-btn" onclick="filterNotifTab(this,'critical')">Critical</button>
-                                <button class="notif-tab-btn" onclick="filterNotifTab(this,'expiry')">Expiry</button>
-                                <button class="notif-tab-btn" onclick="filterNotifTab(this,'shortage')">Stock</button>
-                            </div>
-                            <div class="notif-list" id="notifList">
-                                <div class="notif-loading">
-                                    <span class="material-icons" style="font-size:32px;display:block;margin:0 auto 8px;">hourglass_empty</span>
-                                    <p style="font-size:12px;">Loading alerts from inventory...</p>
-                                </div>
-                            </div>
-                            <div class="notif-footer">
-                                <a href="inventory.html" class="view-all-link">
-                                    View inventory <span class="material-icons">arrow_forward</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="nav-divider"></div>
-
-                    <!-- User Name + Role -->
-                    <div class="text-right leading-tight">
-                        <div id="navUserName" class="text-sm font-bold text-text-light dark:text-text-dark">User</div>
-                        <div id="navUserRole" class="text-xs text-subtext-light dark:text-subtext-dark">Staff</div>
-                    </div>
-
-                    <!-- Avatar with initial -->
-                    <div id="navAvatar" class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm select-none">U</div>
-
+              <div id="notificationDropdown" class="notif-dropdown">
+                <div class="notif-header">
+                  <h3>Notifications</h3>
+                  <div class="notif-header-meta">
+                    <span class="unread-count-pill" id="unreadPill"
+                      >Loading...</span
+                    >
+                    <button class="mark-all-btn" onclick="markAllRead()">
+                      Mark all read
+                    </button>
+                  </div>
                 </div>
-            </header>
-            
-            <main class="flex-1 p-8 overflow-y-auto">
-                <div class="flex items-center justify-between mb-8">
-                    <div>
-                        <h2 class="text-3xl font-bold text-primary dark:text-green-400 flex items-center gap-3">
-                            <span class="material-icons text-4xl">folder_shared</span>
-                            Patient Records
-                        </h2>
-                        <p class="text-subtext-light dark:text-subtext-dark mt-2 ml-1">View patient information and dispense prescribed medicines</p>
-                    </div>
+                <div class="notif-tabs">
+                  <button
+                    class="notif-tab-btn active"
+                    onclick="filterNotifTab(this, 'all')"
+                  >
+                    All
+                  </button>
+                  <button
+                    class="notif-tab-btn"
+                    onclick="filterNotifTab(this, 'critical')"
+                  >
+                    Critical
+                  </button>
+                  <button
+                    class="notif-tab-btn"
+                    onclick="filterNotifTab(this, 'expiry')"
+                  >
+                    Expiry
+                  </button>
+                  <button
+                    class="notif-tab-btn"
+                    onclick="filterNotifTab(this, 'shortage')"
+                  >
+                    Stock
+                  </button>
                 </div>
-
-                <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-2 border-primary/30 dark:border-primary/40 shadow-sm mb-8">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-medium mb-2 text-primary dark:text-green-400">Search Patients</label>
-                            <div class="relative">
-                                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-primary dark:text-green-400">search</span>
-                                <input 
-                                    id="patientSearch"
-                                    class="w-full bg-background-light dark:bg-background-dark border-2 border-primary/30 dark:border-primary/40 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-text-light dark:text-text-dark" 
-                                    placeholder="Search by patient name or ID..." 
-                                    type="text"
-                                   
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-primary dark:text-green-400">Status</label>
-                            <select id="statusFilter"  class="w-full bg-background-light dark:bg-background-dark border-2 border-primary/30 dark:border-primary/40 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-text-light dark:text-text-dark">
-                                <option value="all">All Status</option>
-                                <option value="pending">Pending</option>
-                                <option value="active">Active</option>
-                                <option value="completed">Completed</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-primary dark:text-green-400">Date Range</label>
-                            <select id="dateFilter"  class="w-full bg-background-light dark:bg-background-dark border-2 border-primary/30 dark:border-primary/40 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-text-light dark:text-text-dark">
-                                <option value="all">All Dates</option>
-                                <option value="today">Today</option>
-                                <option value="week">This Week</option>
-                                <option value="month">This Month</option>
-                                <option value="last-year">This Year</option>
-                            </select>
-                        </div>
-                    </div>
+                <div class="notif-list" id="notifList">
+                  <div class="notif-loading">
+                    <span
+                      class="material-icons"
+                      style="
+                        font-size: 32px;
+                        display: block;
+                        margin: 0 auto 8px;
+                      "
+                      >hourglass_empty</span
+                    >
+                    <p style="font-size: 12px">
+                      Loading alerts from inventory...
+                    </p>
+                  </div>
                 </div>
-
-                <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-2 border-primary/30 dark:border-primary/40 shadow-sm mb-8">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="font-semibold text-xl text-primary dark:text-green-400 flex items-center gap-2">
-                            <span class="material-icons">folder_shared</span>
-                            Patient Records
-                        </h3>
-                        <div class="flex items-center gap-2">
-                            <button id="tableViewBtn" onclick="toggleView('table')" class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm">
-                                <span class="material-icons text-sm mr-1">table_chart</span>
-                                Table View
-                            </button>
-                            <button id="cardViewBtn" onclick="toggleView('card')" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-                                <span class="material-icons text-sm mr-1">view_module</span>
-                                Card View
-                            </button>
-                        </div>
-                    </div>
-
-                    <div id="tableView" class="overflow-x-auto">
-                        <table class="w-full text-sm">
-                            <thead class=" text-xs text-subtext-light dark:text-subtext-dark uppercase tracking-wider sticky top-0 z-10">
-                                <tr class="border-b border-border-light dark:border-border-dark">
-                                    <th class="text-left py-3 px-4  text-subtext-light dark:text-subtext-dark font-medium">Patient Name</th>
-                                    <th class="text-left py-3 px-4 text-subtext-light dark:text-subtext-dark font-medium">Patient ID</th>
-                                    <th class="text-left py-3 px-4  text-subtext-light dark:text-subtext-dark font-medium">Gender</th>
-                                    <th class="text-left py-3 px-4  text-subtext-light dark:text-subtext-dark font-medium">Prescribed Date</th>
-                                    <th class="text-left py-3 px-4  text-subtext-light dark:text-subtext-dark font-medium">Status</th>
-                                    <th class="text-left py-3 px-4  text-subtext-light dark:text-subtext-dark font-medium">View Details</th>
-                                </tr>
-                            </thead>
-                            <tbody id="patientsTable">
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div id="cardView" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    </div>
+                <div class="notif-footer">
+                  <a href="inventory.html" class="view-all-link">
+                    View inventory
+                    <span class="material-icons">arrow_forward</span>
+                  </a>
                 </div>
+              </div>
+            </div>
 
-                <div class="dispensed-medicines-section border-2 border-primary/30 dark:border-primary/40 shadow-sm">
-                    <h3 class="font-semibold text-xl text-primary dark:text-green-400 mb-4 flex items-center gap-2">
-                        <span class="material-icons">history</span>
-                        Recently Dispensed Medicines
-                    </h3>
-                    <div id="dispensedMedicinesList">
-                    </div>
+            <div class="nav-divider"></div>
+
+            <!-- User Name + Role -->
+            <div class="text-right leading-tight">
+              <div
+                id="navUserName"
+                class="text-sm font-bold text-text-light dark:text-text-dark"
+              >
+                User
+              </div>
+              <div
+                id="navUserRole"
+                class="text-xs text-subtext-light dark:text-subtext-dark"
+              >
+                Staff
+              </div>
+            </div>
+
+            <!-- Avatar with initial -->
+            <div
+              id="navAvatar"
+              class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm select-none"
+            >
+              U
+            </div>
+          </div>
+        </header>
+
+        <main class="flex-1 p-8 overflow-y-auto">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2
+                class="text-3xl font-bold text-primary dark:text-green-400 flex items-center gap-3"
+              >
+                <span class="material-icons text-4xl">folder_shared</span>
+                Patient Records
+              </h2>
+              <p class="text-subtext-light dark:text-subtext-dark mt-2 ml-1">
+                View patient information and dispense prescribed medicines
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-2 border-primary/30 dark:border-primary/40 shadow-sm mb-8"
+          >
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div class="md:col-span-2">
+                <label
+                  class="block text-sm font-medium mb-2 text-primary dark:text-green-400"
+                  >Search Patients</label
+                >
+                <div class="relative">
+                  <span
+                    class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-primary dark:text-green-400"
+                    >search</span
+                  >
+                  <input
+                    id="patientSearch"
+                    class="w-full bg-background-light dark:bg-background-dark border-2 border-primary/30 dark:border-primary/40 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-text-light dark:text-text-dark"
+                    placeholder="Search by patient name or ID..."
+                    type="text"
+                  />
                 </div>
+              </div>
+              <div>
+                <label
+                  class="block text-sm font-medium mb-2 text-primary dark:text-green-400"
+                  >Status</label
+                >
+                <select
+                  id="statusFilter"
+                  class="w-full bg-background-light dark:bg-background-dark border-2 border-primary/30 dark:border-primary/40 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-text-light dark:text-text-dark"
+                >
+                  <option value="all">All Status</option>
+                  <option value="pending">Pending</option>
+                  <option value="active">Active</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </div>
+              <div>
+                <label
+                  class="block text-sm font-medium mb-2 text-primary dark:text-green-400"
+                  >Date Range</label
+                >
+                <select
+                  id="dateFilter"
+                  class="w-full bg-background-light dark:bg-background-dark border-2 border-primary/30 dark:border-primary/40 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-text-light dark:text-text-dark"
+                >
+                  <option value="all">All Dates</option>
+                  <option value="today">Today</option>
+                  <option value="week">This Week</option>
+                  <option value="month">This Month</option>
+                  <option value="last-year">This Year</option>
+                </select>
+              </div>
+            </div>
+          </div>
 
-                
-            </main>
+          <div
+            class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-2 border-primary/30 dark:border-primary/40 shadow-sm mb-8"
+          >
+            <div class="flex items-center justify-between mb-6">
+              <h3
+                class="font-semibold text-xl text-primary dark:text-green-400 flex items-center gap-2"
+              >
+                <span class="material-icons">folder_shared</span>
+                Patient Records
+              </h3>
+              <div class="flex items-center gap-2">
+                <button
+                  id="tableViewBtn"
+                  onclick="toggleView('table')"
+                  class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm"
+                >
+                  <span class="material-icons text-sm mr-1">table_chart</span>
+                  Table View
+                </button>
+                <button
+                  id="cardViewBtn"
+                  onclick="toggleView('card')"
+                  class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                >
+                  <span class="material-icons text-sm mr-1">view_module</span>
+                  Card View
+                </button>
+              </div>
+            </div>
+
+            <div id="tableView" class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead
+                  class="text-xs text-subtext-light dark:text-subtext-dark uppercase tracking-wider sticky top-0 z-10"
+                >
+                  <tr
+                    class="border-b border-border-light dark:border-border-dark"
+                  >
+                    <th
+                      class="text-left py-3 px-4 text-subtext-light dark:text-subtext-dark font-medium"
+                    >
+                      Patient Name
+                    </th>
+                    <th
+                      class="text-left py-3 px-4 text-subtext-light dark:text-subtext-dark font-medium"
+                    >
+                      Patient ID
+                    </th>
+                    <th
+                      class="text-left py-3 px-4 text-subtext-light dark:text-subtext-dark font-medium"
+                    >
+                      Gender
+                    </th>
+                    <th
+                      class="text-left py-3 px-4 text-subtext-light dark:text-subtext-dark font-medium"
+                    >
+                      Prescribed Date
+                    </th>
+                    <th
+                      class="text-left py-3 px-4 text-subtext-light dark:text-subtext-dark font-medium"
+                    >
+                      Status
+                    </th>
+                    <th
+                      class="text-left py-3 px-4 text-subtext-light dark:text-subtext-dark font-medium"
+                    >
+                      View Details
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="patientsTable"></tbody>
+              </table>
+            </div>
+
+            <div
+              id="cardView"
+              class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            ></div>
+          </div>
+
+          <div
+            class="dispensed-medicines-section border-2 border-primary/30 dark:border-primary/40 shadow-sm"
+          >
+            <h3
+              class="font-semibold text-xl text-primary dark:text-green-400 mb-4 flex items-center gap-2"
+            >
+              <span class="material-icons">history</span>
+              Recently Dispensed Medicines
+            </h3>
+            <div id="dispensedMedicinesList"></div>
+          </div>
         </main>
+      </main>
     </div>
 
     <div id="toastContainer" class="toast-container"></div>
-
+    <script src="../config.js"></script>
     <script>
-const API_BASE_URL = 'http://localhost:5001';
+      // ══════════════════════════════════════════════════════════
+      // LIVE NAVBAR CLOCK — ticks every second
+      // ══════════════════════════════════════════════════════════
+      function updateNavClock() {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: true,
+        });
+        const dateStr = now
+          .toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })
+          .toUpperCase();
+        document.getElementById("navClock").textContent = timeStr;
+        document.getElementById("navDate").textContent = dateStr;
+      }
 
-// ══════════════════════════════════════════════════════════
-// LIVE NAVBAR CLOCK — ticks every second
-// ══════════════════════════════════════════════════════════
-function updateNavClock() {
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString('en-US', {
-        hour:   '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true
-    });
-    const dateStr = now.toLocaleDateString('en-US', {
-        month: 'short',
-        day:   'numeric',
-        year:  'numeric'
-    }).toUpperCase();
-    document.getElementById('navClock').textContent = timeStr;
-    document.getElementById('navDate').textContent  = dateStr;
-}
+      // ── Load user info from session into navbar ──
+      function loadNavUserInfo() {
+        try {
+          const raw = sessionStorage.getItem("userInfo");
+          if (!raw) return;
+          const info = JSON.parse(raw);
+          const name = info.name || info.firstName || info.username || "User";
+          const role = info.role || info.position || "";
+          const initial = name.charAt(0).toUpperCase();
+          document.getElementById("navUserName").textContent = name;
+          document.getElementById("navUserRole").textContent = role;
+          document.getElementById("navAvatar").textContent = initial;
+        } catch (e) {
+          /* keep defaults */
+        }
+      }
 
-// ── Load user info from session into navbar ──
-function loadNavUserInfo() {
-    try {
-        const raw = sessionStorage.getItem('userInfo');
-        if (!raw) return;
-        const info = JSON.parse(raw);
-        const name    = info.name || info.firstName || info.username || 'User';
-        const role    = info.role || info.position || '';
-        const initial = name.charAt(0).toUpperCase();
-        document.getElementById('navUserName').textContent = name;
-        document.getElementById('navUserRole').textContent = role;
-        document.getElementById('navAvatar').textContent   = initial;
-    } catch(e) { /* keep defaults */ }
-}
+      // ══════════════════════════════════════════════════════════
+      // FANCY NOTIFICATION BELL — live from /api/inventory
+      // ══════════════════════════════════════════════════════════
+      let notifData = [];
+      let activeNotifFilter = "all";
 
-// ══════════════════════════════════════════════════════════
-// FANCY NOTIFICATION BELL — live from /api/inventory
-// ══════════════════════════════════════════════════════════
-let notifData         = [];
-let activeNotifFilter = 'all';
+      function getNotifToken() {
+        const direct = sessionStorage.getItem("token");
+        if (direct) return direct;
+        const userInfo = sessionStorage.getItem("userInfo");
+        if (userInfo) {
+          try {
+            return JSON.parse(userInfo).token || null;
+          } catch (e) {}
+        }
+        return null;
+      }
 
-function getNotifToken() {
-    const direct = sessionStorage.getItem('token');
-    if (direct) return direct;
-    const userInfo = sessionStorage.getItem('userInfo');
-    if (userInfo) {
-        try { return JSON.parse(userInfo).token || null; } catch(e) {}
-    }
-    return null;
-}
+      function generateAlertsFromInventory(inventory) {
+        const alerts = [];
+        const today = new Date();
+        const thirtyDays = new Date();
+        thirtyDays.setDate(today.getDate() + 30);
 
-function generateAlertsFromInventory(inventory) {
-    const alerts     = [];
-    const today      = new Date();
-    const thirtyDays = new Date();
-    thirtyDays.setDate(today.getDate() + 30);
+        inventory.forEach((item, idx) => {
+          const medName =
+            item.medicine?.name || item.name || "Unknown Medicine";
 
-    inventory.forEach((item, idx) => {
-        const medName = item.medicine?.name || item.name || 'Unknown Medicine';
-
-        if (item.expiryDate) {
+          if (item.expiryDate) {
             const expiry = new Date(item.expiryDate);
             if (expiry < today) {
-                alerts.push({
-                    id: `exp-${item._id || idx}`, type: 'expiry', unread: true,
-                    medicineName: medName,
-                    title: 'Medicine Expired',
-                    desc:  `${medName} expired on ${expiry.toLocaleDateString('en-PH')}.`,
-                    time:  'Needs immediate attention',
-                    actionLabel: 'View Inventory', actionClass: 'btn-expiry',
-                    icon: 'event_busy', iconClass: 'icon-expiry'
-                });
+              alerts.push({
+                id: `exp-${item._id || idx}`,
+                type: "expiry",
+                unread: true,
+                medicineName: medName,
+                title: "Medicine Expired",
+                desc: `${medName} expired on ${expiry.toLocaleDateString("en-PH")}.`,
+                time: "Needs immediate attention",
+                actionLabel: "View Inventory",
+                actionClass: "btn-expiry",
+                icon: "event_busy",
+                iconClass: "icon-expiry",
+              });
             } else if (expiry <= thirtyDays) {
-                const d = Math.ceil((expiry - today) / 864e5);
-                alerts.push({
-                    id: `exp-${item._id || idx}`, type: 'expiry', unread: true,
-                    medicineName: medName,
-                    title: 'Expiring Soon',
-                    desc:  `${medName} expires in ${d} day${d === 1 ? '' : 's'}.`,
-                    time:  `${d} days left`,
-                    actionLabel: 'View Inventory', actionClass: 'btn-expiry',
-                    icon: 'schedule', iconClass: 'icon-expiry'
-                });
+              const d = Math.ceil((expiry - today) / 864e5);
+              alerts.push({
+                id: `exp-${item._id || idx}`,
+                type: "expiry",
+                unread: true,
+                medicineName: medName,
+                title: "Expiring Soon",
+                desc: `${medName} expires in ${d} day${d === 1 ? "" : "s"}.`,
+                time: `${d} days left`,
+                actionLabel: "View Inventory",
+                actionClass: "btn-expiry",
+                icon: "schedule",
+                iconClass: "icon-expiry",
+              });
             }
+          }
+
+          const qty = parseInt(item.quantity || 0);
+          const minStock = parseInt(item.minStockLevel || 10);
+          const isExpired = new Date(item.expiryDate) < today;
+
+          if (!isExpired && qty === 0) {
+            alerts.push({
+              id: `stk-${item._id || idx}`,
+              type: "critical",
+              unread: true,
+              medicineName: medName,
+              title: "Critical: Out of Stock",
+              desc: `${medName} is completely out of stock.`,
+              time: "Immediate action required",
+              actionLabel: "View Inventory",
+              actionClass: "btn-critical",
+              icon: "warning",
+              iconClass: "icon-critical",
+            });
+          } else if (!isExpired && qty <= minStock) {
+            alerts.push({
+              id: `stk-${item._id || idx}`,
+              type: "shortage",
+              unread: true,
+              medicineName: medName,
+              title: "Low Stock Alert",
+              desc: `${medName} — only ${qty} unit${qty === 1 ? "" : "s"} remaining (min: ${minStock}).`,
+              time: "Reorder soon",
+              actionLabel: "View Inventory",
+              actionClass: "btn-shortage",
+              icon: "inventory_2",
+              iconClass: "icon-shortage",
+            });
+          }
+        });
+
+        const order = { critical: 0, expiry: 1, shortage: 2 };
+        alerts.sort((a, b) => (order[a.type] ?? 9) - (order[b.type] ?? 9));
+        return alerts;
+      }
+
+      function renderNotifications() {
+        const list = document.getElementById("notifList");
+        const filtered =
+          activeNotifFilter === "all"
+            ? notifData
+            : notifData.filter((n) => n.type === activeNotifFilter);
+
+        if (!filtered.length) {
+          const msg =
+            activeNotifFilter === "all"
+              ? "All clear — no alerts right now!"
+              : "No notifications in this category.";
+          list.innerHTML =
+            '<div class="notif-empty"><span class="material-icons">notifications_none</span><p>' +
+            msg +
+            "</p></div>";
+          updateNotifBadge();
+          return;
         }
 
-        const qty      = parseInt(item.quantity || 0);
-        const minStock = parseInt(item.minStockLevel || 10);
-        const isExpired = new Date(item.expiryDate) < today;
-
-        if (!isExpired && qty === 0) {
-            alerts.push({
-                id: `stk-${item._id || idx}`, type: 'critical', unread: true,
-                medicineName: medName,
-                title: 'Critical: Out of Stock',
-                desc:  `${medName} is completely out of stock.`,
-                time:  'Immediate action required',
-                actionLabel: 'View Inventory', actionClass: 'btn-critical',
-                icon: 'warning', iconClass: 'icon-critical'
-            });
-        } else if (!isExpired && qty <= minStock) {
-            alerts.push({
-                id: `stk-${item._id || idx}`, type: 'shortage', unread: true,
-                medicineName: medName,
-                title: 'Low Stock Alert',
-                desc:  `${medName} — only ${qty} unit${qty === 1 ? '' : 's'} remaining (min: ${minStock}).`,
-                time:  'Reorder soon',
-                actionLabel: 'View Inventory', actionClass: 'btn-shortage',
-                icon: 'inventory_2', iconClass: 'icon-shortage'
-            });
-        }
-    });
-
-    const order = { critical: 0, expiry: 1, shortage: 2 };
-    alerts.sort((a, b) => (order[a.type] ?? 9) - (order[b.type] ?? 9));
-    return alerts;
-}
-
-function renderNotifications() {
-    const list     = document.getElementById('notifList');
-    const filtered = activeNotifFilter === 'all'
-        ? notifData
-        : notifData.filter(n => n.type === activeNotifFilter);
-
-    if (!filtered.length) {
-        const msg = activeNotifFilter === 'all' ? 'All clear — no alerts right now!' : 'No notifications in this category.';
-        list.innerHTML = '<div class="notif-empty"><span class="material-icons">notifications_none</span><p>' + msg + '</p></div>';
-        updateNotifBadge();
-        return;
-    }
-
-    list.innerHTML = filtered.map(n => `
-        <div class="notif-item ${n.type} ${n.unread ? 'unread' : ''}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
+        list.innerHTML = filtered
+          .map(
+            (n) => `
+        <div class="notif-item ${n.type} ${n.unread ? "unread" : ""}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
             <div class="notif-icon-wrap ${n.iconClass}"><span class="material-icons">${n.icon}</span></div>
             <div class="notif-body">
                 <div class="notif-title">${n.title}</div>
@@ -1041,342 +1673,416 @@ function renderNotifications() {
                     <button class="notif-action-btn ${n.actionClass}" onclick="handleNotifAction(event,'${n.id}')">${n.actionLabel}</button>
                 </div>
             </div>
-            ${n.unread ? '<div class="unread-dot"></div>' : ''}
-        </div>`).join('');
+            ${n.unread ? '<div class="unread-dot"></div>' : ""}
+        </div>`,
+          )
+          .join("");
 
-    updateNotifBadge();
-}
+        updateNotifBadge();
+      }
 
-function updateNotifBadge() {
-    const count = notifData.filter(n => n.unread).length;
-    const badge = document.getElementById('notificationBadge');
-    const pill  = document.getElementById('unreadPill');
-    if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none'; }
-    if (pill)  pill.textContent = count > 0 ? `${count} new` : 'All clear';
-}
-
-function markNotifRead(id) {
-    const n = notifData.find(n => n.id === id);
-    if (n) { n.unread = false; saveReadNotifId(id); renderNotifications(); }
-}
-
-function markAllRead() {
-    notifData.forEach(n => n.unread = false);
-    saveAllReadNotifIds();
-    renderNotifications();
-}
-
-function handleNotifAction(event, id) {
-    event.stopPropagation();
-    markNotifRead(id);
-    const n = notifData.find(n => n.id === id);
-    if (!n) return;
-    document.getElementById('notificationDropdown').classList.remove('open');
-
-    if (n.type === 'expiry') {
-        sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'batch', medicine: n.medicineName }));
-    } else if (n.type === 'critical' || n.type === 'shortage') {
-        sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'summary', medicine: n.medicineName }));
-    }
-    window.location.href = 'inventory.html';
-}
-
-function filterNotifTab(btn, filter) {
-    document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    activeNotifFilter = filter;
-    renderNotifications();
-}
-
-function getReadNotifIds() {
-    try { return new Set(JSON.parse(sessionStorage.getItem('readNotifIds') || '[]')); }
-    catch(e) { return new Set(); }
-}
-
-function saveReadNotifId(id) {
-    const ids = getReadNotifIds();
-    ids.add(id);
-    sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
-}
-
-function saveAllReadNotifIds() {
-    const ids = getReadNotifIds();
-    notifData.forEach(n => ids.add(n.id));
-    sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
-}
-
-async function refreshNotifications() {
-    const token = getNotifToken();
-    if (!token) return;
-    try {
-        const res = await fetch(`${API_BASE_URL}/api/inventory`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const raw       = await res.json();
-        const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
-        const readIds = getReadNotifIds();
-        notifData = generateAlertsFromInventory(inventory).slice(0, 15);
-        notifData.forEach(n => { if (readIds.has(n.id)) n.unread = false; });
-        renderNotifications();
-    } catch (e) {
-        console.warn('Notification fetch failed:', e);
-        if (!notifData.length) {
-            const list = document.getElementById('notifList');
-            if (list) list.innerHTML = `<div class="notif-empty"><span class="material-icons">cloud_off</span><p>Could not load alerts.</p></div>`;
+      function updateNotifBadge() {
+        const count = notifData.filter((n) => n.unread).length;
+        const badge = document.getElementById("notificationBadge");
+        const pill = document.getElementById("unreadPill");
+        if (badge) {
+          badge.textContent = count;
+          badge.style.display = count > 0 ? "flex" : "none";
         }
-    }
-}
-// ══ END FANCY NOTIFICATION SYSTEM ══
+        if (pill) pill.textContent = count > 0 ? `${count} new` : "All clear";
+      }
 
-class PatientManager {
-    constructor() {
-        this.livePatients = []; 
-        this.currentView = 'table';
-        
-        this.notificationManager = {
+      function markNotifRead(id) {
+        const n = notifData.find((n) => n.id === id);
+        if (n) {
+          n.unread = false;
+          saveReadNotifId(id);
+          renderNotifications();
+        }
+      }
+
+      function markAllRead() {
+        notifData.forEach((n) => (n.unread = false));
+        saveAllReadNotifIds();
+        renderNotifications();
+      }
+
+      function handleNotifAction(event, id) {
+        event.stopPropagation();
+        markNotifRead(id);
+        const n = notifData.find((n) => n.id === id);
+        if (!n) return;
+        document
+          .getElementById("notificationDropdown")
+          .classList.remove("open");
+
+        if (n.type === "expiry") {
+          sessionStorage.setItem(
+            "notifRedirect",
+            JSON.stringify({ tab: "batch", medicine: n.medicineName }),
+          );
+        } else if (n.type === "critical" || n.type === "shortage") {
+          sessionStorage.setItem(
+            "notifRedirect",
+            JSON.stringify({ tab: "summary", medicine: n.medicineName }),
+          );
+        }
+        window.location.href = "inventory.html";
+      }
+
+      function filterNotifTab(btn, filter) {
+        document
+          .querySelectorAll(".notif-tab-btn")
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeNotifFilter = filter;
+        renderNotifications();
+      }
+
+      function getReadNotifIds() {
+        try {
+          return new Set(
+            JSON.parse(sessionStorage.getItem("readNotifIds") || "[]"),
+          );
+        } catch (e) {
+          return new Set();
+        }
+      }
+
+      function saveReadNotifId(id) {
+        const ids = getReadNotifIds();
+        ids.add(id);
+        sessionStorage.setItem("readNotifIds", JSON.stringify([...ids]));
+      }
+
+      function saveAllReadNotifIds() {
+        const ids = getReadNotifIds();
+        notifData.forEach((n) => ids.add(n.id));
+        sessionStorage.setItem("readNotifIds", JSON.stringify([...ids]));
+      }
+
+      async function refreshNotifications() {
+        const token = getNotifToken();
+        if (!token) return;
+        try {
+          const res = await fetch(`${API_BASE_URL}/api/inventory`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const raw = await res.json();
+          const inventory = Array.isArray(raw)
+            ? raw
+            : raw.medicines || raw.data || [];
+          const readIds = getReadNotifIds();
+          notifData = generateAlertsFromInventory(inventory).slice(0, 15);
+          notifData.forEach((n) => {
+            if (readIds.has(n.id)) n.unread = false;
+          });
+          renderNotifications();
+        } catch (e) {
+          console.warn("Notification fetch failed:", e);
+          if (!notifData.length) {
+            const list = document.getElementById("notifList");
+            if (list)
+              list.innerHTML = `<div class="notif-empty"><span class="material-icons">cloud_off</span><p>Could not load alerts.</p></div>`;
+          }
+        }
+      }
+      // ══ END FANCY NOTIFICATION SYSTEM ══
+
+      class PatientManager {
+        constructor() {
+          this.livePatients = [];
+          this.currentView = "table";
+
+          this.notificationManager = {
             notifications: [],
             loadNotifications: () => {},
             markAllAsRead: () => {},
             clearAllNotifications: () => {},
             loadMoreNotifications: () => {},
-            toggleDropdown: () => {}
-        };
+            toggleDropdown: () => {},
+          };
 
-        this.init();
-    }
-
-    async init() {
-        console.log("Patient Manager Initialized");
-        this.setupEventListeners();
-        this.displayDispensedHistory();
-        if(this.getToken()) {
-            await this.fetchPatients();
+          this.init();
         }
-        this.highlightCurrentPage();
-        this.notificationManager.loadNotifications(); 
-    }
 
-    getToken() {
-        const userInfoString = sessionStorage.getItem('userInfo');
-        if (!userInfoString) {
+        async init() {
+          console.log("Patient Manager Initialized");
+          this.setupEventListeners();
+          this.displayDispensedHistory();
+          if (this.getToken()) {
+            await this.fetchPatients();
+          }
+          this.highlightCurrentPage();
+          this.notificationManager.loadNotifications();
+        }
+
+        getToken() {
+          const userInfoString = sessionStorage.getItem("userInfo");
+          if (!userInfoString) {
             this.handleLogout("Session expired.");
             return null;
-        }
-        try {
+          }
+          try {
             const userInfo = JSON.parse(userInfoString);
             return userInfo.token;
-        } catch (e) {
+          } catch (e) {
             this.handleLogout("Invalid session.");
             return null;
+          }
         }
-    }
 
-    handleLogout(msg) {
-        if(msg) Swal.fire('Error', msg, 'error');
-        sessionStorage.removeItem('userInfo');
-        window.location.href = '../../html/login.html'; 
-    }
+        handleLogout(msg) {
+          if (msg) Swal.fire("Error", msg, "error");
+          sessionStorage.removeItem("userInfo");
+          window.location.href = "../../html/login.html";
+        }
 
-    async apiCall(method, url, token, body = null) {
-        const options = {
+        async apiCall(method, url, token, body = null) {
+          const options = {
             method: method,
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        };
-        if (body) {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          };
+          if (body) {
             options.body = JSON.stringify(body);
-        }
+          }
 
-        const response = await fetch(`http://localhost:5001${url}`, options);
-        
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
+          const response = await fetch(`${API_BASE_URL}${url}`, options);
+
+          const contentType = response.headers.get("content-type");
+          if (!contentType || !contentType.includes("application/json")) {
             const textError = await response.text();
-            throw new Error(textError || 'Server Error'); 
-        }
-        
-        const data = await response.json();
-        
-        if (!response.ok) {
+            throw new Error(textError || "Server Error");
+          }
+
+          const data = await response.json();
+
+          if (!response.ok) {
             if (response.status === 401 || response.status === 403) {
-                this.handleLogout("Session expired.");
+              this.handleLogout("Session expired.");
             }
-            throw new Error(data.message || `An error occurred (${response.status})`);
-        }
-        return data;
-    }
-
-    // AFTER
-async fetchPatients() {
-    const token = this.getToken();
-    if (!token) return;
-
-    const searchTerm = (document.getElementById('patientSearch')?.value || '').toLowerCase().trim();
-    const statusTerm = document.getElementById('statusFilter')?.value || 'all';
-    const dateTerm   = document.getElementById('dateFilter')?.value  || 'all';
-
-    const params = new URLSearchParams();
-if (searchTerm)           params.append('search', searchTerm);
-if (statusTerm !== 'all') params.append('status', statusTerm);
-// ← date param removed — let client handle it to avoid server mismatch
-
-    try {
-        const url = `/api/patients?${params.toString()}`;
-        const allPatients = await this.apiCall('GET', url, token);
-
-        // Client-side safety net in case the API ignores some params
-        let filtered = Array.isArray(allPatients) ? allPatients : [];
-
-        if (searchTerm) {
-            filtered = filtered.filter(p =>
-                (p.name       && p.name.toLowerCase().includes(searchTerm)) ||
-                (p.patientId  && p.patientId.toLowerCase().includes(searchTerm))
+            throw new Error(
+              data.message || `An error occurred (${response.status})`,
             );
+          }
+          return data;
         }
 
-        if (statusTerm !== 'all') {
-            filtered = filtered.filter(p =>
-                (p.status || '').toLowerCase() === statusTerm.toLowerCase()
-            );
+        // AFTER
+        async fetchPatients() {
+          const token = this.getToken();
+          if (!token) return;
+
+          const searchTerm = (
+            document.getElementById("patientSearch")?.value || ""
+          )
+            .toLowerCase()
+            .trim();
+          const statusTerm =
+            document.getElementById("statusFilter")?.value || "all";
+          const dateTerm =
+            document.getElementById("dateFilter")?.value || "all";
+
+          const params = new URLSearchParams();
+          if (searchTerm) params.append("search", searchTerm);
+          if (statusTerm !== "all") params.append("status", statusTerm);
+          // ← date param removed — let client handle it to avoid server mismatch
+
+          try {
+            const url = `/api/patients?${params.toString()}`;
+            const allPatients = await this.apiCall("GET", url, token);
+
+            // Client-side safety net in case the API ignores some params
+            let filtered = Array.isArray(allPatients) ? allPatients : [];
+
+            if (searchTerm) {
+              filtered = filtered.filter(
+                (p) =>
+                  (p.name && p.name.toLowerCase().includes(searchTerm)) ||
+                  (p.patientId &&
+                    p.patientId.toLowerCase().includes(searchTerm)),
+              );
+            }
+
+            if (statusTerm !== "all") {
+              filtered = filtered.filter(
+                (p) =>
+                  (p.status || "").toLowerCase() === statusTerm.toLowerCase(),
+              );
+            }
+
+            if (dateTerm !== "all") {
+              const now = new Date();
+              // Normalize to local midnight — avoids UTC off-by-one in PH (UTC+8)
+              const todayLocal = new Date(
+                now.getFullYear(),
+                now.getMonth(),
+                now.getDate(),
+              );
+
+              filtered = filtered.filter((p) => {
+                if (!p.consultationDate) return false;
+                const raw = new Date(p.consultationDate);
+                if (isNaN(raw.getTime())) return false;
+                // Strip time from the record's date so comparison is date-only
+                const d = new Date(
+                  raw.getFullYear(),
+                  raw.getMonth(),
+                  raw.getDate(),
+                );
+
+                if (dateTerm === "today") {
+                  return d.getTime() === todayLocal.getTime();
+                }
+                if (dateTerm === "week") {
+                  const weekStart = new Date(todayLocal);
+                  weekStart.setDate(todayLocal.getDate() - 7);
+                  return d >= weekStart && d <= todayLocal;
+                }
+                if (dateTerm === "month") {
+                  // Current calendar month: March 1 – March 31
+                  const monthStart = new Date(
+                    todayLocal.getFullYear(),
+                    todayLocal.getMonth(),
+                    1,
+                  );
+                  const monthEnd = new Date(
+                    todayLocal.getFullYear(),
+                    todayLocal.getMonth() + 1,
+                    0,
+                  );
+                  return d >= monthStart && d <= monthEnd;
+                }
+                if (dateTerm === "last-year") {
+                  const yearStart = new Date(todayLocal.getFullYear(), 0, 1);
+                  const yearEnd = new Date(todayLocal.getFullYear(), 11, 31);
+                  return d >= yearStart && d <= yearEnd;
+                }
+                return true;
+              });
+            }
+
+            this.livePatients = filtered;
+            this.updatePatientDisplay(filtered);
+          } catch (error) {
+            console.error("fetchPatients error:", error);
+          }
         }
 
-        if (dateTerm !== 'all') {
-    const now = new Date();
-    // Normalize to local midnight — avoids UTC off-by-one in PH (UTC+8)
-    const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        async dispenseMedication(patientId) {
+          const token = this.getToken();
+          if (!token) return;
 
-    filtered = filtered.filter(p => {
-        if (!p.consultationDate) return false;
-        const raw = new Date(p.consultationDate);
-        if (isNaN(raw.getTime())) return false;
-        // Strip time from the record's date so comparison is date-only
-        const d = new Date(raw.getFullYear(), raw.getMonth(), raw.getDate());
-
-        if (dateTerm === 'today') {
-            return d.getTime() === todayLocal.getTime();
-        }
-        if (dateTerm === 'week') {
-            const weekStart = new Date(todayLocal);
-            weekStart.setDate(todayLocal.getDate() - 7);
-            return d >= weekStart && d <= todayLocal;
-        }
-        if (dateTerm === 'month') {
-    // Current calendar month: March 1 – March 31
-    const monthStart = new Date(todayLocal.getFullYear(), todayLocal.getMonth(), 1);
-    const monthEnd   = new Date(todayLocal.getFullYear(), todayLocal.getMonth() + 1, 0);
-    return d >= monthStart && d <= monthEnd;
-}
-        if (dateTerm === 'last-year') {
-    const yearStart = new Date(todayLocal.getFullYear(), 0, 1);
-    const yearEnd   = new Date(todayLocal.getFullYear(), 11, 31);
-    return d >= yearStart && d <= yearEnd;
-}
-        return true;
-    });
-}
-
-        this.livePatients = filtered;
-        this.updatePatientDisplay(filtered);
-    } catch (error) {
-        console.error('fetchPatients error:', error);
-    }
-}
-    
-    async dispenseMedication(patientId) {
-        const token = this.getToken();
-        if (!token) return;
-
-        const result = await Swal.fire({
-            title: 'Are you sure?',
+          const result = await Swal.fire({
+            title: "Are you sure?",
             text: "This will dispense all pending prescriptions for this patient and create a sale.",
-            icon: 'warning',
+            icon: "warning",
             showCancelButton: true,
-            confirmButtonColor: '#005a32',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, dispense!'
-        });
+            confirmButtonColor: "#005a32",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, dispense!",
+          });
 
-        if (result.isConfirmed) {
+          if (result.isConfirmed) {
             Swal.fire({
-                title: 'Processing...',
-                text: 'Please wait, checking stock and creating sale.',
-                allowOutsideClick: false,
-                didOpen: () => { Swal.showLoading(); }
+              title: "Processing...",
+              text: "Please wait, checking stock and creating sale.",
+              allowOutsideClick: false,
+              didOpen: () => {
+                Swal.showLoading();
+              },
             });
-            
+
             try {
-                const patient = this.livePatients.find(p => p._id === patientId);
-                if (!patient) throw new Error('Patient not found');
-                
-                const prescriptions = await this.apiCall('GET', `/api/prescriptions/bypatient/${patientId}`, token);
-                const saleResult = await this.apiCall('POST', `/api/sales/dispense/${patientId}`, token);
-                
-                this.displayDispensedHistory();
-                
-                Swal.fire({
-                   title: 'Dispense Complete!',
-                   text: `Sale created. Total: ₱${saleResult.sale.totalAmount.toFixed(2)}`,
-                   icon: 'success'
-                });
-                
-                await this.fetchPatients(); 
+              const patient = this.livePatients.find(
+                (p) => p._id === patientId,
+              );
+              if (!patient) throw new Error("Patient not found");
 
+              const prescriptions = await this.apiCall(
+                "GET",
+                `/api/prescriptions/bypatient/${patientId}`,
+                token,
+              );
+              const saleResult = await this.apiCall(
+                "POST",
+                `/api/sales/dispense/${patientId}`,
+                token,
+              );
+
+              this.displayDispensedHistory();
+
+              Swal.fire({
+                title: "Dispense Complete!",
+                text: `Sale created. Total: ₱${saleResult.sale.totalAmount.toFixed(2)}`,
+                icon: "success",
+              });
+
+              await this.fetchPatients();
             } catch (error) {
-                Swal.fire('Error!', error.message, 'error');
+              Swal.fire("Error!", error.message, "error");
             }
+          }
         }
-    }
 
-    saveToLocalHistoryFromSale(patient, prescriptions) {
-        const history = JSON.parse(sessionStorage.getItem('dispensedMedicines') || '[]');
-        
-        const medicines = [];
-        prescriptions.forEach(prescription => {
-            prescription.medicines.forEach(med => {
-                medicines.push({
-                    name: med.medicine ? (med.medicine.name || med.medicine) : 'Unknown',
-                    dosage: med.dosage || 'N/A',
-                    quantity: med.quantity
-                });
+        saveToLocalHistoryFromSale(patient, prescriptions) {
+          const history = JSON.parse(
+            sessionStorage.getItem("dispensedMedicines") || "[]",
+          );
+
+          const medicines = [];
+          prescriptions.forEach((prescription) => {
+            prescription.medicines.forEach((med) => {
+              medicines.push({
+                name: med.medicine
+                  ? med.medicine.name || med.medicine
+                  : "Unknown",
+                dosage: med.dosage || "N/A",
+                quantity: med.quantity,
+              });
             });
-        });
+          });
 
-        const newRecord = {
+          const newRecord = {
             patientName: patient.name,
             patientId: patient.patientId,
             date: new Date().toISOString(),
-            medicines: medicines
-        };
+            medicines: medicines,
+          };
 
-        history.unshift(newRecord);
-        if (history.length > 10) history.pop();
-        
-        sessionStorage.setItem('dispensedMedicines', JSON.stringify(history));
-    }
+          history.unshift(newRecord);
+          if (history.length > 10) history.pop();
 
-    updatePatientDisplay(patients) {
-        this.updatePatientsTable(patients);
-        this.updatePatientsCards(patients);
-    }
-
-    updatePatientsTable(patients) {
-        const tableBody = document.getElementById('patientsTable');
-        if (!tableBody) return;
-        
-        tableBody.innerHTML = '';
-        
-        if (!patients || patients.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8 text-subtext-light">No patients found.</td></tr>';
-            return;
+          sessionStorage.setItem("dispensedMedicines", JSON.stringify(history));
         }
 
-        patients.forEach(patient => {
-            const consultationDate = patient.consultationDate ? new Date(patient.consultationDate).toLocaleDateString() : 'N/A';
-            const statusText = patient.status || 'active';
-            const statusInfo = this.getStatusInfo(statusText); 
+        updatePatientDisplay(patients) {
+          this.updatePatientsTable(patients);
+          this.updatePatientsCards(patients);
+        }
+
+        updatePatientsTable(patients) {
+          const tableBody = document.getElementById("patientsTable");
+          if (!tableBody) return;
+
+          tableBody.innerHTML = "";
+
+          if (!patients || patients.length === 0) {
+            tableBody.innerHTML =
+              '<tr><td colspan="6" class="text-center p-8 text-subtext-light">No patients found.</td></tr>';
+            return;
+          }
+
+          patients.forEach((patient) => {
+            const consultationDate = patient.consultationDate
+              ? new Date(patient.consultationDate).toLocaleDateString()
+              : "N/A";
+            const statusText = patient.status || "active";
+            const statusInfo = this.getStatusInfo(statusText);
 
             tableBody.innerHTML += `
                 <tr class="border-b border-slate-200 dark:border-slate-700 hover:bg-primary/5 dark:hover:bg-primary/10 transition-colors">
@@ -1395,22 +2101,23 @@ if (statusTerm !== 'all') params.append('status', statusTerm);
                     </td>
                 </tr>
             `;
-        });
-    }
-
-    updatePatientsCards(patients) {
-        const cardContainer = document.getElementById('cardView');
-        if (!cardContainer) return;
-        
-        cardContainer.innerHTML = '';
-        
-        if (!patients || patients.length === 0) {
-            cardContainer.innerHTML = '<p class="text-center p-8 text-subtext-light col-span-full">No patients found.</p>';
-            return;
+          });
         }
-        
-        patients.forEach(patient => {
-            const statusText = patient.status || 'active';
+
+        updatePatientsCards(patients) {
+          const cardContainer = document.getElementById("cardView");
+          if (!cardContainer) return;
+
+          cardContainer.innerHTML = "";
+
+          if (!patients || patients.length === 0) {
+            cardContainer.innerHTML =
+              '<p class="text-center p-8 text-subtext-light col-span-full">No patients found.</p>';
+            return;
+          }
+
+          patients.forEach((patient) => {
+            const statusText = patient.status || "active";
             const statusInfo = this.getStatusInfo(statusText);
 
             cardContainer.innerHTML += `
@@ -1440,59 +2147,84 @@ if (statusTerm !== 'all') params.append('status', statusTerm);
                     </div>
                 </div>
             `;
-        });
-    }
-    
-    async viewPatientDetails(patientId) {
-        const token = this.getToken();
-        if (!token) return;
+          });
+        }
 
-        const patient = this.livePatients.find(p => p._id === patientId);
-        if (!patient) {
-            Swal.fire('Error', 'Could not find patient data.', 'error');
+        async viewPatientDetails(patientId) {
+          const token = this.getToken();
+          if (!token) return;
+
+          const patient = this.livePatients.find((p) => p._id === patientId);
+          if (!patient) {
+            Swal.fire("Error", "Could not find patient data.", "error");
             return;
-        }
+          }
 
-        let prescriptions = [];
-        try {
-            const response = await this.apiCall('GET', `/api/prescriptions/bypatient/${patientId}`, token);
-            const allPrescriptions = Array.isArray(response) ? response : (response.prescriptions || []);
-            prescriptions = allPrescriptions.filter(rx => rx.status === 'Pending');
-        } catch (error) {
+          let prescriptions = [];
+          try {
+            const response = await this.apiCall(
+              "GET",
+              `/api/prescriptions/bypatient/${patientId}`,
+              token,
+            );
+            const allPrescriptions = Array.isArray(response)
+              ? response
+              : response.prescriptions || [];
+            prescriptions = allPrescriptions.filter(
+              (rx) => rx.status === "Pending",
+            );
+          } catch (error) {
             console.error("Could not fetch prescriptions:", error);
-        }
-        
-        const medicineHtml = prescriptions.length > 0
-            ? prescriptions.map(rx => 
-                rx.medicines.map(med => `
+          }
+
+          const medicineHtml =
+            prescriptions.length > 0
+              ? prescriptions
+                  .map((rx) =>
+                    rx.medicines
+                      .map(
+                        (med) => `
                 <div class="medicine-card bg-white dark:bg-gray-800 p-4 rounded-lg">
-                    <h5 class="font-semibold text-gray-900 dark:text-white text-lg mb-3">${med.medicine ? med.medicine.name : 'Unknown Medicine'}</h5>
+                    <h5 class="font-semibold text-gray-900 dark:text-white text-lg mb-3">${med.medicine ? med.medicine.name : "Unknown Medicine"}</h5>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div class="detail-item"><span class="detail-label">Dosage</span><span class="detail-value">${med.dosage}</span></div>
                         <div class="detail-item"><span class="detail-label">Quantity</span><span class="detail-value">${med.quantity}</span></div>
-                        <div class="detail-item"><span class="detail-label">Frequency</span><span class="detail-value">${med.frequency || 'N/A'}</span></div>
-                        <div class="detail-item"><span class="detail-label">Prescriber</span><span class="detail-value">${rx.pharmacist ? rx.pharmacist.name : 'N/A'}</span></div>
+                        <div class="detail-item"><span class="detail-label">Frequency</span><span class="detail-value">${med.frequency || "N/A"}</span></div>
+                        <div class="detail-item"><span class="detail-label">Prescriber</span><span class="detail-value">${rx.pharmacist ? rx.pharmacist.name : "N/A"}</span></div>
                     </div>
                 </div>
-            `).join('')).join('') 
-            : '<p class="text-subtext-light dark:text-subtext-dark">No prescriptions found for this patient.</p>';
+            `,
+                      )
+                      .join(""),
+                  )
+                  .join("")
+              : '<p class="text-subtext-light dark:text-subtext-dark">No prescriptions found for this patient.</p>';
 
-        const notesHtml = prescriptions.length > 0
-            ? prescriptions.map(rx => `
+          const notesHtml =
+            prescriptions.length > 0
+              ? prescriptions
+                  .map(
+                    (rx) => `
                 <div class="doctor-highlight mb-2">
-                    <p class="text-lg font-bold text-primary mb-2">${rx.pharmacist ? rx.pharmacist.name : 'N/A'} (on ${this.formatDate(rx.createdAt)})</p>
-                    <p class="text-gray-700 dark:text-gray-300">${rx.notes || 'No notes provided.'}</p>
+                    <p class="text-lg font-bold text-primary mb-2">${rx.pharmacist ? rx.pharmacist.name : "N/A"} (on ${this.formatDate(rx.createdAt)})</p>
+                    <p class="text-gray-700 dark:text-gray-300">${rx.notes || "No notes provided."}</p>
                 </div>
-            `).join('')
-            : '<p class="text-subtext-light dark:text-subtext-dark">No notes found.</p>';
+            `,
+                  )
+                  .join("")
+              : '<p class="text-subtext-light dark:text-subtext-dark">No notes found.</p>';
 
-        const allergyHtml = (patient.allergies && patient.allergies.length > 0)
-            ? patient.allergies.map(allergy => 
-                `<span class="bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 text-sm px-3 py-1 rounded-full">${allergy}</span>`
-              ).join('')
-            : '<p class="text-subtext-light dark:text-subtext-dark">No allergies reported.</p>';
+          const allergyHtml =
+            patient.allergies && patient.allergies.length > 0
+              ? patient.allergies
+                  .map(
+                    (allergy) =>
+                      `<span class="bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 text-sm px-3 py-1 rounded-full">${allergy}</span>`,
+                  )
+                  .join("")
+              : '<p class="text-subtext-light dark:text-subtext-dark">No allergies reported.</p>';
 
-        const modalHtml = `
+          const modalHtml = `
             <div class="patient-details-content p-6">
                 <div class="flex justify-between items-start mb-6">
                     <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Patient Details</h3>
@@ -1515,7 +2247,7 @@ if (statusTerm !== 'all') params.append('status', statusTerm);
                     </h4>
                     <div class="patient-details-grid">
                         <div class="detail-item"><span class="detail-label">Phone</span><span class="detail-value">${patient.contactNo}</span></div>
-                        <div class="detail-item"><span class="detail-label">Address</span><span class="detail-value">${patient.address || 'N/A'}</span></div>
+                        <div class="detail-item"><span class="detail-label">Address</span><span class="detail-value">${patient.address || "N/A"}</span></div>
                     </div>
                 </div>
                 <div class="mb-6">
@@ -1549,89 +2281,111 @@ if (statusTerm !== 'all') params.append('status', statusTerm);
             </div>
         `;
 
-        Swal.fire({
+          Swal.fire({
             html: modalHtml,
-            width: '700px',
+            width: "700px",
             showConfirmButton: false,
             showCloseButton: false,
-            background: document.documentElement.classList.contains('dark') ? '#1F2937' : '#FFFFFF',
-            customClass: { popup: 'rounded-xl patient-details-modal' }
-        });
-    }
+            background: document.documentElement.classList.contains("dark")
+              ? "#1F2937"
+              : "#FFFFFF",
+            customClass: { popup: "rounded-xl patient-details-modal" },
+          });
+        }
 
-    saveToLocalHistory() {
-        const history = JSON.parse(sessionStorage.getItem('dispensedMedicines') || '[]');
-        
-        const medicines = this.currentPrescriptions.map((p, idx) => ({
-            name: p.medicine ? (p.medicine.name || p.medicine) : 'Unknown',
-            dosage: p.dosage || 'N/A',
-            quantity: document.getElementById(`medicine-${idx}`)?.value || p.quantity
-        }));
+        saveToLocalHistory() {
+          const history = JSON.parse(
+            sessionStorage.getItem("dispensedMedicines") || "[]",
+          );
 
-        const newRecord = {
+          const medicines = this.currentPrescriptions.map((p, idx) => ({
+            name: p.medicine ? p.medicine.name || p.medicine : "Unknown",
+            dosage: p.dosage || "N/A",
+            quantity:
+              document.getElementById(`medicine-${idx}`)?.value || p.quantity,
+          }));
+
+          const newRecord = {
             patientName: this.currentPatient.name,
             patientId: this.currentPatient.patientId,
             date: new Date().toISOString(),
-            medicines: medicines
-        };
+            medicines: medicines,
+          };
 
-        history.unshift(newRecord);
-        if (history.length > 10) history.pop();
-        
-        sessionStorage.setItem('dispensedMedicines', JSON.stringify(history));
-    }
+          history.unshift(newRecord);
+          if (history.length > 10) history.pop();
 
-    async displayDispensedHistory() {
-        const container = document.getElementById('dispensedMedicinesList');
-        if (!container) return;
+          sessionStorage.setItem("dispensedMedicines", JSON.stringify(history));
+        }
 
-        // Show a loading state while fetching from the database
-        container.innerHTML = '<p class="text-subtext-light dark:text-subtext-dark text-sm p-4">Loading global history...</p>';
+        async displayDispensedHistory() {
+          const container = document.getElementById("dispensedMedicinesList");
+          if (!container) return;
 
-        try {
+          // Show a loading state while fetching from the database
+          container.innerHTML =
+            '<p class="text-subtext-light dark:text-subtext-dark text-sm p-4">Loading global history...</p>';
+
+          try {
             const token = this.getToken();
             if (!token) return;
 
             // Fetch global sales history directly from the backend
-            const sales = await this.apiCall('GET', '/api/sales', token);
-            
+            const sales = await this.apiCall("GET", "/api/sales", token);
+
             // 🔥 NEW: Sort the sales array so the newest dates are at the very top!
             const sortedSales = sales.sort((a, b) => {
-                const dateA = new Date(a.date || a.createdAt);
-                const dateB = new Date(b.date || b.createdAt);
-                return dateB - dateA; // This puts newest (largest) date first
+              const dateA = new Date(a.date || a.createdAt);
+              const dateB = new Date(b.date || b.createdAt);
+              return dateB - dateA; // This puts newest (largest) date first
             });
 
             // NOW grab only the 10 most recent dispenses from the sorted list
             const recentSales = sortedSales.slice(0, 10);
 
             if (recentSales.length === 0) {
-                container.innerHTML = '<p class="text-subtext-light dark:text-subtext-dark text-sm p-4">No recent dispensing history found in the database.</p>';
-                return;
+              container.innerHTML =
+                '<p class="text-subtext-light dark:text-subtext-dark text-sm p-4">No recent dispensing history found in the database.</p>';
+              return;
             }
 
-            let html = '';
-            recentSales.forEach(sale => {
-                const dateObj = new Date(sale.date || sale.createdAt);
-                const dateStr = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            let html = "";
+            recentSales.forEach((sale) => {
+              const dateObj = new Date(sale.date || sale.createdAt);
+              const dateStr =
+                dateObj.toLocaleDateString() +
+                " " +
+                dateObj.toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                });
 
-                // Safely handle EMR patients vs Walk-in customers
-                const patientName = sale.patient ? sale.patient.name : sale.patientName;
-                const patientId = sale.patient ? sale.patient.patientId : 'Walk-in';
+              // Safely handle EMR patients vs Walk-in customers
+              const patientName = sale.patient
+                ? sale.patient.name
+                : sale.patientName;
+              const patientId = sale.patient
+                ? sale.patient.patientId
+                : "Walk-in";
 
-                // Map the sold items to HTML
-                const medsHtml = sale.items.map(item => {
-                    const medName = item.name || 'Unknown';
-                    const dosage = (item.medicine && item.medicine.strength) ? item.medicine.strength : 'N/A';
-                    return `
+              // Map the sold items to HTML
+              const medsHtml = sale.items
+                .map((item) => {
+                  const medName = item.name || "Unknown";
+                  const dosage =
+                    item.medicine && item.medicine.strength
+                      ? item.medicine.strength
+                      : "N/A";
+                  return `
                     <div class="flex justify-between text-sm mt-1">
                         <span class="font-medium text-text-light dark:text-text-dark">${medName} <span class="text-xs text-gray-500">(${dosage})</span></span>
                         <span class="text-gray-600 dark:text-gray-400">Qty: ${item.quantity}</span>
                     </div>
                     `;
-                }).join('');
+                })
+                .join("");
 
-                html += `
+              html += `
                     <div class="dispensed-medicine-item">
                         <div class="dispensed-medicine-header">
                             <h4 class="font-bold text-primary text-lg">${patientName} <span class="text-sm text-gray-500 font-normal">(${patientId})</span></h4>
@@ -1645,230 +2399,295 @@ if (statusTerm !== 'all') params.append('status', statusTerm);
             });
 
             container.innerHTML = html;
-        } catch (error) {
-            console.error("Failed to load dispensing history from database:", error);
-            container.innerHTML = '<p class="text-red-500 text-sm p-4">Error loading history from server.</p>';
+          } catch (error) {
+            console.error(
+              "Failed to load dispensing history from database:",
+              error,
+            );
+            container.innerHTML =
+              '<p class="text-red-500 text-sm p-4">Error loading history from server.</p>';
+          }
         }
-    }
 
-    setupEventListeners() {
-        if(document.getElementById('patientSearch')) 
-            document.getElementById('patientSearch').addEventListener('input', () => this.fetchPatients());
-        
-        if(document.getElementById('statusFilter'))
-            document.getElementById('statusFilter').addEventListener('change', () => this.fetchPatients());
-        
-        if(document.getElementById('dateFilter'))
-            document.getElementById('dateFilter').addEventListener('change', () => this.fetchPatients());
-        
-        if(document.getElementById('tableViewBtn'))
-            document.getElementById('tableViewBtn').addEventListener('click', () => this.toggleView('table'));
-        
-        if(document.getElementById('cardViewBtn'))
-            document.getElementById('cardViewBtn').addEventListener('click', () => this.toggleView('card'));
-        
-        document.addEventListener('click', () => {
-            const searchResults = document.getElementById('searchResults');
-            if (searchResults) searchResults.style.display = 'none';
-        });
-        
-        const searchResults = document.getElementById('searchResults');
-        if (searchResults) {
-            searchResults.addEventListener('click', (e) => e.stopPropagation());
+        setupEventListeners() {
+          if (document.getElementById("patientSearch"))
+            document
+              .getElementById("patientSearch")
+              .addEventListener("input", () => this.fetchPatients());
+
+          if (document.getElementById("statusFilter"))
+            document
+              .getElementById("statusFilter")
+              .addEventListener("change", () => this.fetchPatients());
+
+          if (document.getElementById("dateFilter"))
+            document
+              .getElementById("dateFilter")
+              .addEventListener("change", () => this.fetchPatients());
+
+          if (document.getElementById("tableViewBtn"))
+            document
+              .getElementById("tableViewBtn")
+              .addEventListener("click", () => this.toggleView("table"));
+
+          if (document.getElementById("cardViewBtn"))
+            document
+              .getElementById("cardViewBtn")
+              .addEventListener("click", () => this.toggleView("card"));
+
+          document.addEventListener("click", () => {
+            const searchResults = document.getElementById("searchResults");
+            if (searchResults) searchResults.style.display = "none";
+          });
+
+          const searchResults = document.getElementById("searchResults");
+          if (searchResults) {
+            searchResults.addEventListener("click", (e) => e.stopPropagation());
+          }
         }
-    }
-    
-    formatDate(dateString) {
-        if (!dateString) return 'N/A';
-        const options = { year: 'numeric', month: 'short', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString('en-US', options);
-    }
 
-    getStatusInfo(status) {
-        const s = (status || '').toLowerCase();
-        if (s === 'pending') {
-            return { class: 'status-badge status-pending', text: 'Pending Dispense' };
-        } 
-        else if (s === 'completed') {
-            return { class: 'status-badge status-completed', text: 'Completed' };
-        } 
-        else {
-            return { class: 'status-badge status-neutral', text: 'No Prescription' };
+        formatDate(dateString) {
+          if (!dateString) return "N/A";
+          const options = { year: "numeric", month: "short", day: "numeric" };
+          return new Date(dateString).toLocaleDateString("en-US", options);
         }
-    }
 
-    toggleView(view) {
-        const tableView = document.getElementById('tableView');
-        const cardView = document.getElementById('cardView');
-        const tableBtn = document.getElementById('tableViewBtn');
-        const cardBtn = document.getElementById('cardViewBtn');
-        
-        if(!tableView || !cardView) return;
-
-        if (view === 'table') {
-            tableView.classList.remove('hidden');
-            cardView.classList.add('hidden');
-            tableBtn.classList.add('bg-primary', 'text-white');
-            tableBtn.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-            cardBtn.classList.remove('bg-primary', 'text-white');
-            cardBtn.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-        } else {
-            tableView.classList.add('hidden');
-            cardView.classList.remove('hidden');
-            cardBtn.classList.add('bg-primary', 'text-white');
-            cardBtn.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-            tableBtn.classList.remove('bg-primary', 'text-white');
-            tableBtn.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+        getStatusInfo(status) {
+          const s = (status || "").toLowerCase();
+          if (s === "pending") {
+            return {
+              class: "status-badge status-pending",
+              text: "Pending Dispense",
+            };
+          } else if (s === "completed") {
+            return {
+              class: "status-badge status-completed",
+              text: "Completed",
+            };
+          } else {
+            return {
+              class: "status-badge status-neutral",
+              text: "No Prescription",
+            };
+          }
         }
-    }
-    
-    highlightCurrentPage() {
-        const navItems = document.querySelectorAll('nav a');
-        navItems.forEach(item => {
-            item.classList.remove('bg-primary/10', 'text-primary', 'font-semibold');
-            item.classList.add('text-gray-700', 'dark:text-gray-300');
-        });
-        navItems.forEach(item => {
-            if (item.getAttribute('href') === 'patient_records.html') {
-                item.classList.add('bg-primary/10', 'text-primary', 'font-semibold');
-                item.classList.remove('text-gray-700', 'dark:text-gray-300');
+
+        toggleView(view) {
+          const tableView = document.getElementById("tableView");
+          const cardView = document.getElementById("cardView");
+          const tableBtn = document.getElementById("tableViewBtn");
+          const cardBtn = document.getElementById("cardViewBtn");
+
+          if (!tableView || !cardView) return;
+
+          if (view === "table") {
+            tableView.classList.remove("hidden");
+            cardView.classList.add("hidden");
+            tableBtn.classList.add("bg-primary", "text-white");
+            tableBtn.classList.remove(
+              "bg-gray-200",
+              "dark:bg-gray-700",
+              "text-gray-700",
+              "dark:text-gray-300",
+            );
+            cardBtn.classList.remove("bg-primary", "text-white");
+            cardBtn.classList.add(
+              "bg-gray-200",
+              "dark:bg-gray-700",
+              "text-gray-700",
+              "dark:text-gray-300",
+            );
+          } else {
+            tableView.classList.add("hidden");
+            cardView.classList.remove("hidden");
+            cardBtn.classList.add("bg-primary", "text-white");
+            cardBtn.classList.remove(
+              "bg-gray-200",
+              "dark:bg-gray-700",
+              "text-gray-700",
+              "dark:text-gray-300",
+            );
+            tableBtn.classList.remove("bg-primary", "text-white");
+            tableBtn.classList.add(
+              "bg-gray-200",
+              "dark:bg-gray-700",
+              "text-gray-700",
+              "dark:text-gray-300",
+            );
+          }
+        }
+
+        highlightCurrentPage() {
+          const navItems = document.querySelectorAll("nav a");
+          navItems.forEach((item) => {
+            item.classList.remove(
+              "bg-primary/10",
+              "text-primary",
+              "font-semibold",
+            );
+            item.classList.add("text-gray-700", "dark:text-gray-300");
+          });
+          navItems.forEach((item) => {
+            if (item.getAttribute("href") === "patient_records.html") {
+              item.classList.add(
+                "bg-primary/10",
+                "text-primary",
+                "font-semibold",
+              );
+              item.classList.remove("text-gray-700", "dark:text-gray-300");
             }
-        });
-    }
-    
-    generateReport() { Swal.fire('Generate Report', 'Patient report generation started', 'info'); }
-    exportPatientRecords() { Swal.fire('Exported!', 'Patient records exported as CSV', 'success'); }
-    
-    showToast(message, type = 'info') {
-        const container = document.getElementById('toastContainer');
-        if (!container) return;
+          });
+        }
 
-        const toastId = 'toast-' + Date.now();
-        const toast = document.createElement('div');
-        
-        let icon = 'info';
-        if (type === 'success') icon = 'check_circle';
-        if (type === 'error') icon = 'error';
-        if (type === 'warning') icon = 'warning';
+        generateReport() {
+          Swal.fire(
+            "Generate Report",
+            "Patient report generation started",
+            "info",
+          );
+        }
+        exportPatientRecords() {
+          Swal.fire("Exported!", "Patient records exported as CSV", "success");
+        }
 
-        toast.id = toastId;
-        toast.className = `toast ${type}`;
-        toast.innerHTML = `
+        showToast(message, type = "info") {
+          const container = document.getElementById("toastContainer");
+          if (!container) return;
+
+          const toastId = "toast-" + Date.now();
+          const toast = document.createElement("div");
+
+          let icon = "info";
+          if (type === "success") icon = "check_circle";
+          if (type === "error") icon = "error";
+          if (type === "warning") icon = "warning";
+
+          toast.id = toastId;
+          toast.className = `toast ${type}`;
+          toast.innerHTML = `
             <span class="material-icons text-xl">${icon}</span>
             <span class="text-sm font-medium">${message}</span>
             <button onclick="document.getElementById('${toastId}').remove()" class="ml-auto opacity-50 hover:opacity-100">
                 <span class="material-icons text-sm">close</span>
             </button>
         `;
-        
-        container.appendChild(toast);
-        
-        setTimeout(() => {
+
+          container.appendChild(toast);
+
+          setTimeout(() => {
             if (document.getElementById(toastId)) {
-                toast.classList.add('hiding');
-                toast.addEventListener('animationend', () => toast.remove());
+              toast.classList.add("hiding");
+              toast.addEventListener("animationend", () => toast.remove());
             }
-        }, 3000);
-    }
-}
+          }, 3000);
+        }
+      }
 
-let patientManager;
+      let patientManager;
 
-function confirmBackToHMS(event) {
-    event.preventDefault();
-    Swal.fire({
-        title: "Leave Patient Records?",
-        text: "Return to Integrated Healthcare Management System?",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonColor: "#005a32",
-        confirmButtonText: "Yes, go back"
-    }).then((result) => {
-        if (result.isConfirmed) {
+      function confirmBackToHMS(event) {
+        event.preventDefault();
+        Swal.fire({
+          title: "Leave Patient Records?",
+          text: "Return to Integrated Healthcare Management System?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonColor: "#005a32",
+          confirmButtonText: "Yes, go back",
+        }).then((result) => {
+          if (result.isConfirmed) {
             window.location.href = "index.html";
-        }
-    });
-}
+          }
+        });
+      }
 
-function logoutUser() {
-    Swal.fire({
-        title: "Logout?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#005a32",
-        confirmButtonText: "Yes, logout"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            sessionStorage.removeItem('userInfo');
-            sessionStorage.removeItem('token');
-            window.location.href = 'login.html';
-        }
-    });
-}
+      function logoutUser() {
+        Swal.fire({
+          title: "Logout?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#005a32",
+          confirmButtonText: "Yes, logout",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            sessionStorage.removeItem("userInfo");
+            sessionStorage.removeItem("token");
+            window.location.href = "login.html";
+          }
+        });
+      }
 
-function toggleDarkMode() {
-    const isDarkMode = document.getElementById('darkModeToggle') ? document.getElementById('darkModeToggle').checked : false;
-    document.documentElement.classList.toggle('dark', isDarkMode);
-    sessionStorage.setItem('darkMode', isDarkMode);
-}
+      function toggleDarkMode() {
+        const isDarkMode = document.getElementById("darkModeToggle")
+          ? document.getElementById("darkModeToggle").checked
+          : false;
+        document.documentElement.classList.toggle("dark", isDarkMode);
+        sessionStorage.setItem("darkMode", isDarkMode);
+      }
 
-function toggleAutoSave() {}
-function toggleNotifications() {}
-function toggleAutoRefresh() {}
+      function toggleAutoSave() {}
+      function toggleNotifications() {}
+      function toggleAutoRefresh() {}
 
-document.addEventListener('DOMContentLoaded', function() {
-    // ── Dark mode ──
-    const isDarkMode = sessionStorage.getItem('darkMode') === 'true';
-    document.documentElement.classList.toggle('dark', isDarkMode);
-    const toggle = document.getElementById('darkModeToggle');
-    if (toggle) toggle.checked = isDarkMode;
+      document.addEventListener("DOMContentLoaded", function () {
+        // ── Dark mode ──
+        const isDarkMode = sessionStorage.getItem("darkMode") === "true";
+        document.documentElement.classList.toggle("dark", isDarkMode);
+        const toggle = document.getElementById("darkModeToggle");
+        if (toggle) toggle.checked = isDarkMode;
 
-    // ── Live clock ──
-    updateNavClock();
-    setInterval(updateNavClock, 1000);
+        // ── Live clock ──
+        updateNavClock();
+        setInterval(updateNavClock, 1000);
 
-    // ── Navbar user info ──
-    loadNavUserInfo();
+        // ── Navbar user info ──
+        loadNavUserInfo();
 
-    // ── Patient manager ──
-    patientManager = new PatientManager();
-    window.patientManager = patientManager;
-    window.filterPatients = () => patientManager.fetchPatients();
-    window.handleSearchInput = () => patientManager.fetchPatients();
-    window.toggleView = (view) => patientManager.toggleView(view);
-    window.generateReport = () => patientManager.generateReport();
-    window.exportPatientRecords = () => patientManager.exportPatientRecords();
-    window.confirmBackToHMS = confirmBackToHMS;
-    window.notificationManager = patientManager.notificationManager;
-    window.dispenseMedication = () => {};
+        // ── Patient manager ──
+        patientManager = new PatientManager();
+        window.patientManager = patientManager;
+        window.filterPatients = () => patientManager.fetchPatients();
+        window.handleSearchInput = () => patientManager.fetchPatients();
+        window.toggleView = (view) => patientManager.toggleView(view);
+        window.generateReport = () => patientManager.generateReport();
+        window.exportPatientRecords = () =>
+          patientManager.exportPatientRecords();
+        window.confirmBackToHMS = confirmBackToHMS;
+        window.notificationManager = patientManager.notificationManager;
+        window.dispenseMedication = () => {};
 
-    // ── Notification bell wiring ──
-    const btn      = document.getElementById('notificationBtn');
-    const dropdown = document.getElementById('notificationDropdown');
-    if (btn && dropdown) {
-        btn.addEventListener('click', (e) => {
+        // ── Notification bell wiring ──
+        const btn = document.getElementById("notificationBtn");
+        const dropdown = document.getElementById("notificationDropdown");
+        if (btn && dropdown) {
+          btn.addEventListener("click", (e) => {
             e.stopPropagation();
-            dropdown.classList.toggle('open');
-            if (dropdown.classList.contains('open')) refreshNotifications();
-        });
-        document.addEventListener('click', (e) => {
-            if (!dropdown.contains(e.target) && e.target !== btn) dropdown.classList.remove('open');
-        });
-        dropdown.addEventListener('click', e => e.stopPropagation());
-        setTimeout(refreshNotifications, 800);
-        setInterval(refreshNotifications, 60000);
-    }
-    
-    document.addEventListener('click', function(e) {
-        const settingsDropdown = document.getElementById('settingsDropdown');
-        if (settingsDropdown && !e.target.closest('button[onclick="toggleSettings()"]') && !settingsDropdown.contains(e.target)) {
-            settingsDropdown.style.display = 'none';
+            dropdown.classList.toggle("open");
+            if (dropdown.classList.contains("open")) refreshNotifications();
+          });
+          document.addEventListener("click", (e) => {
+            if (!dropdown.contains(e.target) && e.target !== btn)
+              dropdown.classList.remove("open");
+          });
+          dropdown.addEventListener("click", (e) => e.stopPropagation());
+          setTimeout(refreshNotifications, 800);
+          setInterval(refreshNotifications, 60000);
         }
-    });
-});
-</script>
-<script src="../audio/audio-system.js"></script>
-<script src="../audio/audio-manager.js"></script>
-<script src="../js/windowcontrollerbtn.js"></script>
-</body>
+
+        document.addEventListener("click", function (e) {
+          const settingsDropdown = document.getElementById("settingsDropdown");
+          if (
+            settingsDropdown &&
+            !e.target.closest('button[onclick="toggleSettings()"]') &&
+            !settingsDropdown.contains(e.target)
+          ) {
+            settingsDropdown.style.display = "none";
+          }
+        });
+      });
+    </script>
+    <script src="../audio/audio-system.js"></script>
+    <script src="../audio/audio-manager.js"></script>
+    <script src="../js/windowcontrollerbtn.js"></script>
+  </body>
 </html>
