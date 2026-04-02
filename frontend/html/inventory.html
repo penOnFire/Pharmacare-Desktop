@@ -41,459 +41,106 @@
         };
     </script>
     <style>
-      .export-check-row {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 6px 4px;
-        font-size: 13px;
-        font-weight: 500;
-        color: #374151;
-        cursor: pointer;
-        border-radius: 6px;
-        transition: background 0.12s;
-      }
-      .dark .export-check-row {
-        color: #d1d5db;
-      }
-      .export-check-row:hover {
-        background: #f0fdf4;
-      }
-      .dark .export-check-row:hover {
-        background: #064e3b;
-      }
-      .export-check-row input[type="checkbox"] {
-        width: 15px;
-        height: 15px;
-        accent-color: #005a32;
-        cursor: pointer;
-      }
-      .export-check-row .material-icons {
-        font-size: 16px;
-      }
-      .export-apply-btn {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        padding: 8px 12px;
-        background: #005a32;
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background 0.15s;
-      }
-      .export-apply-btn:hover {
-        background: #004526;
-      }
-      .export-apply-btn .material-icons {
-        font-size: 16px;
-      }
 
-      /* ── EXPORT DROPDOWN ── */
-      .export-wrap {
-        position: relative;
-        display: inline-block;
-      }
-      .export-menu {
-        display: none;
-        position: absolute;
-        top: calc(100% + 6px);
-        right: 0;
-        min-width: 190px;
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 10px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-        z-index: 200;
-        overflow: hidden;
-      }
-      .dark .export-menu {
-        background: #1f2937;
-        border-color: #374151;
-      }
-      .export-menu.open {
-        display: block;
-      }
-      .export-menu-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        width: 100%;
-        padding: 10px 14px;
-        font-size: 13px;
-        font-weight: 500;
-        background: none;
-        border: none;
-        cursor: pointer;
-        text-align: left;
-        color: #374151;
-        transition: background 0.12s;
-      }
-      .dark .export-menu-item {
-        color: #d1d5db;
-      }
-      .export-menu-item:hover {
-        background: #f0fdf4;
-        color: #005a32;
-      }
-      .dark .export-menu-item:hover {
-        background: #064e3b;
-        color: #6ee7b7;
-      }
-      .export-menu-item .material-icons {
-        font-size: 16px;
-      }
-      .export-menu-divider {
-        height: 1px;
-        background: #f0f0f0;
-        margin: 4px 0;
-      }
-      .dark .export-menu-divider {
-        background: #374151;
-      }
 
-      thead th {
-        position: sticky;
-        top: 0;
-        background: transparent !important;
-        z-index: 10;
-      }
-      thead tr {
-        background: linear-gradient(
-          to right,
-          rgba(0, 90, 50, 0.2),
-          rgba(255, 255, 255, 0.5),
-          rgba(214, 40, 40, 0.2)
-        );
-        z-index: 10;
-      }
-      .dark thead tr {
-        background: linear-gradient(
-          to right,
-          rgba(0, 90, 50, 0.3),
-          rgba(15, 23, 42, 0.8),
-          rgba(214, 40, 40, 0.3)
-        );
-      }
+        .export-check-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 4px; font-size: 13px; font-weight: 500;
+    color: #374151; cursor: pointer; border-radius: 6px;
+    transition: background 0.12s;
+}
+.dark .export-check-row { color: #d1d5db; }
+.export-check-row:hover { background: #f0fdf4; }
+.dark .export-check-row:hover { background: #064e3b; }
+.export-check-row input[type="checkbox"] { width: 15px; height: 15px; accent-color: #005a32; cursor: pointer; }
+.export-check-row .material-icons { font-size: 16px; }
+.export-apply-btn {
+    width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 8px 12px; background: #005a32; color: #fff;
+    border: none; border-radius: 8px; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: background 0.15s;
+}
+.export-apply-btn:hover { background: #004526; }
+.export-apply-btn .material-icons { font-size: 16px; }
 
-      body {
-        font-family: "Inter", sans-serif;
-      }
-      .drag-region {
-        -webkit-app-region: drag;
-      }
-      .no-drag {
-        -webkit-app-region: no-drag;
-      }
-      .tab-btn {
-        padding: 8px 16px;
-        border-radius: 6px;
-        font-weight: 500;
-        transition: all 0.2s ease;
-        cursor: pointer;
-        border: none;
-        background: none;
-      }
-      .tab-btn.active {
-        background-color: rgba(0, 90, 50, 0.1);
-        color: #005a32;
-      }
-      .tab-btn:not(.active) {
-        color: rgb(107, 114, 128);
-      }
-      .tab-btn:not(.active):hover {
-        background-color: rgba(107, 114, 128, 0.1);
-      }
-      .status {
-        padding: 5px 10px;
-        border-radius: 20px;
-        font-size: 14px;
-        font-weight: 500;
-      }
-      .in-stock {
-        background-color: #dcfce7;
-        color: #16a34a;
-      }
-      .low-stock {
-        background-color: #fef3c7;
-        color: #d97706;
-      }
-      .out-of-stock {
-        background-color: #fee2e2;
-        color: #dc2626;
-      }
-      .dark .tab-btn.active {
-        background-color: rgba(0, 90, 50, 0.2);
-        color: #22c55e;
-      }
-      .dark {
-        color-scheme: dark;
-      }
-      .table-container {
-        position: relative;
-        overflow-x: auto;
-      }
-      .pagination-bar {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        padding: 12px 20px;
-        border-top: 1px solid #e5e7eb;
-        background: #fafafa;
-        border-radius: 0 0 12px 12px;
-      }
-      .dark .pagination-bar {
-        background: #111827;
-        border-color: #374151;
-      }
-      .pagination-info {
-        font-size: 13px;
-        color: #6b7280;
-      }
-      .dark .pagination-info {
-        color: #9ca3af;
-      }
-      .pagination-info strong {
-        color: #1f2937;
-      }
-      .dark .pagination-info strong {
-        color: #f9fafb;
-      }
-      .pagination-controls {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-      }
-      .pg-btn {
-        min-width: 32px;
-        height: 32px;
-        padding: 0 8px;
-        border-radius: 6px;
-        border: 1px solid #e5e7eb;
-        background: white;
-        color: #374151;
-        font-size: 13px;
-        font-weight: 500;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.15s;
-      }
-      .dark .pg-btn {
-        background: #1f2937;
-        border-color: #374151;
-        color: #d1d5db;
-      }
-      .pg-btn:hover:not(:disabled) {
-        background: #005a32;
-        color: white;
-        border-color: #005a32;
-      }
-      .pg-btn.active {
-        background: #005a32;
-        color: white;
-        border-color: #005a32;
-        font-weight: 700;
-      }
-      .pg-btn:disabled {
-        opacity: 0.35;
-        cursor: not-allowed;
-      }
-      .pg-ellipsis {
-        font-size: 13px;
-        color: #9ca3af;
-        padding: 0 4px;
-      }
-      .rows-per-page {
-        font-size: 12px;
-        color: #6b7280;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-      .rows-per-page select {
-        border: 1px solid #e5e7eb;
-        border-radius: 6px;
-        padding: 3px 6px;
-        font-size: 12px;
-        background: white;
-        color: #374151;
-        cursor: pointer;
-      }
-      .dark .rows-per-page select {
-        background: #1f2937;
-        border-color: #374151;
-        color: #d1d5db;
-      }
-      /* ── NAVBAR CLOCK ── */
-      #navClock {
-        font-size: 15px;
-        font-weight: 700;
-        line-height: 1.2;
-        letter-spacing: -0.01em;
-      }
-      #navDate {
-        font-size: 10px;
-        font-weight: 500;
-        letter-spacing: 0.06em;
-      }
+        /* ── EXPORT DROPDOWN ── */
+.export-wrap { position: relative; display: inline-block; }
+.export-menu {
+    display: none; position: absolute; top: calc(100% + 6px); right: 0;
+    min-width: 190px; background: #fff; border: 1px solid #e5e7eb;
+    border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    z-index: 200; overflow: hidden;
+}
+.dark .export-menu { background: #1f2937; border-color: #374151; }
+.export-menu.open { display: block; }
+.export-menu-item {
+    display: flex; align-items: center; gap: 8px; width: 100%;
+    padding: 10px 14px; font-size: 13px; font-weight: 500;
+    background: none; border: none; cursor: pointer; text-align: left;
+    color: #374151; transition: background 0.12s;
+}
+.dark .export-menu-item { color: #d1d5db; }
+.export-menu-item:hover { background: #f0fdf4; color: #005a32; }
+.dark .export-menu-item:hover { background: #064e3b; color: #6ee7b7; }
+.export-menu-item .material-icons { font-size: 16px; }
+.export-menu-divider { height: 1px; background: #f0f0f0; margin: 4px 0; }
+.dark .export-menu-divider { background: #374151; }
 
-      /* ── NAVBAR DIVIDER ── */
-      .nav-divider {
-        width: 1px;
-        height: 28px;
-        background: #e5e7eb;
-      }
-      .dark .nav-divider {
-        background: #374151;
-      }
+        thead th {
+            position: sticky;
+            top: 0;
+            background: transparent !important;
+            z-index: 10;
+        }
+        thead tr {
+            background: linear-gradient(to right, rgba(0,90,50,0.2), rgba(255,255,255,0.5), rgba(214,40,40,0.2));
+            z-index: 10;
+        }
+        .dark thead tr {
+            background: linear-gradient(to right, rgba(0,90,50,0.3), rgba(15,23,42,0.8), rgba(214,40,40,0.3));
+        }
 
-      /* ── MODULE TABS — full width, green + red ── */
-      .module-tab-bar {
-        display: flex;
-        align-items: stretch;
-        background: linear-gradient(to bottom, #ffffff 0%, #f8fafc 100%);
-        border-bottom: 2px solid #e5e7eb;
-        position: relative;
-      }
-      .dark .module-tab-bar {
-        background: linear-gradient(to bottom, #1f2937 0%, #111827 100%);
-        border-color: #374151;
-      }
-
-      .module-tab-btn {
-        flex: 1;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        height: 54px;
-        font-size: 13px;
-        font-weight: 600;
-        letter-spacing: 0.02em;
-        color: #9ca3af;
-        cursor: pointer;
-        border: none;
-        background: none;
-        outline: none;
-        border-bottom: 3px solid transparent;
-        margin-bottom: -2px;
-        transition:
-          color 0.2s ease,
-          background 0.2s ease;
-        white-space: nowrap;
-        font-family: "Inter", sans-serif;
-      }
-
-      .module-tab-btn::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: transparent;
-        transition: background 0.2s ease;
-      }
-
-      .module-tab-btn + .module-tab-btn {
-        border-left: 1px solid #e5e7eb;
-      }
-      .dark .module-tab-btn + .module-tab-btn {
-        border-color: #374151;
-      }
-
-      .module-tab-btn .material-icons {
-        font-size: 18px;
-        transition: transform 0.2s ease;
-        position: relative;
-        z-index: 1;
-      }
-      .module-tab-btn:hover .material-icons {
-        transform: translateY(-1px);
-      }
-
-      .module-tab-btn span.tab-label {
-        position: relative;
-        z-index: 1;
-      }
-
-      /* INVENTORY — green */
-      #moduleTabInventory:hover {
-        color: #005a32;
-      }
-      #moduleTabInventory:hover::before {
-        background: rgba(0, 90, 50, 0.04);
-      }
-      #moduleTabInventory.active {
-        color: #005a32;
-        border-bottom-color: #005a32;
-      }
-      #moduleTabInventory.active::before {
-        background: linear-gradient(
-          180deg,
-          rgba(0, 90, 50, 0.08) 0%,
-          rgba(0, 90, 50, 0.02) 100%
-        );
-      }
-      #moduleTabInventory.active::after {
-        content: "";
-        position: absolute;
-        bottom: -2px;
-        left: 16px;
-        right: 16px;
-        height: 3px;
-        background: linear-gradient(to right, #005a32, #22c55e);
-        border-radius: 3px 3px 0 0;
-        box-shadow: 0 -2px 8px rgba(0, 90, 50, 0.3);
-      }
-      #moduleTabInventory.active .material-icons {
-        color: #005a32;
-      }
-
-      /* SUPPLIES — red */
-      #moduleTabSupplies:hover {
-        color: #b91c1c;
-      }
-      #moduleTabSupplies:hover::before {
-        background: rgba(185, 28, 28, 0.04);
-      }
-      #moduleTabSupplies.active {
-        color: #b91c1c;
-        border-bottom-color: #b91c1c;
-      }
-      #moduleTabSupplies.active::before {
-        background: linear-gradient(
-          180deg,
-          rgba(185, 28, 28, 0.08) 0%,
-          rgba(185, 28, 28, 0.02) 100%
-        );
-      }
-      #moduleTabSupplies.active::after {
-        content: "";
-        position: absolute;
-        bottom: -2px;
-        left: 16px;
-        right: 16px;
-        height: 3px;
-        background: linear-gradient(to right, #b91c1c, #f87171);
-        border-radius: 3px 3px 0 0;
-        box-shadow: 0 -2px 8px rgba(185, 28, 28, 0.3);
-      }
-      #moduleTabSupplies.active .material-icons {
-        color: #b91c1c;
-      }
-
-      /* ── FANCY NOTIFICATION DROPDOWN ── */
-      @keyframes badge-pop {
-        from {
-          transform: scale(0);
+        body { font-family: 'Inter', sans-serif; }
+        .drag-region { -webkit-app-region: drag; }
+        .no-drag { -webkit-app-region: no-drag; }
+        .tab-btn { padding: 8px 16px; border-radius: 6px; font-weight: 500; transition: all 0.2s ease; cursor: pointer; border: none; background: none; }
+        .tab-btn.active { background-color: rgba(0, 90, 50, 0.1); color: #005a32; }
+        .tab-btn:not(.active) { color: rgb(107, 114, 128); }
+        .tab-btn:not(.active):hover { background-color: rgba(107, 114, 128, 0.1); }
+        .status { padding: 5px 10px; border-radius: 20px; font-size: 14px; font-weight: 500; }
+        .in-stock { background-color: #dcfce7; color: #16a34a; }
+        .low-stock { background-color: #fef3c7; color: #d97706; }
+        .out-of-stock { background-color: #fee2e2; color: #dc2626; }
+        .dark .tab-btn.active { background-color: rgba(0, 90, 50, 0.2); color: #22c55e; }
+        .dark { color-scheme: dark; }
+        .table-container { position: relative; overflow-x: auto; }
+.pagination-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 20px; border-top: 1px solid #e5e7eb; background: #fafafa; border-radius: 0 0 12px 12px; }
+.dark .pagination-bar { background: #111827; border-color: #374151; }
+.pagination-info { font-size: 13px; color: #6b7280; }
+.dark .pagination-info { color: #9ca3af; }
+.pagination-info strong { color: #1f2937; }
+.dark .pagination-info strong { color: #f9fafb; }
+.pagination-controls { display: flex; align-items: center; gap: 4px; }
+.pg-btn { min-width: 32px; height: 32px; padding: 0 8px; border-radius: 6px; border: 1px solid #e5e7eb; background: white; color: #374151; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.dark .pg-btn { background: #1f2937; border-color: #374151; color: #d1d5db; }
+.pg-btn:hover:not(:disabled) { background: #005a32; color: white; border-color: #005a32; }
+.pg-btn.active { background: #005a32; color: white; border-color: #005a32; font-weight: 700; }
+.pg-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.pg-ellipsis { font-size: 13px; color: #9ca3af; padding: 0 4px; }
+.rows-per-page { font-size: 12px; color: #6b7280; display: flex; align-items: center; gap: 6px; }
+.rows-per-page select { border: 1px solid #e5e7eb; border-radius: 6px; padding: 3px 6px; font-size: 12px; background: white; color: #374151; cursor: pointer; }
+.dark .rows-per-page select { background: #1f2937; border-color: #374151; color: #d1d5db; }
+        /* ── NAVBAR CLOCK ── */
+        #navClock {
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+        }
+        #navDate {
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.06em;
         }
 
         /* ── NAVBAR DIVIDER ── */
@@ -547,351 +194,146 @@
             background: transparent;
             transition: background 0.2s ease;
         }
-      }
-      #notificationBadge {
-        animation: badge-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      }
-      .notif-dropdown {
-        position: absolute;
-        top: calc(100% + 10px);
-        right: 0;
-        width: 370px;
-        background: #fff;
-        border-radius: 14px;
-        box-shadow:
-          0 20px 50px rgba(0, 0, 0, 0.14),
-          0 4px 12px rgba(0, 0, 0, 0.06);
-        border: 1px solid #e5e7eb;
-        z-index: 1000;
-        overflow: hidden;
-        opacity: 0;
-        transform: translateY(-8px) scale(0.97);
-        pointer-events: none;
-        transition:
-          opacity 0.22s ease,
-          transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
-        transform-origin: top right;
-      }
-      .dark .notif-dropdown {
-        background: #1f2937;
-        border-color: #374151;
-      }
-      .notif-dropdown.open {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-        pointer-events: all;
-      }
-      .notif-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 16px 18px 14px;
-        border-bottom: 1px solid #f0f0f0;
-      }
-      .dark .notif-header {
-        border-color: #374151;
-      }
-      .notif-header h3 {
-        font-size: 15px;
-        font-weight: 700;
-        color: #111827;
-      }
-      .dark .notif-header h3 {
-        color: #f9fafb;
-      }
-      .notif-header-meta {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .unread-count-pill {
-        background: #005a32;
-        color: #fff;
-        font-size: 10px;
-        font-weight: 700;
-        padding: 2px 8px;
-        border-radius: 99px;
-      }
-      .mark-all-btn {
-        font-size: 11px;
-        color: #005a32;
-        font-weight: 600;
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 2px 4px;
-        border-radius: 4px;
-        transition: background 0.15s;
-      }
-      .mark-all-btn:hover {
-        background: #f0fdf4;
-      }
-      .notif-tabs {
-        display: flex;
-        gap: 4px;
-        padding: 10px 14px;
-        background: #fafafa;
-        border-bottom: 1px solid #f0f0f0;
-      }
-      .dark .notif-tabs {
-        background: #111827;
-        border-color: #374151;
-      }
-      .notif-tab-btn {
-        font-size: 11px;
-        font-weight: 600;
-        padding: 4px 10px;
-        border-radius: 99px;
-        border: 1px solid transparent;
-        cursor: pointer;
-        background: none;
-        color: #6b7280;
-        transition: all 0.15s;
-      }
-      .notif-tab-btn.active {
-        background: #005a32;
-        color: #fff;
-        border-color: #005a32;
-      }
-      .notif-tab-btn:not(.active):hover {
-        background: #f3f4f6;
-        border-color: #e5e7eb;
-        color: #374151;
-      }
-      .notif-list {
-        max-height: 360px;
-        overflow-y: auto;
-        scrollbar-width: thin;
-        scrollbar-color: #e5e7eb transparent;
-      }
-      .notif-list::-webkit-scrollbar {
-        width: 4px;
-      }
-      .notif-list::-webkit-scrollbar-thumb {
-        background: #e5e7eb;
-        border-radius: 2px;
-      }
-      .notif-item {
-        display: flex;
-        gap: 12px;
-        align-items: flex-start;
-        padding: 13px 16px;
-        border-bottom: 1px solid #f5f5f5;
-        cursor: pointer;
-        position: relative;
-        transition: background 0.15s;
-      }
-      .dark .notif-item {
-        border-color: #374151;
-      }
-      .notif-item:last-child {
-        border-bottom: none;
-      }
-      .notif-item:hover {
-        background: #f9fafb;
-      }
-      .dark .notif-item:hover {
-        background: #111827;
-      }
-      .notif-item.unread {
-        background: #ffffff;
-      }
-      .dark .notif-item.unread {
-        background: #1f2937;
-      }
-      .notif-item::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 3px;
-        border-radius: 0 2px 2px 0;
-      }
-      .notif-item.critical::before {
-        background: #ef4444;
-      }
-      .notif-item.expiry::before {
-        background: #8b5a2b;
-      }
-      .notif-item.shortage::before {
-        background: #358e83;
-      }
-      .notif-icon-wrap {
-        flex-shrink: 0;
-        width: 38px;
-        height: 38px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .notif-icon-wrap .material-icons {
-        font-size: 20px;
-      }
-      .icon-critical {
-        background: #fef2f2;
-      }
-      .icon-critical .material-icons {
-        color: #ef4444;
-      }
-      .icon-expiry {
-        background: #fdf6ec;
-      }
-      .icon-expiry .material-icons {
-        color: #8b5a2b;
-      }
-      .icon-shortage {
-        background: #f0fdfa;
-      }
-      .icon-shortage .material-icons {
-        color: #358e83;
-      }
-      .notif-body {
-        flex: 1;
-        min-width: 0;
-      }
-      .notif-title {
-        font-size: 13px;
-        font-weight: 600;
-        color: #111827;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      .dark .notif-title {
-        color: #f9fafb;
-      }
-      .notif-desc {
-        font-size: 12px;
-        color: #6b7280;
-        margin-top: 2px;
-        line-height: 1.4;
-      }
-      .notif-time {
-        font-size: 10px;
-        color: #9ca3af;
-        margin-top: 6px;
-      }
-      .notif-action {
-        margin-top: 8px;
-      }
-      .notif-action-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 11px;
-        font-weight: 700;
-        padding: 5px 12px;
-        border-radius: 6px;
-        border: none;
-        cursor: pointer;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        transition:
-          opacity 0.15s,
-          transform 0.1s;
-      }
-      .notif-action-btn:active {
-        transform: scale(0.96);
-      }
-      .notif-action-btn:hover {
-        opacity: 0.88;
-      }
-      .btn-critical {
-        background: #ef4444;
-        color: #fff;
-      }
-      .btn-expiry {
-        background: #8b5a2b;
-        color: #fff;
-      }
-      .btn-shortage {
-        background: #005a32;
-        color: #fff;
-      }
-      .unread-dot {
-        flex-shrink: 0;
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: #005a32;
-        margin-top: 5px;
-      }
-      .notif-empty {
-        padding: 40px 20px;
-        text-align: center;
-        color: #9ca3af;
-      }
-      .notif-empty .material-icons {
-        font-size: 40px;
-        margin-bottom: 8px;
-        display: block;
-      }
-      .notif-empty p {
-        font-size: 13px;
-      }
-      .notif-footer {
-        border-top: 1px solid #f0f0f0;
-        padding: 12px 18px;
-      }
-      .dark .notif-footer {
-        border-color: #374151;
-      }
-      .view-all-link {
-        font-size: 12px;
-        font-weight: 600;
-        color: #005a32;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-      }
-      .view-all-link:hover {
-        text-decoration: underline;
-      }
-      .view-all-link .material-icons {
-        font-size: 14px;
-      }
 
-      .bexp-pill {
-        font-size: 11px;
-        font-weight: 600;
-        padding: 3px 10px;
-        border-radius: 99px;
-        border: 1px solid #e5e7eb;
-        background: none;
-        cursor: pointer;
-        color: #6b7280;
-        transition: all 0.12s;
-      }
-      .bexp-pill.active {
-        background: #005a32;
-        color: #fff;
-        border-color: #005a32;
-      }
-      .bexp-pill:not(.active):hover {
-        background: #f0fdf4;
-        color: #005a32;
-      }
+        .module-tab-btn + .module-tab-btn {
+            border-left: 1px solid #e5e7eb;
+        }
+        .dark .module-tab-btn + .module-tab-btn {
+            border-color: #374151;
+        }
 
-      .bexp-qp {
-        font-size: 10px;
-        font-weight: 600;
-        padding: 3px 9px;
-        border-radius: 99px;
-        border: 1px solid #e5e7eb;
-        background: #fff;
-        cursor: pointer;
-        color: #6b7280;
-        transition: all 0.12s;
-      }
-      .bexp-qp:hover,
-      .bexp-qp.active {
-        background: #005a32;
-        color: #fff;
-        border-color: #005a32;
-      }
+        .module-tab-btn .material-icons {
+            font-size: 18px;
+            transition: transform 0.2s ease;
+            position: relative;
+            z-index: 1;
+        }
+        .module-tab-btn:hover .material-icons { transform: translateY(-1px); }
+
+        .module-tab-btn span.tab-label {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* INVENTORY — green */
+        #moduleTabInventory:hover { color: #005a32; }
+        #moduleTabInventory:hover::before { background: rgba(0,90,50,0.04); }
+        #moduleTabInventory.active { color: #005a32; border-bottom-color: #005a32; }
+        #moduleTabInventory.active::before {
+            background: linear-gradient(180deg, rgba(0,90,50,0.08) 0%, rgba(0,90,50,0.02) 100%);
+        }
+        #moduleTabInventory.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; left: 16px; right: 16px;
+            height: 3px;
+            background: linear-gradient(to right, #005a32, #22c55e);
+            border-radius: 3px 3px 0 0;
+            box-shadow: 0 -2px 8px rgba(0,90,50,0.3);
+        }
+        #moduleTabInventory.active .material-icons { color: #005a32; }
+
+        /* SUPPLIES — red */
+        #moduleTabSupplies:hover { color: #b91c1c; }
+        #moduleTabSupplies:hover::before { background: rgba(185,28,28,0.04); }
+        #moduleTabSupplies.active { color: #b91c1c; border-bottom-color: #b91c1c; }
+        #moduleTabSupplies.active::before {
+            background: linear-gradient(180deg, rgba(185,28,28,0.08) 0%, rgba(185,28,28,0.02) 100%);
+        }
+        #moduleTabSupplies.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; left: 16px; right: 16px;
+            height: 3px;
+            background: linear-gradient(to right, #b91c1c, #f87171);
+            border-radius: 3px 3px 0 0;
+            box-shadow: 0 -2px 8px rgba(185,28,28,0.3);
+        }
+        #moduleTabSupplies.active .material-icons { color: #b91c1c; }
+
+        /* ── FANCY NOTIFICATION DROPDOWN ── */
+        @keyframes badge-pop { from { transform: scale(0); } to { transform: scale(1); } }
+        #notificationBadge { animation: badge-pop 0.3s cubic-bezier(.34,1.56,.64,1); }
+        .notif-dropdown {
+            position: absolute; top: calc(100% + 10px); right: 0; width: 370px;
+            background: #fff; border-radius: 14px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.06);
+            border: 1px solid #e5e7eb; z-index: 1000; overflow: hidden;
+            opacity: 0; transform: translateY(-8px) scale(0.97); pointer-events: none;
+            transition: opacity 0.22s ease, transform 0.22s cubic-bezier(.34,1.56,.64,1);
+            transform-origin: top right;
+        }
+        .dark .notif-dropdown { background: #1F2937; border-color: #374151; }
+        .notif-dropdown.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
+        .notif-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 14px; border-bottom: 1px solid #f0f0f0; }
+        .dark .notif-header { border-color: #374151; }
+        .notif-header h3 { font-size: 15px; font-weight: 700; color: #111827; }
+        .dark .notif-header h3 { color: #F9FAFB; }
+        .notif-header-meta { display: flex; align-items: center; gap: 10px; }
+        .unread-count-pill { background: #005a32; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+        .mark-all-btn { font-size: 11px; color: #005a32; font-weight: 600; background: none; border: none; cursor: pointer; padding: 2px 4px; border-radius: 4px; transition: background 0.15s; }
+        .mark-all-btn:hover { background: #f0fdf4; }
+        .notif-tabs { display: flex; gap: 4px; padding: 10px 14px; background: #fafafa; border-bottom: 1px solid #f0f0f0; }
+        .dark .notif-tabs { background: #111827; border-color: #374151; }
+        .notif-tab-btn { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 99px; border: 1px solid transparent; cursor: pointer; background: none; color: #6b7280; transition: all 0.15s; }
+        .notif-tab-btn.active { background: #005a32; color: #fff; border-color: #005a32; }
+        .notif-tab-btn:not(.active):hover { background: #f3f4f6; border-color: #e5e7eb; color: #374151; }
+        .notif-list { max-height: 360px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #e5e7eb transparent; }
+        .notif-list::-webkit-scrollbar { width: 4px; }
+        .notif-list::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 2px; }
+        .notif-item { display: flex; gap: 12px; align-items: flex-start; padding: 13px 16px; border-bottom: 1px solid #f5f5f5; cursor: pointer; position: relative; transition: background 0.15s; }
+        .dark .notif-item { border-color: #374151; }
+        .notif-item:last-child { border-bottom: none; }
+        .notif-item:hover { background: #f9fafb; }
+        .dark .notif-item:hover { background: #111827; }
+        .notif-item.unread { background: #ffffff; }
+        .dark .notif-item.unread { background: #1F2937; }
+        .notif-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 0 2px 2px 0; }
+        .notif-item.critical::before { background: #EF4444; }
+        .notif-item.expiry::before   { background: #8b5a2b; }
+        .notif-item.shortage::before { background: #358E83; }
+        .notif-icon-wrap { flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+        .notif-icon-wrap .material-icons { font-size: 20px; }
+        .icon-critical { background: #fef2f2; } .icon-critical .material-icons { color: #EF4444; }
+        .icon-expiry   { background: #fdf6ec; } .icon-expiry   .material-icons { color: #8b5a2b; }
+        .icon-shortage { background: #f0fdfa; } .icon-shortage .material-icons { color: #358E83; }
+        .notif-body { flex: 1; min-width: 0; }
+        .notif-title { font-size: 13px; font-weight: 600; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .dark .notif-title { color: #F9FAFB; }
+        .notif-desc  { font-size: 12px; color: #6b7280; margin-top: 2px; line-height: 1.4; }
+        .notif-time  { font-size: 10px; color: #9ca3af; margin-top: 6px; }
+        .notif-action { margin-top: 8px; }
+        .notif-action-btn { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 6px; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 0.04em; transition: opacity 0.15s, transform 0.1s; }
+        .notif-action-btn:active { transform: scale(0.96); }
+        .notif-action-btn:hover  { opacity: 0.88; }
+        .btn-critical { background: #EF4444; color: #fff; }
+        .btn-expiry   { background: #8b5a2b; color: #fff; }
+        .btn-shortage { background: #005a32; color: #fff; }
+        .unread-dot { flex-shrink: 0; width: 7px; height: 7px; border-radius: 50%; background: #005a32; margin-top: 5px; }
+        .notif-empty { padding: 40px 20px; text-align: center; color: #9ca3af; }
+        .notif-empty .material-icons { font-size: 40px; margin-bottom: 8px; display: block; }
+        .notif-empty p { font-size: 13px; }
+        .notif-footer { border-top: 1px solid #f0f0f0; padding: 12px 18px; }
+        .dark .notif-footer { border-color: #374151; }
+        .view-all-link { font-size: 12px; font-weight: 600; color: #005a32; text-decoration: none; display: flex; align-items: center; gap: 4px; }
+        .view-all-link:hover { text-decoration: underline; }
+        .view-all-link .material-icons { font-size: 14px; }
+
+        .bexp-pill {
+  font-size: 11px; font-weight: 600; padding: 3px 10px;
+  border-radius: 99px; border: 1px solid #e5e7eb;
+  background: none; cursor: pointer; color: #6b7280; transition: all 0.12s;
+}
+.bexp-pill.active { background: #005a32; color: #fff; border-color: #005a32; }
+.bexp-pill:not(.active):hover { background: #f0fdf4; color: #005a32; }
+
+        .bexp-qp {
+  font-size: 10px; font-weight: 600; padding: 3px 9px;
+  border-radius: 99px; border: 1px solid #e5e7eb;
+  background: #fff; cursor: pointer; color: #6b7280; transition: all 0.12s;
+}
+.bexp-qp:hover, .bexp-qp.active { background: #005a32; color: #fff; border-color: #005a32; }
+
     </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
@@ -911,25 +353,7 @@
                 <span class="material-icons-outlined text-sm text-gray-600 group-hover:text-white">close</span>
             </button>
         </div>
-      </aside>
-
-      <main class="flex-1 flex flex-col overflow-hidden">
-        <header
-          class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800"
-        >
-          <div></div>
-
-          <div class="flex items-center gap-4">
-            <div class="text-right">
-              <div
-                id="navClock"
-                class="text-text-light dark:text-text-dark"
-              ></div>
-              <div
-                id="navDate"
-                class="text-subtext-light dark:text-subtext-dark uppercase tracking-widest"
-              ></div>
-            </div>
+    </div>
 
     <div class="flex h-screen pt-8">
         <aside class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-border-light dark:border-border-dark">
@@ -964,374 +388,50 @@
             <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
                 <div></div>
 
-            <div
-              id="summarySection"
-              class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800"
-            >
-              <div
-                class="p-4 md:p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
-              >
-                <h2
-                  class="text-xl font-semibold text-text-light dark:text-text-dark whitespace-nowrap"
-                >
-                  Total Medicine Inventory
-                </h2>
-                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                  <input
-                    id="summarySearch"
-                    onkeyup="searchSummary()"
-                    class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary flex-1 min-w-[150px]"
-                    placeholder="Search medicines..."
-                    type="text"
-                  />
-                  <select
-                    id="summaryStatusFilter"
-                    onchange="filterSummaryByStatus()"
-                    class="border border-border-light dark:border-border-dark rounded-lg px-4 py-2 bg-background-light dark:bg-background-dark flex-1 min-w-[130px]"
-                  >
-                    <option value="">All Status</option>
-                    <option value="In Stock">In Stock</option>
-                    <option value="Low Stock">Low Stock</option>
-                    <option value="Out of Stock">Out of Stock</option>
-                  </select>
-                  <div class="export-wrap">
-                    <button
-                      onclick="toggleExportMenu('summaryExportMenu')"
-                      class="border border-primary px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/10 transition-colors text-primary"
-                    >
-                      <span class="material-icons">print</span> Export / Print
-                      <span class="material-icons text-sm"
-                        >arrow_drop_down</span
-                      >
-                    </button>
-                    <div
-                      id="summaryExportMenu"
-                      class="export-menu"
-                      style="min-width: 220px; padding: 12px 14px"
-                    >
-                      <p
-                        class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2"
-                      >
-                        Include in print
-                      </p>
-                      <label class="export-check-row"
-                        ><input type="checkbox" value="in-stock" checked />
-                        <span style="color: #16a34a" class="material-icons"
-                          >check_circle</span
-                        >
-                        In Stock</label
-                      >
-                      <label class="export-check-row"
-                        ><input type="checkbox" value="low-stock" />
-                        <span style="color: #d97706" class="material-icons"
-                          >warning</span
-                        >
-                        Low Stock</label
-                      >
-                      <label class="export-check-row"
-                        ><input type="checkbox" value="out-of-stock" />
-                        <span style="color: #dc2626" class="material-icons"
-                          >remove_shopping_cart</span
-                        >
-                        Out of Stock</label
-                      >
-                      <label class="export-check-row"
-                        ><input type="checkbox" value="expiring" />
-                        <span style="color: #8b5a2b" class="material-icons"
-                          >schedule</span
-                        >
-                        Expiring Soon (≤30d)</label
-                      >
-                      <label class="export-check-row"
-                        ><input type="checkbox" value="expired" />
-                        <span style="color: #dc2626" class="material-icons"
-                          >event_busy</span
-                        >
-                        Expired</label
-                      >
-                      <div
-                        class="export-menu-divider"
-                        style="margin: 10px 0"
-                      ></div>
-                      <button
-                        onclick="
-                          exportSummaryData(getChecked('summaryExportMenu'))
-                        "
-                        class="export-apply-btn"
-                      >
-                        <span class="material-icons">print</span> Print / Export
-                      </button>
+                <div class="flex items-center gap-4">
+
+                    <div class="text-right">
+                        <div id="navClock" class="text-text-light dark:text-text-dark"></div>
+                        <div id="navDate"  class="text-subtext-light dark:text-subtext-dark uppercase tracking-widest"></div>
                     </div>
 
-            <div
-              id="batchSection"
-              class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 hidden"
-            >
-              <div
-                class="p-4 md:p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
-              >
-                <div class="flex-shrink-0">
-                  <h2
-                    class="text-xl font-semibold text-text-light dark:text-text-dark"
-                  >
-                    Batch Details (FEFO)
-                  </h2>
-                  <p class="text-xs text-primary mt-1">
-                    Sorted by Expiry Date (Dispense First)
-                  </p>
-                </div>
-                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                  <input
-                    id="batchSearch"
-                    onkeyup="searchBatch()"
-                    class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary flex-1 min-w-[150px]"
-                    placeholder="Search batches..."
-                    type="text"
-                  />
-                  <div class="export-wrap">
-                    <button
-                      onclick="openBatchExportMenu()"
-                      class="border border-primary px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/10 transition-colors text-primary"
-                    >
-                      <span class="material-icons">print</span> Export / Print
-                      <span class="material-icons text-sm"
-                        >arrow_drop_down</span
-                      >
-                    </button>
-                    <div
-                      id="batchExportMenu"
-                      class="export-menu"
-                      style="min-width: 310px; padding: 12px 14px"
-                    >
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          justify-content: space-between;
-                          margin-bottom: 8px;
-                        "
-                      >
-                        <p
-                          class="text-xs font-bold text-gray-400 uppercase tracking-wider"
-                          style="margin: 0"
-                        >
-                          Select Batches
-                        </p>
-                        <div style="display: flex; gap: 6px">
-                          <button
-                            onclick="setBatchExportAll(true)"
-                            style="
-                              font-size: 10px;
-                              color: #005a32;
-                              font-weight: 600;
-                              background: none;
-                              border: none;
-                              cursor: pointer;
-                            "
-                          >
-                            All
-                          </button>
-                          <span style="font-size: 10px; color: #9ca3af">|</span>
-                          <button
-                            onclick="setBatchExportAll(false)"
-                            style="
-                              font-size: 10px;
-                              color: #6b7280;
-                              font-weight: 600;
-                              background: none;
-                              border: none;
-                              cursor: pointer;
-                            "
-                          >
-                            None
-                          </button>
+                    <div class="nav-divider"></div>
+
+                    <div class="relative">
+                        <button id="notificationBtn"
+                            class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <span class="material-icons-outlined text-2xl">notifications</span>
+                            <span id="notificationBadge"
+                                class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold"
+                                style="display:none;">0</span>
+                        </button>
+
+                        <div id="notificationDropdown" class="notif-dropdown">
+                            <div class="notif-header">
+                                <h3>Notifications</h3>
+                                <div class="notif-header-meta">
+                                    <span class="unread-count-pill" id="unreadPill">Loading...</span>
+                                    <button class="mark-all-btn" onclick="markAllRead()">Mark all read</button>
+                                </div>
+                            </div>
+                            <div class="notif-tabs">
+                                <button class="notif-tab-btn active" onclick="filterNotifTab(this,'all')">All</button>
+                                <button class="notif-tab-btn" onclick="filterNotifTab(this,'critical')">Critical</button>
+                                <button class="notif-tab-btn" onclick="filterNotifTab(this,'expiry')">Expiry</button>
+                                <button class="notif-tab-btn" onclick="filterNotifTab(this,'shortage')">Stock</button>
+                            </div>
+                            <div class="notif-list" id="notifList">
+                                <div style="padding:30px 20px;text-align:center;color:#9ca3af;">
+                                    <span class="material-icons" style="font-size:32px;display:block;margin:0 auto 8px;">hourglass_empty</span>
+                                    <p style="font-size:12px;">Loading alerts from inventory...</p>
+                                </div>
+                            </div>
+                            <div class="notif-footer">
+                                <a href="inventory.html" class="view-all-link">
+                                    Current page <span class="material-icons">inventory_2</span>
+                                </a>
+                            </div>
                         </div>
-                      </div>
-
-                      <!-- Search -->
-                      <div style="position: relative; margin-bottom: 8px">
-                        <span
-                          class="material-icons"
-                          style="
-                            position: absolute;
-                            left: 7px;
-                            top: 50%;
-                            transform: translateY(-50%);
-                            font-size: 15px;
-                            color: #9ca3af;
-                            pointer-events: none;
-                          "
-                          >search</span
-                        >
-                        <input
-                          id="batchExportSearch"
-                          type="text"
-                          placeholder="Search medicine or batch no..."
-                          oninput="filterBatchExportList()"
-                          style="
-                            width: 100%;
-                            box-sizing: border-box;
-                            padding: 6px 10px 6px 28px;
-                            font-size: 12px;
-                            border: 1px solid #e5e7eb;
-                            border-radius: 8px;
-                            background: #f9fafb;
-                            color: #1f2937;
-                            outline: none;
-                          "
-                        />
-                      </div>
-
-                      <!-- Date range filter -->
-                      <div
-                        style="
-                          background: #f9fafb;
-                          border-radius: 8px;
-                          padding: 10px;
-                          border: 1px solid #e5e7eb;
-                          margin-bottom: 8px;
-                        "
-                      >
-                        <p
-                          style="
-                            font-size: 10px;
-                            font-weight: 700;
-                            color: #9ca3af;
-                            text-transform: uppercase;
-                            letter-spacing: 0.06em;
-                            margin: 0 0 8px;
-                          "
-                        >
-                          Filter by expiry date
-                        </p>
-                        <div
-                          style="
-                            display: grid;
-                            grid-template-columns: 1fr 1fr;
-                            gap: 6px;
-                            margin-bottom: 8px;
-                          "
-                        >
-                          <div>
-                            <label
-                              style="
-                                font-size: 10px;
-                                color: #6b7280;
-                                display: block;
-                                margin-bottom: 3px;
-                              "
-                              >From</label
-                            >
-                            <input
-                              id="batchExportDateFrom"
-                              type="date"
-                              oninput="filterBatchExportList()"
-                              style="
-                                width: 100%;
-                                box-sizing: border-box;
-                                padding: 5px 7px;
-                                font-size: 11px;
-                                border: 1px solid #e5e7eb;
-                                border-radius: 6px;
-                                background: #fff;
-                                color: #1f2937;
-                                outline: none;
-                              "
-                            />
-                          </div>
-                          <div>
-                            <label
-                              style="
-                                font-size: 10px;
-                                color: #6b7280;
-                                display: block;
-                                margin-bottom: 3px;
-                              "
-                              >To</label
-                            >
-                            <input
-                              id="batchExportDateTo"
-                              type="date"
-                              oninput="filterBatchExportList()"
-                              style="
-                                width: 100%;
-                                box-sizing: border-box;
-                                padding: 5px 7px;
-                                font-size: 11px;
-                                border: 1px solid #e5e7eb;
-                                border-radius: 6px;
-                                background: #fff;
-                                color: #1f2937;
-                                outline: none;
-                              "
-                            />
-                          </div>
-                        </div>
-                        <div style="display: flex; gap: 4px; flex-wrap: wrap">
-                          <button
-                            class="bexp-qp"
-                            onclick="setBatchExportQuick(this, 'expired')"
-                          >
-                            Expired
-                          </button>
-                          <button
-                            class="bexp-qp"
-                            onclick="setBatchExportQuick(this, '7')"
-                          >
-                            Next 7d
-                          </button>
-                          <button
-                            class="bexp-qp"
-                            onclick="setBatchExportQuick(this, '30')"
-                          >
-                            Next 30d
-                          </button>
-                          <button
-                            class="bexp-qp"
-                            onclick="setBatchExportQuick(this, '90')"
-                          >
-                            Next 90d
-                          </button>
-                          <button
-                            class="bexp-qp"
-                            onclick="setBatchExportQuick(this, 'clear')"
-                          >
-                            Clear
-                          </button>
-                        </div>
-                      </div>
-
-                      <div
-                        id="batchExportCheckList"
-                        style="
-                          max-height: 200px;
-                          overflow-y: auto;
-                          scrollbar-width: thin;
-                          margin-bottom: 8px;
-                        "
-                      ></div>
-
-                      <div
-                        class="export-menu-divider"
-                        style="margin: 8px 0"
-                      ></div>
-                      <button
-                        onclick="exportBatchData()"
-                        class="export-apply-btn"
-                      >
-                        <span class="material-icons">print</span> Print / Export
-                      </button>
-                      <p
-                        id="batchExportSelCount"
-                        style="
-                          text-align: center;
-                          font-size: 11px;
-                          color: #9ca3af;
-                          margin: 6px 0 0;
-                        "
-                      >
-                        0 batches selected
-                      </p>
                     </div>
 
                     <div class="nav-divider"></div>
@@ -1461,122 +561,98 @@
       <span style="font-size:10px;color:#9ca3af;">|</span>
       <button onclick="setBatchExportAll(false)" style="font-size:10px;color:#6b7280;font-weight:600;background:none;border:none;cursor:pointer;">None</button>
     </div>
+  </div>
 
-    <script>
-      const API_BASE_URL = "http://localhost:5001";
+  <!-- Search -->
+  <div style="position:relative;margin-bottom:8px;">
+    <span class="material-icons" style="position:absolute;left:7px;top:50%;transform:translateY(-50%);font-size:15px;color:#9ca3af;pointer-events:none;">search</span>
+    <input id="batchExportSearch" type="text" placeholder="Search medicine or batch no..."
+      oninput="filterBatchExportList()"
+      style="width:100%;box-sizing:border-box;padding:6px 10px 6px 28px;font-size:12px;border:1px solid #e5e7eb;border-radius:8px;background:#f9fafb;color:#1f2937;outline:none;"/>
+  </div>
 
-      // ══════════════════════════════════════════════════════════
-      // LIVE NAVBAR CLOCK — ticks every second
-      // ══════════════════════════════════════════════════════════
-      function updateNavClock() {
-        const now = new Date();
-        const timeStr = now.toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-          hour12: true,
-        });
-        const dateStr = now
-          .toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          })
-          .toUpperCase();
-        document.getElementById("navClock").textContent = timeStr;
-        document.getElementById("navDate").textContent = dateStr;
-      }
+  <!-- Date range filter -->
+  <div style="background:#f9fafb;border-radius:8px;padding:10px;border:1px solid #e5e7eb;margin-bottom:8px;">
+    <p style="font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 8px;">Filter by expiry date</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
+      <div>
+        <label style="font-size:10px;color:#6b7280;display:block;margin-bottom:3px;">From</label>
+        <input id="batchExportDateFrom" type="date" oninput="filterBatchExportList()"
+          style="width:100%;box-sizing:border-box;padding:5px 7px;font-size:11px;border:1px solid #e5e7eb;border-radius:6px;background:#fff;color:#1f2937;outline:none;"/>
+      </div>
+      <div>
+        <label style="font-size:10px;color:#6b7280;display:block;margin-bottom:3px;">To</label>
+        <input id="batchExportDateTo" type="date" oninput="filterBatchExportList()"
+          style="width:100%;box-sizing:border-box;padding:5px 7px;font-size:11px;border:1px solid #e5e7eb;border-radius:6px;background:#fff;color:#1f2937;outline:none;"/>
+      </div>
+    </div>
+    <div style="display:flex;gap:4px;flex-wrap:wrap;">
+      <button class="bexp-qp" onclick="setBatchExportQuick(this,'expired')">Expired</button>
+      <button class="bexp-qp" onclick="setBatchExportQuick(this,'7')">Next 7d</button>
+      <button class="bexp-qp" onclick="setBatchExportQuick(this,'30')">Next 30d</button>
+      <button class="bexp-qp" onclick="setBatchExportQuick(this,'90')">Next 90d</button>
+      <button class="bexp-qp" onclick="setBatchExportQuick(this,'clear')">Clear</button>
+    </div>
+  </div>
 
-      // ── Load user info from session into navbar ──
-      function loadNavUserInfo() {
-        try {
-          const raw = sessionStorage.getItem("userInfo");
-          if (!raw) return;
-          const info = JSON.parse(raw);
-          const name = info.name || info.firstName || info.username || "User";
-          const role = info.role || info.position || "";
-          const initial = name.charAt(0).toUpperCase();
-          document.getElementById("navUserName").textContent = name;
-          document.getElementById("navUserRole").textContent = role;
-          document.getElementById("navAvatar").textContent = initial;
-        } catch (e) {
-          /* keep defaults */
-        }
-      }
+  <div id="batchExportCheckList" style="max-height:200px;overflow-y:auto;scrollbar-width:thin;margin-bottom:8px;"></div>
 
-      // ══════════════════════════════════════════════════════════
-      // SUPPLIES MANAGER
-      // ══════════════════════════════════════════════════════════
-      class SuppliesManager {
-        constructor() {
-          this.supplies = [
-            {
-              id: 1,
-              name: "Amoxicillin 500mg",
-              category: "Antibiotics",
-              quantity: 245,
-              reorderLevel: 50,
-              unitCost: 15.5,
-            },
-            {
-              id: 2,
-              name: "Ibuprofen 200mg",
-              category: "Pain Relief",
-              quantity: 12,
-              reorderLevel: 25,
-              unitCost: 8.0,
-            },
-            {
-              id: 3,
-              name: "Cetirizine 10mg",
-              category: "Antihistamine",
-              quantity: 0,
-              reorderLevel: 30,
-              unitCost: 5.5,
-            },
-            {
-              id: 4,
-              name: "Omeprazole 20mg",
-              category: "Gastrointestinal",
-              quantity: 180,
-              reorderLevel: 40,
-              unitCost: 12.0,
-            },
-            {
-              id: 5,
-              name: "Metformin 500mg",
-              category: "Diabetes",
-              quantity: 95,
-              reorderLevel: 60,
-              unitCost: 10.0,
-            },
-            {
-              id: 6,
-              name: "Amlodipine 5mg",
-              category: "Cardiovascular",
-              quantity: 220,
-              reorderLevel: 50,
-              unitCost: 14.0,
-            },
-            {
-              id: 7,
-              name: "Paracetamol 500mg",
-              category: "Pain Relief",
-              quantity: 15,
-              reorderLevel: 100,
-              unitCost: 3.5,
-            },
-            {
-              id: 8,
-              name: "Losartan 50mg",
-              category: "Cardiovascular",
-              quantity: 140,
-              reorderLevel: 45,
-              unitCost: 18.0,
-            },
-          ];
-          this.nextId = 9;
-        }
+  <div class="export-menu-divider" style="margin: 8px 0;"></div>
+  <button onclick="exportBatchData()" class="export-apply-btn">
+    <span class="material-icons">print</span> Print / Export
+  </button>
+  <p id="batchExportSelCount" style="text-align:center;font-size:11px;color:#9ca3af;margin:6px 0 0;">0 batches selected</p>
+</div>
+</div>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+                                <thead class="text-xs text-text-light dark:text-text-dark uppercase tracking-wider">
+                                    <tr style="background: linear-gradient(to right, rgba(0,90,50,0.2), rgba(255,255,255,0.5), rgba(214,40,40,0.2));">
+                                        <th class="px-6 py-4 font-medium">Dispense Order</th>
+                                        <th class="px-6 py-4 font-medium">Medicine Name</th>
+                                        <th class="px-6 py-4 font-medium">Category</th>
+                                        <th class="px-6 py-4 font-medium">Batch No.</th>
+                                        <th class="px-6 py-4 font-medium">Quantity</th>
+                                        <th class="px-6 py-4 font-medium">Expiry Date</th>
+                                        <th class="px-6 py-4 font-medium">Days Until Expiry</th>
+                                        <th class="px-6 py-4 font-medium">Price</th>
+                                        <th class="px-6 py-4 font-medium">Supplier</th>
+                                        <th class="px-6 py-4 font-medium">Status</th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody id="batchTableBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="pagination-bar" id="batchPaginationBar">
+                            <div class="rows-per-page">Rows per page: <select onchange="batchRowsPerPage=parseInt(this.value);batchPage=1;inventoryManager.renderBatches()" id="batchRppSelect"><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option></select></div>
+                            <div class="pagination-info" id="batchPaginationInfo"></div>
+                            <div class="pagination-controls" id="batchPaginationControls"></div>
+                        </div>
+                    </div>
+
+                    
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+                            <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium">Total Items</p>
+                            <p id="totalItems" class="text-3xl font-bold text-text-light dark:text-text-dark mt-2">0</p>
+                        </div>
+                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+                            <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium">Total Value</p>
+                            <p id="totalValue" class="text-3xl font-bold text-text-light dark:text-text-dark mt-2">&#8369;0.00</p>
+                        </div>
+                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+                            <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium">Low Stock Items</p>
+                            <p id="lowStockCount" class="text-3xl font-bold text-accent dark:text-amber-400 mt-2">0</p>
+                        </div>
+                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+                            <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium">Expiring Soon</p>
+                            <p id="expiringCount" class="text-3xl font-bold text-secondary dark:text-red-400 mt-2">0</p>
+                        </div>
+                    </div>
 
                 </div><!-- end #modulePanelInventory -->
 
@@ -2262,365 +1338,212 @@ class InventoryManager {
             const name = this._getName(item);
             const qty = parseInt(item.quantity || 0);
             if (qty <= 0) return;
-            const daysLeft = Math.ceil(
-              (new Date(item.expiryDate) - today) / (1000 * 60 * 60 * 24),
-            );
-            if (daysLeft < 0) {
-              hasExpiry = true;
-              expiryList.innerHTML += `<li class="text-sm py-1 font-semibold text-red-600 dark:text-red-400">&#9888; EXPIRED &mdash; ${name} Batch ${item.batchNumber || "N/A"}</li>`;
-            } else if (daysLeft <= 30) {
-              hasExpiry = true;
-              expiryList.innerHTML += `<li class="text-sm py-1 text-secondary dark:text-red-400">${name} &mdash; Batch ${item.batchNumber || "N/A"} (${daysLeft} days left)</li>`;
-            }
-          });
-          if (!hasLowStock)
-            lowStockList.innerHTML =
-              '<li class="text-gray-500 italic">Stock levels are healthy.</li>';
-          if (!hasExpiry)
-            expiryList.innerHTML =
-              '<li class="text-gray-500 italic">No immediate expiries.</li>';
-        }
+            const daysLeft = Math.ceil((new Date(item.expiryDate) - today) / (1000 * 60 * 60 * 24));
+            if (daysLeft < 0) { hasExpiry = true; expiryList.innerHTML += `<li class="text-sm py-1 font-semibold text-red-600 dark:text-red-400">&#9888; EXPIRED &mdash; ${name} Batch ${item.batchNumber || 'N/A'}</li>`; }
+            else if (daysLeft <= 30) { hasExpiry = true; expiryList.innerHTML += `<li class="text-sm py-1 text-secondary dark:text-red-400">${name} &mdash; Batch ${item.batchNumber || 'N/A'} (${daysLeft} days left)</li>`; }
+        });
+        if (!hasLowStock) lowStockList.innerHTML = '<li class="text-gray-500 italic">Stock levels are healthy.</li>';
+        if (!hasExpiry) expiryList.innerHTML = '<li class="text-gray-500 italic">No immediate expiries.</li>';
+    }
 
-        viewBatchDetails(medicineName) {
-          this.switchTab("batch");
-          const searchInput = document.getElementById("batchSearch");
-          if (searchInput) {
-            searchInput.value = medicineName;
-            this.renderBatches();
-          }
-        }
+    viewBatchDetails(medicineName) {
+        this.switchTab('batch');
+        const searchInput = document.getElementById('batchSearch');
+        if (searchInput) { searchInput.value = medicineName; this.renderBatches(); }
+    }
 
-        switchTab(tabName) {
-          this.currentTab = tabName;
-          document
-            .getElementById("summaryTab")
-            .classList.toggle("active", tabName === "summary");
-          document
-            .getElementById("batchTab")
-            .classList.toggle("active", tabName === "batch");
-          document.getElementById("summarySection").classList.add("hidden");
-          document.getElementById("batchSection").classList.add("hidden");
-          if (tabName === "summary") {
-            document
-              .getElementById("summarySection")
-              .classList.remove("hidden");
-            this.renderSummary();
-          } else if (tabName === "batch") {
-            document.getElementById("batchSection").classList.remove("hidden");
-            document.getElementById("batchSearch").value = "";
-            this.renderBatches();
-          }
-        }
+    switchTab(tabName) {
+    this.currentTab = tabName;
+    document.getElementById('summaryTab').classList.toggle('active', tabName === 'summary');
+    document.getElementById('batchTab').classList.toggle('active', tabName === 'batch');
+    document.getElementById('summarySection').classList.add('hidden');
+    document.getElementById('batchSection').classList.add('hidden');
+    if (tabName === 'summary') { document.getElementById('summarySection').classList.remove('hidden'); this.renderSummary(); }
+    else if (tabName === 'batch') { document.getElementById('batchSection').classList.remove('hidden'); document.getElementById('batchSearch').value = ''; this.renderBatches(); }
+}
 
-        formatDate(dateString) {
-          if (!dateString) return "N/A";
-          return new Date(dateString).toLocaleDateString("en-PH", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          });
-        }
+    formatDate(dateString) {
+        if (!dateString) return 'N/A';
+        return new Date(dateString).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
 
-        // BEFORE (3 methods: exportSummaryData, exportBatchData, _printPDF)
-        // — delete all three and replace with these:
+    // BEFORE (3 methods: exportSummaryData, exportBatchData, _printPDF)
+// — delete all three and replace with these:
 
-        exportSummaryData(filters = []) {
-          toggleExportMenu("summaryExportMenu", true);
-          if (!filters.length)
-            return Swal.fire(
-              "Nothing selected",
-              "Please check at least one filter.",
-              "info",
-            );
-          const today = new Date();
-          const thirtyDays = new Date();
-          thirtyDays.setDate(today.getDate() + 30);
-          const timestamp = new Date().toISOString().split("T")[0];
-          const summary = {};
+exportSummaryData(filters = []) {
+    toggleExportMenu('summaryExportMenu', true);
+    if (!filters.length) return Swal.fire('Nothing selected', 'Please check at least one filter.', 'info');
+    const today = new Date();
+    const thirtyDays = new Date(); thirtyDays.setDate(today.getDate() + 30);
+    const timestamp = new Date().toISOString().split('T')[0];
+    const summary = {};
 
-          this.liveInventory.forEach((item) => {
-            const name = this._getName(item);
-            const price = parseFloat(this._getPrice(item) || 0);
-            const qty = parseInt(item.quantity || 0);
-            const isExp = new Date(item.expiryDate) < today;
-            if (!summary[name])
-              summary[name] = {
-                name,
-                batchCount: 0,
-                totalQty: 0,
-                totalValue: 0,
-                earliestExpiry: item.expiryDate,
-                minStock: item.minStockLevel || 10,
-                hasExpired: false,
-                hasExpiring: false,
-              };
-            summary[name].batchCount++;
-            if (!isExp) {
-              summary[name].totalQty += qty;
-              summary[name].totalValue += qty * price;
-            }
-            if (
-              new Date(item.expiryDate) < new Date(summary[name].earliestExpiry)
-            )
-              summary[name].earliestExpiry = item.expiryDate;
-            if (isExp && qty > 0) summary[name].hasExpired = true;
-            const daysLeft = Math.ceil(
-              (new Date(item.expiryDate) - today) / 864e5,
-            );
-            if (daysLeft >= 0 && daysLeft <= 30 && qty > 0)
-              summary[name].hasExpiring = true;
-          });
+    this.liveInventory.forEach(item => {
+        const name  = this._getName(item);
+        const price = parseFloat(this._getPrice(item) || 0);
+        const qty   = parseInt(item.quantity || 0);
+        const isExp = new Date(item.expiryDate) < today;
+        if (!summary[name]) summary[name] = { name, batchCount:0, totalQty:0, totalValue:0, earliestExpiry:item.expiryDate, minStock:item.minStockLevel||10, hasExpired:false, hasExpiring:false };
+        summary[name].batchCount++;
+        if (!isExp) { summary[name].totalQty += qty; summary[name].totalValue += qty * price; }
+        if (new Date(item.expiryDate) < new Date(summary[name].earliestExpiry)) summary[name].earliestExpiry = item.expiryDate;
+        if (isExp && qty > 0) summary[name].hasExpired = true;
+        const daysLeft = Math.ceil((new Date(item.expiryDate) - today) / 864e5);
+        if (daysLeft >= 0 && daysLeft <= 30 && qty > 0) summary[name].hasExpiring = true;
+    });
 
-          const all = Object.values(summary);
-          // Union: item passes if it matches ANY checked filter
-          const arr = all.filter((item) => {
-            return filters.some((f) => {
-              if (f === "in-stock") return item.totalQty > item.minStock;
-              if (f === "low-stock")
-                return item.totalQty > 0 && item.totalQty <= item.minStock;
-              if (f === "out-of-stock") return item.totalQty === 0;
-              if (f === "expiring") return item.hasExpiring;
-              if (f === "expired") return item.hasExpired;
-              return false;
-            });
-          });
+    const all = Object.values(summary);
+    // Union: item passes if it matches ANY checked filter
+    const arr = all.filter(item => {
+        return filters.some(f => {
+            if (f === 'in-stock')     return item.totalQty > item.minStock;
+            if (f === 'low-stock')    return item.totalQty > 0 && item.totalQty <= item.minStock;
+            if (f === 'out-of-stock') return item.totalQty === 0;
+            if (f === 'expiring')     return item.hasExpiring;
+            if (f === 'expired')      return item.hasExpired;
+            return false;
+        });
+    });
 
-          const filterLabel = filters
-            .map(
-              (f) =>
-                ({
-                  "in-stock": "In Stock",
-                  "low-stock": "Low Stock",
-                  "out-of-stock": "Out of Stock",
-                  expiring: "Expiring Soon",
-                  expired: "Expired",
-                })[f],
-            )
-            .join(", ");
-          const rows = arr.map((item) => {
-            let status = "In Stock";
-            if (item.totalQty === 0) status = "Out of Stock";
-            else if (item.totalQty <= item.minStock) status = "Low Stock";
-            const avg = item.totalQty > 0 ? item.totalValue / item.totalQty : 0;
-            return [
-              item.name,
-              item.batchCount,
-              item.totalQty,
-              this.formatDate(item.earliestExpiry),
-              "₱" + avg.toFixed(2),
-              "₱" + item.totalValue.toFixed(2),
-              status,
-            ];
-          });
+    const filterLabel = filters.map(f => ({ 'in-stock':'In Stock','low-stock':'Low Stock','out-of-stock':'Out of Stock','expiring':'Expiring Soon','expired':'Expired' }[f])).join(', ');
+    const rows = arr.map(item => {
+        let status = 'In Stock';
+        if (item.totalQty === 0)               status = 'Out of Stock';
+        else if (item.totalQty <= item.minStock) status = 'Low Stock';
+        const avg = item.totalQty > 0 ? item.totalValue / item.totalQty : 0;
+        return [ item.name, item.batchCount, item.totalQty, this.formatDate(item.earliestExpiry), '₱'+avg.toFixed(2), '₱'+item.totalValue.toFixed(2), status ];
+    });
 
-          if (!rows.length)
-            return Swal.fire(
-              "No Data",
-              `No medicines match the selected filters.`,
-              "info",
-            );
-          this._exportPDF(
-            `WellServed_Summary_${timestamp}`,
-            `Medicine Inventory — ${filterLabel}`,
-            [
-              "Medicine Name",
-              "Total Batches",
-              "Total Quantity",
-              "Earliest Expiry",
-              "Avg Price",
-              "Total Value",
-              "Status",
-            ],
-            rows,
-          );
-        }
+    if (!rows.length) return Swal.fire('No Data', `No medicines match the selected filters.`, 'info');
+    this._exportPDF(`WellServed_Summary_${timestamp}`, `Medicine Inventory — ${filterLabel}`,
+        ['Medicine Name','Total Batches','Total Quantity','Earliest Expiry','Avg Price','Total Value','Status'], rows);
+}
 
-        exportBatchData() {
-          toggleExportMenu("batchExportMenu", true);
-          const today = new Date();
-          const timestamp = new Date().toISOString().split("T")[0];
+exportBatchData() {
+    toggleExportMenu('batchExportMenu', true);
+    const today = new Date();
+    const timestamp = new Date().toISOString().split('T')[0];
 
-          // Collect checked batch IDs from the dynamic checklist
-          const checkedIds = new Set(
-            [
-              ...document.querySelectorAll(
-                '#batchExportCheckList input[type="checkbox"]:checked',
-              ),
-            ].map((cb) => cb.value),
-          );
+    // Collect checked batch IDs from the dynamic checklist
+    const checkedIds = new Set(
+        [...document.querySelectorAll('#batchExportCheckList input[type="checkbox"]:checked')]
+            .map(cb => cb.value)
+    );
 
-          if (!checkedIds.size)
-            return Swal.fire(
-              "Nothing selected",
-              "Please check at least one batch.",
-              "info",
-            );
+    if (!checkedIds.size) return Swal.fire('Nothing selected', 'Please check at least one batch.', 'info');
 
-          // Sort by expiry (FEFO), then filter to only checked batches
-          const source = [...this.liveInventory].sort(
-            (a, b) => new Date(a.expiryDate) - new Date(b.expiryDate),
-          );
-          const batches = source.filter((item) =>
-            checkedIds.has(item._id || item.id),
-          );
+    // Sort by expiry (FEFO), then filter to only checked batches
+    const source = [...this.liveInventory].sort((a, b) => new Date(a.expiryDate) - new Date(b.expiryDate));
+    const batches = source.filter(item => checkedIds.has(item._id || item.id));
 
-          const rows = batches.map((item, i) => {
-            const daysLeft = Math.ceil(
-              (new Date(item.expiryDate) - today) / 864e5,
-            );
-            let status = "Active";
-            if (daysLeft < 0) status = "Expired";
-            else if (daysLeft <= 30) status = `Expiring (${daysLeft}d)`;
-            return [
-              i + 1,
-              this._getName(item),
-              item.batchNumber || "N/A",
-              item.quantity,
-              this.formatDate(item.expiryDate),
-              daysLeft < 0 ? "EXPIRED" : daysLeft,
-              "₱" + parseFloat(this._getPrice(item) || 0).toFixed(2),
-              item.supplier || "Unknown",
-              status,
-            ];
-          });
+    const rows = batches.map((item, i) => {
+        const daysLeft = Math.ceil((new Date(item.expiryDate) - today) / 864e5);
+        let status = 'Active';
+        if (daysLeft < 0)        status = 'Expired';
+        else if (daysLeft <= 30) status = `Expiring (${daysLeft}d)`;
+        return [
+            i + 1,
+            this._getName(item),
+            item.batchNumber || 'N/A',
+            item.quantity,
+            this.formatDate(item.expiryDate),
+            daysLeft < 0 ? 'EXPIRED' : daysLeft,
+            '₱' + parseFloat(this._getPrice(item) || 0).toFixed(2),
+            item.supplier || 'Unknown',
+            status
+        ];
+    });
 
-          if (!rows.length)
-            return Swal.fire(
-              "No Data",
-              "No batches matched your selection.",
-              "info",
-            );
-          this._exportPDF(
-            `WellServed_Batches_${timestamp}`,
-            `Batch Details (FEFO) — Selected Batches`,
-            [
-              "#",
-              "Medicine",
-              "Batch No.",
-              "Qty",
-              "Expiry",
-              "Days Left",
-              "Price",
-              "Supplier",
-              "Status",
-            ],
-            rows,
-          );
-        }
+    if (!rows.length) return Swal.fire('No Data', 'No batches matched your selection.', 'info');
+    this._exportPDF(
+        `WellServed_Batches_${timestamp}`,
+        `Batch Details (FEFO) — Selected Batches`,
+        ['#', 'Medicine', 'Batch No.', 'Qty', 'Expiry', 'Days Left', 'Price', 'Supplier', 'Status'],
+        rows
+    );
+}
 
-        _exportPDF(filename, title, headers, bodyRows) {
-          const { jsPDF } = window.jspdf;
-          const doc = new jsPDF({ orientation: "landscape" });
+_exportPDF(filename, title, headers, bodyRows) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape' });
 
-          doc.setFillColor(0, 90, 50);
-          doc.rect(0, 0, 297, 20, "F");
-          doc.setTextColor(255, 255, 255);
-          doc.setFontSize(15);
-          doc.setFont("helvetica", "bold");
-          doc.text("Well Served Pharmacy", 14, 13);
+    doc.setFillColor(0, 90, 50);
+    doc.rect(0, 0, 297, 20, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(15);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Well Served Pharmacy', 14, 13);
 
-          doc.setTextColor(0, 0, 0);
-          doc.setFontSize(10);
-          doc.setFont("helvetica", "normal");
-          doc.text(title, 14, 28);
-          doc.text(`Generated: ${new Date().toLocaleString("en-PH")}`, 14, 34);
-          doc.text(`Total Records: ${bodyRows.length}`, 14, 40);
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(title, 14, 28);
+    doc.text(`Generated: ${new Date().toLocaleString('en-PH')}`, 14, 34);
+    doc.text(`Total Records: ${bodyRows.length}`, 14, 40);
 
-          doc.autoTable({
-            head: [headers],
-            body: bodyRows,
-            startY: 46,
-            theme: "grid",
-            headStyles: {
-              fillColor: [0, 90, 50],
-              textColor: 255,
-              fontStyle: "bold",
-              fontSize: 8,
-            },
-            bodyStyles: { fontSize: 8 },
-            alternateRowStyles: { fillColor: [245, 250, 247] },
-            styles: { overflow: "linebreak", cellPadding: 3 },
-          });
+    doc.autoTable({
+        head: [headers], body: bodyRows, startY: 46, theme: 'grid',
+        headStyles: { fillColor: [0, 90, 50], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+        bodyStyles: { fontSize: 8 },
+        alternateRowStyles: { fillColor: [245, 250, 247] },
+        styles: { overflow: 'linebreak', cellPadding: 3 },
+    });
 
-          const pageCount = doc.internal.getNumberOfPages();
-          for (let i = 1; i <= pageCount; i++) {
-            doc.setPage(i);
-            doc.setFontSize(8);
-            doc.setTextColor(150);
-            doc.text(
-              `Page ${i} of ${pageCount}`,
-              doc.internal.pageSize.getWidth() - 30,
-              doc.internal.pageSize.getHeight() - 8,
-            );
-          }
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(150);
+        doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.getWidth() - 30, doc.internal.pageSize.getHeight() - 8);
+    }
 
-          // ── Open print dialog instead of saving ──
-          doc.autoPrint();
-          const blobUrl = doc.output("bloburl");
-          const printWin = window.open(blobUrl, "_blank");
-          if (!printWin)
-            Swal.fire(
-              "Popup Blocked",
-              "Please allow popups for this page to print.",
-              "warning",
-            );
-        }
-      }
+    // ── Open print dialog instead of saving ──
+    doc.autoPrint();
+    const blobUrl = doc.output('bloburl');
+    const printWin = window.open(blobUrl, '_blank');
+    if (!printWin) Swal.fire('Popup Blocked', 'Please allow popups for this page to print.', 'warning');
+}
+}
 
-      let inventoryManager;
-      document.addEventListener("DOMContentLoaded", () => {
-        // ── Live clock ──
-        updateNavClock();
-        setInterval(updateNavClock, 1000);
 
-        // ── Navbar user info ──
-        loadNavUserInfo();
+let inventoryManager;
+document.addEventListener('DOMContentLoaded', () => {
+    // ── Live clock ──
+    updateNavClock();
+    setInterval(updateNavClock, 1000);
 
-        // ── Inventory manager ──
-        inventoryManager = new InventoryManager();
-        window.inventoryManager = inventoryManager;
-        window.logoutUser = () => inventoryManager.logoutUser();
-        window.switchTab = (t) => inventoryManager.switchTab(t);
-        window.searchSummary = () => {
-          summaryPage = 1;
-          inventoryManager.renderSummary();
-        };
-        window.filterSummaryByStatus = () => {
-          summaryPage = 1;
-          inventoryManager.renderSummary();
-        };
-        window.exportSummaryData = (filters) =>
-          inventoryManager.exportSummaryData(filters);
-        window.searchBatch = () => {
-          batchPage = 1;
-          inventoryManager.renderBatches();
-        };
-        window.exportBatchData = (filters) =>
-          inventoryManager.exportBatchData(filters);
-        window.searchArchive = () => {
-          archivePage = 1;
-          inventoryManager.renderArchive();
-        };
-        window.viewBatchDetails = (name) =>
-          inventoryManager.viewBatchDetails(name);
-      });
+    // ── Navbar user info ──
+    loadNavUserInfo();
 
-      // ══════════════════════════════════════════════════════════
-      // NOTIFICATION SYSTEM
-      // ══════════════════════════════════════════════════════════
-      let notifData = [];
-      let activeNotifFilter = "all";
+    // ── Inventory manager ──
+    inventoryManager = new InventoryManager();
+    window.inventoryManager = inventoryManager;
+    window.logoutUser = () => inventoryManager.logoutUser();
+    window.switchTab = (t) => inventoryManager.switchTab(t);
+    window.searchSummary = () => { summaryPage = 1; inventoryManager.renderSummary(); };
+    window.filterSummaryByStatus = () => { summaryPage = 1; inventoryManager.renderSummary(); };
+    window.exportSummaryData = (filters) => inventoryManager.exportSummaryData(filters);
+    window.searchBatch = () => { batchPage = 1; inventoryManager.renderBatches(); };
+    window.exportBatchData = (filters) => inventoryManager.exportBatchData(filters);
+    window.searchArchive = () => { archivePage = 1; inventoryManager.renderArchive(); };
+    window.viewBatchDetails = (name) => inventoryManager.viewBatchDetails(name);
+});
 
-      function generateAlertsFromInventory(inventory) {
-        const alerts = [];
-        const today = new Date();
-        const thirtyDays = new Date();
-        thirtyDays.setDate(today.getDate() + 30);
+// ══════════════════════════════════════════════════════════
+// NOTIFICATION SYSTEM
+// ══════════════════════════════════════════════════════════
+let notifData = [];
+let activeNotifFilter = 'all';
 
-        inventory.forEach((item, idx) => {
-          const medName =
-            item.medicine?.name || item.name || "Unknown Medicine";
-          if (item.expiryDate) {
+function generateAlertsFromInventory(inventory) {
+    const alerts = [];
+    const today = new Date();
+    const thirtyDays = new Date();
+    thirtyDays.setDate(today.getDate() + 30);
+
+    inventory.forEach((item, idx) => {
+        const medName = item.medicine?.name || item.name || 'Unknown Medicine';
+        if (item.expiryDate) {
             const expiry = new Date(item.expiryDate);
             if (expiry < today) {
                 alerts.push({ id: `exp-${item._id || idx}`, type: 'expiry', unread: true, medicineName: medName, title: 'Medicine Expired', desc: `${medName} expired on ${expiry.toLocaleDateString('en-PH')}.`, time: 'Needs immediate attention', actionLabel: 'View Batch', actionClass: 'btn-expiry', icon: 'event_busy', iconClass: 'icon-expiry' });
@@ -2909,200 +1832,25 @@ function setBatchExportAll(checked) {
             const cb = row.querySelector('input[type="checkbox"]');
             if (cb) cb.checked = checked;
         }
-      }
+    });
+    updateBatchExportCount();
+}
 
-      document.addEventListener("DOMContentLoaded", function () {
-        const btn = document.getElementById("notificationBtn");
-        const dropdown = document.getElementById("notificationDropdown");
-        if (!btn || !dropdown) return;
-        btn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          dropdown.classList.toggle("open");
-          if (dropdown.classList.contains("open")) refreshNotifications();
-        });
-        document.addEventListener("click", (e) => {
-          if (!dropdown.contains(e.target) && e.target !== btn)
-            dropdown.classList.remove("open");
-        });
-        dropdown.addEventListener("click", (e) => e.stopPropagation());
-        setTimeout(refreshNotifications, 1200);
-        setInterval(refreshNotifications, 60000);
-      });
+function updateBatchExportCount() {
+    const n = document.querySelectorAll('#batchExportCheckList input[type="checkbox"]:checked').length;
+    const el = document.getElementById('batchExportSelCount');
+    if (el) el.textContent = `${n} batch${n !== 1 ? 'es' : ''} selected`;
+}
 
-      function toggleExportMenu(menuId, forceClose = false) {
-        // Close all other open menus first
-        document.querySelectorAll(".export-menu.open").forEach((m) => {
-          if (m.id !== menuId) m.classList.remove("open");
-        });
-        const menu = document.getElementById(menuId);
-        if (!menu) return;
-        if (forceClose) {
-          menu.classList.remove("open");
-          return;
-        }
-        menu.classList.toggle("open");
-      }
+// ── Select All / None for batch export ──
+function setBatchExportAll(checked) {
+    document.querySelectorAll('#batchExportCheckList input[type="checkbox"]')
+        .forEach(cb => cb.checked = checked);
+}
 
-      // Close export menus when clicking outside
-      document.addEventListener("click", (e) => {
-        if (!e.target.closest(".export-wrap")) {
-          document
-            .querySelectorAll(".export-menu.open")
-            .forEach((m) => m.classList.remove("open"));
-        }
-      });
-
-      function getChecked(menuId) {
-        return [
-          ...document.querySelectorAll(
-            `#${menuId} input[type="checkbox"]:checked`,
-          ),
-        ].map((cb) => cb.value);
-      }
-
-      // ── BATCH EXPORT: Populate dynamic checklist then open menu ──
-      let batchExportActiveFilter = "all";
-
-      function openBatchExportMenu() {
-        document
-          .querySelectorAll(".export-menu.open")
-          .forEach((m) => m.classList.remove("open"));
-        const menu = document.getElementById("batchExportMenu");
-        if (!menu || !inventoryManager) return;
-        document.getElementById("batchExportSearch").value = "";
-        document.getElementById("batchExportDateFrom").value = "";
-        document.getElementById("batchExportDateTo").value = "";
-        document
-          .querySelectorAll(".bexp-qp")
-          .forEach((b) => b.classList.remove("active"));
-        populateBatchExportList();
-        menu.classList.add("open");
-      }
-
-      function populateBatchExportList() {
-        const list = document.getElementById("batchExportCheckList");
-        if (!list || !inventoryManager) return;
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const sorted = [...inventoryManager.liveInventory].sort(
-          (a, b) => new Date(a.expiryDate) - new Date(b.expiryDate),
-        );
-        if (!sorted.length) {
-          list.innerHTML =
-            '<p style="font-size:12px;color:#9ca3af;text-align:center;padding:8px 0;">No batches available.</p>';
-          return;
-        }
-        list.innerHTML =
-          sorted
-            .map((item) => {
-              const id = item._id || item.id;
-              const name = inventoryManager._getName(item);
-              const batch = item.batchNumber || "N/A";
-              const qty = item.quantity;
-              const expDate = new Date(item.expiryDate);
-              expDate.setHours(0, 0, 0, 0);
-              const daysLeft = Math.ceil((expDate - today) / 864e5);
-              const expStr = expDate.toLocaleDateString("en-PH", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              });
-              const expisoStr = expDate.toISOString().split("T")[0];
-              let color = "#16a34a";
-              if (daysLeft < 0) color = "#dc2626";
-              else if (daysLeft <= 30) color = "#8b5a2b";
-              return `
-            <label class="export-check-row bexp-row"
-                data-text="${name.toLowerCase()} ${batch.toLowerCase()}"
-                data-expiry="${expisoStr}"
-                style="align-items:flex-start;gap:6px;padding:5px 2px;"
-                onclick="updateBatchExportCount()">
-                <input type="checkbox" value="${id}" style="margin-top:2px;width:14px;height:14px;accent-color:#005a32;flex-shrink:0;" onchange="updateBatchExportCount()">
-                <span style="width:7px;height:7px;border-radius:50%;background:${color};flex-shrink:0;margin-top:4px;"></span>
-                <span style="font-size:12px;line-height:1.3;">
-                    <span style="font-weight:600;color:inherit;">${name}</span>
-                    <span style="display:block;font-size:10px;color:#9ca3af;">Batch ${batch} · Qty ${qty} · <span style="color:${color}">${expStr}</span></span>
-                </span>
-            </label>`;
-            })
-            .join("") +
-          `<div id="batchExportEmpty" style="display:none;font-size:12px;color:#9ca3af;text-align:center;padding:12px 0;">No batches match.</div>`;
-        updateBatchExportCount();
-      }
-
-      function filterBatchExportList() {
-        const q = (
-          document.getElementById("batchExportSearch")?.value || ""
-        ).toLowerCase();
-        const fromVal = document.getElementById("batchExportDateFrom")?.value;
-        const toVal = document.getElementById("batchExportDateTo")?.value;
-        const from = fromVal ? new Date(fromVal) : null;
-        const to = toVal ? new Date(toVal) : null;
-        let visible = 0;
-        document.querySelectorAll(".bexp-row").forEach((row) => {
-          const expiry = new Date(row.dataset.expiry);
-          const matchQ = !q || row.dataset.text.includes(q);
-          const matchFrom = !from || expiry >= from;
-          const matchTo = !to || expiry <= to;
-          const show = matchQ && matchFrom && matchTo;
-          row.style.display = show ? "" : "none";
-          if (show) visible++;
-        });
-        const empty = document.getElementById("batchExportEmpty");
-        if (empty) empty.style.display = visible === 0 ? "" : "none";
-        updateBatchExportCount();
-      }
-
-      function setBatchExportQuick(btn, type) {
-        document
-          .querySelectorAll(".bexp-qp")
-          .forEach((b) => b.classList.remove("active"));
-        if (type !== "clear") btn.classList.add("active");
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const toISO = (d) => d.toISOString().split("T")[0];
-        const df = document.getElementById("batchExportDateFrom");
-        const dt = document.getElementById("batchExportDateTo");
-        if (type === "clear") {
-          df.value = "";
-          dt.value = "";
-        } else if (type === "expired") {
-          df.value = "";
-          dt.value = toISO(new Date(today.getTime() - 864e5));
-        } else {
-          df.value = toISO(today);
-          dt.value = toISO(new Date(today.getTime() + parseInt(type) * 864e5));
-        }
-        filterBatchExportList();
-      }
-
-      function setBatchExportAll(checked) {
-        document.querySelectorAll(".bexp-row").forEach((row) => {
-          if (row.style.display !== "none") {
-            const cb = row.querySelector('input[type="checkbox"]');
-            if (cb) cb.checked = checked;
-          }
-        });
-        updateBatchExportCount();
-      }
-
-      function updateBatchExportCount() {
-        const n = document.querySelectorAll(
-          '#batchExportCheckList input[type="checkbox"]:checked',
-        ).length;
-        const el = document.getElementById("batchExportSelCount");
-        if (el) el.textContent = `${n} batch${n !== 1 ? "es" : ""} selected`;
-      }
-
-      // ── Select All / None for batch export ──
-      function setBatchExportAll(checked) {
-        document
-          .querySelectorAll('#batchExportCheckList input[type="checkbox"]')
-          .forEach((cb) => (cb.checked = checked));
-      }
-    </script>
-    <script src="../audio/audio-system.js"></script>
-    <script src="../audio/audio-manager.js"></script>
-    <script src="../js/windowcontrollerbtn.js"></script>
-  </body>
+</script>
+<script src="../audio/audio-system.js"></script>
+<script src="../audio/audio-manager.js"></script>
+<script src="../js/windowcontrollerbtn.js"></script>
+</body>
 </html>
