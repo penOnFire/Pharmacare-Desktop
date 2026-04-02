@@ -1353,7 +1353,7 @@
             : inventoryData.medicines || []
         ).filter((i) => i.status !== "Archived");
         const grouped = {};
-        const today = new Date();
+        const today   = new Date();
 
         liveInventory.forEach((item) => {
           if (!item.medicine) return;

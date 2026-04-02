@@ -1,134 +1,96 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Sales & Billing - Well Served Pharmacy</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-      tailwind.config = {
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sales & Billing - Well Served Pharmacy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    tailwind.config = {
         darkMode: "class",
         theme: {
-          extend: {
-            colors: {
-              primary: "#005a32",
-              secondary: "#d62828",
-              accent: "#8b5a2b",
-              "background-light": "#f1f5f9",
-              "background-dark": "#0f172a",
-              "surface-light": "#FFFFFF",
-              "surface-dark": "#1F2937",
-              "text-light": "#1F2937",
-              "text-dark": "#F9FAFB",
-              "subtext-light": "#6B7280",
-              "subtext-dark": "#9CA3AF",
-              "border-light": "#E5E7EB",
-              "border-dark": "#374151",
-              success: "#22C55E",
-              warning: "#F59E0B",
-              danger: "#EF4444",
-            },
-            fontFamily: { display: ["Inter", "sans-serif"] },
-          },
-        },
-      };
-    </script>
-    <style>
-      thead th {
+            extend: {
+                colors: {
+                    primary: "#005a32",
+                    secondary: "#d62828",
+                    accent: "#8b5a2b",
+                    "background-light": "#f1f5f9",
+                    "background-dark": "#0f172a",
+                    "surface-light": "#FFFFFF",
+                    "surface-dark": "#1F2937",
+                    "text-light": "#1F2937",
+                    "text-dark": "#F9FAFB",
+                    "subtext-light": "#6B7280",
+                    "subtext-dark": "#9CA3AF",
+                    "border-light": "#E5E7EB",
+                    "border-dark": "#374151",
+                    "success": "#22C55E",
+                    "warning": "#F59E0B",
+                    "danger": "#EF4444"
+                },
+                fontFamily: { display: ["Inter", "sans-serif"] }
+            }
+        }
+    };
+</script>
+<style>
+    thead th {
         background: transparent !important;
-      }
-      thead tr {
-        background: linear-gradient(
-          to right,
-          rgba(0, 90, 50, 0.2),
-          rgba(255, 255, 255, 0.5),
-          rgba(214, 40, 40, 0.2)
-        );
-      }
-      .dark thead tr {
-        background: linear-gradient(
-          to right,
-          rgba(0, 90, 50, 0.3),
-          rgba(15, 23, 42, 0.8),
-          rgba(214, 40, 40, 0.3)
-        );
-      }
+    }
+    thead tr {
+        background: linear-gradient(to right, rgba(0,90,50,0.2), rgba(255,255,255,0.5), rgba(214,40,40,0.2));
+    }
+    .dark thead tr {
+        background: linear-gradient(to right, rgba(0,90,50,0.3), rgba(15,23,42,0.8), rgba(214,40,40,0.3));
+    }
 
-      .drag-region {
-        -webkit-app-region: drag;
-      }
-      .no-drag {
-        -webkit-app-region: no-drag;
-      }
+    .drag-region { -webkit-app-region: drag; }
+    .no-drag { -webkit-app-region: no-drag; }
 
-      /* ── NAVBAR CLOCK ── */
-      #navClock {
+    /* ── NAVBAR CLOCK ── */
+    #navClock {
         font-size: 15px;
         font-weight: 700;
         line-height: 1.2;
         letter-spacing: -0.01em;
-      }
-      #navDate {
+    }
+    #navDate {
         font-size: 10px;
         font-weight: 500;
         letter-spacing: 0.06em;
-      }
+    }
 
-      /* ── NAVBAR DIVIDER ── */
-      .nav-divider {
+    /* ── NAVBAR DIVIDER ── */
+    .nav-divider {
         width: 1px;
         height: 28px;
         background: #e5e7eb;
-      }
-      .dark .nav-divider {
-        background: #374151;
-      }
+    }
+    .dark .nav-divider { background: #374151; }
 
-      /* ── FANCY NOTIFICATION DROPDOWN ── */
-      @keyframes badge-pop {
-        from {
-          transform: scale(0);
-        }
-        to {
-          transform: scale(1);
-        }
-      }
-      #notificationBadge {
-        animation: badge-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      }
+    /* ── FANCY NOTIFICATION DROPDOWN ── */
+    @keyframes badge-pop { from { transform: scale(0); } to { transform: scale(1); } }
+    #notificationBadge { animation: badge-pop 0.3s cubic-bezier(.34,1.56,.64,1); }
 
-      .notif-dropdown {
+    .notif-dropdown {
         position: absolute;
         top: calc(100% + 10px);
         right: 0;
         width: 370px;
         background: #fff;
         border-radius: 14px;
-        box-shadow:
-          0 20px 50px rgba(0, 0, 0, 0.14),
-          0 4px 12px rgba(0, 0, 0, 0.06);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.06);
         border: 1px solid #e5e7eb;
         z-index: 1000;
         overflow: hidden;
         opacity: 0;
         transform: translateY(-8px) scale(0.97);
         pointer-events: none;
-        transition:
-          opacity 0.22s ease,
-          transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+        transition: opacity 0.22s ease, transform 0.22s cubic-bezier(.34,1.56,.64,1);
         transform-origin: top right;
       }
       .dark .notif-dropdown {
@@ -745,265 +707,139 @@
     >
       <div class="flex items-center pl-4 gap-2 text-gray-600">
         <span class="text-xs font-semibold">IHMS Pharmacy</span>
-      </div>
-      <div class="no-drag flex items-center relative z-50">
-        <button
-          id="min-btn"
-          class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200"
-        >
-          <span class="material-icons-outlined text-sm text-gray-600"
-            >remove</span
-          >
-        </button>
-        <button
-          id="max-btn"
-          class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200"
-        >
-          <span class="material-icons-outlined text-sm text-gray-600"
-            >crop_square</span
-          >
-        </button>
-        <button
-          id="close-btn"
-          class="h-full w-12 flex justify-center items-center hover:bg-red-500 hover:text-white transition-colors duration-200 group"
-        >
-          <span
-            class="material-icons-outlined text-sm text-gray-600 group-hover:text-white"
-            >close</span
-          >
-        </button>
-      </div>
     </div>
+    <div class="no-drag flex items-center relative z-50">
+        <button id="min-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200">
+            <span class="material-icons-outlined text-sm text-gray-600">remove</span>
+        </button>
+        <button id="max-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200">
+            <span class="material-icons-outlined text-sm text-gray-600">crop_square</span>
+        </button>
+        <button id="close-btn" class="h-full w-12 flex justify-center items-center hover:bg-red-500 hover:text-white transition-colors duration-200 group">
+            <span class="material-icons-outlined text-sm text-gray-600 group-hover:text-white">close</span>
+        </button>
+    </div>
+</div>
 
-    <div class="flex h-screen pt-8">
-      <aside
-        class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-border-light dark:border-border-dark"
-      >
+<div class="flex h-screen pt-8">
+
+    <aside class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-border-light dark:border-border-dark">
         <div class="h-16 flex items-center px-6">
-          <div class="flex items-center gap-3">
-            <div
-              class="w-12 h-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm"
-            >
-              <img
-                src="images/wellserved.png"
-                alt="Well Served Logo"
-                class="w-full h-full object-cover"
-              />
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm">
+                    <img src="images/wellserved.png" alt="Well Served Logo" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h1 class="font-bold text-primary dark:text-green-400 leading-tight">Well Served</h1>
+                    <p class="text-[10px] uppercase tracking-wider text-accent dark:text-amber-600 font-semibold">Since 1994</p>
+                </div>
             </div>
-            <div>
-              <h1
-                class="font-bold text-primary dark:text-green-400 leading-tight"
-              >
-                Well Served
-              </h1>
-              <p
-                class="text-[10px] uppercase tracking-wider text-accent dark:text-amber-600 font-semibold"
-              >
-                Since 1994
-              </p>
-            </div>
-          </div>
         </div>
         <nav class="flex-1 px-4 py-6 space-y-2">
-          <div
-            class="px-2 text-sm font-semibold text-subtext-light dark:text-subtext-dark"
-          >
-            Pharmacy
-          </div>
-          <a
-            class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md"
-            href="dashboard.html"
-          >
-            <span class="material-icons mr-3">dashboard</span> Dashboard
-          </a>
-          <a
-            class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md"
-            href="inventory.html"
-          >
-            <span class="material-icons mr-3">inventory_2</span> Inventory
-          </a>
-          <a
-            class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md"
-            href="patient_records.html"
-          >
-            <span class="material-icons mr-3">folder_shared</span> Patient
-            Records
-          </a>
-          <a
-            class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md"
-            href="pos.html"
-          >
-            <span class="material-icons mr-3">shopping_cart</span> Counter
-            Dispensing
-          </a>
-          <a
-            class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold"
-            href="billing.html"
-          >
-            <span class="material-icons mr-3">point_of_sale</span> Sales &amp;
-            Billing
-          </a>
+            <div class="px-2 text-sm font-semibold text-subtext-light dark:text-subtext-dark">Pharmacy</div>
+            <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="dashboard.html">
+                <span class="material-icons mr-3">dashboard</span> Dashboard
+            </a>
+            <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="inventory.html">
+                <span class="material-icons mr-3">inventory_2</span> Inventory
+            </a>
+            <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="patient_records.html">
+                <span class="material-icons mr-3">folder_shared</span> Patient Records
+            </a>
+            <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="pos.html">
+                <span class="material-icons mr-3">shopping_cart</span> Counter Dispensing
+            </a>
+            <a class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold" href="billing.html">
+                <span class="material-icons mr-3">point_of_sale</span> Sales &amp; Billing
+            </a>
         </nav>
         <div class="p-4 border-t border-border-light dark:border-border-dark">
-          <button
-            onclick="logoutUser()"
-            class="flex items-center w-full px-4 py-2 gap-3 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
-          >
-            <span class="material-icons text-red-500">logout</span> Logout
-          </button>
+            <button onclick="logoutUser()"
+                class="flex items-center w-full px-4 py-2 gap-3 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors">
+                <span class="material-icons text-red-500">logout</span> Logout
+            </button>
         </div>
-      </aside>
+    </aside>
 
-      <main class="flex-1 flex flex-col overflow-hidden">
+    <main class="flex-1 flex flex-col overflow-hidden">
+
         <!-- ══════════════════════════════════════════
              NAVBAR — copied from dashboard.html
              [ Clock+Date ] [ Bell ] [ Name/Role ] [ Avatar ]
              ══════════════════════════════════════════ -->
-        <header
-          class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800"
-        >
-          <!-- Left: empty spacer -->
-          <div></div>
+        <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
+            <!-- Left: empty spacer -->
+            <div></div>
 
-          <!-- Right: clock · divider · bell · divider · user info · avatar -->
-          <div class="flex items-center gap-4">
-            <!-- Live Clock + Date -->
-            <div class="text-right">
-              <div
-                id="navClock"
-                class="text-text-light dark:text-text-dark"
-              ></div>
-              <div
-                id="navDate"
-                class="text-subtext-light dark:text-subtext-dark uppercase tracking-widest"
-              ></div>
-            </div>
+            <!-- Right: clock · divider · bell · divider · user info · avatar -->
+            <div class="flex items-center gap-4">
 
-            <div class="nav-divider"></div>
+                <!-- Live Clock + Date -->
+                <div class="text-right">
+                    <div id="navClock" class="text-text-light dark:text-text-dark"></div>
+                    <div id="navDate"  class="text-subtext-light dark:text-subtext-dark uppercase tracking-widest"></div>
+                </div>
 
-            <!-- Notification Bell -->
-            <div class="relative">
-              <button
-                id="notificationBtn"
-                class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              >
-                <span class="material-icons-outlined text-2xl"
-                  >notifications</span
-                >
-                <span
-                  id="notificationBadge"
-                  class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold"
-                  style="display: none"
-                  >0</span
-                >
-              </button>
+                <div class="nav-divider"></div>
 
-              <div id="notificationDropdown" class="notif-dropdown">
-                <div class="notif-header">
-                  <h3>Notifications</h3>
-                  <div class="notif-header-meta">
-                    <span class="unread-count-pill" id="unreadPill"
-                      >Loading...</span
-                    >
-                    <button class="mark-all-btn" onclick="markAllRead()">
-                      Mark all read
+                <!-- Notification Bell -->
+                <div class="relative">
+                    <button id="notificationBtn"
+                        class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <span class="material-icons-outlined text-2xl">notifications</span>
+                        <span id="notificationBadge"
+                            class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold"
+                            style="display:none;">0</span>
                     </button>
-                  </div>
-                </div>
-                <div class="notif-tabs">
-                  <button
-                    class="notif-tab-btn active"
-                    onclick="filterNotifTab(this, 'all')"
-                  >
-                    All
-                  </button>
-                  <button
-                    class="notif-tab-btn"
-                    onclick="filterNotifTab(this, 'critical')"
-                  >
-                    Critical
-                  </button>
-                  <button
-                    class="notif-tab-btn"
-                    onclick="filterNotifTab(this, 'expiry')"
-                  >
-                    Expiry
-                  </button>
-                  <button
-                    class="notif-tab-btn"
-                    onclick="filterNotifTab(this, 'shortage')"
-                  >
-                    Stock
-                  </button>
-                </div>
-                <div class="notif-list" id="notifList">
-                  <div
-                    style="
-                      padding: 30px 20px;
-                      text-align: center;
-                      color: #9ca3af;
-                    "
-                  >
-                    <span
-                      class="material-icons"
-                      style="
-                        font-size: 32px;
-                        display: block;
-                        margin: 0 auto 8px;
-                      "
-                      >hourglass_empty</span
-                    >
-                    <p style="font-size: 12px">Loading alerts...</p>
-                  </div>
-                </div>
-                <div class="notif-footer">
-                  <a href="inventory.html" class="view-all-link">
-                    View inventory
-                    <span class="material-icons">arrow_forward</span>
-                  </a>
-                </div>
-              </div>
-            </div>
 
-            <div class="nav-divider"></div>
+                    <div id="notificationDropdown" class="notif-dropdown">
+                        <div class="notif-header">
+                            <h3>Notifications</h3>
+                            <div class="notif-header-meta">
+                                <span class="unread-count-pill" id="unreadPill">Loading...</span>
+                                <button class="mark-all-btn" onclick="markAllRead()">Mark all read</button>
+                            </div>
+                        </div>
+                        <div class="notif-tabs">
+                            <button class="notif-tab-btn active" onclick="filterNotifTab(this,'all')">All</button>
+                            <button class="notif-tab-btn" onclick="filterNotifTab(this,'critical')">Critical</button>
+                            <button class="notif-tab-btn" onclick="filterNotifTab(this,'expiry')">Expiry</button>
+                            <button class="notif-tab-btn" onclick="filterNotifTab(this,'shortage')">Stock</button>
+                        </div>
+                        <div class="notif-list" id="notifList">
+                            <div style="padding:30px 20px;text-align:center;color:#9ca3af;">
+                                <span class="material-icons" style="font-size:32px;display:block;margin:0 auto 8px;">hourglass_empty</span>
+                                <p style="font-size:12px;">Loading alerts...</p>
+                            </div>
+                        </div>
+                        <div class="notif-footer">
+                            <a href="inventory.html" class="view-all-link">
+                                View inventory <span class="material-icons">arrow_forward</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- User Name + Role -->
-            <div class="text-right leading-tight">
-              <div
-                id="navUserName"
-                class="text-sm font-bold text-text-light dark:text-text-dark"
-              >
-                User
-              </div>
-              <div
-                id="navUserRole"
-                class="text-xs text-subtext-light dark:text-subtext-dark"
-              >
-                Staff
-              </div>
-            </div>
+                <div class="nav-divider"></div>
 
-            <!-- Avatar with dynamic initial -->
-            <div
-              id="navAvatar"
-              class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm select-none"
-            >
-              U
+                <!-- User Name + Role -->
+                <div class="text-right leading-tight">
+                    <div id="navUserName" class="text-sm font-bold text-text-light dark:text-text-dark">User</div>
+                    <div id="navUserRole" class="text-xs text-subtext-light dark:text-subtext-dark">Staff</div>
+                </div>
+
+                <!-- Avatar with dynamic initial -->
+                <div id="navAvatar" class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm select-none">U</div>
+
             </div>
-          </div>
         </header>
 
         <div class="flex-1 p-8 overflow-y-auto">
-          <div class="flex justify-between items-center mb-6">
-            <div>
-              <h1
-                class="text-3xl font-bold text-text-light dark:text-text-dark"
-              >
-                Sales & Billing Records
-              </h1>
-              <p class="text-subtext-light dark:text-subtext-dark mt-1">
-                Track sales transactions auto-linked to billing system
-              </p>
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h1 class="text-3xl font-bold text-text-light dark:text-text-dark">Sales & Billing Records</h1>
+                    <p class="text-subtext-light dark:text-subtext-dark mt-1">Track sales transactions auto-linked to billing system</p>
+                </div>
             </div>
           </div>
 
@@ -1138,41 +974,56 @@
                 <tbody id="transactionsTableBody"></tbody>
               </table>
             </div>
-            <div class="pagination-bar" id="billingPaginationBar">
-              <div class="rows-per-page">
-                Rows per page:
-                <select
-                  id="billingRppSelect"
-                  onchange="
-                    billingRowsPerPage = parseInt(this.value);
-                    billingPage = 1;
-                    billingManager.renderTable(billingManager._lastData);
-                  "
-                >
-                  <option value="10" selected>10</option>
-                  <option value="20">20</option>
-                  <option value="50">50</option>
-                </select>
-              </div>
-              <div class="pagination-info" id="billingPaginationInfo"></div>
-              <div
-                class="pagination-controls"
-                id="billingPaginationControls"
-              ></div>
+            <div class="sf-option" data-value="Pending" data-icon="schedule" data-icon-class="sfi-pending" data-label="Pending" onclick="applySF(this)">
+                <span class="sf-opt-icon sfi-pending"><span class="material-icons">schedule</span></span>
+                <span class="sf-opt-name">Pending</span>
             </div>
-            <div
-              id="noResults"
-              class="hidden text-center py-12 text-subtext-light dark:text-subtext-dark"
-            >
-              <span class="material-icons text-5xl mb-2 opacity-50"
-                >search_off</span
-              >
-              <p>No transactions found matching your criteria</p>
+            <div class="sf-option" data-value="Failed" data-icon="cancel" data-icon-class="sfi-failed" data-label="Failed" onclick="applySF(this)">
+                <span class="sf-opt-icon sfi-failed"><span class="material-icons">cancel</span></span>
+                <span class="sf-opt-name">Failed</span>
             </div>
-          </div>
         </div>
-      </main>
     </div>
+</div>
+            <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-semibold text-text-light dark:text-text-dark">Sales Transactions</h2>
+        <span id="recordsCountBadge" class="text-xs text-subtext-light dark:text-subtext-dark bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full font-medium">0 records</span>
+    </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-xs text-subtext-light dark:text-subtext-dark uppercase">
+                            <tr>
+                                <th class="px-6 py-3 rounded-l-lg cursor-pointer">Date</th>
+                                <th class="px-6 py-3 cursor-pointer">Patient</th>
+                                <th class="px-6 py-3 cursor-pointer">Medicine(s)</th>
+                                <th class="px-6 py-3 cursor-pointer">Amount</th>
+                                <th class="px-6 py-3 cursor-pointer">Payment Status</th>
+                                <th class="px-6 py-3 cursor-pointer text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTableBody"></tbody>
+                    </table>
+                </div>
+                <div class="pagination-bar" id="billingPaginationBar">
+                    <div class="rows-per-page">Rows per page:
+                        <select id="billingRppSelect" onchange="billingRowsPerPage=parseInt(this.value);billingPage=1;billingManager.renderTable(billingManager._lastData)">
+                            <option value="10" selected>10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+                    <div class="pagination-info" id="billingPaginationInfo"></div>
+                    <div class="pagination-controls" id="billingPaginationControls"></div>
+                </div>
+                <div id="noResults" class="hidden text-center py-12 text-subtext-light dark:text-subtext-dark">
+                    <span class="material-icons text-5xl mb-2 opacity-50">search_off</span>
+                    <p>No transactions found matching your criteria</p>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
 
     <script>
       const API_BASE_URL = "http://localhost:5001";
@@ -1182,166 +1033,134 @@
       // ══════════════════════════════════════════════════════════
       function updateNavClock() {
         const now = new Date();
-        const timeStr = now.toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-          hour12: true,
+        const timeStr = now.toLocaleTimeString('en-US', {
+            hour:   '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
         });
-        const dateStr = now
-          .toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          })
-          .toUpperCase();
-        document.getElementById("navClock").textContent = timeStr;
-        document.getElementById("navDate").textContent = dateStr;
-      }
+        const dateStr = now.toLocaleDateString('en-US', {
+            month: 'short',
+            day:   'numeric',
+            year:  'numeric'
+        }).toUpperCase();
+        document.getElementById('navClock').textContent = timeStr;
+        document.getElementById('navDate').textContent  = dateStr;
+    }
 
-      // ── Load user info from session into navbar ──
-      function loadNavUserInfo() {
+    // ── Load user info from session into navbar ──
+    function loadNavUserInfo() {
         try {
-          const raw = sessionStorage.getItem("userInfo");
-          if (!raw) return;
-          const info = JSON.parse(raw);
-          const name = info.name || info.firstName || info.username || "User";
-          const role = info.role || info.position || "";
-          const initial = name.charAt(0).toUpperCase();
-          document.getElementById("navUserName").textContent = name;
-          document.getElementById("navUserRole").textContent = role;
-          document.getElementById("navAvatar").textContent = initial;
-        } catch (e) {
-          /* keep defaults */
-        }
-      }
+            const raw = sessionStorage.getItem('userInfo');
+            if (!raw) return;
+            const info    = JSON.parse(raw);
+            const name    = info.name || info.firstName || info.username || 'User';
+            const role    = info.role || info.position || '';
+            const initial = name.charAt(0).toUpperCase();
+            document.getElementById('navUserName').textContent = name;
+            document.getElementById('navUserRole').textContent = role;
+            document.getElementById('navAvatar').textContent   = initial;
+        } catch(e) { /* keep defaults */ }
+    }
 
-      // ══════════════════════════════════════════════════════════
-      // FANCY NOTIFICATION BELL — live from /api/inventory
-      // ══════════════════════════════════════════════════════════
-      let notifData = [];
-      let activeNotifFilter = "all";
+    // ══════════════════════════════════════════════════════════
+    // FANCY NOTIFICATION BELL — live from /api/inventory
+    // ══════════════════════════════════════════════════════════
+    let notifData         = [];
+    let activeNotifFilter = 'all';
 
-      function getNotifToken() {
-        const direct = sessionStorage.getItem("token");
+    function getNotifToken() {
+        const direct = sessionStorage.getItem('token');
         if (direct) return direct;
-        const userInfo = sessionStorage.getItem("userInfo");
+        const userInfo = sessionStorage.getItem('userInfo');
         if (userInfo) {
-          try {
-            return JSON.parse(userInfo).token || null;
-          } catch (e) {}
+            try { return JSON.parse(userInfo).token || null; } catch(e) {}
         }
         return null;
-      }
+    }
 
-      function generateAlertsFromInventory(inventory) {
-        const alerts = [];
-        const today = new Date();
+    function generateAlertsFromInventory(inventory) {
+        const alerts     = [];
+        const today      = new Date();
         const thirtyDays = new Date();
         thirtyDays.setDate(today.getDate() + 30);
 
         inventory.forEach((item, idx) => {
-          const medName =
-            item.medicine?.name || item.name || "Unknown Medicine";
+            const medName = item.medicine?.name || item.name || 'Unknown Medicine';
 
-          if (item.expiryDate) {
-            const expiry = new Date(item.expiryDate);
-            if (expiry < today) {
-              alerts.push({
-                id: `exp-${item._id || idx}`,
-                type: "expiry",
-                unread: true,
-                medicineName: medName,
-                title: "Medicine Expired",
-                desc: `${medName} expired on ${expiry.toLocaleDateString("en-PH")}.`,
-                time: "Needs immediate attention",
-                actionLabel: "View Inventory",
-                actionClass: "btn-expiry",
-                icon: "event_busy",
-                iconClass: "icon-expiry",
-              });
-            } else if (expiry <= thirtyDays) {
-              const d = Math.ceil((expiry - today) / 864e5);
-              alerts.push({
-                id: `exp-${item._id || idx}`,
-                type: "expiry",
-                unread: true,
-                medicineName: medName,
-                title: "Expiring Soon",
-                desc: `${medName} expires in ${d} day${d === 1 ? "" : "s"}.`,
-                time: `${d} days left`,
-                actionLabel: "View Inventory",
-                actionClass: "btn-expiry",
-                icon: "schedule",
-                iconClass: "icon-expiry",
-              });
+            if (item.expiryDate) {
+                const expiry = new Date(item.expiryDate);
+                if (expiry < today) {
+                    alerts.push({
+                        id: `exp-${item._id || idx}`, type: 'expiry', unread: true,
+                        medicineName: medName,
+                        title: 'Medicine Expired',
+                        desc:  `${medName} expired on ${expiry.toLocaleDateString('en-PH')}.`,
+                        time:  'Needs immediate attention',
+                        actionLabel: 'View Inventory', actionClass: 'btn-expiry',
+                        icon: 'event_busy', iconClass: 'icon-expiry'
+                    });
+                } else if (expiry <= thirtyDays) {
+                    const d = Math.ceil((expiry - today) / 864e5);
+                    alerts.push({
+                        id: `exp-${item._id || idx}`, type: 'expiry', unread: true,
+                        medicineName: medName,
+                        title: 'Expiring Soon',
+                        desc:  `${medName} expires in ${d} day${d === 1 ? '' : 's'}.`,
+                        time:  `${d} days left`,
+                        actionLabel: 'View Inventory', actionClass: 'btn-expiry',
+                        icon: 'schedule', iconClass: 'icon-expiry'
+                    });
+                }
             }
-          }
 
-          const qty = parseInt(item.quantity || 0);
-          const minStock = parseInt(item.minStockLevel || 10);
-          const isExpired = new Date(item.expiryDate) < today;
+            const qty      = parseInt(item.quantity || 0);
+            const minStock = parseInt(item.minStockLevel || 10);
+            const isExpired = new Date(item.expiryDate) < today;
 
-          if (!isExpired && qty === 0) {
-            alerts.push({
-              id: `stk-${item._id || idx}`,
-              type: "critical",
-              unread: true,
-              medicineName: medName,
-              title: "Critical: Out of Stock",
-              desc: `${medName} is completely out of stock.`,
-              time: "Immediate action required",
-              actionLabel: "View Inventory",
-              actionClass: "btn-critical",
-              icon: "warning",
-              iconClass: "icon-critical",
-            });
-          } else if (!isExpired && qty <= minStock) {
-            alerts.push({
-              id: `stk-${item._id || idx}`,
-              type: "shortage",
-              unread: true,
-              medicineName: medName,
-              title: "Low Stock Alert",
-              desc: `${medName} — only ${qty} unit${qty === 1 ? "" : "s"} remaining (min: ${minStock}).`,
-              time: "Reorder soon",
-              actionLabel: "View Inventory",
-              actionClass: "btn-shortage",
-              icon: "inventory_2",
-              iconClass: "icon-shortage",
-            });
-          }
+            if (!isExpired && qty === 0) {
+                alerts.push({
+                    id: `stk-${item._id || idx}`, type: 'critical', unread: true,
+                    medicineName: medName,
+                    title: 'Critical: Out of Stock',
+                    desc:  `${medName} is completely out of stock.`,
+                    time:  'Immediate action required',
+                    actionLabel: 'View Inventory', actionClass: 'btn-critical',
+                    icon: 'warning', iconClass: 'icon-critical'
+                });
+            } else if (!isExpired && qty <= minStock) {
+                alerts.push({
+                    id: `stk-${item._id || idx}`, type: 'shortage', unread: true,
+                    medicineName: medName,
+                    title: 'Low Stock Alert',
+                    desc:  `${medName} — only ${qty} unit${qty === 1 ? '' : 's'} remaining (min: ${minStock}).`,
+                    time:  'Reorder soon',
+                    actionLabel: 'View Inventory', actionClass: 'btn-shortage',
+                    icon: 'inventory_2', iconClass: 'icon-shortage'
+                });
+            }
         });
 
         const order = { critical: 0, expiry: 1, shortage: 2 };
         alerts.sort((a, b) => (order[a.type] ?? 9) - (order[b.type] ?? 9));
         return alerts;
-      }
+    }
 
-      function renderNotifications() {
-        const list = document.getElementById("notifList");
-        const filtered =
-          activeNotifFilter === "all"
+    function renderNotifications() {
+        const list     = document.getElementById('notifList');
+        const filtered = activeNotifFilter === 'all'
             ? notifData
-            : notifData.filter((n) => n.type === activeNotifFilter);
+            : notifData.filter(n => n.type === activeNotifFilter);
 
         if (!filtered.length) {
-          const msg =
-            activeNotifFilter === "all"
-              ? "All clear — no alerts right now!"
-              : "No notifications in this category.";
-          list.innerHTML =
-            '<div class="notif-empty"><span class="material-icons">notifications_none</span><p>' +
-            msg +
-            "</p></div>";
-          updateNotifBadge();
-          return;
+            const msg = activeNotifFilter === 'all' ? 'All clear — no alerts right now!' : 'No notifications in this category.';
+            list.innerHTML = '<div class="notif-empty"><span class="material-icons">notifications_none</span><p>' + msg + '</p></div>';
+            updateNotifBadge();
+            return;
         }
 
-        list.innerHTML = filtered
-          .map(
-            (n) => `
-            <div class="notif-item ${n.type} ${n.unread ? "unread" : ""}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
+        list.innerHTML = filtered.map(n => `
+            <div class="notif-item ${n.type} ${n.unread ? 'unread' : ''}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
                 <div class="notif-icon-wrap ${n.iconClass}"><span class="material-icons">${n.icon}</span></div>
                 <div class="notif-body">
                     <div class="notif-title">${n.title}</div>
@@ -1351,178 +1170,138 @@
                         <button class="notif-action-btn ${n.actionClass}" onclick="handleNotifAction(event,'${n.id}')">${n.actionLabel}</button>
                     </div>
                 </div>
-                ${n.unread ? '<div class="unread-dot"></div>' : ""}
-            </div>`,
-          )
-          .join("");
+                ${n.unread ? '<div class="unread-dot"></div>' : ''}
+            </div>`).join('');
 
         updateNotifBadge();
-      }
+    }
 
-      function updateNotifBadge() {
-        const count = notifData.filter((n) => n.unread).length;
-        const badge = document.getElementById("notificationBadge");
-        const pill = document.getElementById("unreadPill");
-        if (badge) {
-          badge.textContent = count;
-          badge.style.display = count > 0 ? "flex" : "none";
-        }
-        if (pill) pill.textContent = count > 0 ? `${count} new` : "All clear";
-      }
+    function updateNotifBadge() {
+        const count = notifData.filter(n => n.unread).length;
+        const badge = document.getElementById('notificationBadge');
+        const pill  = document.getElementById('unreadPill');
+        if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none'; }
+        if (pill)  pill.textContent = count > 0 ? `${count} new` : 'All clear';
+    }
 
-      function markNotifRead(id) {
-        const n = notifData.find((n) => n.id === id);
-        if (n) {
-          n.unread = false;
-          saveReadNotifId(id);
-          renderNotifications();
-        }
-      }
+    function markNotifRead(id) {
+    const n = notifData.find(n => n.id === id);
+    if (n) { n.unread = false; saveReadNotifId(id); renderNotifications(); }
+}
 
-      function markAllRead() {
-        notifData.forEach((n) => (n.unread = false));
-        saveAllReadNotifIds();
-        renderNotifications();
-      }
+function markAllRead() {
+    notifData.forEach(n => n.unread = false);
+    saveAllReadNotifIds();
+    renderNotifications();
+}
 
-      function handleNotifAction(event, id) {
-        event.stopPropagation();
-        markNotifRead(id);
-        const n = notifData.find((n) => n.id === id);
-        if (!n) return;
-        document
-          .getElementById("notificationDropdown")
-          .classList.remove("open");
+    function handleNotifAction(event, id) {
+    event.stopPropagation();
+    markNotifRead(id);
+    const n = notifData.find(n => n.id === id);
+    if (!n) return;
+    document.getElementById('notificationDropdown').classList.remove('open');
 
-        if (n.type === "expiry") {
-          sessionStorage.setItem(
-            "notifRedirect",
-            JSON.stringify({ tab: "batch", medicine: n.medicineName }),
-          );
-        } else if (n.type === "critical" || n.type === "shortage") {
-          sessionStorage.setItem(
-            "notifRedirect",
-            JSON.stringify({ tab: "summary", medicine: n.medicineName }),
-          );
-        }
-        window.location.href = "inventory.html";
-      }
+    if (n.type === 'expiry') {
+        sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'batch', medicine: n.medicineName }));
+    } else if (n.type === 'critical' || n.type === 'shortage') {
+        sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'summary', medicine: n.medicineName }));
+    }
+    window.location.href = 'inventory.html';
+}
 
-      function filterNotifTab(btn, filter) {
-        document
-          .querySelectorAll(".notif-tab-btn")
-          .forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
+    function filterNotifTab(btn, filter) {
+        document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
         activeNotifFilter = filter;
         renderNotifications();
-      }
+    }
 
-      function getReadNotifIds() {
-        try {
-          return new Set(
-            JSON.parse(sessionStorage.getItem("readNotifIds") || "[]"),
-          );
-        } catch (e) {
-          return new Set();
+    function getReadNotifIds() {
+    try { return new Set(JSON.parse(sessionStorage.getItem('readNotifIds') || '[]')); }
+    catch(e) { return new Set(); }
+}
+
+function saveReadNotifId(id) {
+    const ids = getReadNotifIds();
+    ids.add(id);
+    sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
+}
+
+function saveAllReadNotifIds() {
+    const ids = getReadNotifIds();
+    notifData.forEach(n => ids.add(n.id));
+    sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
+}
+
+async function refreshNotifications() {
+    const token = getNotifToken();
+    if (!token) return;
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/inventory`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const raw       = await res.json();
+        const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
+        const readIds = getReadNotifIds();
+        notifData = generateAlertsFromInventory(inventory).slice(0, 15);
+        notifData.forEach(n => { if (readIds.has(n.id)) n.unread = false; });
+        renderNotifications();
+    } catch (e) {
+        console.warn('Notification fetch failed:', e);
+        if (!notifData.length) {
+            const list = document.getElementById('notifList');
+            if (list) list.innerHTML = `<div class="notif-empty"><span class="material-icons">cloud_off</span><p>Could not load alerts.</p></div>`;
         }
-      }
+    }
+}
+    let billingPage = 1, billingRowsPerPage = 10;
 
-      function saveReadNotifId(id) {
-        const ids = getReadNotifIds();
-        ids.add(id);
-        sessionStorage.setItem("readNotifIds", JSON.stringify([...ids]));
-      }
+function buildBillingPagination(totalItems, currentPage, rowsPerPage) {
+    const totalPages = Math.ceil(totalItems / rowsPerPage);
+    if (currentPage > totalPages) currentPage = totalPages || 1;
 
-      function saveAllReadNotifIds() {
-        const ids = getReadNotifIds();
-        notifData.forEach((n) => ids.add(n.id));
-        sessionStorage.setItem("readNotifIds", JSON.stringify([...ids]));
-      }
+    const info = document.getElementById('billingPaginationInfo');
+    const controls = document.getElementById('billingPaginationControls');
+    if (!info || !controls) return currentPage;
 
-      async function refreshNotifications() {
-        const token = getNotifToken();
-        if (!token) return;
-        try {
-          const res = await fetch(`${API_BASE_URL}/api/inventory`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const raw = await res.json();
-          const inventory = Array.isArray(raw)
-            ? raw
-            : raw.medicines || raw.data || [];
-          const readIds = getReadNotifIds();
-          notifData = generateAlertsFromInventory(inventory).slice(0, 15);
-          notifData.forEach((n) => {
-            if (readIds.has(n.id)) n.unread = false;
-          });
-          renderNotifications();
-        } catch (e) {
-          console.warn("Notification fetch failed:", e);
-          if (!notifData.length) {
-            const list = document.getElementById("notifList");
-            if (list)
-              list.innerHTML = `<div class="notif-empty"><span class="material-icons">cloud_off</span><p>Could not load alerts.</p></div>`;
-          }
-        }
-      }
-      let billingPage = 1,
-        billingRowsPerPage = 10;
+    const start = totalItems === 0 ? 0 : (currentPage - 1) * rowsPerPage + 1;
+    const end   = Math.min(currentPage * rowsPerPage, totalItems);
+    info.textContent = totalItems === 0 ? 'No results' : `${start}–${end} of ${totalItems}`;
 
-      function buildBillingPagination(totalItems, currentPage, rowsPerPage) {
-        const totalPages = Math.ceil(totalItems / rowsPerPage);
-        if (currentPage > totalPages) currentPage = totalPages || 1;
+    let pages = [];
+    if (totalPages <= 7) {
+        for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+        pages = [1];
+        if (currentPage > 3) pages.push('...');
+        for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) pages.push(i);
+        if (currentPage < totalPages - 2) pages.push('...');
+        pages.push(totalPages);
+    }
 
-        const info = document.getElementById("billingPaginationInfo");
-        const controls = document.getElementById("billingPaginationControls");
-        if (!info || !controls) return currentPage;
-
-        const start =
-          totalItems === 0 ? 0 : (currentPage - 1) * rowsPerPage + 1;
-        const end = Math.min(currentPage * rowsPerPage, totalItems);
-        info.textContent =
-          totalItems === 0 ? "No results" : `${start}–${end} of ${totalItems}`;
-
-        let pages = [];
-        if (totalPages <= 7) {
-          for (let i = 1; i <= totalPages; i++) pages.push(i);
-        } else {
-          pages = [1];
-          if (currentPage > 3) pages.push("...");
-          for (
-            let i = Math.max(2, currentPage - 1);
-            i <= Math.min(totalPages - 1, currentPage + 1);
-            i++
-          )
-            pages.push(i);
-          if (currentPage < totalPages - 2) pages.push("...");
-          pages.push(totalPages);
-        }
-
-        controls.innerHTML = `
-        <button class="pg-btn" onclick="goBillingPage(${currentPage - 1})" ${currentPage === 1 ? "disabled" : ""}>
+    controls.innerHTML = `
+        <button class="pg-btn" onclick="goBillingPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
             <span class="material-icons" style="font-size:16px;">chevron_left</span>
         </button>
-        ${pages
-          .map((p) =>
-            p === "..."
-              ? `<span class="pg-ellipsis">…</span>`
-              : `<button class="pg-btn ${p === currentPage ? "active" : ""}" onclick="goBillingPage(${p})">${p}</button>`,
-          )
-          .join("")}
-        <button class="pg-btn" onclick="goBillingPage(${currentPage + 1})" ${currentPage === totalPages || totalPages === 0 ? "disabled" : ""}>
+        ${pages.map(p => p === '...'
+            ? `<span class="pg-ellipsis">…</span>`
+            : `<button class="pg-btn ${p === currentPage ? 'active' : ''}" onclick="goBillingPage(${p})">${p}</button>`
+        ).join('')}
+        <button class="pg-btn" onclick="goBillingPage(${currentPage + 1})" ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''}>
             <span class="material-icons" style="font-size:16px;">chevron_right</span>
         </button>`;
 
-        return currentPage;
-      }
+    return currentPage;
+}
 
-      function goBillingPage(p) {
-        billingPage = p;
-        billingManager.renderTable(billingManager._lastData);
-      }
+function goBillingPage(p) {
+    billingPage = p;
+    billingManager.renderTable(billingManager._lastData);
+}
 
-      // ══ END FANCY NOTIFICATION SYSTEM ══
+    // ══ END FANCY NOTIFICATION SYSTEM ══
 
       class BillingManager {
         constructor() {
@@ -1533,16 +1312,16 @@
         }
 
         async init() {
-          if (!this.getToken()) {
-            window.location.href = "../../html/login.html";
-            return;
-          }
-          await this.fetchSales();
+            if(!this.getToken()) {
+                window.location.href = '../../html/login.html';
+                return;
+            }
+            await this.fetchSales();
         }
 
         getToken() {
-          const userInfo = sessionStorage.getItem("userInfo");
-          return userInfo ? JSON.parse(userInfo).token : null;
+            const userInfo = sessionStorage.getItem('userInfo');
+            return userInfo ? JSON.parse(userInfo).token : null;
         }
 
         async fetchSales() {
@@ -1560,70 +1339,58 @@
               this.salesData = data;
               this.applyFilters();
             }
-          } catch (err) {
-            console.error("Fetch Error:", err);
-          }
         }
 
         async syncWithBilling() {
-          const btn = document.getElementById("syncBtn");
-          const icon = document.getElementById("syncIcon");
-          const staticIcon = document.getElementById("staticSyncIcon");
+            const btn = document.getElementById('syncBtn');
+            const icon = document.getElementById('syncIcon');
+            const staticIcon = document.getElementById('staticSyncIcon');
 
-          btn.disabled = true;
-          btn.classList.add("opacity-75");
-          icon.style.display = "inline-block";
-          staticIcon.style.display = "none";
+            btn.disabled = true;
+            btn.classList.add('opacity-75');
+            icon.style.display = 'inline-block';
+            staticIcon.style.display = 'none';
 
-          try {
-            const res = await fetch(`${API_BASE_URL}/api/sales/sync`, {
-              method: "POST",
-              headers: { Authorization: `Bearer ${this.getToken()}` },
-            });
-            const result = await res.json();
-            if (res.ok) {
-              Swal.fire({
-                title: "Sync Complete",
-                text:
-                  result.message +
-                  (result.updated > 0 ? ` (${result.updated} updated)` : ""),
-                icon: "success",
-                timer: 2000,
-                showConfirmButton: false,
-                confirmButtonColor: "#005a32",
-              });
-              await this.fetchSales();
-            } else {
-              Swal.fire("Sync Failed", result.message, "error");
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/sales/sync`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${this.getToken()}` }
+                });
+                const result = await res.json();
+                if (res.ok) {
+                    Swal.fire({
+                        title: 'Sync Complete',
+                        text: result.message + (result.updated > 0 ? ` (${result.updated} updated)` : ''),
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false,
+                        confirmButtonColor: '#005a32'
+                    });
+                    await this.fetchSales();
+                } else {
+                    Swal.fire('Sync Failed', result.message, 'error');
+                }
+            } catch (err) {
+                Swal.fire('Error', 'Could not connect to server', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove('opacity-75');
+                icon.style.display = 'none';
+                staticIcon.style.display = 'inline-block';
             }
-          } catch (err) {
-            Swal.fire("Error", "Could not connect to server", "error");
-          } finally {
-            btn.disabled = false;
-            btn.classList.remove("opacity-75");
-            icon.style.display = "none";
-            staticIcon.style.display = "inline-block";
-          }
         }
 
         updateStats() {
-          const totalRevenue = this.salesData
-            .filter((s) => s.paymentStatus === "Paid")
-            .reduce((acc, curr) => acc + curr.totalAmount, 0);
-          const today = new Date().toDateString();
-          const todaysSales = this.salesData
-            .filter(
-              (s) =>
-                new Date(s.date).toDateString() === today &&
-                s.paymentStatus === "Paid",
-            )
-            .reduce((acc, curr) => acc + curr.totalAmount, 0);
-          document.getElementById("totalTransactions").textContent =
-            this.salesData.length;
-          document.getElementById("totalRevenue").textContent =
-            `₱${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
-          document.getElementById("todaysSales").textContent =
-            `₱${todaysSales.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+            const totalRevenue = this.salesData
+                .filter(s => s.paymentStatus === 'Paid')
+                .reduce((acc, curr) => acc + curr.totalAmount, 0);
+            const today = new Date().toDateString();
+            const todaysSales = this.salesData
+                .filter(s => new Date(s.date).toDateString() === today && s.paymentStatus === 'Paid')
+                .reduce((acc, curr) => acc + curr.totalAmount, 0);
+            document.getElementById('totalTransactions').textContent = this.salesData.length;
+            document.getElementById('totalRevenue').textContent = `₱${totalRevenue.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            document.getElementById('todaysSales').textContent = `₱${todaysSales.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
         }
 
         renderTable(data) {
@@ -1703,12 +1470,11 @@
                         <select class="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             ${options}
                         </select>`;
-              }
+                }
 
-              const amount =
-                sale.totalAmount !== undefined ? sale.totalAmount : 0;
+                const amount = sale.totalAmount !== undefined ? sale.totalAmount : 0;
 
-              return `
+                return `
                 <tr class="border-b border-slate-200 dark:border-slate-700 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 transition-colors">
                     <td class="px-6 py-4 text-subtext-light dark:text-subtext-dark whitespace-nowrap">${dateDisplay}</td>
                     <td class="px-6 py-4">
@@ -1716,7 +1482,7 @@
                         <div class="text-xs text-subtext-light dark:text-subtext-dark bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded w-fit mt-1">${pIdDisplay}</div>
                     </td>
                     <td class="px-6 py-4"><div class="w-64">${medicineHtml}</div></td>
-                    <td class="px-6 py-4 font-bold text-text-light dark:text-text-dark">₱${amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                    <td class="px-6 py-4 font-bold text-text-light dark:text-text-dark">₱${amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
                     <td class="px-6 py-4">
                         <span class="status-badge ${statusClass}">${currentStatus}</span>
                     </td>
@@ -1726,15 +1492,57 @@
                         </button>
                     </td>
                 </tr>`;
-            })
-            .join("");
+            }).join('');
         }
 
         getItemName(item) {
-          if (item.name && item.name !== "Unknown") return item.name;
-          if (item.medicine && item.medicine.name) return item.medicine.name;
-          return "";
-        }
+    if (item.name && item.name !== 'Unknown') return item.name;
+    if (item.medicine && item.medicine.name) return item.medicine.name;
+    return '';
+}
+
+onSearch(val) {
+    this.activeSearch = val.trim();
+    this.applyFilters();
+}
+onStatusFilter(status) {
+    this.activeStatus = status;
+    this.applyFilters();
+}
+
+applyFilters() {
+    billingPage = 1;
+    const dateVal = document.getElementById('dateRangeFilter')?.value || 'all';
+
+    let filtered = this.salesData;
+
+    if (this.activeStatus !== 'all') {
+    const target = this.activeStatus.toLowerCase();
+    filtered = filtered.filter(s => {
+        let raw = (s.paymentStatus || 'Pending').trim().toLowerCase();
+        if (raw === 'completed') raw = 'paid';
+        return raw === target;
+    });
+}
+
+    if (this.activeSearch) {
+        const lower = this.activeSearch.toLowerCase();
+        filtered = filtered.filter(s =>
+            (s.patientName && s.patientName.toLowerCase().includes(lower)) ||
+            (s._id && s._id.toLowerCase().includes(lower)) ||
+            (s.items && s.items.some(i => this.getItemName(i).toLowerCase().includes(lower)))
+        );
+    }
+
+    if (dateVal !== 'all') {
+        const now = new Date();
+        const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        filtered = filtered.filter(s => {
+            const raw = new Date(s.date || s.createdAt);
+            if (isNaN(raw.getTime())) return false;
+            // Normalize to local midnight — avoids UTC off-by-one (same fix as patient records)
+            const d = new Date(raw.getFullYear(), raw.getMonth(), raw.getDate());
 
         onSearch(val) {
           this.activeSearch = val.trim();
@@ -1795,50 +1603,34 @@
 
               if (dateVal === "today") {
                 return d.getTime() === todayLocal.getTime();
-              }
-              if (dateVal === "week") {
+            }
+            if (dateVal === 'week') {
                 const weekStart = new Date(todayLocal);
                 weekStart.setDate(todayLocal.getDate() - 7);
                 return d >= weekStart && d <= todayLocal;
-              }
-              if (dateVal === "month") {
+            }
+            if (dateVal === 'month') {
                 // Current calendar month: e.g. March 1 – March 31
-                const monthStart = new Date(
-                  todayLocal.getFullYear(),
-                  todayLocal.getMonth(),
-                  1,
-                );
-                const monthEnd = new Date(
-                  todayLocal.getFullYear(),
-                  todayLocal.getMonth() + 1,
-                  0,
-                );
+                const monthStart = new Date(todayLocal.getFullYear(), todayLocal.getMonth(), 1);
+                const monthEnd   = new Date(todayLocal.getFullYear(), todayLocal.getMonth() + 1, 0);
                 return d >= monthStart && d <= monthEnd;
-              }
-              if (dateVal === "last-month") {
-                const lmStart = new Date(
-                  todayLocal.getFullYear(),
-                  todayLocal.getMonth() - 1,
-                  1,
-                );
-                const lmEnd = new Date(
-                  todayLocal.getFullYear(),
-                  todayLocal.getMonth(),
-                  0,
-                );
+            }
+            if (dateVal === 'last-month') {
+                const lmStart = new Date(todayLocal.getFullYear(), todayLocal.getMonth() - 1, 1);
+                const lmEnd   = new Date(todayLocal.getFullYear(), todayLocal.getMonth(), 0);
                 return d >= lmStart && d <= lmEnd;
-              }
-              if (dateVal === "year") {
+            }
+            if (dateVal === 'year') {
                 const yearStart = new Date(todayLocal.getFullYear(), 0, 1);
-                const yearEnd = new Date(todayLocal.getFullYear(), 11, 31);
+                const yearEnd   = new Date(todayLocal.getFullYear(), 11, 31);
                 return d >= yearStart && d <= yearEnd;
-              }
-              return true;
-            });
-          }
+            }
+            return true;
+        });
+    }
 
-          this.renderTable(filtered);
-        }
+    this.renderTable(filtered);
+}
 
         handleSearch(val) {
           this.onSearch(val);
@@ -1849,11 +1641,9 @@
         }
 
         viewDetails(id) {
-          const sale = this.salesData.find((s) => s._id === id);
-          if (!sale) return;
-          const itemsHtml = sale.items
-            .map(
-              (i) =>
+            const sale = this.salesData.find(s => s._id === id);
+            if(!sale) return;
+            const itemsHtml = sale.items.map(i =>
                 `<div class="flex justify-between text-sm py-1 border-b border-gray-100 last:border-0">
                     <span>${i.name} <span class="text-gray-500 text-xs">x${i.quantity}</span></span>
                     <span>₱${(i.priceAtSale * i.quantity).toFixed(2)}</span>
@@ -1894,35 +1684,35 @@
             confirmButtonColor: "#005a32",
           });
         }
-      }
+    }
 
-      function confirmBackToHMS(event) {
+    function confirmBackToHMS(event) {
         event.preventDefault();
         Swal.fire({
-          title: "Leave Sales & Billing?",
-          text: "Return to Integrated Healthcare Management System?",
-          icon: "question",
-          showCancelButton: true,
-          confirmButtonColor: "#005a32",
-          confirmButtonText: "Yes, go back",
+            title: "Leave Sales & Billing?",
+            text: "Return to Integrated Healthcare Management System?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#005a32",
+            confirmButtonText: "Yes, go back"
         }).then((result) => {
-          if (result.isConfirmed) window.location.href = "index.html";
+            if (result.isConfirmed) window.location.href = 'index.html';
         });
-      }
+    }
 
-      function logoutUser() {
+    function logoutUser() {
         Swal.fire({
-          title: "Logout?",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#005a32",
-          confirmButtonText: "Yes, logout",
+            title: "Logout?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#005a32",
+            confirmButtonText: "Yes, logout"
         }).then((result) => {
-          if (result.isConfirmed) {
-            sessionStorage.removeItem("userInfo");
-            sessionStorage.removeItem("token");
-            window.location.href = "login.html";
-          }
+            if (result.isConfirmed) {
+                sessionStorage.removeItem('userInfo');
+                sessionStorage.removeItem('token');
+                window.location.href = 'login.html';
+            }
         });
       }
 
@@ -1972,8 +1762,8 @@
 
       document.addEventListener("DOMContentLoaded", function () {
         // ── Dark mode ──
-        const isDarkMode = sessionStorage.getItem("darkMode") === "true";
-        document.documentElement.classList.toggle("dark", isDarkMode);
+        const isDarkMode = sessionStorage.getItem('darkMode') === 'true';
+        document.documentElement.classList.toggle('dark', isDarkMode);
 
         // ── Live clock ──
         updateNavClock();
@@ -1983,26 +1773,28 @@
         loadNavUserInfo();
 
         // ── Notification bell wiring ──
-        const btn = document.getElementById("notificationBtn");
-        const dropdown = document.getElementById("notificationDropdown");
+        const btn      = document.getElementById('notificationBtn');
+        const dropdown = document.getElementById('notificationDropdown');
         if (btn && dropdown) {
-          btn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            dropdown.classList.toggle("open");
-            if (dropdown.classList.contains("open")) refreshNotifications();
-          });
-          document.addEventListener("click", (e) => {
-            if (!dropdown.contains(e.target) && e.target !== btn)
-              dropdown.classList.remove("open");
-          });
-          dropdown.addEventListener("click", (e) => e.stopPropagation());
-          setTimeout(refreshNotifications, 1000);
-          setInterval(refreshNotifications, 60000);
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('open');
+                if (dropdown.classList.contains('open')) refreshNotifications();
+            });
+            document.addEventListener('click', (e) => {
+                if (!dropdown.contains(e.target) && e.target !== btn) dropdown.classList.remove('open');
+            });
+            dropdown.addEventListener('click', e => e.stopPropagation());
+            setTimeout(refreshNotifications, 1000);
+            setInterval(refreshNotifications, 60000);
         }
-      });
-    </script>
-    <script src="../audio/audio-system.js"></script>
-    <script src="../audio/audio-manager.js"></script>
-    <script src="../js/windowcontrollerbtn.js"></script>
-  </body>
+    });
+
+
+    
+</script>
+<script src="../audio/audio-system.js"></script>
+<script src="../audio/audio-manager.js"></script>
+<script src="../js/windowcontrollerbtn.js"></script>
+</body>
 </html>

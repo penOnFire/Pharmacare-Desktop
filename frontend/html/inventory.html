@@ -1,53 +1,44 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Well Served - Inventory Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <script>
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              primary: "#005a32",
-              secondary: "#d62828",
-              accent: "#8b5a2b",
-              "background-light": "#f1f5f9",
-              "background-dark": "#0f172a",
-              "surface-light": "#FFFFFF",
-              "surface-dark": "#1F2937",
-              "text-light": "#1F2937",
-              "text-dark": "#F9FAFB",
-              "subtext-light": "#6B7280",
-              "subtext-dark": "#9CA3AF",
-              "border-light": "#E5E7EB",
-              "border-dark": "#374151",
-              success: "#22C55E",
-              warning: "#F59E0B",
-              danger: "#EF4444",
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#005a32",
+                        secondary: "#d62828",
+                        accent: "#8b5a2b",
+                        "background-light": "#f1f5f9",
+                        "background-dark": "#0f172a",
+                        "surface-light": "#FFFFFF",
+                        "surface-dark": "#1F2937",
+                        "text-light": "#1F2937",
+                        "text-dark": "#F9FAFB",
+                        "subtext-light": "#6B7280",
+                        "subtext-dark": "#9CA3AF",
+                        "border-light": "#E5E7EB",
+                        "border-dark": "#374151",
+                        "success": "#22C55E",
+                        "warning": "#F59E0B",
+                        "danger": "#EF4444",
+                    },
+                    fontFamily: { display: ["Inter", "sans-serif"] },
+                    borderRadius: { DEFAULT: "0.5rem" },
+                },
             },
-            fontFamily: { display: ["Inter", "sans-serif"] },
-            borderRadius: { DEFAULT: "0.5rem" },
-          },
-        },
-      };
+        };
     </script>
     <style>
       .export-check-row {
@@ -504,8 +495,57 @@
         from {
           transform: scale(0);
         }
-        to {
-          transform: scale(1);
+
+        /* ── NAVBAR DIVIDER ── */
+        .nav-divider {
+            width: 1px;
+            height: 28px;
+            background: #e5e7eb;
+        }
+        .dark .nav-divider { background: #374151; }
+
+        /* ── MODULE TABS — full width, green + red ── */
+        .module-tab-bar {
+            display: flex;
+            align-items: stretch;
+            background: linear-gradient(to bottom, #ffffff 0%, #f8fafc 100%);
+            border-bottom: 2px solid #e5e7eb;
+            position: relative;
+        }
+        .dark .module-tab-bar {
+            background: linear-gradient(to bottom, #1f2937 0%, #111827 100%);
+            border-color: #374151;
+        }
+
+        .module-tab-btn {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            height: 54px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            color: #9ca3af;
+            cursor: pointer;
+            border: none;
+            background: none;
+            outline: none;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: color 0.2s ease, background 0.2s ease;
+            white-space: nowrap;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .module-tab-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: transparent;
+            transition: background 0.2s ease;
         }
       }
       #notificationBadge {
@@ -853,117 +893,23 @@
         border-color: #005a32;
       }
     </style>
-  </head>
-  <body
-    class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark"
-  >
-    <div
-      id="title-bar"
-      class="drag-region fixed top-0 left-0 w-full h-8 bg-white flex justify-between items-stretch z-40 border-b border-gray-200 select-none"
-    >
-      <div class="flex items-center pl-4 gap-2 text-gray-600">
-        <span class="text-xs font-semibold">IHMS Pharmacy</span>
-      </div>
-      <div class="no-drag flex items-center relative z-50">
-        <button
-          id="min-btn"
-          class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200"
-        >
-          <span class="material-icons-outlined text-sm text-gray-600"
-            >remove</span
-          >
-        </button>
-        <button
-          id="max-btn"
-          class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200"
-        >
-          <span class="material-icons-outlined text-sm text-gray-600"
-            >crop_square</span
-          >
-        </button>
-        <button
-          id="close-btn"
-          class="h-full w-12 flex justify-center items-center hover:bg-red-500 hover:text-white transition-colors duration-200 group"
-        >
-          <span
-            class="material-icons-outlined text-sm text-gray-600 group-hover:text-white"
-            >close</span
-          >
-        </button>
-      </div>
-    </div>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
 
-    <div class="flex h-screen pt-8">
-      <aside
-        class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-border-light dark:border-border-dark"
-      >
-        <div class="h-16 flex items-center px-6">
-          <div class="flex items-center gap-3">
-            <div
-              class="w-12 h-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm"
-            >
-              <img
-                src="images/wellserved.png"
-                alt="Well Served Logo"
-                class="w-full h-full object-cover"
-              />
-            </div>
-            <div>
-              <h1
-                class="font-bold text-primary dark:text-green-400 leading-tight"
-              >
-                Well Served
-              </h1>
-              <p
-                class="text-[10px] uppercase tracking-wider text-accent dark:text-amber-600 font-semibold"
-              >
-                Since 1994
-              </p>
-            </div>
-          </div>
+    <div id="title-bar" class="drag-region fixed top-0 left-0 w-full h-8 bg-white flex justify-between items-stretch z-40 border-b border-gray-200 select-none">
+        <div class="flex items-center pl-4 gap-2 text-gray-600">
+            <span class="text-xs font-semibold">IHMS Pharmacy</span>
         </div>
-        <nav class="flex-1 px-4 py-6 space-y-2">
-          <div
-            class="px-2 text-sm font-semibold text-subtext-light dark:text-subtext-dark"
-          >
-            Pharmacy
-          </div>
-          <a
-            class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md"
-            href="dashboard.html"
-            ><span class="material-icons mr-3">dashboard</span> Dashboard</a
-          >
-          <a
-            class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold"
-            href="inventory.html"
-            ><span class="material-icons mr-3">inventory_2</span> Inventory</a
-          >
-          <a
-            class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md"
-            href="patient_records.html"
-            ><span class="material-icons mr-3">folder_shared</span> Patient
-            Records</a
-          >
-          <a
-            class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md"
-            href="pos.html"
-            ><span class="material-icons mr-3">shopping_cart</span> Counter
-            Dispensing</a
-          >
-          <a
-            class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md"
-            href="billing.html"
-            ><span class="material-icons mr-3">point_of_sale</span> Sales &amp;
-            Billing</a
-          >
-        </nav>
-        <div class="p-4 border-t border-border-light dark:border-border-dark">
-          <button
-            onclick="logoutUser()"
-            class="flex items-center w-full px-4 py-2 gap-3 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
-          >
-            <span class="material-icons text-red-500">logout</span> Logout
-          </button>
+        <div class="no-drag flex items-center relative z-50">
+            <button id="min-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200">
+                <span class="material-icons-outlined text-sm text-gray-600">remove</span>
+            </button>
+            <button id="max-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200">
+                <span class="material-icons-outlined text-sm text-gray-600">crop_square</span>
+            </button>
+            <button id="close-btn" class="h-full w-12 flex justify-center items-center hover:bg-red-500 hover:text-white transition-colors duration-200 group">
+                <span class="material-icons-outlined text-sm text-gray-600 group-hover:text-white">close</span>
+            </button>
         </div>
       </aside>
 
@@ -985,194 +931,38 @@
               ></div>
             </div>
 
-            <div class="nav-divider"></div>
-
-            <div class="relative">
-              <button
-                id="notificationBtn"
-                class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              >
-                <span class="material-icons-outlined text-2xl"
-                  >notifications</span
-                >
-                <span
-                  id="notificationBadge"
-                  class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold"
-                  style="display: none"
-                  >0</span
-                >
-              </button>
-
-              <div id="notificationDropdown" class="notif-dropdown">
-                <div class="notif-header">
-                  <h3>Notifications</h3>
-                  <div class="notif-header-meta">
-                    <span class="unread-count-pill" id="unreadPill"
-                      >Loading...</span
-                    >
-                    <button class="mark-all-btn" onclick="markAllRead()">
-                      Mark all read
-                    </button>
-                  </div>
+    <div class="flex h-screen pt-8">
+        <aside class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-border-light dark:border-border-dark">
+            <div class="h-16 flex items-center px-6">
+                <div class="flex items-center gap-3">
+                     <div class="w-12 h-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm">
+                        <img src="images/wellserved.png" alt="Well Served Logo" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-primary dark:text-green-400 leading-tight">Well Served</h1>
+                        <p class="text-[10px] uppercase tracking-wider text-accent dark:text-amber-600 font-semibold">Since 1994</p>
+                    </div>
                 </div>
-                <div class="notif-tabs">
-                  <button
-                    class="notif-tab-btn active"
-                    onclick="filterNotifTab(this, 'all')"
-                  >
-                    All
-                  </button>
-                  <button
-                    class="notif-tab-btn"
-                    onclick="filterNotifTab(this, 'critical')"
-                  >
-                    Critical
-                  </button>
-                  <button
-                    class="notif-tab-btn"
-                    onclick="filterNotifTab(this, 'expiry')"
-                  >
-                    Expiry
-                  </button>
-                  <button
-                    class="notif-tab-btn"
-                    onclick="filterNotifTab(this, 'shortage')"
-                  >
-                    Stock
-                  </button>
-                </div>
-                <div class="notif-list" id="notifList">
-                  <div
-                    style="
-                      padding: 30px 20px;
-                      text-align: center;
-                      color: #9ca3af;
-                    "
-                  >
-                    <span
-                      class="material-icons"
-                      style="
-                        font-size: 32px;
-                        display: block;
-                        margin: 0 auto 8px;
-                      "
-                      >hourglass_empty</span
-                    >
-                    <p style="font-size: 12px">
-                      Loading alerts from inventory...
-                    </p>
-                  </div>
-                </div>
-                <div class="notif-footer">
-                  <a href="inventory.html" class="view-all-link">
-                    Current page <span class="material-icons">inventory_2</span>
-                  </a>
-                </div>
-              </div>
             </div>
-
-            <div class="nav-divider"></div>
-
-            <div class="text-right leading-tight">
-              <div
-                id="navUserName"
-                class="text-sm font-bold text-text-light dark:text-text-dark"
-              >
-                User
-              </div>
-              <div
-                id="navUserRole"
-                class="text-xs text-subtext-light dark:text-subtext-dark"
-              >
-                Staff
-              </div>
+            <nav class="flex-1 px-4 py-6 space-y-2">
+                <div class="px-2 text-sm font-semibold text-subtext-light dark:text-subtext-dark">Pharmacy</div>
+                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="dashboard.html"><span class="material-icons mr-3">dashboard</span> Dashboard</a>
+                <a class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold" href="inventory.html"><span class="material-icons mr-3">inventory_2</span> Inventory</a>
+                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="patient_records.html"><span class="material-icons mr-3">folder_shared</span> Patient Records</a>
+                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="pos.html"><span class="material-icons mr-3">shopping_cart</span> Counter Dispensing</a>
+                <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="billing.html"><span class="material-icons mr-3">point_of_sale</span> Sales &amp; Billing</a>
+            </nav>
+            <div class="p-4 border-t border-border-light dark:border-border-dark">
+                <button onclick="logoutUser()" class="flex items-center w-full px-4 py-2 gap-3 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors">
+                    <span class="material-icons text-red-500">logout</span> Logout
+                </button>
             </div>
+        </aside>
 
-            <div
-              id="navAvatar"
-              class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm select-none"
-            >
-              U
-            </div>
-          </div>
-        </header>
+        <main class="flex-1 flex flex-col overflow-hidden">
 
-        <div class="flex-1 flex flex-col overflow-hidden">
-          <!-- Inventory Panel -->
-          <div id="modulePanelInventory" class="flex-1 p-8 overflow-y-auto">
-            <div class="flex justify-between items-center mb-6">
-              <div>
-                <h1
-                  class="text-3xl font-bold text-text-light dark:text-text-dark"
-                >
-                  Medicine Inventory
-                </h1>
-                <p class="text-subtext-light dark:text-subtext-dark mt-1">
-                  Manage medicine stock and track expiries
-                </p>
-              </div>
-            </div>
-
-            <div
-              class="flex mb-6 bg-surface-light dark:bg-surface-dark rounded-lg p-1 w-fit border border-slate-200 dark:border-slate-700"
-            >
-              <button
-                id="summaryTab"
-                class="tab-btn active"
-                onclick="switchTab('summary')"
-              >
-                Total Inventory
-              </button>
-              <button
-                id="batchTab"
-                class="tab-btn"
-                onclick="switchTab('batch')"
-              >
-                Batch Details (FEFO)
-              </button>
-            </div>
-
-            <div
-              id="alertsSection"
-              class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8"
-            >
-              <div
-                class="bg-[rgba(0,90,50,0.1)] dark:bg-[rgba(0,90,50,0.2)] border-l-4 border-[rgb(0,90,50)] p-6 rounded-lg"
-              >
-                <div class="flex items-start gap-4">
-                  <span class="material-icons text-[rgb(0,90,50)] mt-1"
-                    >warning_amber</span
-                  >
-                  <div>
-                    <h3 class="font-semibold text-[rgb(0,90,50)] text-lg">
-                      Low Stock &amp; Out-of-Stock Alerts
-                    </h3>
-                    <ul
-                      id="lowStockList"
-                      class="list-disc list-inside mt-2 space-y-1 text-text-light dark:text-text-dark text-sm"
-                    ></ul>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="bg-secondary/10 dark:bg-secondary/20 border-l-4 border-secondary p-6 rounded-lg"
-              >
-                <div class="flex items-start gap-4">
-                  <span class="material-icons text-secondary mt-1"
-                    >event_busy</span
-                  >
-                  <div>
-                    <h3 class="font-semibold text-secondary text-lg">
-                      Expiry &amp; Expired Alerts
-                    </h3>
-                    <ul
-                      id="expiryList"
-                      class="list-disc list-inside mt-2 space-y-1 text-text-light dark:text-text-dark text-sm"
-                    ></ul>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
+                <div></div>
 
             <div
               id="summarySection"
@@ -1272,63 +1062,6 @@
                         <span class="material-icons">print</span> Print / Export
                       </button>
                     </div>
-                  </div>
-                </div>
-              </div>
-              <div class="table-container">
-                <table
-                  class="w-full text-left text-sm text-gray-500 dark:text-gray-400"
-                >
-                  <thead
-                    class="text-xs text-text-light dark:text-text-dark uppercase tracking-wider"
-                  >
-                    <tr
-                      style="
-                        background: linear-gradient(
-                          to right,
-                          rgba(0, 90, 50, 0.2),
-                          rgba(255, 255, 255, 0.5),
-                          rgba(214, 40, 40, 0.2)
-                        );
-                      "
-                    >
-                      <th class="px-6 py-4 font-medium">Medicine Name</th>
-                      <th class="px-6 py-4 font-medium">Category</th>
-                      <th class="px-6 py-4 font-medium">Total Batches</th>
-                      <th class="px-6 py-4 font-medium">Total Quantity</th>
-                      <th class="px-6 py-4 font-medium">Earliest Expiry</th>
-                      <th class="px-6 py-4 font-medium">Avg Price</th>
-                      <th class="px-6 py-4 font-medium">Total Value</th>
-                      <th class="px-6 py-4 font-medium">Status</th>
-                      <th class="px-6 py-4 font-medium">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody id="summaryTableBody"></tbody>
-                </table>
-              </div>
-              <div class="pagination-bar" id="summaryPaginationBar">
-                <div class="rows-per-page">
-                  Rows per page:
-                  <select
-                    onchange="
-                      summaryRowsPerPage = parseInt(this.value);
-                      summaryPage = 1;
-                      inventoryManager.renderSummary();
-                    "
-                    id="summaryRppSelect"
-                  >
-                    <option value="10" selected>10</option>
-                    <option value="20">20</option>
-                    <option value="50">50</option>
-                  </select>
-                </div>
-                <div class="pagination-info" id="summaryPaginationInfo"></div>
-                <div
-                  class="pagination-controls"
-                  id="summaryPaginationControls"
-                ></div>
-              </div>
-            </div>
 
             <div
               id="batchSection"
@@ -1600,340 +1333,133 @@
                         0 batches selected
                       </p>
                     </div>
-                  </div>
-                </div>
-              </div>
-              <div class="table-container">
-                <table
-                  class="w-full text-left text-sm text-gray-500 dark:text-gray-400"
-                >
-                  <thead
-                    class="text-xs text-text-light dark:text-text-dark uppercase tracking-wider"
-                  >
-                    <tr
-                      style="
-                        background: linear-gradient(
-                          to right,
-                          rgba(0, 90, 50, 0.2),
-                          rgba(255, 255, 255, 0.5),
-                          rgba(214, 40, 40, 0.2)
-                        );
-                      "
-                    >
-                      <th class="px-6 py-4 font-medium">Dispense Order</th>
-                      <th class="px-6 py-4 font-medium">Medicine Name</th>
-                      <th class="px-6 py-4 font-medium">Category</th>
-                      <th class="px-6 py-4 font-medium">Batch No.</th>
-                      <th class="px-6 py-4 font-medium">Quantity</th>
-                      <th class="px-6 py-4 font-medium">Expiry Date</th>
-                      <th class="px-6 py-4 font-medium">Days Until Expiry</th>
-                      <th class="px-6 py-4 font-medium">Price</th>
-                      <th class="px-6 py-4 font-medium">Supplier</th>
-                      <th class="px-6 py-4 font-medium">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody id="batchTableBody"></tbody>
-                </table>
-              </div>
-              <div class="pagination-bar" id="batchPaginationBar">
-                <div class="rows-per-page">
-                  Rows per page:
-                  <select
-                    onchange="
-                      batchRowsPerPage = parseInt(this.value);
-                      batchPage = 1;
-                      inventoryManager.renderBatches();
-                    "
-                    id="batchRppSelect"
-                  >
-                    <option value="10" selected>10</option>
-                    <option value="20">20</option>
-                    <option value="50">50</option>
-                  </select>
-                </div>
-                <div class="pagination-info" id="batchPaginationInfo"></div>
-                <div
-                  class="pagination-controls"
-                  id="batchPaginationControls"
-                ></div>
-              </div>
-            </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
-              <div
-                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
-              >
-                <p
-                  class="text-sm text-subtext-light dark:text-subtext-dark font-medium"
-                >
-                  Total Items
-                </p>
-                <p
-                  id="totalItems"
-                  class="text-3xl font-bold text-text-light dark:text-text-dark mt-2"
-                >
-                  0
-                </p>
-              </div>
-              <div
-                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
-              >
-                <p
-                  class="text-sm text-subtext-light dark:text-subtext-dark font-medium"
-                >
-                  Total Value
-                </p>
-                <p
-                  id="totalValue"
-                  class="text-3xl font-bold text-text-light dark:text-text-dark mt-2"
-                >
-                  &#8369;0.00
-                </p>
-              </div>
-              <div
-                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
-              >
-                <p
-                  class="text-sm text-subtext-light dark:text-subtext-dark font-medium"
-                >
-                  Low Stock Items
-                </p>
-                <p
-                  id="lowStockCount"
-                  class="text-3xl font-bold text-accent dark:text-amber-400 mt-2"
-                >
-                  0
-                </p>
-              </div>
-              <div
-                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
-              >
-                <p
-                  class="text-sm text-subtext-light dark:text-subtext-dark font-medium"
-                >
-                  Expiring Soon
-                </p>
-                <p
-                  id="expiringCount"
-                  class="text-3xl font-bold text-secondary dark:text-red-400 mt-2"
-                >
-                  0
-                </p>
-              </div>
-            </div>
-          </div>
-          <!-- end #modulePanelInventory -->
+                    <div class="nav-divider"></div>
 
-          <!-- Supplies Panel -->
-          <div
-            id="modulePanelSupplies"
-            class="flex-1 p-8 overflow-y-auto hidden"
-          >
-            <div class="flex justify-between items-center mb-6">
-              <div>
-                <h1
-                  class="text-3xl font-bold text-text-light dark:text-text-dark"
-                >
-                  Supplies Inventory
-                </h1>
-                <p class="text-subtext-light dark:text-subtext-dark mt-1">
-                  monitor and manage pharmaceutical stock levels
-                </p>
-              </div>
-            </div>
+                    <div class="text-right leading-tight">
+                        <div id="navUserName" class="text-sm font-bold text-text-light dark:text-text-dark">User</div>
+                        <div id="navUserRole" class="text-xs text-subtext-light dark:text-subtext-dark">Staff</div>
+                    </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-              <div
-                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-primary shadow-sm"
-              >
-                <div class="flex items-start justify-between">
-                  <div>
-                    <p
-                      class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide"
-                    >
-                      Total Medicines
-                    </p>
-                    <p
-                      id="suppliesTotalCount"
-                      class="text-4xl font-bold text-text-light dark:text-text-dark"
-                    >
-                      0
-                    </p>
-                    <div
-                      class="flex items-center mt-2 text-sm text-subtext-light dark:text-subtext-dark"
-                    >
-                      <span class="material-icons text-base">inventory_2</span>
-                      <span class="ml-1">All tracked items</span>
-                    </div>
-                  </div>
-                  <div class="p-3 bg-primary/10 rounded-lg">
-                    <span
-                      class="material-icons text-primary"
-                      style="font-size: 28px"
-                      >medical_services</span
-                    >
-                  </div>
-                </div>
-              </div>
-              <div
-                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-success shadow-sm"
-              >
-                <div class="flex items-start justify-between">
-                  <div>
-                    <p
-                      class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide"
-                    >
-                      In Stock
-                    </p>
-                    <p
-                      id="suppliesInStockCount"
-                      class="text-4xl font-bold text-text-light dark:text-text-dark"
-                    >
-                      0
-                    </p>
-                    <div class="flex items-center mt-2 text-sm text-success">
-                      <span class="material-icons text-base">check_circle</span>
-                      <span class="ml-1">Adequately stocked</span>
-                    </div>
-                  </div>
-                  <div class="p-3 bg-success/10 rounded-lg">
-                    <span
-                      class="material-icons text-success"
-                      style="font-size: 28px"
-                      >verified</span
-                    >
-                  </div>
-                </div>
-              </div>
-              <div
-                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-warning shadow-sm"
-              >
-                <div class="flex items-start justify-between">
-                  <div>
-                    <p
-                      class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide"
-                    >
-                      Low Stock Alerts
-                    </p>
-                    <p
-                      id="suppliesLowStockCount"
-                      class="text-4xl font-bold text-text-light dark:text-text-dark"
-                    >
-                      0
-                    </p>
-                    <div class="flex items-center mt-2 text-sm text-warning">
-                      <span class="material-icons text-base">warning</span>
-                      <span class="ml-1">Reorder soon</span>
-                    </div>
-                  </div>
-                  <div class="p-3 bg-warning/10 rounded-lg">
-                    <span
-                      class="material-icons text-warning"
-                      style="font-size: 28px"
-                      >inventory</span
-                    >
-                  </div>
-                </div>
-              </div>
-              <div
-                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-danger shadow-sm"
-              >
-                <div class="flex items-start justify-between">
-                  <div>
-                    <p
-                      class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide"
-                    >
-                      Out of Stock
-                    </p>
-                    <p
-                      id="suppliesOutOfStockCount"
-                      class="text-4xl font-bold text-text-light dark:text-text-dark"
-                    >
-                      0
-                    </p>
-                    <div class="flex items-center mt-2 text-sm text-danger">
-                      <span class="material-icons text-base"
-                        >error_outline</span
-                      >
-                      <span class="ml-1">Immediate action needed</span>
-                    </div>
-                  </div>
-                  <div class="p-3 bg-danger/10 rounded-lg">
-                    <span
-                      class="material-icons text-danger"
-                      style="font-size: 28px"
-                      >remove_shopping_cart</span
-                    >
-                  </div>
-                </div>
-              </div>
-            </div>
+                    <div id="navAvatar" class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm select-none">U</div>
 
-            <div
-              class="bg-surface-light dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-800"
-            >
-              <div
-                class="flex flex-col md:flex-row justify-between items-center p-6 gap-4 border-b border-slate-200 dark:border-slate-800"
-              >
-                <h2
-                  class="text-lg font-semibold text-text-light dark:text-text-dark"
-                >
-                  Medicine Back Stock List
-                </h2>
-                <div class="flex gap-3 w-full md:w-auto">
-                  <input
-                    id="suppliesSearch"
-                    onkeyup="searchSupplies()"
-                    type="text"
-                    placeholder="Search medicines..."
-                    class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                  <select
-                    id="suppliesStatusFilter"
-                    onchange="filterSuppliesByStatus()"
-                    class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm"
-                  >
-                    <option value="">All Status</option>
-                    <option value="In Stock">In Stock</option>
-                    <option value="Low Stock">Low Stock</option>
-                    <option value="Out of Stock">Out of Stock</option>
-                  </select>
                 </div>
-              </div>
-              <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left">
-                  <thead
-                    class="text-xs text-text-light dark:text-text-dark uppercase tracking-wider"
-                  >
-                    <tr
-                      style="
-                        background: linear-gradient(
-                          to right,
-                          rgba(0, 90, 50, 0.2),
-                          rgba(255, 255, 255, 0.5),
-                          rgba(214, 40, 40, 0.2)
-                        );
-                      "
-                    >
-                      <th class="px-6 py-4 font-medium">Medicine Name</th>
-                      <th class="px-6 py-4 font-medium">Category</th>
-                      <th class="px-6 py-4 font-medium text-center">
-                        Quantity in Stock
-                      </th>
-                      <th class="px-6 py-4 font-medium text-center">
-                        Reorder Level
-                      </th>
-                      <th class="px-6 py-4 font-medium text-center">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody id="suppliesTableBody"></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-          <!-- end #modulePanelSupplies -->
-        </div>
-      </main>
+            </header>
+
+            <div class="flex-1 flex flex-col overflow-hidden">
+
+                <!-- Inventory Panel -->
+                <div id="modulePanelInventory" class="flex-1 p-8 overflow-y-auto">
+
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h1 class="text-3xl font-bold text-text-light dark:text-text-dark">Medicine Inventory</h1>
+                            <p class="text-subtext-light dark:text-subtext-dark mt-1">Manage medicine stock and track expiries</p>
+                        </div>
+                    </div>
+
+                    <div class="flex mb-6 bg-surface-light dark:bg-surface-dark rounded-lg p-1 w-fit border border-slate-200 dark:border-slate-700">
+    <button id="summaryTab" class="tab-btn active" onclick="switchTab('summary')">Total Inventory</button>
+    <button id="batchTab" class="tab-btn" onclick="switchTab('batch')">Batch Details (FEFO)</button>
+</div>
+
+                    <div id="alertsSection" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-[rgba(0,90,50,0.1)] dark:bg-[rgba(0,90,50,0.2)] border-l-4 border-[rgb(0,90,50)] p-6 rounded-lg">
+                            <div class="flex items-start gap-4">
+                                <span class="material-icons text-[rgb(0,90,50)] mt-1">warning_amber</span>
+                                <div>
+                                    <h3 class="font-semibold text-[rgb(0,90,50)] text-lg">Low Stock &amp; Out-of-Stock Alerts</h3>
+                                    <ul id="lowStockList" class="list-disc list-inside mt-2 space-y-1 text-text-light dark:text-text-dark text-sm"></ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-secondary/10 dark:bg-secondary/20 border-l-4 border-secondary p-6 rounded-lg">
+                            <div class="flex items-start gap-4">
+                                <span class="material-icons text-secondary mt-1">event_busy</span>
+                                <div>
+                                    <h3 class="font-semibold text-secondary text-lg">Expiry &amp; Expired Alerts</h3>
+                                    <ul id="expiryList" class="list-disc list-inside mt-2 space-y-1 text-text-light dark:text-text-dark text-sm"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="summarySection" class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+                        <div class="p-4 md:p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <h2 class="text-xl font-semibold text-text-light dark:text-text-dark whitespace-nowrap">Total Medicine Inventory</h2>
+    <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+        <input id="summarySearch" onkeyup="searchSummary()" class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary flex-1 min-w-[150px]" placeholder="Search medicines..." type="text"/>
+        <select id="summaryStatusFilter" onchange="filterSummaryByStatus()" class="border border-border-light dark:border-border-dark rounded-lg px-4 py-2 bg-background-light dark:bg-background-dark flex-1 min-w-[130px]">
+            <option value="">All Status</option>
+            <option value="In Stock">In Stock</option>
+            <option value="Low Stock">Low Stock</option>
+            <option value="Out of Stock">Out of Stock</option>
+        </select>
+                                <div class="export-wrap">
+    <button onclick="toggleExportMenu('summaryExportMenu')" class="border border-primary px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/10 transition-colors text-primary">
+        <span class="material-icons">print</span> Export / Print
+        <span class="material-icons text-sm">arrow_drop_down</span>
+    </button>
+    <div id="summaryExportMenu" class="export-menu" style="min-width:220px; padding: 12px 14px;">
+    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Include in print</p>
+    <label class="export-check-row"><input type="checkbox" value="in-stock" checked> <span style="color:#16a34a" class="material-icons">check_circle</span> In Stock</label>
+    <label class="export-check-row"><input type="checkbox" value="low-stock"> <span style="color:#d97706" class="material-icons">warning</span> Low Stock</label>
+    <label class="export-check-row"><input type="checkbox" value="out-of-stock"> <span style="color:#dc2626" class="material-icons">remove_shopping_cart</span> Out of Stock</label>
+    <label class="export-check-row"><input type="checkbox" value="expiring"> <span style="color:#8b5a2b" class="material-icons">schedule</span> Expiring Soon (≤30d)</label>
+    <label class="export-check-row"><input type="checkbox" value="expired"> <span style="color:#dc2626" class="material-icons">event_busy</span> Expired</label>
+    <div class="export-menu-divider" style="margin: 10px 0;"></div>
+    <button onclick="exportSummaryData(getChecked('summaryExportMenu'))" class="export-apply-btn">
+        <span class="material-icons">print</span> Print / Export
+    </button>
+</div>
+</div>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+                                <thead class="text-xs text-text-light dark:text-text-dark uppercase tracking-wider">
+                                    <tr style="background: linear-gradient(to right, rgba(0,90,50,0.2), rgba(255,255,255,0.5), rgba(214,40,40,0.2));">
+                                        <th class="px-6 py-4 font-medium">Medicine Name</th>
+                                        <th class="px-6 py-4 font-medium">Category</th>
+                                        <th class="px-6 py-4 font-medium">Total Batches</th>
+                                        <th class="px-6 py-4 font-medium">Total Quantity</th>
+                                        <th class="px-6 py-4 font-medium">Earliest Expiry</th>
+                                        <th class="px-6 py-4 font-medium">Avg Price</th>
+                                        <th class="px-6 py-4 font-medium">Total Value</th>
+                                        <th class="px-6 py-4 font-medium">Status</th>
+                                        <th class="px-6 py-4 font-medium">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="summaryTableBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="pagination-bar" id="summaryPaginationBar">
+                            <div class="rows-per-page">Rows per page: <select onchange="summaryRowsPerPage=parseInt(this.value);summaryPage=1;inventoryManager.renderSummary()" id="summaryRppSelect"><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option></select></div>
+                            <div class="pagination-info" id="summaryPaginationInfo"></div>
+                            <div class="pagination-controls" id="summaryPaginationControls"></div>
+                        </div>
+                    </div>
+
+                    <div id="batchSection" class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 hidden">
+                       <div class="p-4 md:p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div class="flex-shrink-0">
+        <h2 class="text-xl font-semibold text-text-light dark:text-text-dark">Batch Details (FEFO)</h2>
+        <p class="text-xs text-primary mt-1">Sorted by Expiry Date (Dispense First)</p>
+    </div>
+    <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+        <input id="batchSearch" onkeyup="searchBatch()" class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary flex-1 min-w-[150px]" placeholder="Search batches..." type="text"/>
+                                <div class="export-wrap">
+    <button onclick="openBatchExportMenu()" class="border border-primary px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/10 transition-colors text-primary">
+        <span class="material-icons">print</span> Export / Print
+        <span class="material-icons text-sm">arrow_drop_down</span>
+    </button>
+   <div id="batchExportMenu" class="export-menu" style="min-width:310px; padding: 12px 14px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider" style="margin:0;">Select Batches</p>
+    <div style="display:flex;gap:6px;">
+      <button onclick="setBatchExportAll(true)" style="font-size:10px;color:#005a32;font-weight:600;background:none;border:none;cursor:pointer;">All</button>
+      <span style="font-size:10px;color:#9ca3af;">|</span>
+      <button onclick="setBatchExportAll(false)" style="font-size:10px;color:#6b7280;font-weight:600;background:none;border:none;cursor:pointer;">None</button>
     </div>
 
     <script>
@@ -2052,89 +1578,238 @@
           this.nextId = 9;
         }
 
-        getAll() {
-          return this.supplies;
-        }
-        getById(id) {
-          return this.supplies.find((s) => s.id === id);
-        }
+                </div><!-- end #modulePanelInventory -->
 
-        add(supply) {
-          supply.id = this.nextId++;
-          this.supplies.push(supply);
-          this.renderSupplies();
-          this.updateSuppliesStats();
-        }
+                <!-- Supplies Panel -->
+                <div id="modulePanelSupplies" class="flex-1 p-8 overflow-y-auto hidden">
 
-        update(id, updates) {
-          const index = this.supplies.findIndex((s) => s.id === id);
-          if (index !== -1) {
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h1 class="text-3xl font-bold text-text-light dark:text-text-dark">Supplies Inventory</h1>
+                            <p class="text-subtext-light dark:text-subtext-dark mt-1">monitor and manage pharmaceutical stock levels</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-primary shadow-sm">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide">Total Medicines</p>
+                                    <p id="suppliesTotalCount" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
+                                    <div class="flex items-center mt-2 text-sm text-subtext-light dark:text-subtext-dark">
+                                        <span class="material-icons text-base">inventory_2</span>
+                                        <span class="ml-1">All tracked items</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-primary/10 rounded-lg">
+                                    <span class="material-icons text-primary" style="font-size:28px;">medical_services</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-success shadow-sm">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide">In Stock</p>
+                                    <p id="suppliesInStockCount" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
+                                    <div class="flex items-center mt-2 text-sm text-success">
+                                        <span class="material-icons text-base">check_circle</span>
+                                        <span class="ml-1">Adequately stocked</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-success/10 rounded-lg">
+                                    <span class="material-icons text-success" style="font-size:28px;">verified</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-warning shadow-sm">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide">Low Stock Alerts</p>
+                                    <p id="suppliesLowStockCount" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
+                                    <div class="flex items-center mt-2 text-sm text-warning">
+                                        <span class="material-icons text-base">warning</span>
+                                        <span class="ml-1">Reorder soon</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-warning/10 rounded-lg">
+                                    <span class="material-icons text-warning" style="font-size:28px;">inventory</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border-t-4 border-danger shadow-sm">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <p class="text-sm text-subtext-light dark:text-subtext-dark font-medium mb-1 uppercase tracking-wide">Out of Stock</p>
+                                    <p id="suppliesOutOfStockCount" class="text-4xl font-bold text-text-light dark:text-text-dark">0</p>
+                                    <div class="flex items-center mt-2 text-sm text-danger">
+                                        <span class="material-icons text-base">error_outline</span>
+                                        <span class="ml-1">Immediate action needed</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-danger/10 rounded-lg">
+                                    <span class="material-icons text-danger" style="font-size:28px;">remove_shopping_cart</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-surface-light dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-800">
+                        <div class="flex flex-col md:flex-row justify-between items-center p-6 gap-4 border-b border-slate-200 dark:border-slate-800">
+                            <h2 class="text-lg font-semibold text-text-light dark:text-text-dark">Medicine Back Stock List</h2>
+                            <div class="flex gap-3 w-full md:w-auto">
+                                <input id="suppliesSearch" onkeyup="searchSupplies()" type="text" placeholder="Search medicines..."
+                                    class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-primary" />
+                                <select id="suppliesStatusFilter" onchange="filterSuppliesByStatus()" class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm">
+                                    <option value="">All Status</option>
+                                    <option value="In Stock">In Stock</option>
+                                    <option value="Low Stock">Low Stock</option>
+                                    <option value="Out of Stock">Out of Stock</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="text-xs text-text-light dark:text-text-dark uppercase tracking-wider">
+                                    <tr style="background: linear-gradient(to right, rgba(0,90,50,0.2), rgba(255,255,255,0.5), rgba(214,40,40,0.2));">
+                                        <th class="px-6 py-4 font-medium">Medicine Name</th>
+                                        <th class="px-6 py-4 font-medium">Category</th>
+                                        <th class="px-6 py-4 font-medium text-center">Quantity in Stock</th>
+                                        <th class="px-6 py-4 font-medium text-center">Reorder Level</th>
+                                        <th class="px-6 py-4 font-medium text-center">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="suppliesTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div><!-- end #modulePanelSupplies -->
+
+            </div>
+        </main>
+    </div>
+
+<script>
+const API_BASE_URL = 'http://localhost:5001';
+
+// ══════════════════════════════════════════════════════════
+// LIVE NAVBAR CLOCK — ticks every second
+// ══════════════════════════════════════════════════════════
+function updateNavClock() {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-US', {
+        hour:   '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+    });
+    const dateStr = now.toLocaleDateString('en-US', {
+        month: 'short',
+        day:   'numeric',
+        year:  'numeric'
+    }).toUpperCase();
+    document.getElementById('navClock').textContent = timeStr;
+    document.getElementById('navDate').textContent  = dateStr;
+}
+
+// ── Load user info from session into navbar ──
+function loadNavUserInfo() {
+    try {
+        const raw = sessionStorage.getItem('userInfo');
+        if (!raw) return;
+        const info    = JSON.parse(raw);
+        const name    = info.name || info.firstName || info.username || 'User';
+        const role    = info.role || info.position || '';
+        const initial = name.charAt(0).toUpperCase();
+        document.getElementById('navUserName').textContent = name;
+        document.getElementById('navUserRole').textContent = role;
+        document.getElementById('navAvatar').textContent   = initial;
+    } catch(e) { /* keep defaults */ }
+}
+
+// ══════════════════════════════════════════════════════════
+// SUPPLIES MANAGER
+// ══════════════════════════════════════════════════════════
+class SuppliesManager {
+    constructor() {
+        this.supplies = [
+            { id: 1, name: 'Amoxicillin 500mg', category: 'Antibiotics', quantity: 245, reorderLevel: 50, unitCost: 15.50 },
+            { id: 2, name: 'Ibuprofen 200mg', category: 'Pain Relief', quantity: 12, reorderLevel: 25, unitCost: 8.00 },
+            { id: 3, name: 'Cetirizine 10mg', category: 'Antihistamine', quantity: 0, reorderLevel: 30, unitCost: 5.50 },
+            { id: 4, name: 'Omeprazole 20mg', category: 'Gastrointestinal', quantity: 180, reorderLevel: 40, unitCost: 12.00 },
+            { id: 5, name: 'Metformin 500mg', category: 'Diabetes', quantity: 95, reorderLevel: 60, unitCost: 10.00 },
+            { id: 6, name: 'Amlodipine 5mg', category: 'Cardiovascular', quantity: 220, reorderLevel: 50, unitCost: 14.00 },
+            { id: 7, name: 'Paracetamol 500mg', category: 'Pain Relief', quantity: 15, reorderLevel: 100, unitCost: 3.50 },
+            { id: 8, name: 'Losartan 50mg', category: 'Cardiovascular', quantity: 140, reorderLevel: 45, unitCost: 18.00 }
+        ];
+        this.nextId = 9;
+    }
+
+    getAll() { return this.supplies; }
+    getById(id) { return this.supplies.find(s => s.id === id); }
+
+    add(supply) {
+        supply.id = this.nextId++;
+        this.supplies.push(supply);
+        this.renderSupplies();
+        this.updateSuppliesStats();
+    }
+
+    update(id, updates) {
+        const index = this.supplies.findIndex(s => s.id === id);
+        if (index !== -1) {
             this.supplies[index] = { ...this.supplies[index], ...updates };
             this.renderSupplies();
             this.updateSuppliesStats();
-          }
         }
+    }
 
-        restock(id, quantity) {
-          const supply = this.getById(id);
-          if (supply) {
+    restock(id, quantity) {
+        const supply = this.getById(id);
+        if (supply) {
             supply.quantity += quantity;
             this.renderSupplies();
             this.updateSuppliesStats();
-          }
         }
+    }
 
-        delete(id) {
-          this.supplies = this.supplies.filter((s) => s.id !== id);
-          this.renderSupplies();
-          this.updateSuppliesStats();
-        }
+    delete(id) {
+        this.supplies = this.supplies.filter(s => s.id !== id);
+        this.renderSupplies();
+        this.updateSuppliesStats();
+    }
 
-        getStatus(quantity, reorderLevel) {
-          if (quantity === 0) return "Out of Stock";
-          if (quantity <= reorderLevel) return "Low Stock";
-          return "In Stock";
-        }
+    getStatus(quantity, reorderLevel) {
+        if (quantity === 0) return 'Out of Stock';
+        if (quantity <= reorderLevel) return 'Low Stock';
+        return 'In Stock';
+    }
 
-        renderSupplies() {
-          const tbody = document.getElementById("suppliesTableBody");
-          const search =
-            document.getElementById("suppliesSearch")?.value.toLowerCase() ||
-            "";
-          const statusFilter =
-            document.getElementById("suppliesStatusFilter")?.value || "";
+    renderSupplies() {
+        const tbody = document.getElementById('suppliesTableBody');
+        const search = document.getElementById('suppliesSearch')?.value.toLowerCase() || '';
+        const statusFilter = document.getElementById('suppliesStatusFilter')?.value || '';
 
-          let filtered = this.supplies.filter((item) => {
-            const matchesSearch =
-              item.name.toLowerCase().includes(search) ||
-              item.category.toLowerCase().includes(search);
+        let filtered = this.supplies.filter(item => {
+            const matchesSearch = item.name.toLowerCase().includes(search) || item.category.toLowerCase().includes(search);
             const status = this.getStatus(item.quantity, item.reorderLevel);
             const matchesStatus = !statusFilter || status === statusFilter;
             return matchesSearch && matchesStatus;
-          });
+        });
 
-          if (filtered.length === 0) {
+        if (filtered.length === 0) {
             tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-500">No supplies found matching your criteria.</td></tr>`;
             return;
-          }
+        }
 
-          tbody.innerHTML = filtered
-            .map((item) => {
-              const status = this.getStatus(item.quantity, item.reorderLevel);
-              let statusBg = "",
-                statusText = "";
-              if (status === "In Stock") {
-                statusBg = "bg-green-100 dark:bg-green-900/30";
-                statusText = "text-green-700 dark:text-green-400";
-              } else if (status === "Low Stock") {
-                statusBg = "bg-yellow-100 dark:bg-yellow-900/30";
-                statusText = "text-yellow-700 dark:text-yellow-400";
-              } else {
-                statusBg = "bg-red-100 dark:bg-red-900/30";
-                statusText = "text-red-700 dark:text-red-400";
-              }
+        tbody.innerHTML = filtered.map(item => {
+            const status = this.getStatus(item.quantity, item.reorderLevel);
+            let statusBg = '', statusText = '';
+            if (status === 'In Stock') { statusBg = 'bg-green-100 dark:bg-green-900/30'; statusText = 'text-green-700 dark:text-green-400'; }
+            else if (status === 'Low Stock') { statusBg = 'bg-yellow-100 dark:bg-yellow-900/30'; statusText = 'text-yellow-700 dark:text-yellow-400'; }
+            else { statusBg = 'bg-red-100 dark:bg-red-900/30'; statusText = 'text-red-700 dark:text-red-400'; }
 
-              return `
+            return `
                 <tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
                     <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${item.name}</td>
                     <td class="px-6 py-4 text-gray-600 dark:text-gray-400">${item.category}</td>
@@ -2144,472 +1819,334 @@
                         <span class="px-3 py-1 text-xs font-semibold rounded-full ${statusBg} ${statusText}">${status}</span>
                     </td>
                 </tr>`;
-            })
-            .join("");
-        }
+        }).join('');
+    }
 
-        updateSuppliesStats() {
-          const total = this.supplies.length;
-          const inStock = this.supplies.filter(
-            (s) => this.getStatus(s.quantity, s.reorderLevel) === "In Stock",
-          ).length;
-          const lowStock = this.supplies.filter(
-            (s) => this.getStatus(s.quantity, s.reorderLevel) === "Low Stock",
-          ).length;
-          const outOfStock = this.supplies.filter(
-            (s) =>
-              this.getStatus(s.quantity, s.reorderLevel) === "Out of Stock",
-          ).length;
-          document.getElementById("suppliesTotalCount").textContent = total;
-          document.getElementById("suppliesInStockCount").textContent = inStock;
-          document.getElementById("suppliesLowStockCount").textContent =
-            lowStock;
-          document.getElementById("suppliesOutOfStockCount").textContent =
-            outOfStock;
-        }
-      }
+    updateSuppliesStats() {
+        const total = this.supplies.length;
+        const inStock = this.supplies.filter(s => this.getStatus(s.quantity, s.reorderLevel) === 'In Stock').length;
+        const lowStock = this.supplies.filter(s => this.getStatus(s.quantity, s.reorderLevel) === 'Low Stock').length;
+        const outOfStock = this.supplies.filter(s => this.getStatus(s.quantity, s.reorderLevel) === 'Out of Stock').length;
+        document.getElementById('suppliesTotalCount').textContent = total;
+        document.getElementById('suppliesInStockCount').textContent = inStock;
+        document.getElementById('suppliesLowStockCount').textContent = lowStock;
+        document.getElementById('suppliesOutOfStockCount').textContent = outOfStock;
+    }
+}
 
-      let suppliesManager;
+let suppliesManager;
 
-      function initializeSupplies() {
-        if (!suppliesManager) {
-          suppliesManager = new SuppliesManager();
-          window.suppliesManager = suppliesManager;
-        }
-        suppliesManager.renderSupplies();
-        suppliesManager.updateSuppliesStats();
-      }
+function initializeSupplies() {
+    if (!suppliesManager) {
+        suppliesManager = new SuppliesManager();
+        window.suppliesManager = suppliesManager;
+    }
+    suppliesManager.renderSupplies();
+    suppliesManager.updateSuppliesStats();
+}
 
-      function searchSupplies() {
-        if (suppliesManager) suppliesManager.renderSupplies();
-      }
-      function filterSuppliesByStatus() {
-        if (suppliesManager) suppliesManager.renderSupplies();
-      }
+function searchSupplies() { if (suppliesManager) suppliesManager.renderSupplies(); }
+function filterSuppliesByStatus() { if (suppliesManager) suppliesManager.renderSupplies(); }
 
-      // ══════════════════════════════════════════════════════════
-      // MODULE TAB SWITCHER
-      // ══════════════════════════════════════════════════════════
-      function switchModuleTab(module) {
-        document
-          .getElementById("moduleTabInventory")
-          .classList.toggle("active", module === "inventory");
-        document
-          .getElementById("moduleTabSupplies")
-          .classList.toggle("active", module === "supplies");
-        document
-          .getElementById("modulePanelInventory")
-          .classList.toggle("hidden", module !== "inventory");
-        document
-          .getElementById("modulePanelSupplies")
-          .classList.toggle("hidden", module !== "supplies");
-        if (module === "supplies") initializeSupplies();
-      }
+// ══════════════════════════════════════════════════════════
+// MODULE TAB SWITCHER
+// ══════════════════════════════════════════════════════════
+function switchModuleTab(module) {
+    document.getElementById('moduleTabInventory').classList.toggle('active', module === 'inventory');
+    document.getElementById('moduleTabSupplies').classList.toggle('active', module === 'supplies');
+    document.getElementById('modulePanelInventory').classList.toggle('hidden', module !== 'inventory');
+    document.getElementById('modulePanelSupplies').classList.toggle('hidden', module !== 'supplies');
+    if (module === 'supplies') initializeSupplies();
+}
 
-      // ── PAGINATION STATE ──
-      let summaryPage = 1,
-        summaryRowsPerPage = 10;
-      let batchPage = 1,
-        batchRowsPerPage = 10;
-      let archivePage = 1,
-        archiveRowsPerPage = 10;
+// ── PAGINATION STATE ──
+let summaryPage = 1, summaryRowsPerPage = 10;
+let batchPage   = 1, batchRowsPerPage   = 10;
+let archivePage = 1, archiveRowsPerPage = 10;
 
-      function buildPagination(
-        totalItems,
-        currentPage,
-        rowsPerPage,
-        infoId,
-        controlsId,
-        onPageChange,
-      ) {
-        const totalPages = Math.max(1, Math.ceil(totalItems / rowsPerPage));
-        if (currentPage > totalPages) currentPage = totalPages;
-        const start =
-          totalItems === 0 ? 0 : (currentPage - 1) * rowsPerPage + 1;
-        const end = Math.min(currentPage * rowsPerPage, totalItems);
-        const info = document.getElementById(infoId);
-        const ctrl = document.getElementById(controlsId);
-        if (!info || !ctrl) return currentPage;
-        info.innerHTML = `<strong>${start}–${end}</strong> of <strong>${totalItems}</strong>`;
-        let btns = "";
-        btns += `<button class="pg-btn" onclick="${onPageChange}(${currentPage - 1})" ${currentPage === 1 ? "disabled" : ""}><span class="material-icons" style="font-size:16px;">chevron_left</span></button>`;
-        const pages = [];
-        if (totalPages <= 7) {
-          for (let i = 1; i <= totalPages; i++) pages.push(i);
-        } else {
-          pages.push(1);
-          if (currentPage > 3) pages.push("...");
-          for (
-            let i = Math.max(2, currentPage - 1);
-            i <= Math.min(totalPages - 1, currentPage + 1);
-            i++
-          )
-            pages.push(i);
-          if (currentPage < totalPages - 2) pages.push("...");
-          pages.push(totalPages);
-        }
-        pages.forEach((p) => {
-          if (p === "...") btns += `<span class="pg-ellipsis">…</span>`;
-          else
-            btns += `<button class="pg-btn ${p === currentPage ? "active" : ""}" onclick="${onPageChange}(${p})">${p}</button>`;
-        });
-        btns += `<button class="pg-btn" onclick="${onPageChange}(${currentPage + 1})" ${currentPage === totalPages ? "disabled" : ""}><span class="material-icons" style="font-size:16px;">chevron_right</span></button>`;
-        ctrl.innerHTML = btns;
-        return currentPage;
-      }
+function buildPagination(totalItems, currentPage, rowsPerPage, infoId, controlsId, onPageChange) {
+    const totalPages = Math.max(1, Math.ceil(totalItems / rowsPerPage));
+    if (currentPage > totalPages) currentPage = totalPages;
+    const start = totalItems === 0 ? 0 : (currentPage - 1) * rowsPerPage + 1;
+    const end   = Math.min(currentPage * rowsPerPage, totalItems);
+    const info = document.getElementById(infoId);
+    const ctrl = document.getElementById(controlsId);
+    if (!info || !ctrl) return currentPage;
+    info.innerHTML = `<strong>${start}–${end}</strong> of <strong>${totalItems}</strong>`;
+    let btns = '';
+    btns += `<button class="pg-btn" onclick="${onPageChange}(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}><span class="material-icons" style="font-size:16px;">chevron_left</span></button>`;
+    const pages = [];
+    if (totalPages <= 7) { for (let i = 1; i <= totalPages; i++) pages.push(i); }
+    else {
+        pages.push(1);
+        if (currentPage > 3) pages.push('...');
+        for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) pages.push(i);
+        if (currentPage < totalPages - 2) pages.push('...');
+        pages.push(totalPages);
+    }
+    pages.forEach(p => {
+        if (p === '...') btns += `<span class="pg-ellipsis">…</span>`;
+        else btns += `<button class="pg-btn ${p === currentPage ? 'active' : ''}" onclick="${onPageChange}(${p})">${p}</button>`;
+    });
+    btns += `<button class="pg-btn" onclick="${onPageChange}(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}><span class="material-icons" style="font-size:16px;">chevron_right</span></button>`;
+    ctrl.innerHTML = btns;
+    return currentPage;
+}
 
-      function goSummaryPage(p) {
-        const panel = document.getElementById("modulePanelInventory");
-        const scrollY = panel ? panel.scrollTop : 0;
-        summaryPage = p;
-        inventoryManager.renderSummary();
-        if (panel) panel.scrollTop = scrollY;
-      }
-      function goBatchPage(p) {
-        const panel = document.getElementById("modulePanelInventory");
-        const scrollY = panel ? panel.scrollTop : 0;
-        batchPage = p;
-        inventoryManager.renderBatches();
-        if (panel) panel.scrollTop = scrollY;
-      }
-      function goArchivePage(p) {
-        const panel = document.getElementById("modulePanelInventory");
-        const scrollY = panel ? panel.scrollTop : 0;
-        archivePage = p;
-        inventoryManager.renderArchive();
-        if (panel) panel.scrollTop = scrollY;
-      }
+function goSummaryPage(p) {
+    const panel = document.getElementById('modulePanelInventory');
+    const scrollY = panel ? panel.scrollTop : 0;
+    summaryPage = p; inventoryManager.renderSummary();
+    if (panel) panel.scrollTop = scrollY;
+}
+function goBatchPage(p) {
+    const panel = document.getElementById('modulePanelInventory');
+    const scrollY = panel ? panel.scrollTop : 0;
+    batchPage = p; inventoryManager.renderBatches();
+    if (panel) panel.scrollTop = scrollY;
+}
+function goArchivePage(p) {
+    const panel = document.getElementById('modulePanelInventory');
+    const scrollY = panel ? panel.scrollTop : 0;
+    archivePage = p; inventoryManager.renderArchive();
+    if (panel) panel.scrollTop = scrollY;
+}
 
-      // ══════════════════════════════════════════════════════════
-      // INVENTORY MANAGER
-      // ══════════════════════════════════════════════════════════
-      class InventoryManager {
-        constructor() {
-          this.liveInventory = [];
-          this.archivedInventory = [];
-          this.currentTab = "summary";
-          this.init();
-        }
+// ══════════════════════════════════════════════════════════
+// INVENTORY MANAGER
+// ══════════════════════════════════════════════════════════
+class InventoryManager {
+    constructor() {
+        this.liveInventory = [];
+        this.archivedInventory = [];
+        this.currentTab = 'summary';
+        this.init();
+    }
 
-        async init() {
-          this.loadDarkModePreference();
-          const token = this.getToken();
-          if (token) await this.fetchInventory();
-          else console.warn("No authentication token found.");
-          this.applyNotifRedirectOnLoad();
-        }
+    async init() {
+        this.loadDarkModePreference();
+        const token = this.getToken();
+        if (token) await this.fetchInventory();
+        else console.warn("No authentication token found.");
+        this.applyNotifRedirectOnLoad();
+    }
 
-        applyNotifRedirectOnLoad() {
-          try {
-            const raw = sessionStorage.getItem("notifRedirect");
+    applyNotifRedirectOnLoad() {
+        try {
+            const raw = sessionStorage.getItem('notifRedirect');
             if (!raw) return;
-            sessionStorage.removeItem("notifRedirect");
+            sessionStorage.removeItem('notifRedirect');
             const { tab, medicine } = JSON.parse(raw);
-            if (tab === "batch") {
-              setTimeout(() => {
-                this.viewBatchDetails(medicine);
-                setTimeout(
-                  () => highlightMedicineRow("batchTableBody", medicine),
-                  300,
-                );
-              }, 400);
-            } else if (tab === "summary") {
-              setTimeout(() => {
-                this.switchTab("summary");
-                const s = document.getElementById("summarySearch");
-                if (s) {
-                  s.value = medicine;
-                  this.renderSummary();
+            if (tab === 'batch') {
+                setTimeout(() => {
+                    this.viewBatchDetails(medicine);
+                    setTimeout(() => highlightMedicineRow('batchTableBody', medicine), 300);
+                }, 400);
+            } else if (tab === 'summary') {
+                setTimeout(() => {
+                    this.switchTab('summary');
+                    const s = document.getElementById('summarySearch');
+                    if (s) { s.value = medicine; this.renderSummary(); }
+                    setTimeout(() => highlightMedicineRow('summaryTableBody', medicine), 300);
+                }, 400);
+            }
+        } catch(e) {}
+    }
+
+    loadDarkModePreference() {
+        const isDarkMode = sessionStorage.getItem('darkMode') === 'true';
+        document.documentElement.classList.toggle('dark', isDarkMode);
+    }
+
+    getToken() {
+        const directToken = sessionStorage.getItem('token');
+        if (directToken) return directToken;
+        const userInfoString = sessionStorage.getItem('userInfo');
+        if (userInfoString) {
+            try { const userInfo = JSON.parse(userInfoString); return userInfo.token || userInfo.access_token; }
+            catch (e) { console.error("Error parsing userInfo", e); }
+        }
+        return null;
+    }
+
+    logoutUser() {
+        Swal.fire({ title: "Logout?", text: "Are you sure you want to log out?", icon: "warning", showCancelButton: true, confirmButtonColor: "#005a32", confirmButtonText: "Yes, log out" })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    sessionStorage.removeItem('userInfo');
+                    sessionStorage.removeItem('token');
+                    window.location.href = 'login.html';
                 }
-                setTimeout(
-                  () => highlightMedicineRow("summaryTableBody", medicine),
-                  300,
-                );
-              }, 400);
-            }
-          } catch (e) {}
-        }
+            });
+    }
 
-        loadDarkModePreference() {
-          const isDarkMode = sessionStorage.getItem("darkMode") === "true";
-          document.documentElement.classList.toggle("dark", isDarkMode);
-        }
-
-        getToken() {
-          const directToken = sessionStorage.getItem("token");
-          if (directToken) return directToken;
-          const userInfoString = sessionStorage.getItem("userInfo");
-          if (userInfoString) {
-            try {
-              const userInfo = JSON.parse(userInfoString);
-              return userInfo.token || userInfo.access_token;
-            } catch (e) {
-              console.error("Error parsing userInfo", e);
-            }
-          }
-          return null;
-        }
-
-        logoutUser() {
-          Swal.fire({
-            title: "Logout?",
-            text: "Are you sure you want to log out?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#005a32",
-            confirmButtonText: "Yes, log out",
-          }).then((result) => {
-            if (result.isConfirmed) {
-              sessionStorage.removeItem("userInfo");
-              sessionStorage.removeItem("token");
-              window.location.href = "login.html";
-            }
-          });
-        }
-
-        async apiCall(endpoint, method = "GET", body = null) {
-          const token = this.getToken();
-          const options = {
-            method,
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          };
-          if (body) options.body = JSON.stringify(body);
-          const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-          const data = await response.json();
-          if (!response.ok) {
+    async apiCall(endpoint, method = 'GET', body = null) {
+        const token = this.getToken();
+        const options = { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` } };
+        if (body) options.body = JSON.stringify(body);
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+        const data = await response.json();
+        if (!response.ok) {
             if (response.status === 401) console.warn("Session expired");
             throw new Error(data.message || `Error ${response.status}`);
-          }
-          return data;
         }
+        return data;
+    }
 
-        async fetchInventory() {
-          try {
+    async fetchInventory() {
+        try {
             // 1. Fetch Active Inventory
-            const liveData = await this.apiCall("/api/inventory");
-            this.liveInventory = Array.isArray(liveData)
-              ? liveData
-              : liveData.medicines || liveData.data || [];
+            const liveData = await this.apiCall('/api/inventory');
+            this.liveInventory = Array.isArray(liveData) ? liveData : (liveData.medicines || liveData.data || []);
 
             // 2. Fetch Archived Inventory (🔥 This is what was missing!)
-            const archivedData = await this.apiCall("/api/inventory/archived");
-            this.archivedInventory = Array.isArray(archivedData)
-              ? archivedData
-              : archivedData.medicines || archivedData.data || [];
+            const archivedData = await this.apiCall('/api/inventory/archived');
+            this.archivedInventory = Array.isArray(archivedData) ? archivedData : (archivedData.medicines || archivedData.data || []);
 
             this.renderTables();
             this.updateDashboardStats();
-          } catch (error) {
+        } catch (error) {
             console.error("Failed to fetch inventory data:", error);
-            Swal.fire(
-              "Sync Error",
-              "Could not load inventory data from the server.",
-              "error",
-            );
-          }
+            Swal.fire('Sync Error', 'Could not load inventory data from the server.', 'error');
         }
+    }
 
-        // ── ARCHIVE BATCH (DB-first: save to database → update UI on success → revert on failure) ──
-        async archiveBatch(id) {
-          if (!id || id === "undefined" || id === "null") return;
-          const result = await Swal.fire({
-            title: "Archive Batch?",
-            text: "This batch will be moved to the Archive tab.",
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonColor: "#005a32",
-            confirmButtonText: "Yes, archive it",
-          });
-
-          if (result.isConfirmed) {
+    // ── ARCHIVE BATCH (DB-first: save to database → update UI on success → revert on failure) ──
+    async archiveBatch(id) {
+        if (!id || id === 'undefined' || id === 'null') return;
+        const result = await Swal.fire({ 
+            title: 'Archive Batch?', 
+            text: 'This batch will be moved to the Archive tab.', 
+            icon: 'question', 
+            showCancelButton: true, 
+            confirmButtonColor: '#005a32', 
+            confirmButtonText: 'Yes, archive it' 
+        });
+        
+        if (result.isConfirmed) {
             try {
-              // 🔥 FIX: Added "/archive" to the URL!
-              await this.apiCall(`/api/inventory/${id}/archive`, "PATCH");
-
-              Swal.fire({
-                icon: "success",
-                title: "Archived!",
-                text: "Batch has been moved to the archive.",
-                confirmButtonColor: "#005a32",
-                timer: 1600,
-                showConfirmButton: false,
-              });
-
-              this.fetchInventory(); // Instantly reload tables
+                // 🔥 FIX: Added "/archive" to the URL!
+                await this.apiCall(`/api/inventory/${id}/archive`, 'PATCH');
+                
+                Swal.fire({
+                    icon: 'success', 
+                    title: 'Archived!', 
+                    text: 'Batch has been moved to the archive.', 
+                    confirmButtonColor: '#005a32', 
+                    timer: 1600, 
+                    showConfirmButton: false 
+                });
+                
+                this.fetchInventory(); // Instantly reload tables
             } catch (error) {
-              Swal.fire("Archive Failed", error.message, "error");
+                Swal.fire('Archive Failed', error.message, 'error');
             }
-          }
         }
+    }
 
-        async restoreBatch(id) {
-          if (!id || id === "undefined" || id === "null") return;
-          const result = await Swal.fire({
-            title: "Restore Batch?",
-            text: "This batch will be moved back to the active inventory.",
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonColor: "#005a32",
-            confirmButtonText: "Yes, restore it",
-          });
-
-          if (result.isConfirmed) {
+    async restoreBatch(id) {
+        if (!id || id === 'undefined' || id === 'null') return;
+        const result = await Swal.fire({ 
+            title: 'Restore Batch?', 
+            text: 'This batch will be moved back to the active inventory.', 
+            icon: 'question', 
+            showCancelButton: true, 
+            confirmButtonColor: '#005a32', 
+            confirmButtonText: 'Yes, restore it' 
+        });
+        
+        if (result.isConfirmed) { 
             try {
-              // 🔥 FIX: Added "/restore" to the URL!
-              await this.apiCall(`/api/inventory/${id}/restore`, "PATCH");
-
-              Swal.fire({
-                icon: "success",
-                title: "Restored!",
-                text: "Batch has been moved back to active inventory.",
-                confirmButtonColor: "#005a32",
-                timer: 1600,
-                showConfirmButton: false,
-              });
-
-              this.fetchInventory();
+                // 🔥 FIX: Added "/restore" to the URL!
+                await this.apiCall(`/api/inventory/${id}/restore`, 'PATCH');
+                
+                Swal.fire({
+                    icon: 'success', 
+                    title: 'Restored!', 
+                    text: 'Batch has been moved back to active inventory.', 
+                    confirmButtonColor: '#005a32', 
+                    timer: 1600, 
+                    showConfirmButton: false 
+                });
+                
+                this.fetchInventory();
             } catch (error) {
-              Swal.fire("Restore Failed", error.message, "error");
+                Swal.fire('Restore Failed', error.message, 'error');
             }
-          }
         }
+    }
 
-        async deleteBatch(id) {
-          if (!id || id === "undefined" || id === "null") return;
-          const result = await Swal.fire({
-            title: "Delete Permanently?",
-            text: "This cannot be undone!",
-            icon: "warning",
-            showCancelButton: true,
+    async deleteBatch(id) {
+        if (!id || id === 'undefined' || id === 'null') return;
+        const result = await Swal.fire({ 
+            title: "Delete Permanently?", 
+            text: "This cannot be undone!", 
+            icon: "warning", 
+            showCancelButton: true, 
             confirmButtonColor: "#d62828",
-            confirmButtonText: "Yes, delete it",
-          });
-
-          if (result.isConfirmed) {
+            confirmButtonText: "Yes, delete it"
+        });
+        
+        if (result.isConfirmed) { 
             try {
-              // 🔥 FIX: Targeting /api/inventory
-              await this.apiCall(`/api/inventory/${id}`, "DELETE");
-              Swal.fire("Deleted", "Record permanently removed.", "success");
-              this.fetchInventory();
+                // 🔥 FIX: Targeting /api/inventory
+                await this.apiCall(`/api/inventory/${id}`, 'DELETE');
+                Swal.fire('Deleted', 'Record permanently removed.', 'success'); 
+                this.fetchInventory(); 
             } catch (error) {
-              Swal.fire("Delete Failed", error.message, "error");
+                Swal.fire('Delete Failed', error.message, 'error');
             }
-          }
         }
+    }
 
-        renderTables() {
-          this.renderSummary();
-          this.renderBatches();
-        }
+    renderTables() { this.renderSummary(); this.renderBatches(); }
 
-        _getName(item) {
-          if (
-            item.medicine &&
-            typeof item.medicine === "object" &&
-            item.medicine.name
-          )
-            return item.medicine.name;
-          if (item.name) return item.name;
-          if (item.medicineName) return item.medicineName;
-          return "Unknown Medicine";
-        }
+    _getName(item) {
+        if (item.medicine && typeof item.medicine === 'object' && item.medicine.name) return item.medicine.name;
+        if (item.name) return item.name;
+        if (item.medicineName) return item.medicineName;
+        return "Unknown Medicine";
+    }
 
-        _getPrice(item) {
-          if (item.sellingPrice) return item.sellingPrice;
-          if (item.price) return item.price;
-          if (item.medicine && item.medicine.sellingPrice)
-            return item.medicine.sellingPrice;
-          return 0;
-        }
+    _getPrice(item) {
+        if (item.sellingPrice) return item.sellingPrice;
+        if (item.price) return item.price;
+        if (item.medicine && item.medicine.sellingPrice) return item.medicine.sellingPrice;
+        return 0;
+    }
 
-        renderSummary() {
-          const tbody = document.getElementById("summaryTableBody");
-          const search = document
-            .getElementById("summarySearch")
-            .value.toLowerCase();
-          const sf = document.getElementById("summaryStatusFilter").value;
-          tbody.innerHTML = "";
-          const summary = {};
-          this.liveInventory.forEach((item) => {
-            const name = this._getName(item),
-              price = parseFloat(this._getPrice(item) || 0),
-              qty = parseInt(item.quantity || 0),
-              isExp = new Date(item.expiryDate) < new Date();
+    renderSummary() {
+        const tbody = document.getElementById('summaryTableBody');
+        const search = document.getElementById('summarySearch').value.toLowerCase();
+        const sf     = document.getElementById('summaryStatusFilter').value;
+        tbody.innerHTML = '';
+        const summary = {};
+        this.liveInventory.forEach(item => {
+            const name = this._getName(item), price = parseFloat(this._getPrice(item)||0), qty = parseInt(item.quantity||0), isExp = new Date(item.expiryDate) < new Date();
             // 🔥 Extract Category from the populated medicine object
-            const category =
-              item.medicine && item.medicine.category
-                ? item.medicine.category
-                : item.category || "N/A";
+            const category = (item.medicine && item.medicine.category) ? item.medicine.category : (item.category || 'N/A');
 
             // Add 'category' to the summary object
-            if (!summary[name])
-              summary[name] = {
-                name,
-                category,
-                batchCount: 0,
-                totalQty: 0,
-                totalValue: 0,
-                earliestExpiry: item.expiryDate,
-                minStock: item.minStockLevel || 10,
-              };
+            if (!summary[name]) summary[name] = { name, category, batchCount:0, totalQty:0, totalValue:0, earliestExpiry:item.expiryDate, minStock:item.minStockLevel||10 };
             summary[name].batchCount++;
-            if (!isExp) {
-              summary[name].totalQty += qty;
-              summary[name].totalValue += qty * price;
-            }
-            if (
-              new Date(item.expiryDate) < new Date(summary[name].earliestExpiry)
-            )
-              summary[name].earliestExpiry = item.expiryDate;
-          });
-          let arr = Object.values(summary);
-          if (search)
-            arr = arr.filter((i) => i.name.toLowerCase().includes(search));
-          if (!arr.length) {
-            tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-gray-500">No active inventory found.</td></tr>`;
-            buildPagination(
-              0,
-              1,
-              summaryRowsPerPage,
-              "summaryPaginationInfo",
-              "summaryPaginationControls",
-              "goSummaryPage",
-            );
-            return;
-          }
-          const filtered = sf
-            ? arr.filter((item) => {
-                let status = "In Stock";
-                if (item.totalQty === 0) status = "Out of Stock";
-                else if (item.totalQty <= item.minStock) status = "Low Stock";
-                return status === sf;
-              })
-            : arr;
-          summaryPage = buildPagination(
-            filtered.length,
-            summaryPage,
-            summaryRowsPerPage,
-            "summaryPaginationInfo",
-            "summaryPaginationControls",
-            "goSummaryPage",
-          );
-          const pageItems = filtered.slice(
-            (summaryPage - 1) * summaryRowsPerPage,
-            summaryPage * summaryRowsPerPage,
-          );
-          pageItems.forEach((item) => {
-            let status = "In Stock",
-              sc = "in-stock";
-            if (item.totalQty === 0) {
-              status = "Out of Stock";
-              sc = "out-of-stock";
-            } else if (item.totalQty <= item.minStock) {
-              status = "Low Stock";
-              sc = "low-stock";
-            }
+            if (!isExp) { summary[name].totalQty += qty; summary[name].totalValue += qty * price; }
+            if (new Date(item.expiryDate) < new Date(summary[name].earliestExpiry)) summary[name].earliestExpiry = item.expiryDate;
+        });
+        let arr = Object.values(summary);
+        if (search) arr = arr.filter(i => i.name.toLowerCase().includes(search));
+        if (!arr.length) { tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-gray-500">No active inventory found.</td></tr>`; buildPagination(0, 1, summaryRowsPerPage, 'summaryPaginationInfo', 'summaryPaginationControls', 'goSummaryPage'); return; }
+        const filtered = sf ? arr.filter(item => {
+            let status = 'In Stock';
+            if (item.totalQty === 0) status = 'Out of Stock';
+            else if (item.totalQty <= item.minStock) status = 'Low Stock';
+            return status === sf;
+        }) : arr;
+        summaryPage = buildPagination(filtered.length, summaryPage, summaryRowsPerPage, 'summaryPaginationInfo', 'summaryPaginationControls', 'goSummaryPage');
+        const pageItems = filtered.slice((summaryPage - 1) * summaryRowsPerPage, summaryPage * summaryRowsPerPage);
+        pageItems.forEach(item => {
+            let status = 'In Stock', sc = 'in-stock';
+            if (item.totalQty === 0)                { status = 'Out of Stock'; sc = 'out-of-stock'; }
+            else if (item.totalQty <= item.minStock) { status = 'Low Stock';   sc = 'low-stock'; }
             const avg = item.totalQty > 0 ? item.totalValue / item.totalQty : 0;
             tbody.innerHTML += `<tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
                 <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${item.name}</td>
@@ -2621,207 +2158,107 @@
                 <td class="px-6 py-4"><span class="status ${sc}">${status}</span></td>
                 <td class="px-6 py-4"><button onclick="inventoryManager.viewBatchDetails('${item.name}')" class="text-primary hover:underline text-sm font-medium">View Batches</button></td>
             </tr>`;
-          });
-        }
+        });
+    }
 
-        renderBatches() {
-          const tbody = document.getElementById("batchTableBody");
-          const search = document
-            .getElementById("batchSearch")
-            .value.toLowerCase();
-          tbody.innerHTML = "";
-          let batches = [...this.liveInventory].sort(
-            (a, b) => new Date(a.expiryDate) - new Date(b.expiryDate),
-          );
-          if (search)
-            batches = batches.filter((i) => {
-              const n = this._getName(i);
-              return (
-                n.toLowerCase().includes(search) ||
-                (i.batchNumber || "").toLowerCase().includes(search)
-              );
-            });
-          if (!batches.length) {
-            tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-gray-500">No active batches found.</td></tr>`;
-            buildPagination(
-              0,
-              1,
-              batchRowsPerPage,
-              "batchPaginationInfo",
-              "batchPaginationControls",
-              "goBatchPage",
-            );
-            return;
-          }
-          batchPage = buildPagination(
-            batches.length,
-            batchPage,
-            batchRowsPerPage,
-            "batchPaginationInfo",
-            "batchPaginationControls",
-            "goBatchPage",
-          );
-          const pageItems = batches.slice(
-            (batchPage - 1) * batchRowsPerPage,
-            batchPage * batchRowsPerPage,
-          );
-          pageItems.forEach((item, index) => {
+    renderBatches() {
+        const tbody  = document.getElementById('batchTableBody');
+        const search = document.getElementById('batchSearch').value.toLowerCase();
+        tbody.innerHTML = '';
+        let batches = [...this.liveInventory].sort((a,b) => new Date(a.expiryDate)-new Date(b.expiryDate));
+        if (search) batches = batches.filter(i => { const n=this._getName(i); return n.toLowerCase().includes(search)||(i.batchNumber||'').toLowerCase().includes(search); });
+        if (!batches.length) { tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-gray-500">No active batches found.</td></tr>`; buildPagination(0, 1, batchRowsPerPage, 'batchPaginationInfo', 'batchPaginationControls', 'goBatchPage'); return; }
+        batchPage = buildPagination(batches.length, batchPage, batchRowsPerPage, 'batchPaginationInfo', 'batchPaginationControls', 'goBatchPage');
+        const pageItems = batches.slice((batchPage - 1) * batchRowsPerPage, batchPage * batchRowsPerPage);
+        pageItems.forEach((item, index) => {
             const globalIndex = (batchPage - 1) * batchRowsPerPage + index;
-            const name = this._getName(item),
-              expiry = new Date(item.expiryDate),
-              today = new Date(),
-              daysLeft = Math.ceil((expiry - today) / 864e5);
+            const name = this._getName(item), expiry = new Date(item.expiryDate), today = new Date(), daysLeft = Math.ceil((expiry-today)/864e5);
             // 🔥 Extract Category for Batch Table
-            const category =
-              item.medicine && item.medicine.category
-                ? item.medicine.category
-                : item.category || "N/A";
+            const category = (item.medicine && item.medicine.category) ? item.medicine.category : (item.category || 'N/A');
 
-            let dc = "text-success",
-              dt = `${daysLeft} days`,
-              sl = '<span class="status in-stock">Active</span>';
-            if (daysLeft < 0) {
-              dc = "text-secondary font-bold";
-              dt = "EXPIRED";
-              sl = '<span class="status out-of-stock">Expired</span>';
-            } else if (daysLeft < 30) {
-              dc = "text-accent font-bold";
-            }
+            let dc='text-success', dt=`${daysLeft} days`, sl='<span class="status in-stock">Active</span>';
+            if (daysLeft<0)       { dc='text-secondary font-bold'; dt='EXPIRED'; sl='<span class="status out-of-stock">Expired</span>'; }
+            else if (daysLeft<30) { dc='text-accent font-bold'; }
             const isPriority = globalIndex < 3;
             tbody.innerHTML += `<tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
                 <td class="px-6 py-4"><div class="flex items-center gap-2">
-                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-full ${isPriority ? "bg-secondary/20 text-secondary" : "bg-gray-200 text-gray-600"} text-xs font-bold">${globalIndex + 1}</span>
-                    ${isPriority ? '<span class="material-icons text-xs text-secondary" title="Expiring Soonest">priority_high</span>' : ""}</div></td>
+                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-full ${isPriority?'bg-secondary/20 text-secondary':'bg-gray-200 text-gray-600'} text-xs font-bold">${globalIndex+1}</span>
+                    ${isPriority?'<span class="material-icons text-xs text-secondary" title="Expiring Soonest">priority_high</span>':''}</div></td>
                 <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${name}</td>
-                <td class="px-6 py-4 text-gray-500">${category}</td> <td class="px-6 py-4 text-gray-500">${item.batchNumber || "N/A"}</td>
+                <td class="px-6 py-4 text-gray-500">${category}</td> <td class="px-6 py-4 text-gray-500">${item.batchNumber||'N/A'}</td>
                 <td class="px-6 py-4 font-bold">${item.quantity}</td>
                 <td class="px-6 py-4 text-gray-500">${this.formatDate(item.expiryDate)}</td>
                 <td class="px-6 py-4 ${dc}">${dt}</td>
-                <td class="px-6 py-4 text-gray-500">₱${parseFloat(this._getPrice(item) || 0).toFixed(2)}</td>
-                <td class="px-6 py-4 text-gray-500">${item.supplier || "Unknown"}</td>
+                <td class="px-6 py-4 text-gray-500">₱${parseFloat(this._getPrice(item)||0).toFixed(2)}</td>
+                <td class="px-6 py-4 text-gray-500">${item.supplier||'Unknown'}</td>
                 <td class="px-6 py-4">${sl}</td>
                
             </tr>`;
-          });
-        }
+        });
+    }
 
-        renderArchive() {
-          const tbody = document.getElementById("archiveTableBody");
-          const search = document
-            .getElementById("archiveSearch")
-            .value.toLowerCase();
-          tbody.innerHTML = "";
-          let archives = [...this.archivedInventory];
-          if (search)
-            archives = archives.filter((i) =>
-              this._getName(i).toLowerCase().includes(search),
-            );
-          if (!archives.length) {
-            tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-500">Archive is empty.</td></tr>`;
-            buildPagination(
-              0,
-              1,
-              archiveRowsPerPage,
-              "archivePaginationInfo",
-              "archivePaginationControls",
-              "goArchivePage",
-            );
-            return;
-          }
-          archivePage = buildPagination(
-            archives.length,
-            archivePage,
-            archiveRowsPerPage,
-            "archivePaginationInfo",
-            "archivePaginationControls",
-            "goArchivePage",
-          );
-          const pageItems = archives.slice(
-            (archivePage - 1) * archiveRowsPerPage,
-            archivePage * archiveRowsPerPage,
-          );
-          pageItems.forEach((item) => {
+    renderArchive() {
+        const tbody  = document.getElementById('archiveTableBody');
+        const search = document.getElementById('archiveSearch').value.toLowerCase();
+        tbody.innerHTML = '';
+        let archives = [...this.archivedInventory];
+        if (search) archives = archives.filter(i => this._getName(i).toLowerCase().includes(search));
+        if (!archives.length) { tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-500">Archive is empty.</td></tr>`; buildPagination(0, 1, archiveRowsPerPage, 'archivePaginationInfo', 'archivePaginationControls', 'goArchivePage'); return; }
+        archivePage = buildPagination(archives.length, archivePage, archiveRowsPerPage, 'archivePaginationInfo', 'archivePaginationControls', 'goArchivePage');
+        const pageItems = archives.slice((archivePage - 1) * archiveRowsPerPage, archivePage * archiveRowsPerPage);
+        pageItems.forEach(item => {
             tbody.innerHTML += `<tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 opacity-75">
                 <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${this._getName(item)}</td>
-                <td class="px-6 py-4 text-gray-500">${item.batchNumber || "N/A"}</td>
+                <td class="px-6 py-4 text-gray-500">${item.batchNumber||'N/A'}</td>
                 <td class="px-6 py-4">${item.quantity}</td>
                 <td class="px-6 py-4 text-gray-500">${this.formatDate(item.expiryDate)}</td>
                 <td class="px-6 py-4"><div class="flex items-center gap-2">
                     <button onclick="inventoryManager.restoreBatch('${item._id}')" class="text-success hover:text-success/80" title="Restore"><span class="material-icons text-sm">restore</span></button>
                 </div></td>
             </tr>`;
-          });
-        }
+        });
+    }
 
-        updateDashboardStats() {
-          const today = new Date();
-          const thirtyDays = new Date();
-          thirtyDays.setDate(thirtyDays.getDate() + 30);
-          const totalVal = this.liveInventory.reduce((acc, item) => {
+    updateDashboardStats() {
+        const today = new Date();
+        const thirtyDays = new Date();
+        thirtyDays.setDate(thirtyDays.getDate() + 30);
+        const totalVal = this.liveInventory.reduce((acc, item) => {
             if (new Date(item.expiryDate) < today) return acc;
-            let price =
-              item.sellingPrice ||
-              item.price ||
-              (item.medicine ? item.medicine.price : 0);
-            return acc + item.quantity * parseFloat(price || 0);
-          }, 0);
-          const lowStock = this.liveInventory.filter((item) => {
-            const isExpired = new Date(item.expiryDate) < today;
-            return (
-              !isExpired &&
-              item.quantity <= (item.minStockLevel || 10) &&
-              item.quantity > 0
-            );
-          }).length;
-          const expiring = this.liveInventory.filter((item) => {
-            const d = new Date(item.expiryDate);
-            return (
-              d > today && d <= thirtyDays && parseInt(item.quantity || 0) > 0
-            );
-          }).length;
-          const expiredWithStock = this.liveInventory.filter(
-            (item) =>
-              new Date(item.expiryDate) < today &&
-              parseInt(item.quantity || 0) > 0,
-          ).length;
-          document.getElementById("totalItems").textContent =
-            this.liveInventory.length;
-          document.getElementById("totalValue").textContent =
-            `₱${totalVal.toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-          document.getElementById("lowStockCount").textContent = lowStock;
-          document.getElementById("expiringCount").textContent =
-            expiring + expiredWithStock;
-          this.updateAlertLists();
-        }
+            let price = item.sellingPrice || item.price || (item.medicine ? item.medicine.price : 0);
+            return acc + (item.quantity * parseFloat(price || 0));
+        }, 0);
+        const lowStock = this.liveInventory.filter(item => { const isExpired = new Date(item.expiryDate) < today; return !isExpired && item.quantity <= (item.minStockLevel || 10) && item.quantity > 0; }).length;
+        const expiring = this.liveInventory.filter(item => { const d = new Date(item.expiryDate); return d > today && d <= thirtyDays && parseInt(item.quantity || 0) > 0; }).length;
+        const expiredWithStock = this.liveInventory.filter(item => new Date(item.expiryDate) < today && parseInt(item.quantity || 0) > 0).length;
+        document.getElementById('totalItems').textContent = this.liveInventory.length;
+        document.getElementById('totalValue').textContent = `₱${totalVal.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        document.getElementById('lowStockCount').textContent = lowStock;
+        document.getElementById('expiringCount').textContent = expiring + expiredWithStock;
+        this.updateAlertLists();
+    }
 
-        updateAlertLists() {
-          const lowStockList = document.getElementById("lowStockList");
-          const expiryList = document.getElementById("expiryList");
-          lowStockList.innerHTML = "";
-          expiryList.innerHTML = "";
-          let hasLowStock = false,
-            hasExpiry = false;
-          const today = new Date();
-          const medicineTotals = {};
-          this.liveInventory.forEach((item) => {
+    updateAlertLists() {
+        const lowStockList = document.getElementById('lowStockList');
+        const expiryList = document.getElementById('expiryList');
+        lowStockList.innerHTML = '';
+        expiryList.innerHTML = '';
+        let hasLowStock = false, hasExpiry = false;
+        const today = new Date();
+        const medicineTotals = {};
+        this.liveInventory.forEach(item => {
             const name = this._getName(item);
             const qty = parseInt(item.quantity || 0);
             const minStock = item.minStockLevel || 10;
             const isExpired = new Date(item.expiryDate) < today;
-            if (!medicineTotals[name])
-              medicineTotals[name] = { usableQty: 0, minStock };
+            if (!medicineTotals[name]) medicineTotals[name] = { usableQty: 0, minStock };
             if (!isExpired) medicineTotals[name].usableQty += qty;
-          });
-          Object.entries(medicineTotals).forEach(([name, data]) => {
-            if (data.usableQty === 0) {
-              hasLowStock = true;
-              lowStockList.innerHTML += `<li class="text-sm py-1 text-red-500 dark:text-red-400">${name} &mdash; Out of Stock</li>`;
-            } else if (data.usableQty <= data.minStock) {
-              hasLowStock = true;
-              lowStockList.innerHTML += `<li class="text-sm py-1 text-accent dark:text-amber-400">${name} (${data.usableQty} left &mdash; Low Stock)</li>`;
-            }
-          });
-          this.liveInventory.forEach((item) => {
+        });
+        Object.entries(medicineTotals).forEach(([name, data]) => {
+            if (data.usableQty === 0) { hasLowStock = true; lowStockList.innerHTML += `<li class="text-sm py-1 text-red-500 dark:text-red-400">${name} &mdash; Out of Stock</li>`; }
+            else if (data.usableQty <= data.minStock) { hasLowStock = true; lowStockList.innerHTML += `<li class="text-sm py-1 text-accent dark:text-amber-400">${name} (${data.usableQty} left &mdash; Low Stock)</li>`; }
+        });
+        this.liveInventory.forEach(item => {
             const name = this._getName(item);
             const qty = parseInt(item.quantity || 0);
             if (qty <= 0) return;
@@ -3186,97 +2623,37 @@
           if (item.expiryDate) {
             const expiry = new Date(item.expiryDate);
             if (expiry < today) {
-              alerts.push({
-                id: `exp-${item._id || idx}`,
-                type: "expiry",
-                unread: true,
-                medicineName: medName,
-                title: "Medicine Expired",
-                desc: `${medName} expired on ${expiry.toLocaleDateString("en-PH")}.`,
-                time: "Needs immediate attention",
-                actionLabel: "View Batch",
-                actionClass: "btn-expiry",
-                icon: "event_busy",
-                iconClass: "icon-expiry",
-              });
+                alerts.push({ id: `exp-${item._id || idx}`, type: 'expiry', unread: true, medicineName: medName, title: 'Medicine Expired', desc: `${medName} expired on ${expiry.toLocaleDateString('en-PH')}.`, time: 'Needs immediate attention', actionLabel: 'View Batch', actionClass: 'btn-expiry', icon: 'event_busy', iconClass: 'icon-expiry' });
             } else if (expiry <= thirtyDays) {
-              const d = Math.ceil((expiry - today) / 864e5);
-              alerts.push({
-                id: `exp-${item._id || idx}`,
-                type: "expiry",
-                unread: true,
-                medicineName: medName,
-                title: "Expiring Soon",
-                desc: `${medName} expires in ${d} day${d === 1 ? "" : "s"}.`,
-                time: `${d} days left`,
-                actionLabel: "View Batch",
-                actionClass: "btn-expiry",
-                icon: "schedule",
-                iconClass: "icon-expiry",
-              });
+                const d = Math.ceil((expiry - today) / 864e5);
+                alerts.push({ id: `exp-${item._id || idx}`, type: 'expiry', unread: true, medicineName: medName, title: 'Expiring Soon', desc: `${medName} expires in ${d} day${d === 1 ? '' : 's'}.`, time: `${d} days left`, actionLabel: 'View Batch', actionClass: 'btn-expiry', icon: 'schedule', iconClass: 'icon-expiry' });
             }
-          }
-          const qty = parseInt(item.quantity || 0);
-          const minStock = parseInt(item.minStockLevel || 10);
-          const isExpired = new Date(item.expiryDate) < today;
-          if (!isExpired && qty === 0) {
-            alerts.push({
-              id: `stk-${item._id || idx}`,
-              type: "critical",
-              unread: true,
-              medicineName: medName,
-              title: "Critical: Out of Stock",
-              desc: `${medName} is completely out of stock.`,
-              time: "Immediate action required",
-              actionLabel: "View in Inventory",
-              actionClass: "btn-critical",
-              icon: "warning",
-              iconClass: "icon-critical",
-            });
-          } else if (!isExpired && qty <= minStock) {
-            alerts.push({
-              id: `stk-${item._id || idx}`,
-              type: "shortage",
-              unread: true,
-              medicineName: medName,
-              title: "Low Stock Alert",
-              desc: `${medName} — only ${qty} unit${qty === 1 ? "" : "s"} remaining (min: ${minStock}).`,
-              time: "Reorder soon",
-              actionLabel: "View in Inventory",
-              actionClass: "btn-shortage",
-              icon: "inventory_2",
-              iconClass: "icon-shortage",
-            });
-          }
-        });
-
-        const order = { critical: 0, expiry: 1, shortage: 2 };
-        alerts.sort((a, b) => (order[a.type] ?? 9) - (order[b.type] ?? 9));
-        return alerts;
-      }
-
-      function renderNotifications() {
-        const list = document.getElementById("notifList");
-        const filtered =
-          activeNotifFilter === "all"
-            ? notifData
-            : notifData.filter((n) => n.type === activeNotifFilter);
-        if (!filtered.length) {
-          const msg =
-            activeNotifFilter === "all"
-              ? "All clear — no alerts right now!"
-              : "No notifications in this category.";
-          list.innerHTML =
-            '<div class="notif-empty"><span class="material-icons">notifications_none</span><p>' +
-            msg +
-            "</p></div>";
-          updateNotifBadge();
-          return;
         }
-        list.innerHTML = filtered
-          .map(
-            (n) => `
-        <div class="notif-item ${n.type} ${n.unread ? "unread" : ""}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
+        const qty = parseInt(item.quantity || 0);
+        const minStock = parseInt(item.minStockLevel || 10);
+        const isExpired = new Date(item.expiryDate) < today;
+        if (!isExpired && qty === 0) {
+            alerts.push({ id: `stk-${item._id || idx}`, type: 'critical', unread: true, medicineName: medName, title: 'Critical: Out of Stock', desc: `${medName} is completely out of stock.`, time: 'Immediate action required', actionLabel: 'View in Inventory', actionClass: 'btn-critical', icon: 'warning', iconClass: 'icon-critical' });
+        } else if (!isExpired && qty <= minStock) {
+            alerts.push({ id: `stk-${item._id || idx}`, type: 'shortage', unread: true, medicineName: medName, title: 'Low Stock Alert', desc: `${medName} — only ${qty} unit${qty === 1 ? '' : 's'} remaining (min: ${minStock}).`, time: 'Reorder soon', actionLabel: 'View in Inventory', actionClass: 'btn-shortage', icon: 'inventory_2', iconClass: 'icon-shortage' });
+        }
+    });
+
+    const order = { critical: 0, expiry: 1, shortage: 2 };
+    alerts.sort((a, b) => (order[a.type] ?? 9) - (order[b.type] ?? 9));
+    return alerts;
+}
+
+function renderNotifications() {
+    const list = document.getElementById('notifList');
+    const filtered = activeNotifFilter === 'all' ? notifData : notifData.filter(n => n.type === activeNotifFilter);
+    if (!filtered.length) {
+        const msg = activeNotifFilter === 'all' ? 'All clear — no alerts right now!' : 'No notifications in this category.';
+        list.innerHTML = '<div class="notif-empty"><span class="material-icons">notifications_none</span><p>' + msg + '</p></div>';
+        updateNotifBadge(); return;
+    }
+    list.innerHTML = filtered.map(n => `
+        <div class="notif-item ${n.type} ${n.unread ? 'unread' : ''}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
             <div class="notif-icon-wrap ${n.iconClass}"><span class="material-icons">${n.icon}</span></div>
             <div class="notif-body">
                 <div class="notif-title">${n.title}</div>
@@ -3286,89 +2663,62 @@
                     <button class="notif-action-btn ${n.actionClass}" onclick="handleNotifAction(event,'${n.id}')">${n.actionLabel}</button>
                 </div>
             </div>
-            ${n.unread ? '<div class="unread-dot"></div>' : ""}
-        </div>`,
-          )
-          .join("");
-        updateNotifBadge();
-      }
+            ${n.unread ? '<div class="unread-dot"></div>' : ''}
+        </div>`).join('');
+    updateNotifBadge();
+}
 
-      function updateNotifBadge() {
-        const count = notifData.filter((n) => n.unread).length;
-        const badge = document.getElementById("notificationBadge");
-        const pill = document.getElementById("unreadPill");
-        if (badge) {
-          badge.textContent = count;
-          badge.style.display = count > 0 ? "flex" : "none";
-        }
-        if (pill) pill.textContent = count > 0 ? `${count} new` : "All clear";
-      }
+function updateNotifBadge() {
+    const count = notifData.filter(n => n.unread).length;
+    const badge = document.getElementById('notificationBadge');
+    const pill = document.getElementById('unreadPill');
+    if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none'; }
+    if (pill) pill.textContent = count > 0 ? `${count} new` : 'All clear';
+}
 
-      function markNotifRead(id) {
-        const n = notifData.find((n) => n.id === id);
-        if (n) {
-          n.unread = false;
-          saveReadNotifId(id);
-          renderNotifications();
-        }
-      }
+function markNotifRead(id) {
+    const n = notifData.find(n => n.id === id);
+    if (n) { n.unread = false; saveReadNotifId(id); renderNotifications(); }
+}
 
-      function markAllRead() {
-        notifData.forEach((n) => (n.unread = false));
-        saveAllReadNotifIds();
-        renderNotifications();
-      }
+function markAllRead() {
+    notifData.forEach(n => n.unread = false);
+    saveAllReadNotifIds();
+    renderNotifications();
+}
 
-      function handleNotifAction(event, id) {
-        event.stopPropagation();
-        markNotifRead(id);
-        const n = notifData.find((n) => n.id === id);
-        if (!n) return;
-        document
-          .getElementById("notificationDropdown")
-          .classList.remove("open");
+function handleNotifAction(event, id) {
+    event.stopPropagation();
+    markNotifRead(id);
+    const n = notifData.find(n => n.id === id);
+    if (!n) return;
+    document.getElementById('notificationDropdown').classList.remove('open');
 
-        if (n.type === "expiry") {
-          inventoryManager.viewBatchDetails(n.medicineName);
-          setTimeout(
-            () => highlightMedicineRow("batchTableBody", n.medicineName),
-            300,
-          );
-        } else if (n.type === "critical" || n.type === "shortage") {
-          inventoryManager.switchTab("summary");
-          const s = document.getElementById("summarySearch");
-          if (s) {
-            s.value = n.medicineName;
-            summaryPage = 1;
-            inventoryManager.renderSummary();
-          }
-          setTimeout(
-            () => highlightMedicineRow("summaryTableBody", n.medicineName),
-            300,
-          );
-        }
-      }
+    if (n.type === 'expiry') {
+        inventoryManager.viewBatchDetails(n.medicineName);
+        setTimeout(() => highlightMedicineRow('batchTableBody', n.medicineName), 300);
+    } else if (n.type === 'critical' || n.type === 'shortage') {
+        inventoryManager.switchTab('summary');
+        const s = document.getElementById('summarySearch');
+        if (s) { s.value = n.medicineName; summaryPage = 1; inventoryManager.renderSummary(); }
+        setTimeout(() => highlightMedicineRow('summaryTableBody', n.medicineName), 300);
+    }
+}
 
-      function highlightMedicineRow(tbodyId, medicineName) {
-        const tbody = document.getElementById(tbodyId);
-        if (!tbody) return;
-        const nameLower = medicineName.toLowerCase();
-        let targetRow = null;
-        for (const row of tbody.querySelectorAll("tr")) {
-          const firstCell = row.querySelector("td");
-          if (
-            firstCell &&
-            firstCell.textContent.toLowerCase().includes(nameLower)
-          ) {
-            targetRow = row;
-            break;
-          }
-        }
-        if (!targetRow) return;
-        if (!document.getElementById("notifHighlightStyle")) {
-          const style = document.createElement("style");
-          style.id = "notifHighlightStyle";
-          style.textContent = `
+function highlightMedicineRow(tbodyId, medicineName) {
+    const tbody = document.getElementById(tbodyId);
+    if (!tbody) return;
+    const nameLower = medicineName.toLowerCase();
+    let targetRow = null;
+    for (const row of tbody.querySelectorAll('tr')) {
+        const firstCell = row.querySelector('td');
+        if (firstCell && firstCell.textContent.toLowerCase().includes(nameLower)) { targetRow = row; break; }
+    }
+    if (!targetRow) return;
+    if (!document.getElementById('notifHighlightStyle')) {
+        const style = document.createElement('style');
+        style.id = 'notifHighlightStyle';
+        style.textContent = `
             @keyframes notifRowPulse {
                 0%   { background-color: rgba(245,158,11,0.35); outline: 2px solid #f59e0b; }
                 60%  { background-color: rgba(245,158,11,0.20); outline: 2px solid #f59e0b; }
@@ -3376,70 +2726,188 @@
             }
             .notif-row-highlight { animation: notifRowPulse 2.2s ease-out forwards; border-radius: 6px; }
         `;
-          document.head.appendChild(style);
-        }
-        targetRow.scrollIntoView({ behavior: "smooth", block: "center" });
-        targetRow.classList.remove("notif-row-highlight");
-        void targetRow.offsetWidth;
-        targetRow.classList.add("notif-row-highlight");
-        targetRow.addEventListener(
-          "animationend",
-          () => targetRow.classList.remove("notif-row-highlight"),
-          { once: true },
-        );
-      }
+        document.head.appendChild(style);
+    }
+    targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    targetRow.classList.remove('notif-row-highlight');
+    void targetRow.offsetWidth;
+    targetRow.classList.add('notif-row-highlight');
+    targetRow.addEventListener('animationend', () => targetRow.classList.remove('notif-row-highlight'), { once: true });
+}
 
-      function filterNotifTab(btn, filter) {
-        document
-          .querySelectorAll(".notif-tab-btn")
-          .forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-        activeNotifFilter = filter;
+function filterNotifTab(btn, filter) {
+    document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeNotifFilter = filter;
+    renderNotifications();
+}
+
+function getReadNotifIds() {
+    try { return new Set(JSON.parse(sessionStorage.getItem('readNotifIds') || '[]')); }
+    catch(e) { return new Set(); }
+}
+
+function saveReadNotifId(id) {
+    const ids = getReadNotifIds();
+    ids.add(id);
+    sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
+}
+
+function saveAllReadNotifIds() {
+    const ids = getReadNotifIds();
+    notifData.forEach(n => ids.add(n.id));
+    sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
+}
+
+async function refreshNotifications() {
+    const token = inventoryManager ? inventoryManager.getToken() : null;
+    if (!token) return;
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/inventory`, { headers: { 'Authorization': `Bearer ${token}` } });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const raw = await res.json();
+        const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
+        const readIds = getReadNotifIds();
+        notifData = generateAlertsFromInventory(inventory).slice(0, 15);
+        notifData.forEach(n => { if (readIds.has(n.id)) n.unread = false; });
         renderNotifications();
-      }
+    } catch (e) { console.warn('Notification fetch failed:', e); }
+}
 
-      function getReadNotifIds() {
-        try {
-          return new Set(
-            JSON.parse(sessionStorage.getItem("readNotifIds") || "[]"),
-          );
-        } catch (e) {
-          return new Set();
-        }
-      }
+document.addEventListener('DOMContentLoaded', function () {
+    const btn = document.getElementById('notificationBtn');
+    const dropdown = document.getElementById('notificationDropdown');
+    if (!btn || !dropdown) return;
+    btn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('open'); if (dropdown.classList.contains('open')) refreshNotifications(); });
+    document.addEventListener('click', (e) => { if (!dropdown.contains(e.target) && e.target !== btn) dropdown.classList.remove('open'); });
+    dropdown.addEventListener('click', e => e.stopPropagation());
+    setTimeout(refreshNotifications, 1200);
+    setInterval(refreshNotifications, 60000);
+});
 
-      function saveReadNotifId(id) {
-        const ids = getReadNotifIds();
-        ids.add(id);
-        sessionStorage.setItem("readNotifIds", JSON.stringify([...ids]));
-      }
+function toggleExportMenu(menuId, forceClose = false) {
+    // Close all other open menus first
+    document.querySelectorAll('.export-menu.open').forEach(m => {
+        if (m.id !== menuId) m.classList.remove('open');
+    });
+    const menu = document.getElementById(menuId);
+    if (!menu) return;
+    if (forceClose) { menu.classList.remove('open'); return; }
+    menu.classList.toggle('open');
+}
 
-      function saveAllReadNotifIds() {
-        const ids = getReadNotifIds();
-        notifData.forEach((n) => ids.add(n.id));
-        sessionStorage.setItem("readNotifIds", JSON.stringify([...ids]));
-      }
+// Close export menus when clicking outside
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.export-wrap')) {
+        document.querySelectorAll('.export-menu.open').forEach(m => m.classList.remove('open'));
+    }
+});
 
-      async function refreshNotifications() {
-        const token = inventoryManager ? inventoryManager.getToken() : null;
-        if (!token) return;
-        try {
-          const res = await fetch(`${API_BASE_URL}/api/inventory`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const raw = await res.json();
-          const inventory = Array.isArray(raw)
-            ? raw
-            : raw.medicines || raw.data || [];
-          const readIds = getReadNotifIds();
-          notifData = generateAlertsFromInventory(inventory).slice(0, 15);
-          notifData.forEach((n) => {
-            if (readIds.has(n.id)) n.unread = false;
-          });
-          renderNotifications();
-        } catch (e) {
-          console.warn("Notification fetch failed:", e);
+function getChecked(menuId) {
+    return [...document.querySelectorAll(`#${menuId} input[type="checkbox"]:checked`)]
+        .map(cb => cb.value);
+}
+
+// ── BATCH EXPORT: Populate dynamic checklist then open menu ──
+let batchExportActiveFilter = 'all';
+
+function openBatchExportMenu() {
+    document.querySelectorAll('.export-menu.open').forEach(m => m.classList.remove('open'));
+    const menu = document.getElementById('batchExportMenu');
+    if (!menu || !inventoryManager) return;
+    document.getElementById('batchExportSearch').value = '';
+    document.getElementById('batchExportDateFrom').value = '';
+    document.getElementById('batchExportDateTo').value = '';
+    document.querySelectorAll('.bexp-qp').forEach(b => b.classList.remove('active'));
+    populateBatchExportList();
+    menu.classList.add('open');
+}
+
+function populateBatchExportList() {
+    const list = document.getElementById('batchExportCheckList');
+    if (!list || !inventoryManager) return;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const sorted = [...inventoryManager.liveInventory].sort(
+        (a, b) => new Date(a.expiryDate) - new Date(b.expiryDate)
+    );
+    if (!sorted.length) {
+        list.innerHTML = '<p style="font-size:12px;color:#9ca3af;text-align:center;padding:8px 0;">No batches available.</p>';
+        return;
+    }
+    list.innerHTML = sorted.map(item => {
+        const id = item._id || item.id;
+        const name = inventoryManager._getName(item);
+        const batch = item.batchNumber || 'N/A';
+        const qty = item.quantity;
+        const expDate = new Date(item.expiryDate); expDate.setHours(0,0,0,0);
+        const daysLeft = Math.ceil((expDate - today) / 864e5);
+        const expStr = expDate.toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric' });
+        const expisoStr = expDate.toISOString().split('T')[0];
+        let color = '#16a34a';
+        if (daysLeft < 0) color = '#dc2626';
+        else if (daysLeft <= 30) color = '#8b5a2b';
+        return `
+            <label class="export-check-row bexp-row"
+                data-text="${name.toLowerCase()} ${batch.toLowerCase()}"
+                data-expiry="${expisoStr}"
+                style="align-items:flex-start;gap:6px;padding:5px 2px;"
+                onclick="updateBatchExportCount()">
+                <input type="checkbox" value="${id}" style="margin-top:2px;width:14px;height:14px;accent-color:#005a32;flex-shrink:0;" onchange="updateBatchExportCount()">
+                <span style="width:7px;height:7px;border-radius:50%;background:${color};flex-shrink:0;margin-top:4px;"></span>
+                <span style="font-size:12px;line-height:1.3;">
+                    <span style="font-weight:600;color:inherit;">${name}</span>
+                    <span style="display:block;font-size:10px;color:#9ca3af;">Batch ${batch} · Qty ${qty} · <span style="color:${color}">${expStr}</span></span>
+                </span>
+            </label>`;
+    }).join('') + `<div id="batchExportEmpty" style="display:none;font-size:12px;color:#9ca3af;text-align:center;padding:12px 0;">No batches match.</div>`;
+    updateBatchExportCount();
+}
+
+function filterBatchExportList() {
+    const q = (document.getElementById('batchExportSearch')?.value || '').toLowerCase();
+    const fromVal = document.getElementById('batchExportDateFrom')?.value;
+    const toVal   = document.getElementById('batchExportDateTo')?.value;
+    const from = fromVal ? new Date(fromVal) : null;
+    const to   = toVal   ? new Date(toVal)   : null;
+    let visible = 0;
+    document.querySelectorAll('.bexp-row').forEach(row => {
+        const expiry = new Date(row.dataset.expiry);
+        const matchQ    = !q    || row.dataset.text.includes(q);
+        const matchFrom = !from || expiry >= from;
+        const matchTo   = !to   || expiry <= to;
+        const show = matchQ && matchFrom && matchTo;
+        row.style.display = show ? '' : 'none';
+        if (show) visible++;
+    });
+    const empty = document.getElementById('batchExportEmpty');
+    if (empty) empty.style.display = visible === 0 ? '' : 'none';
+    updateBatchExportCount();
+}
+
+function setBatchExportQuick(btn, type) {
+    document.querySelectorAll('.bexp-qp').forEach(b => b.classList.remove('active'));
+    if (type !== 'clear') btn.classList.add('active');
+    const today = new Date(); today.setHours(0,0,0,0);
+    const toISO = d => d.toISOString().split('T')[0];
+    const df = document.getElementById('batchExportDateFrom');
+    const dt = document.getElementById('batchExportDateTo');
+    if (type === 'clear') {
+        df.value = ''; dt.value = '';
+    } else if (type === 'expired') {
+        df.value = '';
+        dt.value = toISO(new Date(today.getTime() - 864e5));
+    } else {
+        df.value = toISO(today);
+        dt.value = toISO(new Date(today.getTime() + parseInt(type) * 864e5));
+    }
+    filterBatchExportList();
+}
+
+function setBatchExportAll(checked) {
+    document.querySelectorAll('.bexp-row').forEach(row => {
+        if (row.style.display !== 'none') {
+            const cb = row.querySelector('input[type="checkbox"]');
+            if (cb) cb.checked = checked;
         }
       }
 
