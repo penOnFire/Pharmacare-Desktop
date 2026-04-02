@@ -201,6 +201,63 @@
         .restore-btn:hover { background: rgba(0,90,50,0.18); }
         .delete-btn  { background: rgba(214,40,40,0.08); color: #d62828; border-color: rgba(214,40,40,0.2); }
         .delete-btn:hover  { background: rgba(214,40,40,0.18); }
+
+        /* ── ADD SUPPLY MODAL ── */
+        #addSupplyModal .as-input {
+            width: 100%; padding: 9px 13px; border: 1.5px solid #e5e7eb; border-radius: 8px;
+            font-size: 14px; color: #111827; outline: none; box-sizing: border-box;
+            transition: border-color 0.15s, box-shadow 0.15s; font-family: 'Inter', sans-serif; background: #fff;
+        }
+        #addSupplyModal .as-input:focus { border-color: #005a32; box-shadow: 0 0 0 3px rgba(0,90,50,0.1); }
+        #addSupplyModal .as-label { display: block; font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 6px; }
+        #addSupplyModal .as-error { font-size: 12px; color: #dc2626; margin-top: 4px; display: none; }
+        .dark #addSupplyModal .as-input { background: #1f2937; border-color: #374151; color: #f9fafb; }
+        .dark #addSupplyModal .as-input:focus { border-color: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.12); }
+        .dark #addSupplyModal .as-label { color: #d1d5db; }
+
+        #restockModal .as-input, #updateSupplyModal .as-input {
+            width: 100%; padding: 9px 13px; border: 1.5px solid #e5e7eb; border-radius: 8px;
+            font-size: 14px; color: #111827; outline: none; box-sizing: border-box;
+            transition: border-color 0.15s, box-shadow 0.15s; font-family: 'Inter', sans-serif; background: #fff;
+        }
+        #restockModal .as-input:focus, #updateSupplyModal .as-input:focus { border-color: #005a32; box-shadow: 0 0 0 3px rgba(0,90,50,0.1); }
+        #restockModal .as-label, #updateSupplyModal .as-label { display: block; font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 6px; }
+        #restockModal .as-error, #updateSupplyModal .as-error { font-size: 12px; color: #dc2626; margin-top: 4px; display: none; }
+        #restockModal .as-info-banner { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 12px 14px; display: flex; align-items: flex-start; gap: 10px; }
+        #restockModal .as-info-banner .material-icons { color: #16a34a; font-size: 18px; margin-top: 1px; flex-shrink: 0; }
+        #restockModal .as-info-banner p { font-size: 12.5px; color: #166534; line-height: 1.6; margin: 0; }
+        #restockModal .as-info-banner strong { font-weight: 600; }
+        #updateSupplyModal .as-delete-btn { padding: 9px 18px; background: none; border: 1.5px solid #fca5a5; color: #dc2626; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.15s, border-color 0.15s; font-family: 'Inter', sans-serif; }
+        #updateSupplyModal .as-delete-btn:hover { background: #fef2f2; border-color: #f87171; }
+        .dark #restockModal .as-input, .dark #updateSupplyModal .as-input { background: #1f2937; border-color: #374151; color: #f9fafb; }
+        .dark #restockModal .as-input:focus, .dark #updateSupplyModal .as-input:focus { border-color: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.12); }
+        .dark #restockModal .as-label, .dark #updateSupplyModal .as-label { color: #d1d5db; }
+        .dark #restockModal .as-info-banner { background: rgba(0,90,50,0.15); border-color: rgba(0,90,50,0.3); }
+        .dark #restockModal .as-info-banner p { color: #86efac; }
+
+        @keyframes asModalIn {
+            from { opacity: 0; transform: scale(0.96) translateY(8px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        #addSupplyModal .as-card, #restockModal .as-card, #updateSupplyModal .as-card {
+            animation: asModalIn 0.22s cubic-bezier(.34,1.56,.64,1);
+        }
+
+        .bexp-pill {
+  font-size: 11px; font-weight: 600; padding: 3px 10px;
+  border-radius: 99px; border: 1px solid #e5e7eb;
+  background: none; cursor: pointer; color: #6b7280; transition: all 0.12s;
+}
+.bexp-pill.active { background: #005a32; color: #fff; border-color: #005a32; }
+.bexp-pill:not(.active):hover { background: #f0fdf4; color: #005a32; }
+
+        .bexp-qp {
+  font-size: 10px; font-weight: 600; padding: 3px 9px;
+  border-radius: 99px; border: 1px solid #e5e7eb;
+  background: #fff; cursor: pointer; color: #6b7280; transition: all 0.12s;
+}
+.bexp-qp:hover, .bexp-qp.active { background: #005a32; color: #fff; border-color: #005a32; }
+
     </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
@@ -422,21 +479,61 @@
                                 <input id="batchSearch" onkeyup="searchBatch()" class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm" placeholder="Search batches..." type="text"/>
                                 <!-- Batch Export Dropdown -->
                                 <div class="export-wrap">
-                                    <button onclick="toggleExportMenu('batchExportMenu')" class="border border-primary px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/10 transition-colors text-primary font-semibold text-sm">
-                                        <span class="material-icons text-sm">print</span> Export / Print
-                                        <span class="material-icons text-sm">arrow_drop_down</span>
-                                    </button>
-                                    <div id="batchExportMenu" class="export-menu" style="min-width:220px; padding: 12px 14px;">
-                                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Include in print</p>
-                                        <label class="export-check-row"><input type="checkbox" value="active" checked> <span style="color:#16a34a" class="material-icons">check_circle</span> Active</label>
-                                        <label class="export-check-row"><input type="checkbox" value="expiring"> <span style="color:#8b5a2b" class="material-icons">schedule</span> Expiring Soon (≤30d)</label>
-                                        <label class="export-check-row"><input type="checkbox" value="expired"> <span style="color:#dc2626" class="material-icons">event_busy</span> Expired</label>
-                                        <div class="export-menu-divider" style="margin: 10px 0;"></div>
-                                        <button onclick="exportInventoryData('batch', getChecked('batchExportMenu'))" class="export-apply-btn">
-                                            <span class="material-icons">print</span> Print / Export
-                                        </button>
-                                    </div>
-                                </div>
+    <button onclick="openBatchExportMenu()" class="border border-primary px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/10 transition-colors text-primary font-semibold text-sm">
+        <span class="material-icons text-sm">print</span> Export / Print
+        <span class="material-icons text-sm">arrow_drop_down</span>
+    </button>
+    <div id="batchExportMenu" class="export-menu" style="min-width:310px; padding: 12px 14px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider" style="margin:0;">Select Batches</p>
+    <div style="display:flex;gap:6px;">
+      <button onclick="setBatchExportAll(true)" style="font-size:10px;color:#005a32;font-weight:600;background:none;border:none;cursor:pointer;">All</button>
+      <span style="font-size:10px;color:#9ca3af;">|</span>
+      <button onclick="setBatchExportAll(false)" style="font-size:10px;color:#6b7280;font-weight:600;background:none;border:none;cursor:pointer;">None</button>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div style="position:relative;margin-bottom:8px;">
+    <span class="material-icons" style="position:absolute;left:7px;top:50%;transform:translateY(-50%);font-size:15px;color:#9ca3af;pointer-events:none;">search</span>
+    <input id="batchExportSearch" type="text" placeholder="Search medicine or batch no..."
+      oninput="filterBatchExportList()"
+      style="width:100%;box-sizing:border-box;padding:6px 10px 6px 28px;font-size:12px;border:1px solid #e5e7eb;border-radius:8px;background:#f9fafb;color:#1f2937;outline:none;"/>
+  </div>
+
+  <!-- Date range filter -->
+  <div style="background:#f9fafb;border-radius:8px;padding:10px;border:1px solid #e5e7eb;margin-bottom:8px;">
+    <p style="font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 8px;">Filter by expiry date</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
+      <div>
+        <label style="font-size:10px;color:#6b7280;display:block;margin-bottom:3px;">From</label>
+        <input id="batchExportDateFrom" type="date" oninput="filterBatchExportList()"
+          style="width:100%;box-sizing:border-box;padding:5px 7px;font-size:11px;border:1px solid #e5e7eb;border-radius:6px;background:#fff;color:#1f2937;outline:none;"/>
+      </div>
+      <div>
+        <label style="font-size:10px;color:#6b7280;display:block;margin-bottom:3px;">To</label>
+        <input id="batchExportDateTo" type="date" oninput="filterBatchExportList()"
+          style="width:100%;box-sizing:border-box;padding:5px 7px;font-size:11px;border:1px solid #e5e7eb;border-radius:6px;background:#fff;color:#1f2937;outline:none;"/>
+      </div>
+    </div>
+    <div style="display:flex;gap:4px;flex-wrap:wrap;">
+      <button class="bexp-qp" onclick="setBatchExportQuick(this,'expired')">Expired</button>
+      <button class="bexp-qp" onclick="setBatchExportQuick(this,'7')">Next 7d</button>
+      <button class="bexp-qp" onclick="setBatchExportQuick(this,'30')">Next 30d</button>
+      <button class="bexp-qp" onclick="setBatchExportQuick(this,'90')">Next 90d</button>
+      <button class="bexp-qp" onclick="setBatchExportQuick(this,'clear')">Clear</button>
+    </div>
+  </div>
+
+  <div id="batchExportCheckList" style="max-height:200px;overflow-y:auto;scrollbar-width:thin;margin-bottom:8px;"></div>
+
+  <div class="export-menu-divider" style="margin: 8px 0;"></div>
+  <button onclick="exportBatchData()" class="export-apply-btn">
+    <span class="material-icons">print</span> Print / Export
+  </button>
+  <p id="batchExportSelCount" style="text-align:center;font-size:11px;color:#9ca3af;margin:6px 0 0;">0 batches selected</p>
+</div>
+</div>
                             </div>
                         </div>
                         <div class="table-container overflow-x-auto w-full">
@@ -585,6 +682,191 @@
                 </div>
             </div>
         </main>
+    </div>
+
+<!-- ADD NEW MEDICINE TO SUPPLIES MODAL -->
+    <div id="addSupplyModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4"
+         style="background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);"
+         onclick="handleAddSupplyBackdropClick(event)">
+        <div class="as-card dark:bg-surface-dark"
+             style="background: #fff; border-radius: 16px; width: 100%; max-width: 460px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.16), 0 4px 16px rgba(0,0,0,0.06);">
+            <div style="background: #f0fdf4; padding: 20px 28px 18px; border-bottom: 1px solid #dcfce7;">
+                <h2 style="font-size: 16px; font-weight: 700; color: #005a32; margin: 0; letter-spacing: -0.01em;" class="dark:text-green-400">
+                    Add New Medicine to Supplies
+                </h2>
+            </div>
+            <div style="padding: 22px 28px; display: flex; flex-direction: column; gap: 15px;">
+                <div>
+                    <label class="as-label">Medicine Name</label>
+                    <input type="text" id="addSupplyName" class="as-input" placeholder="e.g., Aspirin 100mg">
+                    <p class="as-error" id="addSupplyNameErr">Please enter a medicine name.</p>
+                </div>
+                <div>
+                    <label class="as-label">Category</label>
+                    <select id="addSupplyCategory" class="as-input" style="appearance: auto;">
+                        <option value="">-- Select Category --</option>
+                        <option value="Antibiotics">Antibiotics</option>
+                        <option value="Pain Relief">Pain Relief</option>
+                        <option value="Antihistamine">Antihistamine</option>
+                        <option value="Gastrointestinal">Gastrointestinal</option>
+                        <option value="Diabetes">Diabetes</option>
+                        <option value="Cardiovascular">Cardiovascular</option>
+                    </select>
+                    <p class="as-error" id="addSupplyCategoryErr">Please select a category.</p>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <div>
+                        <label class="as-label">Initial Quantity</label>
+                        <input type="number" id="addSupplyQuantity" class="as-input" value="0" min="0" placeholder="0">
+                        <p class="as-error" id="addSupplyQuantityErr">Quantity cannot be negative.</p>
+                    </div>
+                    <div>
+                        <label class="as-label">Reorder Level</label>
+                        <input type="number" id="addSupplyReorderLevel" class="as-input" value="50" min="1" placeholder="50">
+                        <p class="as-error" id="addSupplyReorderErr">Must be greater than 0.</p>
+                    </div>
+                </div>
+                <div>
+                    <label class="as-label">Unit Cost (₱)</label>
+                    <input type="number" id="addSupplyUnitCost" class="as-input" value="0" step="0.01" min="0" placeholder="0.00">
+                    <p class="as-error" id="addSupplyUnitCostErr">Unit cost cannot be negative.</p>
+                </div>
+            </div>
+            <div style="padding: 12px 28px 22px; display: flex; justify-content: flex-end; gap: 10px; align-items: center;">
+                <button id="addSupplyCancelBtn"
+                    style="padding: 9px 20px; background: none; border: none; font-size: 14px; font-weight: 500; color: #6b7280; cursor: pointer; border-radius: 8px; transition: background 0.15s; font-family: 'Inter', sans-serif;"
+                    onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'"
+                    onclick="closeAddSupplyModal()">Cancel</button>
+                <button id="addSupplySubmitBtn"
+                    style="padding: 9px 22px; background: #005a32; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.15s; font-family: 'Inter', sans-serif; letter-spacing: 0.01em;"
+                    onmouseover="this.style.background='#004526'" onmouseout="this.style.background='#005a32'"
+                    onclick="submitAddSupply()">Add Medicine</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESTOCK MODAL -->
+    <div id="restockModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4"
+         style="background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);"
+         onclick="if(event.target===this) closeRestockModal()">
+        <div class="as-card dark:bg-surface-dark"
+             style="background: #fff; border-radius: 16px; width: 100%; max-width: 480px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.16), 0 4px 16px rgba(0,0,0,0.06);">
+            <div style="background: #f0fdf4; padding: 20px 28px 18px; border-bottom: 1px solid #dcfce7; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <h2 style="font-size: 16px; font-weight: 700; color: #005a32; margin: 0; letter-spacing: -0.01em;" class="dark:text-green-400">Restock Medicine</h2>
+                    <p id="restockModalSubtitle" style="font-size: 12px; color: #16a34a; margin: 3px 0 0; font-weight: 500;"></p>
+                </div>
+                <span class="material-icons" style="color: #16a34a; font-size: 22px; opacity: 0.7;">add_shopping_cart</span>
+            </div>
+            <div style="padding: 20px 28px; display: flex; flex-direction: column; gap: 14px; max-height: 70vh; overflow-y: auto;">
+                <div class="as-info-banner" id="restockInfoBanner">
+                    <span class="material-icons">info</span>
+                    <p id="restockInfoText"></p>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <div>
+                        <label class="as-label">Quantity Purchased <span style="color:#dc2626;">*</span></label>
+                        <input type="number" id="restockQuantity" class="as-input" value="10" min="1" placeholder="0">
+                        <p class="as-error" id="restockQuantityErr">Enter a valid quantity (≥1).</p>
+                    </div>
+                    <div>
+                        <label class="as-label">Unit Cost (₱) <span style="color:#dc2626;">*</span></label>
+                        <input type="number" id="restockUnitCost" class="as-input" step="0.01" min="0" placeholder="0.00">
+                        <p class="as-error" id="restockUnitCostErr">Enter a valid unit cost.</p>
+                    </div>
+                </div>
+                <div>
+                    <label class="as-label">Supplier</label>
+                    <input type="text" id="restockSupplier" class="as-input" placeholder="e.g., MediSource Inc.">
+                </div>
+                <div>
+                    <label class="as-label">Purchase Date <span style="color:#dc2626;">*</span></label>
+                    <input type="date" id="restockDate" class="as-input">
+                    <p class="as-error" id="restockDateErr">Please select a purchase date.</p>
+                </div>
+                <div>
+                    <label class="as-label">Notes</label>
+                    <textarea id="restockNotes" class="as-input" rows="2"
+                        style="resize: vertical; min-height: 60px;" placeholder="Additional notes..."></textarea>
+                </div>
+            </div>
+            <div style="padding: 14px 28px 22px; display: flex; justify-content: flex-end; gap: 10px; align-items: center; border-top: 1px solid #f0f0f0;">
+                <button style="padding: 9px 20px; background: none; border: none; font-size: 14px; font-weight: 500; color: #6b7280; cursor: pointer; border-radius: 8px; transition: background 0.15s; font-family: 'Inter', sans-serif;"
+                    onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'"
+                    onclick="closeRestockModal()">Cancel</button>
+                <button style="padding: 9px 22px; background: #005a32; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.15s; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 6px;"
+                    onmouseover="this.style.background='#004526'" onmouseout="this.style.background='#005a32'"
+                    onclick="submitRestock()">
+                    <span class="material-icons" style="font-size: 16px;">add_shopping_cart</span> Restock
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- UPDATE SUPPLY MODAL -->
+    <div id="updateSupplyModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4"
+         style="background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);"
+         onclick="if(event.target===this) closeUpdateSupplyModal()">
+        <div class="as-card dark:bg-surface-dark"
+             style="background: #fff; border-radius: 16px; width: 100%; max-width: 480px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.16), 0 4px 16px rgba(0,0,0,0.06);">
+            <div style="background: #f0fdf4; padding: 20px 28px 18px; border-bottom: 1px solid #dcfce7; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <h2 style="font-size: 16px; font-weight: 700; color: #005a32; margin: 0; letter-spacing: -0.01em;" class="dark:text-green-400">Update Medicine</h2>
+                    <p id="updateModalSubtitle" style="font-size: 12px; color: #16a34a; margin: 3px 0 0; font-weight: 500;"></p>
+                </div>
+                <span class="material-icons" style="color: #16a34a; font-size: 22px; opacity: 0.7;">edit</span>
+            </div>
+            <div style="padding: 20px 28px; display: flex; flex-direction: column; gap: 14px;">
+                <div>
+                    <label class="as-label">Medicine Name <span style="color:#dc2626;">*</span></label>
+                    <input type="text" id="updateSupplyName" class="as-input" placeholder="e.g., Aspirin 100mg">
+                    <p class="as-error" id="updateSupplyNameErr">Please enter a medicine name.</p>
+                </div>
+                <div>
+                    <label class="as-label">Category <span style="color:#dc2626;">*</span></label>
+                    <select id="updateSupplyCategory" class="as-input" style="appearance: auto;">
+                        <option value="Antibiotics">Antibiotics</option>
+                        <option value="Pain Relief">Pain Relief</option>
+                        <option value="Antihistamine">Antihistamine</option>
+                        <option value="Gastrointestinal">Gastrointestinal</option>
+                        <option value="Diabetes">Diabetes</option>
+                        <option value="Cardiovascular">Cardiovascular</option>
+                    </select>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <div>
+                        <label class="as-label">Quantity in Stock <span style="color:#dc2626;">*</span></label>
+                        <input type="number" id="updateSupplyQuantity" class="as-input" min="0" placeholder="0">
+                        <p class="as-error" id="updateSupplyQuantityErr">Quantity cannot be negative.</p>
+                    </div>
+                    <div>
+                        <label class="as-label">Reorder Level <span style="color:#dc2626;">*</span></label>
+                        <input type="number" id="updateSupplyReorderLevel" class="as-input" min="0" placeholder="50">
+                        <p class="as-error" id="updateSupplyReorderErr">Cannot be negative.</p>
+                    </div>
+                </div>
+                <div>
+                    <label class="as-label">Unit Cost (₱) <span style="color:#dc2626;">*</span></label>
+                    <input type="number" id="updateSupplyUnitCost" class="as-input" step="0.01" min="0" placeholder="0.00">
+                    <p class="as-error" id="updateSupplyUnitCostErr">Unit cost cannot be negative.</p>
+                </div>
+            </div>
+            <div style="padding: 14px 28px 22px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f0f0f0;">
+                <button class="as-delete-btn" onclick="confirmDeleteSupply()" style="display: flex; align-items: center; gap: 6px;">
+                    <span class="material-icons" style="font-size: 16px;">delete_outline</span> Delete
+                </button>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button style="padding: 9px 20px; background: none; border: none; font-size: 14px; font-weight: 500; color: #6b7280; cursor: pointer; border-radius: 8px; transition: background 0.15s; font-family: 'Inter', sans-serif;"
+                        onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'"
+                        onclick="closeUpdateSupplyModal()">Cancel</button>
+                    <button style="padding: 9px 22px; background: #005a32; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.15s; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 6px;"
+                        onmouseover="this.style.background='#004526'" onmouseout="this.style.background='#005a32'"
+                        onclick="submitUpdateSupply()">
+                        <span class="material-icons" style="font-size: 16px;">check</span> Update
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
 <script>
@@ -904,109 +1186,209 @@ function initializeSupplies() {
 function searchSupplies()         { if (suppliesManager) suppliesManager.renderSupplies(); }
 function filterSuppliesByStatus() { if (suppliesManager) suppliesManager.renderSupplies(); }
 
-async function openRestockModal(supplyId) {
-    const supply = suppliesManager.getById(supplyId);
-    if (!supply) return;
-    const { value: formValues } = await Swal.fire({
-        title: `Restock ${supply.name}`,
-        html: `<div class="text-left space-y-4">
-            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 rounded-lg p-4 mb-4">
-                <p class="text-sm text-blue-800 dark:text-blue-300"><strong>Current Stock:</strong> ${supply.quantity} units<br><strong>Reorder Level:</strong> ${supply.reorderLevel} units<br><strong>Status:</strong> ${suppliesManager.getStatus(supply.quantity, supply.reorderLevel)}</p>
-            </div>
-            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Quantity Purchased *</label><input type="number" id="restockQuantity" class="swal2-input" placeholder="Enter quantity" min="1" value="10" style="margin:0;width:100%;"></div>
-            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unit Cost (₱) *</label><input type="number" id="restockUnitCost" class="swal2-input" placeholder="Enter unit cost" step="0.01" min="0" value="${supply.unitCost||0}" style="margin:0;width:100%;"></div>
-            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Supplier</label><input type="text" id="restockSupplier" class="swal2-input" placeholder="Enter supplier name" style="margin:0;width:100%;"></div>
-            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Purchase Date *</label><input type="date" id="restockDate" class="swal2-input" value="${new Date().toISOString().split('T')[0]}" style="margin:0;width:100%;"></div>
-            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Notes</label><textarea id="restockNotes" class="swal2-textarea" placeholder="Additional notes..." style="margin:0;width:100%;"></textarea></div>
-        </div>`,
-        focusConfirm: false, showCancelButton: true, confirmButtonText: 'Restock', confirmButtonColor: '#005a32', cancelButtonText: 'Cancel', width: '600px',
-        preConfirm: () => {
-            const quantity = parseInt(document.getElementById('restockQuantity').value);
-            const unitCost = parseFloat(document.getElementById('restockUnitCost').value);
-            const date     = document.getElementById('restockDate').value;
-            if (!quantity || quantity <= 0) { Swal.showValidationMessage('Please enter a valid quantity'); return false; }
-            if (!unitCost || unitCost < 0)  { Swal.showValidationMessage('Please enter a valid unit cost'); return false; }
-            if (!date)                      { Swal.showValidationMessage('Please select a purchase date'); return false; }
-            return { quantity, unitCost, supplier: document.getElementById('restockSupplier').value, date, notes: document.getElementById('restockNotes').value };
-        }
-    });
-    if (formValues) {
-        suppliesManager.restock(supplyId, formValues.quantity);
-        if (formValues.unitCost !== supply.unitCost) suppliesManager.update(supplyId, { unitCost: formValues.unitCost });
-        await Swal.fire({ icon:'success', title:'Restocked Successfully!',
-            html:`<div class="text-left"><p><strong>Medicine:</strong> ${supply.name}</p><p><strong>Quantity Added:</strong> ${formValues.quantity} units</p><p><strong>Total Cost:</strong> ₱${(formValues.quantity * formValues.unitCost).toFixed(2)}</p>${formValues.supplier ? `<p><strong>Supplier:</strong> ${formValues.supplier}</p>` : ''}</div>`,
-            confirmButtonColor:'#005a32' });
-    }
+// ── ADD SUPPLY MODAL ──
+function openAddSupplyModal() {
+    document.getElementById('addSupplyName').value         = '';
+    document.getElementById('addSupplyCategory').value     = '';
+    document.getElementById('addSupplyQuantity').value     = '0';
+    document.getElementById('addSupplyReorderLevel').value = '50';
+    document.getElementById('addSupplyUnitCost').value     = '0';
+    ['addSupplyNameErr','addSupplyCategoryErr','addSupplyQuantityErr','addSupplyReorderErr','addSupplyUnitCostErr']
+        .forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; });
+    ['addSupplyName','addSupplyCategory','addSupplyQuantity','addSupplyReorderLevel','addSupplyUnitCost']
+        .forEach(id => { const el = document.getElementById(id); if(el) el.style.borderColor = ''; });
+    document.getElementById('addSupplyModal').classList.remove('hidden');
+    setTimeout(() => document.getElementById('addSupplyName').focus(), 60);
 }
 
-async function openUpdateSupplyModal(supplyId) {
-    const supply = suppliesManager.getById(supplyId);
-    if (!supply) return;
-    const categories = ['Antibiotics','Pain Relief','Antihistamine','Gastrointestinal','Diabetes','Cardiovascular'];
-    const categoryOptions = categories.map(cat => `<option value="${cat}" ${cat===supply.category?'selected':''}>${cat}</option>`).join('');
-    const result = await Swal.fire({
-        title: `Update ${supply.name}`,
-        html: `<div class="text-left space-y-4">
-            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Medicine Name *</label><input type="text" id="updateName" class="swal2-input" value="${supply.name}" style="margin:0;width:100%;"></div>
-            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category *</label><select id="updateCategory" class="swal2-input" style="margin:0;width:100%;">${categoryOptions}</select></div>
-            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Quantity in Stock *</label><input type="number" id="updateQuantity" class="swal2-input" value="${supply.quantity}" min="0" style="margin:0;width:100%;"></div>
-            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Reorder Level *</label><input type="number" id="updateReorderLevel" class="swal2-input" value="${supply.reorderLevel}" min="0" style="margin:0;width:100%;"></div>
-            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unit Cost (₱) *</label><input type="number" id="updateUnitCost" class="swal2-input" value="${supply.unitCost||0}" step="0.01" min="0" style="margin:0;width:100%;"></div>
-        </div>`,
-        focusConfirm: false, showCancelButton: true, confirmButtonText: 'Update', confirmButtonColor: '#005a32', cancelButtonText: 'Cancel', showDenyButton: true, denyButtonText: 'Delete', denyButtonColor: '#d62828', width: '600px',
-        preConfirm: () => {
-            const name = document.getElementById('updateName').value.trim();
-            const category = document.getElementById('updateCategory').value;
-            const quantity = parseInt(document.getElementById('updateQuantity').value);
-            const reorderLevel = parseInt(document.getElementById('updateReorderLevel').value);
-            const unitCost = parseFloat(document.getElementById('updateUnitCost').value);
-            if (!name)            { Swal.showValidationMessage('Please enter a medicine name'); return false; }
-            if (quantity < 0)     { Swal.showValidationMessage('Quantity cannot be negative'); return false; }
-            if (reorderLevel < 0) { Swal.showValidationMessage('Reorder level cannot be negative'); return false; }
-            if (unitCost < 0)     { Swal.showValidationMessage('Unit cost cannot be negative'); return false; }
-            return { name, category, quantity, reorderLevel, unitCost };
-        }
-    }).then(r => {
-        if (r.isDenied)    return { action:'delete' };
-        if (r.isConfirmed) return { action:'update', value: r.value };
-        return null;
-    });
-    if (result?.action === 'delete') {
-        const cf = await Swal.fire({ title:'Delete Supply?', text:`This will permanently delete ${supply.name}.`, icon:'warning', showCancelButton:true, confirmButtonColor:'#d62828', confirmButtonText:'Yes, delete it' });
-        if (cf.isConfirmed) { suppliesManager.delete(supplyId); Swal.fire({ icon:'success', title:'Deleted!', text:`${supply.name} has been removed.`, confirmButtonColor:'#005a32' }); }
-    } else if (result?.action === 'update' && result.value) {
-        suppliesManager.update(supplyId, result.value);
-        Swal.fire({ icon:'success', title:'Updated!', text:`${result.value.name} has been updated.`, confirmButtonColor:'#005a32' });
-    }
+function closeAddSupplyModal() {
+    document.getElementById('addSupplyModal').classList.add('hidden');
 }
 
-async function openAddSupplyModal() {
-    const categories = ['Antibiotics','Pain Relief','Antihistamine','Gastrointestinal','Diabetes','Cardiovascular'];
-    const { value: formValues } = await Swal.fire({
-        title: 'Add New Medicine to Supplies',
-        html: `<div class="text-left space-y-4">
-            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Medicine Name *</label><input type="text" id="addName" class="swal2-input" placeholder="e.g., Aspirin 100mg" style="margin:0;width:100%;"></div>
-            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category *</label><select id="addCategory" class="swal2-input" style="margin:0;width:100%;"><option value="">-- Select Category --</option>${categories.map(c=>`<option value="${c}">${c}</option>`).join('')}</select></div>
-            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Initial Quantity *</label><input type="number" id="addQuantity" class="swal2-input" placeholder="0" min="0" value="0" style="margin:0;width:100%;"></div>
-            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Reorder Level *</label><input type="number" id="addReorderLevel" class="swal2-input" placeholder="e.g., 50" min="1" value="50" style="margin:0;width:100%;"></div>
-            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unit Cost (₱) *</label><input type="number" id="addUnitCost" class="swal2-input" placeholder="0.00" step="0.01" min="0" value="0" style="margin:0;width:100%;"></div>
-        </div>`,
-        focusConfirm: false, showCancelButton: true, confirmButtonText: 'Add Medicine', confirmButtonColor: '#005a32', cancelButtonText: 'Cancel', width: '600px',
-        preConfirm: () => {
-            const name = document.getElementById('addName').value.trim();
-            const category = document.getElementById('addCategory').value;
-            const quantity = parseInt(document.getElementById('addQuantity').value);
-            const reorderLevel = parseInt(document.getElementById('addReorderLevel').value);
-            const unitCost = parseFloat(document.getElementById('addUnitCost').value);
-            if (!name)             { Swal.showValidationMessage('Please enter a medicine name'); return false; }
-            if (!category)         { Swal.showValidationMessage('Please select a category'); return false; }
-            if (quantity < 0)      { Swal.showValidationMessage('Quantity cannot be negative'); return false; }
-            if (reorderLevel <= 0) { Swal.showValidationMessage('Reorder level must be greater than 0'); return false; }
-            if (unitCost < 0)      { Swal.showValidationMessage('Unit cost cannot be negative'); return false; }
-            return { name, category, quantity, reorderLevel, unitCost };
-        }
+function handleAddSupplyBackdropClick(e) {
+    if (e.target === document.getElementById('addSupplyModal')) closeAddSupplyModal();
+}
+
+function _addSupplySetError(inputId, errId, show) {
+    const input = document.getElementById(inputId);
+    const err   = document.getElementById(errId);
+    if (input) input.style.borderColor = show ? '#dc2626' : '';
+    if (err)   err.style.display = show ? 'block' : 'none';
+}
+
+function submitAddSupply() {
+    const name         = document.getElementById('addSupplyName').value.trim();
+    const category     = document.getElementById('addSupplyCategory').value;
+    const quantity     = parseInt(document.getElementById('addSupplyQuantity').value);
+    const reorderLevel = parseInt(document.getElementById('addSupplyReorderLevel').value);
+    const unitCost     = parseFloat(document.getElementById('addSupplyUnitCost').value);
+
+    _addSupplySetError('addSupplyName',        'addSupplyNameErr',     !name);
+    _addSupplySetError('addSupplyCategory',     'addSupplyCategoryErr', !category);
+    _addSupplySetError('addSupplyQuantity',     'addSupplyQuantityErr', quantity < 0 || isNaN(quantity));
+    _addSupplySetError('addSupplyReorderLevel', 'addSupplyReorderErr',  reorderLevel <= 0 || isNaN(reorderLevel));
+    _addSupplySetError('addSupplyUnitCost',     'addSupplyUnitCostErr', unitCost < 0 || isNaN(unitCost));
+
+    if (!name || !category || quantity < 0 || isNaN(quantity) || reorderLevel <= 0 || isNaN(reorderLevel) || unitCost < 0 || isNaN(unitCost)) return;
+
+    closeAddSupplyModal();
+    suppliesManager.add({ name, category, quantity, reorderLevel, unitCost });
+    Swal.fire({ icon: 'success', title: 'Added!', text: `${name} has been added to supplies.`, confirmButtonColor: '#005a32' });
+}
+
+// ── RESTOCK MODAL ──
+let _restockingSupplyId = null;
+
+function openRestockModal(supplyId) {
+    const supply = suppliesManager.getById(supplyId);
+    if (!supply) return;
+    _restockingSupplyId = supplyId;
+
+    document.getElementById('restockModalSubtitle').textContent = supply.name;
+    const status = suppliesManager.getStatus(supply.quantity, supply.reorderLevel);
+    const statusColor = status === 'In Stock' ? '#16a34a' : status === 'Low Stock' ? '#b45309' : '#dc2626';
+    document.getElementById('restockInfoText').innerHTML =
+        `<strong>Current Stock:</strong> ${supply.quantity} units &nbsp;·&nbsp; <strong>Reorder Level:</strong> ${supply.reorderLevel} units &nbsp;·&nbsp; <strong>Status:</strong> <span style="color:${statusColor};font-weight:600;">${status}</span>`;
+
+    document.getElementById('restockQuantity').value  = '10';
+    document.getElementById('restockUnitCost').value  = supply.unitCost || '0';
+    document.getElementById('restockSupplier').value  = '';
+    document.getElementById('restockDate').value      = new Date().toISOString().split('T')[0];
+    document.getElementById('restockNotes').value     = '';
+
+    ['restockQuantityErr','restockUnitCostErr','restockDateErr'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.style.display = 'none';
     });
-    if (formValues) { suppliesManager.add(formValues); Swal.fire({ icon:'success', title:'Added!', text:`${formValues.name} has been added to supplies.`, confirmButtonColor:'#005a32' }); }
+    ['restockQuantity','restockUnitCost','restockDate'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.style.borderColor = '';
+    });
+
+    document.getElementById('restockModal').classList.remove('hidden');
+    setTimeout(() => document.getElementById('restockQuantity').focus(), 60);
+}
+
+function closeRestockModal() {
+    document.getElementById('restockModal').classList.add('hidden');
+    _restockingSupplyId = null;
+}
+
+function _restockSetError(inputId, errId, show) {
+    const input = document.getElementById(inputId);
+    const err   = document.getElementById(errId);
+    if (input) input.style.borderColor = show ? '#dc2626' : '';
+    if (err)   err.style.display = show ? 'block' : 'none';
+}
+
+function submitRestock() {
+    const quantity = parseInt(document.getElementById('restockQuantity').value);
+    const unitCost = parseFloat(document.getElementById('restockUnitCost').value);
+    const date     = document.getElementById('restockDate').value;
+
+    const qErr  = !quantity || quantity <= 0 || isNaN(quantity);
+    const ucErr = isNaN(unitCost) || unitCost < 0;
+    const dErr  = !date;
+
+    _restockSetError('restockQuantity', 'restockQuantityErr', qErr);
+    _restockSetError('restockUnitCost', 'restockUnitCostErr', ucErr);
+    _restockSetError('restockDate',     'restockDateErr',     dErr);
+
+    if (qErr || ucErr || dErr) return;
+
+    const supply   = suppliesManager.getById(_restockingSupplyId);
+    const supplier = document.getElementById('restockSupplier').value.trim();
+
+    closeRestockModal();
+    suppliesManager.restock(_restockingSupplyId, quantity);
+    if (unitCost !== supply.unitCost) suppliesManager.update(_restockingSupplyId, { unitCost });
+
+    Swal.fire({
+        icon: 'success', title: 'Restocked Successfully!',
+        html: `<div class="text-left" style="font-size:14px;line-height:1.8;">
+            <p><strong>Medicine:</strong> ${supply.name}</p>
+            <p><strong>Quantity Added:</strong> ${quantity} units</p>
+            <p><strong>Total Cost:</strong> ₱${(quantity * unitCost).toFixed(2)}</p>
+            ${supplier ? `<p><strong>Supplier:</strong> ${supplier}</p>` : ''}
+        </div>`,
+        confirmButtonColor: '#005a32'
+    });
+}
+
+// ── UPDATE SUPPLY MODAL ──
+let _updatingSupplyId = null;
+
+function openUpdateSupplyModal(supplyId) {
+    const supply = suppliesManager.getById(supplyId);
+    if (!supply) return;
+    _updatingSupplyId = supplyId;
+
+    document.getElementById('updateModalSubtitle').textContent        = `Editing: ${supply.name}`;
+    document.getElementById('updateSupplyName').value                 = supply.name;
+    document.getElementById('updateSupplyCategory').value             = supply.category;
+    document.getElementById('updateSupplyQuantity').value             = supply.quantity;
+    document.getElementById('updateSupplyReorderLevel').value         = supply.reorderLevel;
+    document.getElementById('updateSupplyUnitCost').value             = supply.unitCost || '0';
+
+    ['updateSupplyNameErr','updateSupplyQuantityErr','updateSupplyReorderErr','updateSupplyUnitCostErr'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.style.display = 'none';
+    });
+    ['updateSupplyName','updateSupplyQuantity','updateSupplyReorderLevel','updateSupplyUnitCost'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.style.borderColor = '';
+    });
+
+    document.getElementById('updateSupplyModal').classList.remove('hidden');
+    setTimeout(() => document.getElementById('updateSupplyName').focus(), 60);
+}
+
+function closeUpdateSupplyModal() {
+    document.getElementById('updateSupplyModal').classList.add('hidden');
+    _updatingSupplyId = null;
+}
+
+function _updateSetError(inputId, errId, show) {
+    const input = document.getElementById(inputId);
+    const err   = document.getElementById(errId);
+    if (input) input.style.borderColor = show ? '#dc2626' : '';
+    if (err)   err.style.display = show ? 'block' : 'none';
+}
+
+function submitUpdateSupply() {
+    const name         = document.getElementById('updateSupplyName').value.trim();
+    const category     = document.getElementById('updateSupplyCategory').value;
+    const quantity     = parseInt(document.getElementById('updateSupplyQuantity').value);
+    const reorderLevel = parseInt(document.getElementById('updateSupplyReorderLevel').value);
+    const unitCost     = parseFloat(document.getElementById('updateSupplyUnitCost').value);
+
+    const nErr  = !name;
+    const qErr  = isNaN(quantity)     || quantity < 0;
+    const rErr  = isNaN(reorderLevel) || reorderLevel < 0;
+    const ucErr = isNaN(unitCost)     || unitCost < 0;
+
+    _updateSetError('updateSupplyName',        'updateSupplyNameErr',     nErr);
+    _updateSetError('updateSupplyQuantity',     'updateSupplyQuantityErr', qErr);
+    _updateSetError('updateSupplyReorderLevel', 'updateSupplyReorderErr',  rErr);
+    _updateSetError('updateSupplyUnitCost',     'updateSupplyUnitCostErr', ucErr);
+
+    if (nErr || qErr || rErr || ucErr) return;
+
+    closeUpdateSupplyModal();
+    suppliesManager.update(_updatingSupplyId, { name, category, quantity, reorderLevel, unitCost });
+    Swal.fire({ icon: 'success', title: 'Updated!', text: `${name} has been updated.`, confirmButtonColor: '#005a32' });
+}
+
+async function confirmDeleteSupply() {
+    const supply = suppliesManager.getById(_updatingSupplyId);
+    if (!supply) return;
+    closeUpdateSupplyModal();
+    const cf = await Swal.fire({
+        title: 'Delete Supply?',
+        text: `This will permanently delete ${supply.name}.`,
+        icon: 'warning', showCancelButton: true,
+        confirmButtonColor: '#d62828', confirmButtonText: 'Yes, delete it'
+    });
+    if (cf.isConfirmed) {
+        suppliesManager.delete(supply.id);
+        Swal.fire({ icon: 'success', title: 'Deleted!', text: `${supply.name} has been removed.`, confirmButtonColor: '#005a32' });
+    }
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1470,6 +1852,160 @@ class InventoryManager {
             } catch(e) { Swal.fire('Error', e.message, 'error'); }
         }
     }
+}
+
+// ── BATCH EXPORT: Populate dynamic checklist then open menu ──
+let batchExportActiveFilter = 'all';
+
+function openBatchExportMenu() {
+    document.querySelectorAll('.export-menu.open').forEach(m => m.classList.remove('open'));
+    const menu = document.getElementById('batchExportMenu');
+    if (!menu || !inventoryManager) return;
+    document.getElementById('batchExportSearch').value = '';
+    document.getElementById('batchExportDateFrom').value = '';
+    document.getElementById('batchExportDateTo').value = '';
+    document.querySelectorAll('.bexp-qp').forEach(b => b.classList.remove('active'));
+    populateBatchExportList();
+    menu.classList.add('open');
+}
+
+function populateBatchExportList() {
+    const list = document.getElementById('batchExportCheckList');
+    if (!list || !inventoryManager) return;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const sorted = [...inventoryManager.liveInventory].sort(
+        (a, b) => new Date(a.expiryDate) - new Date(b.expiryDate)
+    );
+    if (!sorted.length) {
+        list.innerHTML = '<p style="font-size:12px;color:#9ca3af;text-align:center;padding:8px 0;">No batches available.</p>';
+        return;
+    }
+    list.innerHTML = sorted.map(item => {
+        const id = item._id || item.id;
+        const name = inventoryManager._getName(item);
+        const batch = item.batchNumber || 'N/A';
+        const qty = item.quantity;
+        const expDate = new Date(item.expiryDate); expDate.setHours(0,0,0,0);
+        const daysLeft = Math.ceil((expDate - today) / 864e5);
+        const expStr = expDate.toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric' });
+        const expisoStr = expDate.toISOString().split('T')[0];
+        let color = '#16a34a';
+        if (daysLeft < 0) color = '#dc2626';
+        else if (daysLeft <= 30) color = '#8b5a2b';
+        return `
+            <label class="export-check-row bexp-row"
+                data-text="${name.toLowerCase()} ${batch.toLowerCase()}"
+                data-expiry="${expisoStr}"
+                style="align-items:flex-start;gap:6px;padding:5px 2px;"
+                onclick="updateBatchExportCount()">
+                <input type="checkbox" value="${id}" style="margin-top:2px;width:14px;height:14px;accent-color:#005a32;flex-shrink:0;" onchange="updateBatchExportCount()">
+                <span style="width:7px;height:7px;border-radius:50%;background:${color};flex-shrink:0;margin-top:4px;"></span>
+                <span style="font-size:12px;line-height:1.3;">
+                    <span style="font-weight:600;color:inherit;">${name}</span>
+                    <span style="display:block;font-size:10px;color:#9ca3af;">Batch ${batch} · Qty ${qty} · <span style="color:${color}">${expStr}</span></span>
+                </span>
+            </label>`;
+    }).join('') + `<div id="batchExportEmpty" style="display:none;font-size:12px;color:#9ca3af;text-align:center;padding:12px 0;">No batches match.</div>`;
+    updateBatchExportCount();
+}
+
+function filterBatchExportList() {
+    const q = (document.getElementById('batchExportSearch')?.value || '').toLowerCase();
+    const fromVal = document.getElementById('batchExportDateFrom')?.value;
+    const toVal   = document.getElementById('batchExportDateTo')?.value;
+    const from = fromVal ? new Date(fromVal) : null;
+    const to   = toVal   ? new Date(toVal)   : null;
+    let visible = 0;
+    document.querySelectorAll('.bexp-row').forEach(row => {
+        const expiry = new Date(row.dataset.expiry);
+        const matchQ    = !q    || row.dataset.text.includes(q);
+        const matchFrom = !from || expiry >= from;
+        const matchTo   = !to   || expiry <= to;
+        const show = matchQ && matchFrom && matchTo;
+        row.style.display = show ? '' : 'none';
+        if (show) visible++;
+    });
+    const empty = document.getElementById('batchExportEmpty');
+    if (empty) empty.style.display = visible === 0 ? '' : 'none';
+    updateBatchExportCount();
+}
+
+function setBatchExportQuick(btn, type) {
+    document.querySelectorAll('.bexp-qp').forEach(b => b.classList.remove('active'));
+    if (type !== 'clear') btn.classList.add('active');
+    const today = new Date(); today.setHours(0,0,0,0);
+    const toISO = d => d.toISOString().split('T')[0];
+    const df = document.getElementById('batchExportDateFrom');
+    const dt = document.getElementById('batchExportDateTo');
+    if (type === 'clear') {
+        df.value = ''; dt.value = '';
+    } else if (type === 'expired') {
+        df.value = '';
+        dt.value = toISO(new Date(today.getTime() - 864e5));
+    } else {
+        df.value = toISO(today);
+        dt.value = toISO(new Date(today.getTime() + parseInt(type) * 864e5));
+    }
+    filterBatchExportList();
+}
+
+function setBatchExportAll(checked) {
+    document.querySelectorAll('.bexp-row').forEach(row => {
+        if (row.style.display !== 'none') {
+            const cb = row.querySelector('input[type="checkbox"]');
+            if (cb) cb.checked = checked;
+        }
+    });
+    updateBatchExportCount();
+}
+
+function updateBatchExportCount() {
+    const n = document.querySelectorAll('#batchExportCheckList input[type="checkbox"]:checked').length;
+    const el = document.getElementById('batchExportSelCount');
+    if (el) el.textContent = `${n} batch${n !== 1 ? 'es' : ''} selected`;
+}
+
+function exportBatchData() {
+    toggleExportMenu('batchExportMenu', true);
+    const today = new Date();
+    const timestamp = new Date().toISOString().split('T')[0];
+
+    const checkedIds = new Set(
+        [...document.querySelectorAll('#batchExportCheckList input[type="checkbox"]:checked')]
+            .map(cb => cb.value)
+    );
+
+    if (!checkedIds.size) return Swal.fire('Nothing selected', 'Please check at least one batch.', 'info');
+
+    const source = [...inventoryManager.liveInventory].sort((a, b) => new Date(a.expiryDate) - new Date(b.expiryDate));
+    const batches = source.filter(item => checkedIds.has(item._id || item.id));
+
+    const rows = batches.map((item, i) => {
+        const daysLeft = Math.ceil((new Date(item.expiryDate) - today) / 864e5);
+        let status = 'Active';
+        if (daysLeft < 0)        status = 'Expired';
+        else if (daysLeft <= 30) status = `Expiring (${daysLeft}d)`;
+        return [
+            i + 1,
+            inventoryManager._getName(item),
+            item.batchNumber || 'N/A',
+            item.quantity,
+            inventoryManager.formatDate(item.expiryDate),
+            daysLeft < 0 ? 'EXPIRED' : daysLeft,
+            '₱' + parseFloat(inventoryManager._getPrice(item) || 0).toFixed(2),
+            item.supplier || 'Unknown',
+            status
+        ];
+    });
+
+    if (!rows.length) return Swal.fire('No Data', 'No batches matched your selection.', 'info');
+
+    _exportInventoryPDF(
+        `WellServed_Batches_${timestamp}`,
+        `Batch Details (FEFO) — Selected Batches`,
+        ['#', 'Medicine', 'Batch No.', 'Qty', 'Expiry', 'Days Left', 'Price', 'Supplier', 'Status'],
+        rows
+    );
 }
 
 // ── INIT ──

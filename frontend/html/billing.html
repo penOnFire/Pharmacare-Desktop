@@ -1002,22 +1002,34 @@ handleFilter(status) {
             Swal.fire({
                 title: 'Transaction Details',
                 html: `
-                    <div class="text-left space-y-3 mb-2">
-                        <div class="bg-gray-50 p-3 rounded text-sm">
-                            <p><strong>Ref ID:</strong> ${sale._id}</p>
-                            <p><strong>Date:</strong> ${sale.date || sale.createdAt ? new Date(sale.date || sale.createdAt).toLocaleString() : 'N/A'}</p>
-                            <p><strong>Patient:</strong> ${sale.patientName || 'Walk-in'}</p>
-                            <p><strong>Status:</strong> <span class="font-bold">${sale.paymentStatus || 'Pending'}</span></p>
-                        </div>
-                        <div class="mt-2">
-                            <p class="font-semibold text-sm mb-1">Items Purchased:</p>
-                            ${itemsHtml}
-                        </div>
-                        <div class="border-t pt-3 mt-2 flex justify-between font-bold text-lg text-primary">
-                            <span>Total Amount</span>
-                            <span>₱${sale.totalAmount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
-                        </div>
-                    </div>`,
+    <div class="text-left space-y-4 mb-2">
+        <div style="background:#f9fafb;border-radius:10px;padding:14px 16px;space-y:0;">
+            <div class="flex items-start gap-3" style="padding-bottom:8px;margin-bottom:8px;">
+                <span style="min-width:72px;font-size:12px;font-weight:600;color:#6b7280;">Patient</span>
+                <span style="font-size:14px;font-weight:700;color:#111827;">${sale.patientName || 'Walk-in Customer'}</span>
+            </div>
+            <div class="flex items-start gap-3" style="padding-bottom:8px;margin-bottom:8px;">
+                <span style="min-width:72px;font-size:12px;font-weight:600;color:#6b7280;">Ref ID</span>
+                <span style="font-size:12px;font-weight:600;color:#374151;word-break:break-all;">${sale._id}</span>
+            </div>
+            <div class="flex items-start gap-3" style="padding-bottom:8px;margin-bottom:8px;">
+                <span style="min-width:72px;font-size:12px;font-weight:600;color:#6b7280;">Date</span>
+                <span style="font-size:14px;font-weight:700;color:#111827;">${sale.date || sale.createdAt ? new Date(sale.date || sale.createdAt).toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'}) + ' · ' + new Date(sale.date || sale.createdAt).toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit',hour12:true}) : 'N/A'}</span>
+            </div>
+            <div class="flex items-start gap-3">
+                <span style="min-width:72px;font-size:12px;font-weight:600;color:#6b7280;">Status</span>
+                <span style="font-size:14px;font-weight:700;color:#111827;">${sale.paymentStatus || 'Pending'}</span>
+            </div>
+        </div>
+        <div>
+            <p style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Items Purchased</p>
+            <div style="font-size:12px;">${itemsHtml}</div>
+        </div>
+        <div style="border-top:1px solid #e5e7eb;padding-top:12px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:13px;font-weight:700;color:#374151;">Total Amount</span>
+            <span style="font-size:16px;font-weight:800;color:#005a32;">₱${sale.totalAmount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+        </div>
+    </div>`,
                 confirmButtonColor: '#005a32'
             });
         }
