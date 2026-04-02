@@ -6,10 +6,46 @@
     "start": "concurrently \"npm run backend\" \"npm run electron\"",
     "electron": "electron .",
     "backend": "cd backend/pharmacydb && node index.js",
-    "migrate": "cd backend/pharmacydb && node migrateStatus.js"
+    "migrate": "cd backend/pharmacydb && node migrateStatus.js",
+    "build": "electron-builder"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
-    "electron": "^40.6.1"
+    "electron": "^40.6.1",
+    "electron-builder": "^26.8.1"
+  },
+  "build": {
+    "appId": "com.pharmacare.desktop",
+    "productName": "PharmaCare",
+    "directories": {
+      "output": "dist"
+    },
+    "asar": true,
+    "asarUnpack": [
+      "backend/**/*",
+      "node_modules/**/*"
+    ],
+    "files": [
+      "electron/**/*",
+      "backend/**/*",
+      "frontend/**/*",
+      "node_modules/**/*",
+      "package.json",
+      "backend/pharmacydb/.env"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "frontend/html/images/wellserved.ico"
+    }
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.1",
+    "mongoose-sequence": "^6.0.1",
+    "pdfkit": "^0.17.2"
   }
 }
