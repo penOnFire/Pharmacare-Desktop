@@ -44,33 +44,13 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     .dark ::-webkit-scrollbar-thumb { background: #334155; }
-    .pos-primary-color { color: #319795; }
-    .pos-primary-bg { background-color: #319795; }
-    .pos-primary-border { border-color: #319795; }
-    .pos-primary-ring:focus { --tw-ring-color: #319795; }
 
-    /* ── NAVBAR CLOCK ── */
-    #navClock {
-        font-size: 15px;
-        font-weight: 700;
-        line-height: 1.2;
-        letter-spacing: -0.01em;
-    }
-    #navDate {
-        font-size: 10px;
-        font-weight: 500;
-        letter-spacing: 0.06em;
-    }
+    #navClock { font-size: 15px; font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; }
+    #navDate  { font-size: 10px; font-weight: 500; letter-spacing: 0.06em; }
 
-    /* ── NAVBAR DIVIDER ── */
-    .nav-divider {
-        width: 1px;
-        height: 28px;
-        background: #e5e7eb;
-    }
+    .nav-divider { width: 1px; height: 28px; background: #e5e7eb; }
     .dark .nav-divider { background: #374151; }
 
-    /* ── NOTIFICATION DROPDOWN ── */
     @keyframes badge-pop { from { transform: scale(0); } to { transform: scale(1); } }
     #notificationBadge { animation: badge-pop 0.3s cubic-bezier(.34,1.56,.64,1); }
     .notif-dropdown { position: absolute; top: calc(100% + 10px); right: 0; width: 370px; background: #fff; border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.06); border: 1px solid #e5e7eb; z-index: 1000; overflow: hidden; opacity: 0; transform: translateY(-8px) scale(0.97); pointer-events: none; transition: opacity 0.22s ease, transform 0.22s cubic-bezier(.34,1.56,.64,1); transform-origin: top right; }
@@ -192,11 +172,7 @@
     <!-- Main Content -->
     <div class="flex-1 flex flex-col overflow-hidden">
 
-        <!-- ══════════════════════════════════════════
-             NAVBAR — page context + clock + bell + user
-             ══════════════════════════════════════════ -->
         <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
-            <!-- Left: page context (from pos.html) -->
             <div class="flex items-center gap-3">
                 <span class="material-icons text-primary">shopping_cart</span>
                 <div>
@@ -205,10 +181,7 @@
                 </div>
             </div>
 
-            <!-- Right: clock · divider · bell · divider · user info · avatar -->
             <div class="flex items-center gap-4">
-
-                <!-- Live Clock + Date -->
                 <div class="text-right">
                     <div id="navClock" class="text-text-light dark:text-text-dark"></div>
                     <div id="navDate" class="text-subtext-light dark:text-subtext-dark uppercase tracking-widest"></div>
@@ -216,7 +189,6 @@
 
                 <div class="nav-divider"></div>
 
-                <!-- Notification Bell -->
                 <div class="relative">
                     <button id="notificationBtn"
                         class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
@@ -256,15 +228,12 @@
 
                 <div class="nav-divider"></div>
 
-                <!-- User Name + Role -->
                 <div class="text-right leading-tight">
                     <div id="navUserName" class="text-sm font-bold text-text-light dark:text-text-dark">User</div>
                     <div id="navUserRole" class="text-xs text-subtext-light dark:text-subtext-dark">Pharmacy Assistant</div>
                 </div>
 
-                <!-- Avatar with dynamic initial -->
                 <div id="navAvatar" class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm select-none">U</div>
-
             </div>
         </header>
 
@@ -285,7 +254,6 @@
                                     placeholder="Search medicine by name, category, or generic name..."
                                     type="text"/>
                             </div>
-                            <!-- Category pills + Form dropdown row (from pos.html) -->
                             <div class="flex items-center gap-3">
                                 <div class="flex gap-2 overflow-x-auto pb-1 flex-1">
                                     <button onclick="setCategory(this,'all')" class="category-btn px-5 py-2 rounded-full bg-teal-600 text-white text-sm font-medium shadow-md whitespace-nowrap" data-cat="all">All</button>
@@ -297,7 +265,7 @@
                                     <button onclick="setCategory(this,'Cardiovascular')" class="category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap" data-cat="Cardiovascular">Cardiovascular</button>
                                 </div>
 
-                                <!-- Form filter dropdown (from pos.html) -->
+                                <!-- Form dropdown -->
                                 <div class="relative flex-shrink-0" id="formDropdownWrap">
                                     <button onclick="toggleFormDropdown()"
                                         id="formDropdownBtn"
@@ -324,7 +292,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div><!-- end flex items-center row -->
+                            </div>
                         </div>
 
                         <!-- Product Cards -->
@@ -337,7 +305,6 @@
                     <div class="lg:col-span-4 flex flex-col overflow-hidden">
                         <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl flex flex-col overflow-hidden h-full">
 
-                            <!-- Order Header -->
                             <div class="p-5 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
                                 <div class="flex items-center gap-2">
                                     <span class="material-icons-round text-teal-600">shopping_basket</span>
@@ -346,7 +313,6 @@
                                 <span id="cartCount" class="px-3 py-1 bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 text-xs font-bold rounded-full">0 Items</span>
                             </div>
 
-                            <!-- Order Items -->
                             <div id="cartItems" class="flex-1 overflow-y-auto p-5 space-y-3">
                                 <div class="flex flex-col items-center justify-center h-32 text-slate-400 text-sm gap-2">
                                     <span class="material-icons-round text-4xl">shopping_basket</span>
@@ -354,22 +320,16 @@
                                 </div>
                             </div>
 
-                            <!-- Order Summary & Dispense -->
                             <div class="p-5 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700 space-y-4">
-                                <div class="space-y-2">
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-base font-bold">Total Amount</span>
-                                        <span id="totalAmount" class="text-2xl font-black text-teal-600">₱0.00</span>
-                                    </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-base font-bold">Total Amount</span>
+                                    <span id="totalAmount" class="text-2xl font-black text-teal-600">₱0.00</span>
                                 </div>
-
-                                <div class="space-y-3">
-                                    <button onclick="processDispense()"
-                                        class="w-full py-4 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-teal-500/20 transition-all active:scale-[0.98] transform flex items-center justify-center gap-2">
-                                        <span id="dispenseBtnText">Dispense Medicine</span>
-                                        <span class="material-icons-round">arrow_forward</span>
-                                    </button>
-                                </div>
+                                <button onclick="processDispense()"
+                                    class="w-full py-4 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-teal-500/20 transition-all active:scale-[0.98] transform flex items-center justify-center gap-2">
+                                    <span id="dispenseBtnText">Dispense Medicine</span>
+                                    <span class="material-icons-round">arrow_forward</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -384,7 +344,7 @@
     const API_BASE_URL = 'http://localhost:5001';
 
     // ══════════════════════════════════════════════════════════
-    // LIVE NAVBAR CLOCK — ticks every second (from pos.html)
+    // LIVE CLOCK
     // ══════════════════════════════════════════════════════════
     function updateNavClock() {
         const now = new Date();
@@ -396,7 +356,9 @@
         }).toUpperCase();
     }
 
-    // ── Load user info from session into navbar (from pos.html) ──
+    // ══════════════════════════════════════════════════════════
+    // NAV USER INFO
+    // ══════════════════════════════════════════════════════════
     function loadNavUserInfo() {
         try {
             const raw = sessionStorage.getItem('userInfo');
@@ -408,49 +370,11 @@
             document.getElementById('navUserName').textContent = name;
             document.getElementById('navUserRole').textContent = role;
             document.getElementById('navAvatar').textContent   = initial;
-        } catch(e) { /* keep defaults */ }
+        } catch(e) {}
     }
 
     // ══════════════════════════════════════════════════════════
-    // AUTH & API CALL HELPER (from pos.html)
-    // ══════════════════════════════════════════════════════════
-    function getToken() {
-        const directToken = sessionStorage.getItem('token');
-        if (directToken) return directToken;
-        const userInfoString = sessionStorage.getItem('userInfo');
-        if (userInfoString) { try { return JSON.parse(userInfoString).token; } catch(e){} }
-        return null;
-    }
-
-    async function apiCall(endpoint, method = 'GET', body = null) {
-        const token = getToken();
-        if (!token) { window.location.href = 'login.html'; return null; }
-
-        const options = { method, headers: { 'Authorization': `Bearer ${token}` } };
-        if (body) {
-            options.headers['Content-Type'] = 'application/json';
-            options.body = JSON.stringify(body);
-        }
-
-        try {
-            const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-            if (response.status === 401 || response.status === 403) {
-                sessionStorage.clear();
-                window.location.href = 'login.html';
-                return null;
-            }
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.message || 'API Error');
-            return data;
-        } catch (error) {
-            console.error("API Error:", error);
-            Swal.fire('Transaction Error', error.message, 'error');
-            return null;
-        }
-    }
-
-    // ══════════════════════════════════════════════════════════
-    // NOTIFICATION SYSTEM (from pos.html — with persistent read IDs)
+    // NOTIFICATIONS
     // ══════════════════════════════════════════════════════════
     let notifData         = [];
     let activeNotifFilter = 'all';
@@ -461,6 +385,13 @@
         const userInfo = sessionStorage.getItem('userInfo');
         if (userInfo) { try { return JSON.parse(userInfo).token || null; } catch(e) {} }
         return null;
+    }
+
+    function filterNotifTab(btn, type) {
+        activeNotifFilter = type;
+        document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderNotifications();
     }
 
     function generateAlertsFromInventory(inventory) {
@@ -482,14 +413,14 @@
                 }
             }
 
-            const qty      = parseInt(item.quantity || 0);
-            const minStock = parseInt(item.minStockLevel || 10);
+            const qty       = parseInt(item.quantity || 0);
+            const minStock  = parseInt(item.minStockLevel || 10);
             const isExpired = new Date(item.expiryDate) < today;
 
             if (!isExpired && qty === 0) {
-                alerts.push({ id: `stk-${item._id || idx}`, type: 'critical', unread: true, medicineName: medName, title: 'Critical: Out of Stock', desc: `${medName} is completely out of stock.`, time: 'Immediate action required', actionLabel: 'Go to Inventory', actionClass: 'btn-critical', icon: 'warning', iconClass: 'icon-critical' });
+                alerts.push({ id: `stk-${item._id || idx}`, type: 'critical', unread: true, medicineName: medName, title: 'Critical: Out of Stock', desc: `${medName} is completely out of stock.`, time: 'Immediate action required', actionLabel: 'View Inventory', actionClass: 'btn-critical', icon: 'warning', iconClass: 'icon-critical' });
             } else if (!isExpired && qty <= minStock) {
-                alerts.push({ id: `stk-${item._id || idx}`, type: 'shortage', unread: true, medicineName: medName, title: 'Low Stock Alert', desc: `${medName} — only ${qty} unit${qty === 1 ? '' : 's'} remaining (min: ${minStock}).`, time: 'Reorder soon', actionLabel: 'Go to Inventory', actionClass: 'btn-shortage', icon: 'inventory_2', iconClass: 'icon-shortage' });
+                alerts.push({ id: `stk-${item._id || idx}`, type: 'shortage', unread: true, medicineName: medName, title: 'Low Stock Alert', desc: `${medName} — only ${qty} unit${qty === 1 ? '' : 's'} remaining (min: ${minStock}).`, time: 'Reorder soon', actionLabel: 'View Inventory', actionClass: 'btn-shortage', icon: 'inventory_2', iconClass: 'icon-shortage' });
             }
         });
 
@@ -534,43 +465,28 @@
         if (pill)  pill.textContent = count > 0 ? `${count} new` : 'All clear';
     }
 
-    // Persistent read-state helpers (from pos.html)
     function getReadNotifIds() {
         try { return new Set(JSON.parse(sessionStorage.getItem('readNotifIds') || '[]')); }
         catch(e) { return new Set(); }
     }
-
     function saveReadNotifId(id) {
-        const ids = getReadNotifIds();
-        ids.add(id);
+        const ids = getReadNotifIds(); ids.add(id);
         sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
     }
-
     function saveAllReadNotifIds() {
         const ids = getReadNotifIds();
         notifData.forEach(n => ids.add(n.id));
         sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
     }
-
     function markNotifRead(id) {
         const n = notifData.find(n => n.id === id);
         if (n) { n.unread = false; saveReadNotifId(id); renderNotifications(); }
     }
-
     function markAllRead() {
         notifData.forEach(n => n.unread = false);
         saveAllReadNotifIds();
         renderNotifications();
     }
-
-    // Tab filter (from pos_pharmasst.html)
-    function filterNotifTab(btn, filter) {
-        document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        activeNotifFilter = filter;
-        renderNotifications();
-    }
-
     function handleNotifAction(event, id) {
         event.stopPropagation();
         markNotifRead(id);
@@ -595,7 +511,7 @@
             const raw       = await res.json();
             const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
             const readIds   = getReadNotifIds();
-            notifData = generateAlertsFromInventory(inventory).slice(0, 15);
+            notifData       = generateAlertsFromInventory(inventory).slice(0, 15);
             notifData.forEach(n => { if (readIds.has(n.id)) n.unread = false; });
             renderNotifications();
         } catch (e) {
@@ -608,6 +524,40 @@
     }
 
     // ══════════════════════════════════════════════════════════
+    // AUTH & API
+    // ══════════════════════════════════════════════════════════
+    function getToken() {
+        const directToken = sessionStorage.getItem('token');
+        if (directToken) return directToken;
+        const userInfoString = sessionStorage.getItem('userInfo');
+        if (userInfoString) { try { return JSON.parse(userInfoString).token; } catch(e){} }
+        return null;
+    }
+
+    async function apiCall(endpoint, method = 'GET', body = null) {
+        const token = getToken();
+        if (!token) { window.location.href = 'login.html'; return null; }
+
+        const options = { method, headers: { 'Authorization': `Bearer ${token}` } };
+        if (body) {
+            options.headers['Content-Type'] = 'application/json';
+            options.body = JSON.stringify(body);
+        }
+
+        try {
+            const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+            if (response.status === 401 || response.status === 403) { sessionStorage.clear(); window.location.href = 'login.html'; return null; }
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || 'API Error');
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            Swal.fire('Transaction Error', error.message, 'error');
+            return null;
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════
     // DATA
     // ══════════════════════════════════════════════════════════
     let products       = [];
@@ -616,12 +566,12 @@
     let activeForm     = 'all';
 
     const catColors = {
-        blue:    { bg: 'bg-blue-50 dark:bg-blue-900/30',     text: 'text-blue-600 dark:text-blue-400' },
-        purple:  { bg: 'bg-purple-50 dark:bg-purple-900/30', text: 'text-purple-600 dark:text-purple-400' },
-        indigo:  { bg: 'bg-indigo-50 dark:bg-indigo-900/30', text: 'text-indigo-600 dark:text-indigo-400' },
-        emerald: { bg: 'bg-emerald-50 dark:bg-emerald-900/30',text: 'text-emerald-600 dark:text-emerald-400' },
-        rose:    { bg: 'bg-rose-50 dark:bg-rose-900/30',     text: 'text-rose-600 dark:text-rose-400' },
-        sky:     { bg: 'bg-sky-50 dark:bg-sky-900/30',       text: 'text-sky-600 dark:text-sky-400' },
+        blue:    { bg: 'bg-blue-50 dark:bg-blue-900/30',      text: 'text-blue-600 dark:text-blue-400' },
+        purple:  { bg: 'bg-purple-50 dark:bg-purple-900/30',  text: 'text-purple-600 dark:text-purple-400' },
+        indigo:  { bg: 'bg-indigo-50 dark:bg-indigo-900/30',  text: 'text-indigo-600 dark:text-indigo-400' },
+        emerald: { bg: 'bg-emerald-50 dark:bg-emerald-900/30', text: 'text-emerald-600 dark:text-emerald-400' },
+        rose:    { bg: 'bg-rose-50 dark:bg-rose-900/30',      text: 'text-rose-600 dark:text-rose-400' },
+        sky:     { bg: 'bg-sky-50 dark:bg-sky-900/30',        text: 'text-sky-600 dark:text-sky-400' },
     };
 
     function getColorForCategory(cat) {
@@ -634,22 +584,27 @@
         return 'indigo';
     }
 
+    // ── detectForm: top-level so it's never re-declared inside a loop ──
+    function detectForm(name, raw) {
+        if (raw) return raw;
+        const n = name.toLowerCase();
+        if (n.includes('tablet')  || n.includes(' tab') || n.includes('tab.'))                                return 'tablet';
+        if (n.includes('capsule') || n.includes(' cap') || n.includes('cap.'))                                return 'capsule';
+        if (n.includes('syrup')   || n.includes('suspension') || n.includes('solution') || n.includes('drops')) return 'syrup';
+        return '';
+    }
+
     // ══════════════════════════════════════════════════════════
     // INIT
     // ══════════════════════════════════════════════════════════
     document.addEventListener('DOMContentLoaded', () => {
-        // Dark mode from sessionStorage (from pos.html)
         const isDarkMode = sessionStorage.getItem('darkMode') === 'true';
         document.documentElement.classList.toggle('dark', isDarkMode);
 
-        // Live clock
         updateNavClock();
         setInterval(updateNavClock, 1000);
-
-        // Navbar user info
         loadNavUserInfo();
 
-        // Notification bell wiring
         const btn      = document.getElementById('notificationBtn');
         const dropdown = document.getElementById('notificationDropdown');
         if (btn && dropdown) {
@@ -666,7 +621,7 @@
             setInterval(refreshNotifications, 60000);
         }
 
-        // Form dropdown close-on-outside-click (from pos.html)
+        // Close form dropdown on outside click
         document.addEventListener('click', (e) => {
             const wrap = document.getElementById('formDropdownWrap');
             if (wrap && !wrap.contains(e.target)) {
@@ -678,7 +633,7 @@
     });
 
     // ══════════════════════════════════════════════════════════
-    // INVENTORY FETCH (from pos.html — live API, not static)
+    // INVENTORY FETCH
     // ══════════════════════════════════════════════════════════
     async function loadInventory() {
         const inventoryData = await apiCall('/api/inventory');
@@ -697,6 +652,7 @@
             const medObj = typeof item.medicine === 'object'
                 ? item.medicine
                 : { _id: item.medicine, name: item.name, type: 'General', strength: '' };
+
             const medId = String(medObj._id);
             const qty   = parseInt(item.quantity || 0);
             if (qty <= 0) return;
@@ -704,15 +660,24 @@
             const price = parseFloat(item.sellingPrice || item.price || medObj.sellingPrice || 0);
 
             if (!grouped[medId]) {
+                // medObj.type holds "Tablet" / "Capsule" / "Syrup" — use it as rawForm
+                const rawForm = (
+                    medObj.type        || medObj.form        || medObj.dosageForm  ||
+                    medObj.drugForm    || medObj.formulation || medObj.dosage_form ||
+                    item.form          || item.dosageForm    || item.dosage_form   || ''
+                ).toLowerCase();
+
+                const medName = `${medObj.name} ${medObj.strength || ''}`.trim();
+
                 grouped[medId] = {
                     id:       medId,
-                    name:     `${medObj.name} ${medObj.strength || ''}`.trim(),
-                    category: medObj.type || 'General',
-                    form:     (medObj.form || '').toLowerCase(),
+                    name:     medName,
+                    category: medObj.category || medObj.type || 'General',
+                    form:     detectForm(medName, rawForm),
                     price:    price,
                     stock:    0,
                     lowStock: false,
-                    catColor: getColorForCategory(medObj.type)
+                    catColor: getColorForCategory(medObj.category || medObj.type)
                 };
             }
 
@@ -726,17 +691,17 @@
     }
 
     // ══════════════════════════════════════════════════════════
-    // PRODUCTS
+    // RENDER PRODUCTS
     // ══════════════════════════════════════════════════════════
     function renderProducts() {
         const grid  = document.getElementById('productGrid');
         const query = (document.getElementById('searchInput')?.value || '').toLowerCase();
 
         const list = products.filter(p => {
-            const matchCat    = activeCategory === 'all' || p.category === activeCategory;
+            const matchCat    = activeCategory === 'all' || p.category.toLowerCase() === activeCategory.toLowerCase();
             const matchSearch = p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query);
             const matchForm   = activeForm === 'all'
-                || p.form.includes(activeForm)
+                || (p.form !== '' && p.form.includes(activeForm))
                 || p.name.toLowerCase().includes(activeForm);
             return matchCat && matchSearch && matchForm;
         });
@@ -755,8 +720,11 @@
             return `
             <div class="group bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-teal-500 transition-all shadow-sm hover:shadow-md h-[200px] flex flex-col justify-between overflow-hidden">
                 <div class="flex justify-between items-start mb-4">
-                    <span class="px-2.5 py-1 ${cc.bg} ${cc.text} text-[10px] font-bold uppercase tracking-wider rounded">${p.category}</span>
-                    ${p.lowStock ? `<span class="px-2 py-0.5 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-500 text-[10px] font-bold rounded">Low Stock</span>` : ''}
+                    <div class="flex gap-1.5 flex-wrap">
+                        <span class="px-2.5 py-1 ${cc.bg} ${cc.text} text-[10px] font-bold uppercase tracking-wider rounded">${p.category}</span>
+                        <span class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wider rounded">${p.form || ''}</span>
+                    </div>
+                    ${p.lowStock ? `<span class="px-2 py-0.5 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-500 text-[10px] font-bold rounded shrink-0">Low Stock</span>` : ''}
                 </div>
                 <h3 class="text-base font-bold mb-1 truncate" title="${p.name}">${p.name}</h3>
                 <p class="text-xs text-slate-400 mb-5">Available Stock: ${p.stock} units</p>
@@ -778,7 +746,9 @@
         }).join('');
     }
 
-    // Form dropdown (from pos.html)
+    // ══════════════════════════════════════════════════════════
+    // FORM DROPDOWN
+    // ══════════════════════════════════════════════════════════
     function toggleFormDropdown() {
         document.getElementById('formDropdown').classList.toggle('hidden');
     }
@@ -786,20 +756,23 @@
     function setForm(form) {
         activeForm = form;
         const labels = { all: 'Form', tablet: 'Tablet', capsule: 'Capsule', syrup: 'Syrup' };
-        const btn   = document.getElementById('formDropdownBtn');
+        const btn    = document.getElementById('formDropdownBtn');
         document.getElementById('formDropdownLabel').textContent = labels[form] || 'Form';
         btn.classList.toggle('border-teal-500', form !== 'all');
         btn.classList.toggle('text-teal-600',   form !== 'all');
         document.querySelectorAll('.form-opt').forEach(o => {
             const isActive = o.dataset.form === form;
-            o.classList.toggle('bg-teal-50',           isActive);
-            o.classList.toggle('dark:bg-teal-900/20',  isActive);
+            o.classList.toggle('bg-teal-50',          isActive);
+            o.classList.toggle('dark:bg-teal-900/20', isActive);
             o.classList.toggle('text-teal-600',        isActive);
         });
         document.getElementById('formDropdown').classList.add('hidden');
         renderProducts();
     }
 
+    // ══════════════════════════════════════════════════════════
+    // CATEGORY FILTER
+    // ══════════════════════════════════════════════════════════
     function setCategory(btn, cat) {
         activeCategory = cat;
         document.querySelectorAll('.category-btn').forEach(b => {
@@ -818,7 +791,6 @@
         const p = products.find(x => x.id === id);
         if (!p) return;
         if (!cart[id]) cart[id] = { product: p, qty: 0 };
-        // Swal stock limit warning (from pos.html)
         if (cart[id].qty >= p.stock) {
             Swal.fire({ icon: 'warning', title: 'Stock Limit', text: 'Cannot exceed available active stock.' });
             return;
@@ -842,6 +814,9 @@
     function removeFromCart(id) { delete cart[id]; updateUI(); }
     function updateUI() { renderProducts(); renderCart(); updateTotals(); }
 
+    // ══════════════════════════════════════════════════════════
+    // RENDER CART — new card style
+    // ══════════════════════════════════════════════════════════
     function renderCart() {
         const container = document.getElementById('cartItems');
         const items     = Object.values(cart);
@@ -859,19 +834,49 @@
         document.getElementById('cartCount').textContent = `${total} Item${total !== 1 ? 's' : ''}`;
 
         container.innerHTML = items.map(({ product: p, qty }) => `
-            <div class="flex justify-between items-start group py-2 border-b border-slate-100 dark:border-slate-700 last:border-0">
-                <div class="flex gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 flex items-center justify-center font-bold text-xs text-teal-600">${qty}x</div>
-                    <div>
-                        <h4 class="text-sm font-semibold truncate w-36" title="${p.name}">${p.name}</h4>
-                        <p class="text-[10px] text-slate-400">₱${p.price.toFixed(2)} / unit</p>
-                    </div>
+            <div class="group flex gap-3 p-3 rounded-xl border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-teal-200 dark:hover:border-teal-800 hover:shadow-sm transition-all">
+
+                <!-- Icon -->
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-teal-50 to-slate-100 dark:from-teal-900/30 dark:to-slate-700 border border-slate-100 dark:border-slate-600 flex-shrink-0 flex flex-col items-center justify-center gap-0.5">
+                    <span class="material-icons text-teal-500 text-2xl">medication</span>
+                    <span class="text-[9px] font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wide">${p.form || 'med'}</span>
                 </div>
-                <div class="flex flex-col items-end gap-1">
-                    <button onclick="removeFromCart('${p.id}')" class="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-400 hover:bg-rose-100 hover:text-rose-500 flex items-center justify-center transition-colors flex-shrink-0">
-                        <span class="material-icons" style="font-size:12px;">close</span>
-                    </button>
-                    <p class="text-sm font-bold">₱${(p.price * qty).toFixed(2)}</p>
+
+                <!-- Details -->
+                <div class="flex-1 min-w-0">
+
+                    <!-- Name + price + remove -->
+                    <div class="flex items-start justify-between gap-1">
+                        <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100 leading-snug truncate" title="${p.name}">${p.name}</h4>
+                        <div class="flex items-center gap-1 flex-shrink-0 ml-1">
+                            <span class="text-sm font-black text-teal-600 dark:text-teal-400 whitespace-nowrap">₱${(p.price * qty).toFixed(2)}</span>
+                            <button onclick="removeFromCart('${p.id}')"
+                                class="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-400 hover:bg-rose-100 hover:text-rose-500 flex items-center justify-center transition-colors">
+                                <span class="material-icons" style="font-size:11px;">close</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Unit price hint -->
+                    <p class="text-[10px] text-slate-400 mt-0.5">₱${p.price.toFixed(2)} / unit</p>
+
+                    <!-- Category + form tags -->
+                    <div class="flex gap-1 mt-1 flex-wrap">
+                        <span class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-[9px] font-semibold rounded uppercase tracking-wide">${p.category}</span>
+                        <span class="px-1.5 py-0.5 bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 text-[9px] font-semibold rounded uppercase tracking-wide">${p.form || 'General'}</span>
+                    </div>
+
+                    <!-- Qty stepper -->
+                    <div class="flex items-center justify-end mt-2">
+                        <div class="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded-lg px-2 py-1">
+                            <button onclick="updateQty('${p.id}',-1)"
+                                class="w-5 h-5 rounded-md bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-500 text-slate-600 dark:text-slate-300 hover:bg-red-50 hover:text-red-500 hover:border-red-200 flex items-center justify-center transition-all font-bold text-sm leading-none shadow-sm">−</button>
+                            <span class="w-6 text-center text-sm font-black text-slate-800 dark:text-slate-100">${qty}</span>
+                            <button onclick="updateQty('${p.id}',1)"
+                                class="w-5 h-5 rounded-md bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-500 text-slate-600 dark:text-slate-300 hover:bg-teal-50 hover:text-teal-600 hover:border-teal-300 flex items-center justify-center transition-all font-bold text-sm leading-none shadow-sm">+</button>
+                        </div>
+                    </div>
+
                 </div>
             </div>`).join('');
     }
@@ -882,7 +887,7 @@
     }
 
     // ══════════════════════════════════════════════════════════
-    // DISPENSE MEDICINE — matches reference pos.html exactly
+    // DISPENSE
     // ══════════════════════════════════════════════════════════
     async function processDispense() {
         const items = Object.values(cart);
@@ -917,25 +922,27 @@
         }
     }
 
-    // ── UTILS ──
+    // ══════════════════════════════════════════════════════════
+    // UTILS
+    // ══════════════════════════════════════════════════════════
     function toggleDarkMode() {
         document.documentElement.classList.toggle('dark');
         sessionStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
     }
 
-   function logoutUser() {
-    Swal.fire({
-        title: "Logout?", icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#005a32",
-        confirmButtonText: "Yes, logout"
-    }).then(r => {
-        if (r.isConfirmed) {
-            sessionStorage.clear();
-            window.location.href = '../html/login.html'; 
-        }
-    });
-}
+    function logoutUser() {
+        Swal.fire({
+            title: 'Logout?', icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#005a32',
+            confirmButtonText: 'Yes, logout'
+        }).then(r => {
+            if (r.isConfirmed) {
+                sessionStorage.clear();
+                window.location.href = '../html/login.html';
+            }
+        });
+    }
 </script>
 <script src="../audio/audio-system.js"></script>
 <script src="../audio/audio-manager.js"></script>

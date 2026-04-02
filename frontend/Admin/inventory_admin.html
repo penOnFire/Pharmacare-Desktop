@@ -882,6 +882,26 @@
           opacity: 1;
           transform: scale(1) translateY(0);
         }
+        .dark #restockModal .as-label,
+        .dark #updateSupplyModal .as-label { color: #d1d5db; }
+        .dark #restockModal .as-info-banner { background: rgba(0,90,50,0.15); border-color: rgba(0,90,50,0.3); }
+        .dark #restockModal .as-info-banner p { color: #86efac; }
+
+        .bexp-pill {
+  font-size: 11px; font-weight: 600; padding: 3px 10px;
+  border-radius: 99px; border: 1px solid #e5e7eb;
+  background: none; cursor: pointer; color: #6b7280; transition: all 0.12s;
+}
+.bexp-pill.active { background: #005a32; color: #fff; border-color: #005a32; }
+.bexp-pill:not(.active):hover { background: #f0fdf4; color: #005a32; }
+        
+    .bexp-qp {
+  font-size: 10px; font-weight: 600; padding: 3px 9px;
+  border-radius: 99px; border: 1px solid #e5e7eb;
+  background: #fff; cursor: pointer; color: #6b7280; transition: all 0.12s;
+}
+.bexp-qp:hover, .bexp-qp.active { background: #005a32; color: #fff; border-color: #005a32; }
+
       }
       #addSupplyModal .as-card,
       #restockModal .as-card,
@@ -1487,89 +1507,97 @@
               </div>
             </div>
 
-            <!-- Batch Table -->
-            <div
-              id="batchSection"
-              class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 hidden"
-            >
-              <div
-                class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center"
-              >
-                <div>
-                  <h2
-                    class="text-xl font-semibold text-text-light dark:text-text-dark"
-                  >
-                    Batch Details (FEFO)
-                  </h2>
-                  <p class="text-xs text-primary mt-1">
-                    Sorted by Expiry Date (Dispense First)
-                  </p>
-                </div>
-                <div class="flex items-center gap-4">
-                  <input
-                    id="batchSearch"
-                    onkeyup="searchBatch()"
-                    class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="Search batches..."
-                    type="text"
-                  />
-                  <div class="export-wrap">
-                    <button
-                      onclick="toggleExportMenu('batchExportMenu')"
-                      class="border border-primary px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/10 transition-colors text-primary font-semibold text-sm"
-                    >
-                      <span class="material-icons text-sm">print</span> Export /
-                      Print
-                      <span class="material-icons text-sm"
-                        >arrow_drop_down</span
-                      >
-                    </button>
-                    <div
-                      id="batchExportMenu"
-                      class="export-menu"
-                      style="min-width: 220px; padding: 12px 14px"
-                    >
-                      <p
-                        class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2"
-                      >
-                        Include in print
-                      </p>
-                      <label class="export-check-row"
-                        ><input type="checkbox" value="active" checked />
-                        <span style="color: #16a34a" class="material-icons"
-                          >check_circle</span
-                        >
-                        Active</label
-                      >
-                      <label class="export-check-row"
-                        ><input type="checkbox" value="expiring" />
-                        <span style="color: #8b5a2b" class="material-icons"
-                          >schedule</span
-                        >
-                        Expiring Soon (≤30d)</label
-                      >
-                      <label class="export-check-row"
-                        ><input type="checkbox" value="expired" />
-                        <span style="color: #dc2626" class="material-icons"
-                          >event_busy</span
-                        >
-                        Expired</label
-                      >
-                      <div
-                        class="export-menu-divider"
-                        style="margin: 10px 0"
-                      ></div>
-                      <button
-                        onclick="
-                          exportInventoryData(
-                            'batch',
-                            getChecked('batchExportMenu'),
-                          )
-                        "
-                        class="export-apply-btn"
-                      >
-                        <span class="material-icons">print</span> Print / Export
-                      </button>
+                    <!-- Batch Table -->
+                    <div id="batchSection" class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 hidden">
+                        <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                            <div>
+                                <h2 class="text-xl font-semibold text-text-light dark:text-text-dark">Batch Details (FEFO)</h2>
+                                <p class="text-xs text-primary mt-1">Sorted by Expiry Date (Dispense First)</p>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <input id="batchSearch" onkeyup="searchBatch()" class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Search batches..." type="text"/>
+                                <div class="export-wrap">
+    <button onclick="openBatchExportMenu()" class="border border-primary px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/10 transition-colors text-primary font-semibold text-sm">
+        <span class="material-icons text-sm">print</span> Export / Print
+        <span class="material-icons text-sm">arrow_drop_down</span>
+    </button>
+    <div id="batchExportMenu" class="export-menu" style="min-width:310px; padding: 12px 14px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider" style="margin:0;">Select Batches</p>
+    <div style="display:flex;gap:6px;">
+      <button onclick="setBatchExportAll(true)" style="font-size:10px;color:#005a32;font-weight:600;background:none;border:none;cursor:pointer;">All</button>
+      <span style="font-size:10px;color:#9ca3af;">|</span>
+      <button onclick="setBatchExportAll(false)" style="font-size:10px;color:#6b7280;font-weight:600;background:none;border:none;cursor:pointer;">None</button>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div style="position:relative;margin-bottom:8px;">
+    <span class="material-icons" style="position:absolute;left:7px;top:50%;transform:translateY(-50%);font-size:15px;color:#9ca3af;pointer-events:none;">search</span>
+    <input id="batchExportSearch" type="text" placeholder="Search medicine or batch no..."
+      oninput="filterBatchExportList()"
+      style="width:100%;box-sizing:border-box;padding:6px 10px 6px 28px;font-size:12px;border:1px solid #e5e7eb;border-radius:8px;background:#f9fafb;color:#1f2937;outline:none;"/>
+  </div>
+
+  <!-- Date range filter -->
+  <div style="background:#f9fafb;border-radius:8px;padding:10px;border:1px solid #e5e7eb;margin-bottom:8px;">
+    <p style="font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 8px;">Filter by expiry date</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
+      <div>
+        <label style="font-size:10px;color:#6b7280;display:block;margin-bottom:3px;">From</label>
+        <input id="batchExportDateFrom" type="date" oninput="filterBatchExportList()"
+          style="width:100%;box-sizing:border-box;padding:5px 7px;font-size:11px;border:1px solid #e5e7eb;border-radius:6px;background:#fff;color:#1f2937;outline:none;"/>
+      </div>
+      <div>
+        <label style="font-size:10px;color:#6b7280;display:block;margin-bottom:3px;">To</label>
+        <input id="batchExportDateTo" type="date" oninput="filterBatchExportList()"
+          style="width:100%;box-sizing:border-box;padding:5px 7px;font-size:11px;border:1px solid #e5e7eb;border-radius:6px;background:#fff;color:#1f2937;outline:none;"/>
+      </div>
+    </div>
+    <div style="display:flex;gap:4px;flex-wrap:wrap;">
+      <button class="bexp-qp" onclick="setBatchExportQuick(this,'expired')">Expired</button>
+      <button class="bexp-qp" onclick="setBatchExportQuick(this,'7')">Next 7d</button>
+      <button class="bexp-qp" onclick="setBatchExportQuick(this,'30')">Next 30d</button>
+      <button class="bexp-qp" onclick="setBatchExportQuick(this,'90')">Next 90d</button>
+      <button class="bexp-qp" onclick="setBatchExportQuick(this,'clear')">Clear</button>
+    </div>
+  </div>
+
+  <div id="batchExportCheckList" style="max-height:200px;overflow-y:auto;scrollbar-width:thin;margin-bottom:8px;"></div>
+
+  <div class="export-menu-divider" style="margin: 8px 0;"></div>
+  <button onclick="exportBatchData()" class="export-apply-btn">
+    <span class="material-icons">print</span> Print / Export
+  </button>
+  <p id="batchExportSelCount" style="text-align:center;font-size:11px;color:#9ca3af;margin:6px 0 0;">0 batches selected</p>
+</div>
+</div>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+                                <thead class="text-xs text-text-light dark:text-text-dark uppercase tracking-wider">
+                                    <tr>
+                                        <th class="px-6 py-4 font-medium">Order</th>
+                                        <th class="px-6 py-4 font-medium">Medicine Name</th>
+                                        <th class="px-6 py-4 font-medium">Batch No.</th>
+                                        <th class="px-6 py-4 font-medium">Quantity</th>
+                                        <th class="px-6 py-4 font-medium">Expiry Date</th>
+                                        <th class="px-6 py-4 font-medium">Days Left</th>
+                                        <th class="px-6 py-4 font-medium">Price</th>
+                                        <th class="px-6 py-4 font-medium">Supplier</th>
+                                        <th class="px-6 py-4 font-medium">Status</th>
+                                        <th class="px-6 py-4 font-medium">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="batchTableBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="pagination-bar" id="batchPaginationBar">
+                            <div class="rows-per-page">Rows per page: <select onchange="batchRowsPerPage=parseInt(this.value);batchPage=1;inventoryManager.renderBatches()" id="batchRppSelect"><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option></select></div>
+                            <div class="pagination-info" id="batchPaginationInfo"></div>
+                            <div class="pagination-controls" id="batchPaginationControls"></div>
+                        </div>
                     </div>
                   </div>
                 </div>
@@ -4788,17 +4816,202 @@
           dropdown.classList.toggle("open");
           if (dropdown.classList.contains("open")) refreshNotifications();
         });
-        document.addEventListener("click", (e) => {
-          if (!dropdown.contains(e.target) && e.target !== btn)
-            dropdown.classList.remove("open");
-        });
-        dropdown.addEventListener("click", (e) => e.stopPropagation());
-        setTimeout(refreshNotifications, 1200);
-        setInterval(refreshNotifications, 60000);
-      });
-    </script>
-    <script src="../audio/audio-system.js"></script>
-    <script src="../audio/audio-manager.js"></script>
-    <script src="../js/windowcontrollerbtn.js"></script>
-  </body>
+    }
+
+    setupModalListeners() {
+        const addBtn = document.getElementById('addMedicineBtn');
+        if (addBtn) addBtn.addEventListener('click', () => this.openMedicineModal());
+        document.getElementById('closeModalBtn').addEventListener('click',  () => this.closeMedicineModal());
+        document.getElementById('cancelMedicineBtn').addEventListener('click', () => this.closeMedicineModal());
+        document.getElementById('saveMedicineBtn').addEventListener('click',   () => this.saveMedicine());
+    }
+}
+
+// ── INIT ──
+// ── BATCH EXPORT: Populate dynamic checklist then open menu ──
+let batchExportActiveFilter = 'all';
+
+function openBatchExportMenu() {
+    document.querySelectorAll('.export-menu.open').forEach(m => m.classList.remove('open'));
+    const menu = document.getElementById('batchExportMenu');
+    if (!menu || !inventoryManager) return;
+    document.getElementById('batchExportSearch').value = '';
+    document.getElementById('batchExportDateFrom').value = '';
+    document.getElementById('batchExportDateTo').value = '';
+    document.querySelectorAll('.bexp-qp').forEach(b => b.classList.remove('active'));
+    populateBatchExportList();
+    menu.classList.add('open');
+}
+
+function populateBatchExportList() {
+    const list = document.getElementById('batchExportCheckList');
+    if (!list || !inventoryManager) return;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const sorted = [...inventoryManager.liveInventory].sort(
+        (a, b) => new Date(a.expiryDate) - new Date(b.expiryDate)
+    );
+    if (!sorted.length) {
+        list.innerHTML = '<p style="font-size:12px;color:#9ca3af;text-align:center;padding:8px 0;">No batches available.</p>';
+        return;
+    }
+    list.innerHTML = sorted.map(item => {
+        const id = item._id || item.id;
+        const name = inventoryManager._getName(item);
+        const batch = item.batchNumber || 'N/A';
+        const qty = item.quantity;
+        const expDate = new Date(item.expiryDate); expDate.setHours(0,0,0,0);
+        const daysLeft = Math.ceil((expDate - today) / 864e5);
+        const expStr = expDate.toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric' });
+        const expisoStr = expDate.toISOString().split('T')[0];
+        let color = '#16a34a';
+        if (daysLeft < 0) color = '#dc2626';
+        else if (daysLeft <= 30) color = '#8b5a2b';
+        return `
+            <label class="export-check-row bexp-row"
+                data-text="${name.toLowerCase()} ${batch.toLowerCase()}"
+                data-expiry="${expisoStr}"
+                style="align-items:flex-start;gap:6px;padding:5px 2px;"
+                onclick="updateBatchExportCount()">
+                <input type="checkbox" value="${id}" style="margin-top:2px;width:14px;height:14px;accent-color:#005a32;flex-shrink:0;" onchange="updateBatchExportCount()">
+                <span style="width:7px;height:7px;border-radius:50%;background:${color};flex-shrink:0;margin-top:4px;"></span>
+                <span style="font-size:12px;line-height:1.3;">
+                    <span style="font-weight:600;color:inherit;">${name}</span>
+                    <span style="display:block;font-size:10px;color:#9ca3af;">Batch ${batch} · Qty ${qty} · <span style="color:${color}">${expStr}</span></span>
+                </span>
+            </label>`;
+    }).join('') + `<div id="batchExportEmpty" style="display:none;font-size:12px;color:#9ca3af;text-align:center;padding:12px 0;">No batches match.</div>`;
+    updateBatchExportCount();
+}
+
+function filterBatchExportList() {
+    const q = (document.getElementById('batchExportSearch')?.value || '').toLowerCase();
+    const fromVal = document.getElementById('batchExportDateFrom')?.value;
+    const toVal   = document.getElementById('batchExportDateTo')?.value;
+    const from = fromVal ? new Date(fromVal) : null;
+    const to   = toVal   ? new Date(toVal)   : null;
+    let visible = 0;
+    document.querySelectorAll('.bexp-row').forEach(row => {
+        const expiry = new Date(row.dataset.expiry);
+        const matchQ    = !q    || row.dataset.text.includes(q);
+        const matchFrom = !from || expiry >= from;
+        const matchTo   = !to   || expiry <= to;
+        const show = matchQ && matchFrom && matchTo;
+        row.style.display = show ? '' : 'none';
+        if (show) visible++;
+    });
+    const empty = document.getElementById('batchExportEmpty');
+    if (empty) empty.style.display = visible === 0 ? '' : 'none';
+    updateBatchExportCount();
+}
+
+function setBatchExportQuick(btn, type) {
+    document.querySelectorAll('.bexp-qp').forEach(b => b.classList.remove('active'));
+    if (type !== 'clear') btn.classList.add('active');
+    const today = new Date(); today.setHours(0,0,0,0);
+    const toISO = d => d.toISOString().split('T')[0];
+    const df = document.getElementById('batchExportDateFrom');
+    const dt = document.getElementById('batchExportDateTo');
+    if (type === 'clear') {
+        df.value = ''; dt.value = '';
+    } else if (type === 'expired') {
+        df.value = '';
+        dt.value = toISO(new Date(today.getTime() - 864e5));
+    } else {
+        df.value = toISO(today);
+        dt.value = toISO(new Date(today.getTime() + parseInt(type) * 864e5));
+    }
+    filterBatchExportList();
+}
+
+function setBatchExportAll(checked) {
+    document.querySelectorAll('.bexp-row').forEach(row => {
+        if (row.style.display !== 'none') {
+            const cb = row.querySelector('input[type="checkbox"]');
+            if (cb) cb.checked = checked;
+        }
+    });
+    updateBatchExportCount();
+}
+
+function updateBatchExportCount() {
+    const n = document.querySelectorAll('#batchExportCheckList input[type="checkbox"]:checked').length;
+    const el = document.getElementById('batchExportSelCount');
+    if (el) el.textContent = `${n} batch${n !== 1 ? 'es' : ''} selected`;
+}
+
+function exportBatchData() {
+    toggleExportMenu('batchExportMenu', true);
+    const today = new Date();
+    const timestamp = new Date().toISOString().split('T')[0];
+
+    const checkedIds = new Set(
+        [...document.querySelectorAll('#batchExportCheckList input[type="checkbox"]:checked')]
+            .map(cb => cb.value)
+    );
+
+    if (!checkedIds.size) return Swal.fire('Nothing selected', 'Please check at least one batch.', 'info');
+
+    const source = [...inventoryManager.liveInventory].sort((a, b) => new Date(a.expiryDate) - new Date(b.expiryDate));
+    const batches = source.filter(item => checkedIds.has(item._id || item.id));
+
+    const rows = batches.map((item, i) => {
+        const daysLeft = Math.ceil((new Date(item.expiryDate) - today) / 864e5);
+        let status = 'Active';
+        if (daysLeft < 0)        status = 'Expired';
+        else if (daysLeft <= 30) status = `Expiring (${daysLeft}d)`;
+        return [
+            i + 1,
+            inventoryManager._getName(item),
+            item.batchNumber || 'N/A',
+            item.quantity,
+            inventoryManager.formatDate(item.expiryDate),
+            daysLeft < 0 ? 'EXPIRED' : daysLeft,
+            '₱' + parseFloat(inventoryManager._getPrice(item) || 0).toFixed(2),
+            item.supplier || 'Unknown',
+            status
+        ];
+    });
+
+    if (!rows.length) return Swal.fire('No Data', 'No batches matched your selection.', 'info');
+
+    _exportInventoryPDF(
+        `WellServed_Batches_${timestamp}`,
+        `Batch Details (FEFO) — Selected Batches`,
+        ['#', 'Medicine', 'Batch No.', 'Qty', 'Expiry', 'Days Left', 'Price', 'Supplier', 'Status'],
+        rows
+    );
+}
+
+// ── INIT ──
+let inventoryManager;
+document.addEventListener('DOMContentLoaded', () => {
+    updateNavClock();
+    setInterval(updateNavClock, 1000);
+    loadNavUserInfo();
+
+    inventoryManager = new InventoryManager();
+    window.inventoryManager = inventoryManager;
+
+    window.logoutUser            = logoutUser;
+    window.switchTab             = t  => inventoryManager.switchTab(t);
+    window.searchSummary         = () => { summaryPage=1; inventoryManager.renderSummary(); };
+    window.filterSummaryByStatus = () => { summaryPage=1; inventoryManager.renderSummary(); };
+    window.searchBatch           = () => { batchPage=1; inventoryManager.renderBatches(); };
+    window.searchArchive         = () => { archivePage=1; inventoryManager.renderArchive(); };
+    window.viewBatchDetails      = n  => inventoryManager.viewBatchDetails(n);
+    window.exportInventoryData   = exportInventoryData;
+
+    const btn      = document.getElementById('notificationBtn');
+    const dropdown = document.getElementById('notificationDropdown');
+    btn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('open'); if (dropdown.classList.contains('open')) refreshNotifications(); });
+    document.addEventListener('click', (e) => { if (!dropdown.contains(e.target) && e.target !== btn) dropdown.classList.remove('open'); });
+    dropdown.addEventListener('click', e => e.stopPropagation());
+    setTimeout(refreshNotifications, 1200);
+    setInterval(refreshNotifications, 60000);
+});
+</script>
+<script src="../audio/audio-system.js"></script>
+<script src="../audio/audio-manager.js"></script>
+<script src="../js/windowcontrollerbtn.js"></script>
+</body>
 </html>
