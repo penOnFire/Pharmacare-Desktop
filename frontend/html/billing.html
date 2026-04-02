@@ -92,138 +92,620 @@
         pointer-events: none;
         transition: opacity 0.22s ease, transform 0.22s cubic-bezier(.34,1.56,.64,1);
         transform-origin: top right;
-    }
-    .dark .notif-dropdown { background: #1F2937; border-color: #374151; }
-    .notif-dropdown.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
+      }
+      .dark .notif-dropdown {
+        background: #1f2937;
+        border-color: #374151;
+      }
+      .notif-dropdown.open {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: all;
+      }
 
-    .notif-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 14px; border-bottom: 1px solid #f0f0f0; }
-    .dark .notif-header { border-color: #374151; }
-    .notif-header h3 { font-size: 15px; font-weight: 700; color: #111827; }
-    .dark .notif-header h3 { color: #F9FAFB; }
-    .notif-header-meta { display: flex; align-items: center; gap: 10px; }
-    .unread-count-pill { background: #005a32; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
-    .mark-all-btn { font-size: 11px; color: #005a32; font-weight: 600; background: none; border: none; cursor: pointer; padding: 2px 4px; border-radius: 4px; transition: background 0.15s; }
-    .mark-all-btn:hover { background: #f0fdf4; }
+      .notif-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 18px 14px;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      .dark .notif-header {
+        border-color: #374151;
+      }
+      .notif-header h3 {
+        font-size: 15px;
+        font-weight: 700;
+        color: #111827;
+      }
+      .dark .notif-header h3 {
+        color: #f9fafb;
+      }
+      .notif-header-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .unread-count-pill {
+        background: #005a32;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 99px;
+      }
+      .mark-all-btn {
+        font-size: 11px;
+        color: #005a32;
+        font-weight: 600;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 2px 4px;
+        border-radius: 4px;
+        transition: background 0.15s;
+      }
+      .mark-all-btn:hover {
+        background: #f0fdf4;
+      }
 
-    .notif-tabs { display: flex; gap: 4px; padding: 10px 14px; background: #fafafa; border-bottom: 1px solid #f0f0f0; }
-    .dark .notif-tabs { background: #111827; border-color: #374151; }
-    .notif-tab-btn { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 99px; border: 1px solid transparent; cursor: pointer; background: none; color: #6b7280; transition: all 0.15s; }
-    .notif-tab-btn.active { background: #005a32; color: #fff; border-color: #005a32; }
-    .notif-tab-btn:not(.active):hover { background: #f3f4f6; border-color: #e5e7eb; color: #374151; }
+      .notif-tabs {
+        display: flex;
+        gap: 4px;
+        padding: 10px 14px;
+        background: #fafafa;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      .dark .notif-tabs {
+        background: #111827;
+        border-color: #374151;
+      }
+      .notif-tab-btn {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 99px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        background: none;
+        color: #6b7280;
+        transition: all 0.15s;
+      }
+      .notif-tab-btn.active {
+        background: #005a32;
+        color: #fff;
+        border-color: #005a32;
+      }
+      .notif-tab-btn:not(.active):hover {
+        background: #f3f4f6;
+        border-color: #e5e7eb;
+        color: #374151;
+      }
 
-    .notif-list { max-height: 360px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #e5e7eb transparent; }
-    .notif-list::-webkit-scrollbar { width: 4px; }
-    .notif-list::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 2px; }
+      .notif-list {
+        max-height: 360px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #e5e7eb transparent;
+      }
+      .notif-list::-webkit-scrollbar {
+        width: 4px;
+      }
+      .notif-list::-webkit-scrollbar-thumb {
+        background: #e5e7eb;
+        border-radius: 2px;
+      }
 
-    .notif-item { display: flex; gap: 12px; align-items: flex-start; padding: 13px 16px; border-bottom: 1px solid #f5f5f5; cursor: pointer; position: relative; transition: background 0.15s; }
-    .dark .notif-item { border-color: #374151; }
-    .notif-item:last-child { border-bottom: none; }
-    .notif-item:hover { background: #f9fafb; }
-    .dark .notif-item:hover { background: #111827; }
-    .notif-item.unread { background: #ffffff; }
-    .dark .notif-item.unread { background: #1F2937; }
-    .notif-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 0 2px 2px 0; }
-    .notif-item.critical::before { background: #EF4444; }
-    .notif-item.expiry::before   { background: #8b5a2b; }
-    .notif-item.shortage::before { background: #358E83; }
+      .notif-item {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        padding: 13px 16px;
+        border-bottom: 1px solid #f5f5f5;
+        cursor: pointer;
+        position: relative;
+        transition: background 0.15s;
+      }
+      .dark .notif-item {
+        border-color: #374151;
+      }
+      .notif-item:last-child {
+        border-bottom: none;
+      }
+      .notif-item:hover {
+        background: #f9fafb;
+      }
+      .dark .notif-item:hover {
+        background: #111827;
+      }
+      .notif-item.unread {
+        background: #ffffff;
+      }
+      .dark .notif-item.unread {
+        background: #1f2937;
+      }
+      .notif-item::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        border-radius: 0 2px 2px 0;
+      }
+      .notif-item.critical::before {
+        background: #ef4444;
+      }
+      .notif-item.expiry::before {
+        background: #8b5a2b;
+      }
+      .notif-item.shortage::before {
+        background: #358e83;
+      }
 
-    .notif-icon-wrap { flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-    .notif-icon-wrap .material-icons { font-size: 20px; }
-    .icon-critical { background: #fef2f2; } .icon-critical .material-icons { color: #EF4444; }
-    .icon-expiry   { background: #fdf6ec; } .icon-expiry   .material-icons { color: #8b5a2b; }
-    .icon-shortage { background: #f0fdfa; } .icon-shortage .material-icons { color: #358E83; }
+      .notif-icon-wrap {
+        flex-shrink: 0;
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .notif-icon-wrap .material-icons {
+        font-size: 20px;
+      }
+      .icon-critical {
+        background: #fef2f2;
+      }
+      .icon-critical .material-icons {
+        color: #ef4444;
+      }
+      .icon-expiry {
+        background: #fdf6ec;
+      }
+      .icon-expiry .material-icons {
+        color: #8b5a2b;
+      }
+      .icon-shortage {
+        background: #f0fdfa;
+      }
+      .icon-shortage .material-icons {
+        color: #358e83;
+      }
 
-    .notif-body { flex: 1; min-width: 0; }
-    .notif-title { font-size: 13px; font-weight: 600; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .dark .notif-title { color: #F9FAFB; }
-    .notif-desc  { font-size: 12px; color: #6b7280; margin-top: 2px; line-height: 1.4; }
-    .notif-time  { font-size: 10px; color: #9ca3af; margin-top: 6px; }
-    .notif-action { margin-top: 8px; }
-    .notif-action-btn { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 6px; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 0.04em; transition: opacity 0.15s, transform 0.1s; }
-    .notif-action-btn:active { transform: scale(0.96); }
-    .notif-action-btn:hover  { opacity: 0.88; }
-    .btn-critical { background: #EF4444; color: #fff; }
-    .btn-expiry   { background: #8b5a2b; color: #fff; }
-    .btn-shortage { background: #005a32; color: #fff; }
+      .notif-body {
+        flex: 1;
+        min-width: 0;
+      }
+      .notif-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #111827;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .dark .notif-title {
+        color: #f9fafb;
+      }
+      .notif-desc {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 2px;
+        line-height: 1.4;
+      }
+      .notif-time {
+        font-size: 10px;
+        color: #9ca3af;
+        margin-top: 6px;
+      }
+      .notif-action {
+        margin-top: 8px;
+      }
+      .notif-action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 5px 12px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        transition:
+          opacity 0.15s,
+          transform 0.1s;
+      }
+      .notif-action-btn:active {
+        transform: scale(0.96);
+      }
+      .notif-action-btn:hover {
+        opacity: 0.88;
+      }
+      .btn-critical {
+        background: #ef4444;
+        color: #fff;
+      }
+      .btn-expiry {
+        background: #8b5a2b;
+        color: #fff;
+      }
+      .btn-shortage {
+        background: #005a32;
+        color: #fff;
+      }
 
-    .unread-dot { flex-shrink: 0; width: 7px; height: 7px; border-radius: 50%; background: #005a32; margin-top: 5px; }
-    .notif-empty { padding: 40px 20px; text-align: center; color: #9ca3af; }
-    .notif-empty .material-icons { font-size: 40px; margin-bottom: 8px; display: block; }
-    .notif-empty p { font-size: 13px; }
-    .notif-footer { border-top: 1px solid #f0f0f0; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; }
-    .dark .notif-footer { border-color: #374151; }
-    .view-all-link { font-size: 12px; font-weight: 600; color: #005a32; text-decoration: none; display: flex; align-items: center; gap: 4px; }
-    .view-all-link:hover { text-decoration: underline; }
-    .view-all-link .material-icons { font-size: 14px; }
-    /* ── END NOTIFICATION STYLES ── */
+      .unread-dot {
+        flex-shrink: 0;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #005a32;
+        margin-top: 5px;
+      }
+      .notif-empty {
+        padding: 40px 20px;
+        text-align: center;
+        color: #9ca3af;
+      }
+      .notif-empty .material-icons {
+        font-size: 40px;
+        margin-bottom: 8px;
+        display: block;
+      }
+      .notif-empty p {
+        font-size: 13px;
+      }
+      .notif-footer {
+        border-top: 1px solid #f0f0f0;
+        padding: 12px 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .dark .notif-footer {
+        border-color: #374151;
+      }
+      .view-all-link {
+        font-size: 12px;
+        font-weight: 600;
+        color: #005a32;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .view-all-link:hover {
+        text-decoration: underline;
+      }
+      .view-all-link .material-icons {
+        font-size: 14px;
+      }
+      /* ── END NOTIFICATION STYLES ── */
 
-    .hidden { display: none !important; }
-    .animate-spin-slow { animation: spin 2s linear infinite; }
-    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      .hidden {
+        display: none !important;
+      }
+      .animate-spin-slow {
+        animation: spin 2s linear infinite;
+      }
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
 
-    /* Status Badges */
-    .status-badge { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 500; }
-    .status-Paid    { background-color: rgba(34, 197, 94, 0.1); color: rgb(22, 163, 74); }
-    .status-Pending { background-color: rgba(245, 158, 11, 0.1); color: rgb(180, 83, 9); }
-    .status-Failed  { background-color: rgba(239, 68, 68, 0.1); color: rgb(185, 28, 28); }
+      /* Status Badges */
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+      .status-Paid {
+        background-color: rgba(34, 197, 94, 0.1);
+        color: rgb(22, 163, 74);
+      }
+      .status-Pending {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: rgb(180, 83, 9);
+      }
+      .status-Failed {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: rgb(185, 28, 28);
+      }
 
-/* ── CUSTOM STATUS FILTER ── */
-.sf-wrap { position: relative; flex-shrink: 0; }
-.sf-btn { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; border: 1.5px solid #e5e7eb; background: #fff; font-size: 13px; font-weight: 600; color: #374151; cursor: pointer; white-space: nowrap; font-family: 'Inter', sans-serif; transition: border-color 0.15s, box-shadow 0.15s; min-width: 152px; justify-content: space-between; }
-.dark .sf-btn { background: #1F2937; border-color: #374151; color: #d1d5db; }
-.sf-btn:hover { border-color: #005a32; box-shadow: 0 0 0 3px rgba(0,90,50,0.08); }
-.sf-btn.sf-active { border-color: #005a32; }
-.sf-btn-left { display: flex; align-items: center; gap: 8px; }
-.sf-chevron { font-size: 18px; color: #9ca3af; transition: transform 0.2s; flex-shrink: 0; }
-.sf-btn.open .sf-chevron { transform: rotate(180deg); }
-.sf-btn-icon { width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.sf-btn-icon .material-icons { font-size: 14px; }
-.sf-menu { display: none; position: absolute; top: calc(100% + 6px); right: 0; min-width: 210px; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 16px 40px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.06); z-index: 400; overflow: hidden; animation: sfIn 0.14s ease; }
-.dark .sf-menu { background: #1F2937; border-color: #374151; }
-@keyframes sfIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
-.sf-menu.open { display: block; }
-.sf-menu-label { font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.08em; padding: 10px 14px 6px; }
-.sf-option { display: flex; align-items: center; gap: 10px; padding: 9px 14px; cursor: pointer; font-size: 13px; font-weight: 500; color: #374151; border-bottom: 1px solid #f3f4f6; transition: background 0.12s; position: relative; }
-.dark .sf-option { color: #d1d5db; border-color: #374151; }
-.sf-option:last-child { border-bottom: none; }
-.sf-option:hover { background: #f9fafb; }
-.dark .sf-option:hover { background: #111827; }
-.sf-option.selected { background: #f0fdf4; }
-.dark .sf-option.selected { background: rgba(0,90,50,0.18); }
-.sf-option.selected .sf-opt-name { color: #005a32; font-weight: 700; }
-.dark .sf-option.selected .sf-opt-name { color: #4ade80; }
-.sf-opt-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.sf-opt-icon .material-icons { font-size: 17px; }
-.sfi-all     { background: #f3f4f6; }           .sfi-all     .material-icons { color: #6b7280; }
-.sfi-paid    { background: rgba(34,197,94,0.12);  } .sfi-paid    .material-icons { color: #16a34a; }
-.sfi-pending { background: rgba(245,158,11,0.12); } .sfi-pending .material-icons { color: #b45309; }
-.sfi-failed  { background: rgba(239,68,68,0.12);  } .sfi-failed  .material-icons { color: #b91c1c; }
-.sf-opt-name { flex: 1; }
-.sf-opt-check { font-size: 16px; color: #005a32; }
-.dark .sf-opt-check { color: #4ade80; }
+      /* ── CUSTOM STATUS FILTER ── */
+      .sf-wrap {
+        position: relative;
+        flex-shrink: 0;
+      }
+      .sf-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 10px;
+        border: 1.5px solid #e5e7eb;
+        background: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        color: #374151;
+        cursor: pointer;
+        white-space: nowrap;
+        font-family: "Inter", sans-serif;
+        transition:
+          border-color 0.15s,
+          box-shadow 0.15s;
+        min-width: 152px;
+        justify-content: space-between;
+      }
+      .dark .sf-btn {
+        background: #1f2937;
+        border-color: #374151;
+        color: #d1d5db;
+      }
+      .sf-btn:hover {
+        border-color: #005a32;
+        box-shadow: 0 0 0 3px rgba(0, 90, 50, 0.08);
+      }
+      .sf-btn.sf-active {
+        border-color: #005a32;
+      }
+      .sf-btn-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .sf-chevron {
+        font-size: 18px;
+        color: #9ca3af;
+        transition: transform 0.2s;
+        flex-shrink: 0;
+      }
+      .sf-btn.open .sf-chevron {
+        transform: rotate(180deg);
+      }
+      .sf-btn-icon {
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .sf-btn-icon .material-icons {
+        font-size: 14px;
+      }
+      .sf-menu {
+        display: none;
+        position: absolute;
+        top: calc(100% + 6px);
+        right: 0;
+        min-width: 210px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        box-shadow:
+          0 16px 40px rgba(0, 0, 0, 0.13),
+          0 2px 8px rgba(0, 0, 0, 0.06);
+        z-index: 400;
+        overflow: hidden;
+        animation: sfIn 0.14s ease;
+      }
+      .dark .sf-menu {
+        background: #1f2937;
+        border-color: #374151;
+      }
+      @keyframes sfIn {
+        from {
+          opacity: 0;
+          transform: translateY(-6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .sf-menu.open {
+        display: block;
+      }
+      .sf-menu-label {
+        font-size: 10px;
+        font-weight: 700;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 10px 14px 6px;
+      }
+      .sf-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 14px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 500;
+        color: #374151;
+        border-bottom: 1px solid #f3f4f6;
+        transition: background 0.12s;
+        position: relative;
+      }
+      .dark .sf-option {
+        color: #d1d5db;
+        border-color: #374151;
+      }
+      .sf-option:last-child {
+        border-bottom: none;
+      }
+      .sf-option:hover {
+        background: #f9fafb;
+      }
+      .dark .sf-option:hover {
+        background: #111827;
+      }
+      .sf-option.selected {
+        background: #f0fdf4;
+      }
+      .dark .sf-option.selected {
+        background: rgba(0, 90, 50, 0.18);
+      }
+      .sf-option.selected .sf-opt-name {
+        color: #005a32;
+        font-weight: 700;
+      }
+      .dark .sf-option.selected .sf-opt-name {
+        color: #4ade80;
+      }
+      .sf-opt-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .sf-opt-icon .material-icons {
+        font-size: 17px;
+      }
+      .sfi-all {
+        background: #f3f4f6;
+      }
+      .sfi-all .material-icons {
+        color: #6b7280;
+      }
+      .sfi-paid {
+        background: rgba(34, 197, 94, 0.12);
+      }
+      .sfi-paid .material-icons {
+        color: #16a34a;
+      }
+      .sfi-pending {
+        background: rgba(245, 158, 11, 0.12);
+      }
+      .sfi-pending .material-icons {
+        color: #b45309;
+      }
+      .sfi-failed {
+        background: rgba(239, 68, 68, 0.12);
+      }
+      .sfi-failed .material-icons {
+        color: #b91c1c;
+      }
+      .sf-opt-name {
+        flex: 1;
+      }
+      .sf-opt-check {
+        font-size: 16px;
+        color: #005a32;
+      }
+      .dark .sf-opt-check {
+        color: #4ade80;
+      }
 
-    /* ── PAGINATION ── */
-.pagination-bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 6px 2px; flex-wrap: wrap; gap: 8px; }
-.pagination-info { font-size: 13px; color: #6b7280; }
-.pagination-controls { display: flex; align-items: center; gap: 4px; }
-.pg-btn { min-width: 34px; height: 34px; padding: 0 8px; border-radius: 8px; border: 1px solid #e5e7eb; background: #fff; color: #374151; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
-.dark .pg-btn { background: #1F2937; border-color: #374151; color: #F9FAFB; }
-.pg-btn:hover:not(:disabled):not(.active) { background: #f3f4f6; border-color: #d1d5db; }
-.dark .pg-btn:hover:not(:disabled):not(.active) { background: #374151; }
-.pg-btn.active { background: #005a32; border-color: #005a32; color: #fff; font-weight: 700; }
-.pg-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.pg-ellipsis { font-size: 13px; color: #9ca3af; padding: 0 4px; }
-.rows-per-page { font-size: 13px; color: #6b7280; display: flex; align-items: center; gap: 6px; }
-.rows-per-page select { border: 1px solid #e5e7eb; border-radius: 6px; padding: 4px 8px; font-size: 13px; background: #fff; color: #374151; cursor: pointer; }
-.dark .rows-per-page select { background: #1F2937; border-color: #374151; color: #F9FAFB; }
-
-</style>
-</head>
-<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark font-display">
-
-<!--Titlebar-->
-<div id="title-bar" class="drag-region fixed top-0 left-0 w-full h-8 bg-white flex justify-between items-stretch z-40 border-b border-gray-200 select-none">
-    <div class="flex items-center pl-4 gap-2 text-gray-600">
+      /* ── PAGINATION ── */
+      .pagination-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 6px 2px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .pagination-info {
+        font-size: 13px;
+        color: #6b7280;
+      }
+      .pagination-controls {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .pg-btn {
+        min-width: 34px;
+        height: 34px;
+        padding: 0 8px;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        background: #fff;
+        color: #374151;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s;
+      }
+      .dark .pg-btn {
+        background: #1f2937;
+        border-color: #374151;
+        color: #f9fafb;
+      }
+      .pg-btn:hover:not(:disabled):not(.active) {
+        background: #f3f4f6;
+        border-color: #d1d5db;
+      }
+      .dark .pg-btn:hover:not(:disabled):not(.active) {
+        background: #374151;
+      }
+      .pg-btn.active {
+        background: #005a32;
+        border-color: #005a32;
+        color: #fff;
+        font-weight: 700;
+      }
+      .pg-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .pg-ellipsis {
+        font-size: 13px;
+        color: #9ca3af;
+        padding: 0 4px;
+      }
+      .rows-per-page {
+        font-size: 13px;
+        color: #6b7280;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .rows-per-page select {
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 4px 8px;
+        font-size: 13px;
+        background: #fff;
+        color: #374151;
+        cursor: pointer;
+      }
+      .dark .rows-per-page select {
+        background: #1f2937;
+        border-color: #374151;
+        color: #f9fafb;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark font-display"
+  >
+    <!--Titlebar-->
+    <div
+      id="title-bar"
+      class="drag-region fixed top-0 left-0 w-full h-8 bg-white flex justify-between items-stretch z-40 border-b border-gray-200 select-none"
+    >
+      <div class="flex items-center pl-4 gap-2 text-gray-600">
         <span class="text-xs font-semibold">IHMS Pharmacy</span>
     </div>
     <div class="no-drag flex items-center relative z-50">
@@ -359,41 +841,138 @@
                     <p class="text-subtext-light dark:text-subtext-dark mt-1">Track sales transactions auto-linked to billing system</p>
                 </div>
             </div>
+          </div>
 
-            <div class="bg-surface-light dark:bg-surface-dark p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-wrap items-center gap-3 mb-6">
-    <div class="relative flex-1 min-w-[200px]">
-        <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-subtext-light dark:text-subtext-dark">search</span>
-        <input id="tableSearchInput" oninput="billingManager.onSearch(this.value)" class="w-full bg-background-light dark:bg-background-dark border-none rounded-lg pl-10 pr-4 py-2.5 text-sm focus:ring-primary focus:border-primary text-text-light dark:text-text-dark" placeholder="Search by Patient Name, ID, or Medicine..." type="text"/>
-    </div>
-    <select id="dateRangeFilter" onchange="billingManager.applyFilters()" class="px-4 py-2.5 text-sm font-medium border border-slate-200 dark:border-slate-700 rounded-lg bg-surface-light dark:bg-surface-dark focus:ring-primary text-text-light dark:text-text-dark">
-        <option value="all">All Dates</option>
-        <option value="today">Today</option>
-        <option value="week">This Week</option>
-        <option value="month">This Month</option>
-        <option value="last-month">Last Month</option>
-        <option value="year">This Year</option>
-    </select>
-    <!-- Custom Status Filter -->
-    <div class="sf-wrap" id="sfWrap">
-        <button id="sfBtn" class="sf-btn" onclick="toggleSF()">
-            <span class="sf-btn-left">
-                <span class="sf-btn-icon sfi-all" id="sfBtnIcon">
-                    <span class="material-icons" id="sfBtnIconName">filter_list</span>
-                </span>
-                <span id="sfBtnLabel">All Status</span>
-            </span>
-            <span class="material-icons sf-chevron">expand_more</span>
-        </button>
-        <div class="sf-menu" id="sfMenu">
-            <div class="sf-menu-label">Payment Status</div>
-            <div class="sf-option selected" data-value="all" data-icon="filter_list" data-icon-class="sfi-all" data-label="All Status" onclick="applySF(this)">
-                <span class="sf-opt-icon sfi-all"><span class="material-icons">filter_list</span></span>
-                <span class="sf-opt-name">All Transactions</span>
-                <span class="material-icons sf-opt-check">check</span>
+          <div
+            class="bg-surface-light dark:bg-surface-dark p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-wrap items-center gap-3 mb-6"
+          >
+            <div class="relative flex-1 min-w-[200px]">
+              <span
+                class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-subtext-light dark:text-subtext-dark"
+                >search</span
+              >
+              <input
+                id="tableSearchInput"
+                oninput="billingManager.onSearch(this.value)"
+                class="w-full bg-background-light dark:bg-background-dark border-none rounded-lg pl-10 pr-4 py-2.5 text-sm focus:ring-primary focus:border-primary text-text-light dark:text-text-dark"
+                placeholder="Search by Patient Name, ID, or Medicine..."
+                type="text"
+              />
             </div>
-            <div class="sf-option" data-value="Paid" data-icon="check_circle" data-icon-class="sfi-paid" data-label="Paid" onclick="applySF(this)">
-                <span class="sf-opt-icon sfi-paid"><span class="material-icons">check_circle</span></span>
-                <span class="sf-opt-name">Paid</span>
+            <select
+              id="dateRangeFilter"
+              onchange="billingManager.applyFilters()"
+              class="px-4 py-2.5 text-sm font-medium border border-slate-200 dark:border-slate-700 rounded-lg bg-surface-light dark:bg-surface-dark focus:ring-primary text-text-light dark:text-text-dark"
+            >
+              <option value="all">All Dates</option>
+              <option value="today">Today</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
+              <option value="last-month">Last Month</option>
+              <option value="year">This Year</option>
+            </select>
+            <!-- Custom Status Filter -->
+            <div class="sf-wrap" id="sfWrap">
+              <button id="sfBtn" class="sf-btn" onclick="toggleSF()">
+                <span class="sf-btn-left">
+                  <span class="sf-btn-icon sfi-all" id="sfBtnIcon">
+                    <span class="material-icons" id="sfBtnIconName"
+                      >filter_list</span
+                    >
+                  </span>
+                  <span id="sfBtnLabel">All Status</span>
+                </span>
+                <span class="material-icons sf-chevron">expand_more</span>
+              </button>
+              <div class="sf-menu" id="sfMenu">
+                <div class="sf-menu-label">Payment Status</div>
+                <div
+                  class="sf-option selected"
+                  data-value="all"
+                  data-icon="filter_list"
+                  data-icon-class="sfi-all"
+                  data-label="All Status"
+                  onclick="applySF(this)"
+                >
+                  <span class="sf-opt-icon sfi-all"
+                    ><span class="material-icons">filter_list</span></span
+                  >
+                  <span class="sf-opt-name">All Transactions</span>
+                  <span class="material-icons sf-opt-check">check</span>
+                </div>
+                <div
+                  class="sf-option"
+                  data-value="Paid"
+                  data-icon="check_circle"
+                  data-icon-class="sfi-paid"
+                  data-label="Paid"
+                  onclick="applySF(this)"
+                >
+                  <span class="sf-opt-icon sfi-paid"
+                    ><span class="material-icons">check_circle</span></span
+                  >
+                  <span class="sf-opt-name">Paid</span>
+                </div>
+                <div
+                  class="sf-option"
+                  data-value="Pending"
+                  data-icon="schedule"
+                  data-icon-class="sfi-pending"
+                  data-label="Pending"
+                  onclick="applySF(this)"
+                >
+                  <span class="sf-opt-icon sfi-pending"
+                    ><span class="material-icons">schedule</span></span
+                  >
+                  <span class="sf-opt-name">Pending</span>
+                </div>
+                <div
+                  class="sf-option"
+                  data-value="Failed"
+                  data-icon="cancel"
+                  data-icon-class="sfi-failed"
+                  data-label="Failed"
+                  onclick="applySF(this)"
+                >
+                  <span class="sf-opt-icon sfi-failed"
+                    ><span class="material-icons">cancel</span></span
+                  >
+                  <span class="sf-opt-name">Failed</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
+          >
+            <div class="flex items-center justify-between mb-4">
+              <h2
+                class="text-xl font-semibold text-text-light dark:text-text-dark"
+              >
+                Sales Transactions
+              </h2>
+              <span
+                id="recordsCountBadge"
+                class="text-xs text-subtext-light dark:text-subtext-dark bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full font-medium"
+                >0 records</span
+              >
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left">
+                <thead
+                  class="text-xs text-subtext-light dark:text-subtext-dark uppercase"
+                >
+                  <tr>
+                    <th class="px-6 py-3 rounded-l-lg cursor-pointer">Date</th>
+                    <th class="px-6 py-3 cursor-pointer">Patient</th>
+                    <th class="px-6 py-3 cursor-pointer">Medicine(s)</th>
+                    <th class="px-6 py-3 cursor-pointer">Amount</th>
+                    <th class="px-6 py-3 cursor-pointer">Payment Status</th>
+                    <th class="px-6 py-3 cursor-pointer text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="transactionsTableBody"></tbody>
+              </table>
             </div>
             <div class="sf-option" data-value="Pending" data-icon="schedule" data-icon-class="sfi-pending" data-label="Pending" onclick="applySF(this)">
                 <span class="sf-opt-icon sfi-pending"><span class="material-icons">schedule</span></span>
@@ -446,13 +1025,13 @@
     </main>
 </div>
 
-<script>
-    const API_BASE_URL = 'http://localhost:5001';
+    <script>
+      const API_BASE_URL = "http://localhost:5001";
 
-    // ══════════════════════════════════════════════════════════
-    // LIVE NAVBAR CLOCK — ticks every second
-    // ══════════════════════════════════════════════════════════
-    function updateNavClock() {
+      // ══════════════════════════════════════════════════════════
+      // LIVE NAVBAR CLOCK — ticks every second
+      // ══════════════════════════════════════════════════════════
+      function updateNavClock() {
         const now = new Date();
         const timeStr = now.toLocaleTimeString('en-US', {
             hour:   '2-digit',
@@ -724,13 +1303,13 @@ function goBillingPage(p) {
 
     // ══ END FANCY NOTIFICATION SYSTEM ══
 
-    class BillingManager {
-    constructor() {
-    this.salesData    = [];
-    this.activeStatus = 'all';
-    this.activeSearch = '';
-    this.init();
-}
+      class BillingManager {
+        constructor() {
+          this.salesData = [];
+          this.activeStatus = "all";
+          this.activeSearch = "";
+          this.init();
+        }
 
         async init() {
             if(!this.getToken()) {
@@ -746,26 +1325,22 @@ function goBillingPage(p) {
         }
 
         async fetchSales() {
-            try {
-                const res = await fetch(`${API_BASE_URL}/api/sales`, {
-                    headers: { 'Authorization': `Bearer ${this.getToken()}` }
-                });
-                if(res.ok) {
-                    let data = await res.json();
-                    data.sort((a, b) => {
-                        const dateA = new Date(a.date || a.createdAt);
-                        const dateB = new Date(b.date || b.createdAt);
-                        return dateB - dateA;
-                    });
-                    this.salesData = data;
-                    this.applyFilters();
-                }
-            } catch (err) {
-                console.error("Fetch Error:", err);
+          try {
+            const res = await fetch(`${API_BASE_URL}/api/sales`, {
+              headers: { Authorization: `Bearer ${this.getToken()}` },
+            });
+            if (res.ok) {
+              let data = await res.json();
+              data.sort((a, b) => {
+                const dateA = new Date(a.date || a.createdAt);
+                const dateB = new Date(b.date || b.createdAt);
+                return dateB - dateA;
+              });
+              this.salesData = data;
+              this.applyFilters();
             }
         }
 
-       
         async syncWithBilling() {
             const btn = document.getElementById('syncBtn');
             const icon = document.getElementById('syncIcon');
@@ -819,60 +1394,79 @@ function goBillingPage(p) {
         }
 
         renderTable(data) {
-    this._lastData = data;
-    const tbody = document.getElementById('transactionsTableBody');
-    const noResults = document.getElementById('noResults');
-    const badge = document.getElementById('recordsCountBadge');
-    if (badge) badge.textContent = `${(data || []).length} record${(data || []).length !== 1 ? 's' : ''}`;
+          this._lastData = data;
+          const tbody = document.getElementById("transactionsTableBody");
+          const noResults = document.getElementById("noResults");
+          const badge = document.getElementById("recordsCountBadge");
+          if (badge)
+            badge.textContent = `${(data || []).length} record${(data || []).length !== 1 ? "s" : ""}`;
 
-            if (!data || data.length === 0) {
-                tbody.innerHTML = '';
-                noResults.classList.remove('hidden');
-                document.getElementById('billingPaginationBar').style.display = 'none';
-                return;
-            }
-            noResults.classList.add('hidden');
-            document.getElementById('billingPaginationBar').style.display = 'flex';
+          if (!data || data.length === 0) {
+            tbody.innerHTML = "";
+            noResults.classList.remove("hidden");
+            document.getElementById("billingPaginationBar").style.display =
+              "none";
+            return;
+          }
+          noResults.classList.add("hidden");
+          document.getElementById("billingPaginationBar").style.display =
+            "flex";
 
-            billingPage = buildBillingPagination(data.length, billingPage, billingRowsPerPage);
-            const start = (billingPage - 1) * billingRowsPerPage;
-            const paged = data.slice(start, start + billingRowsPerPage);
+          billingPage = buildBillingPagination(
+            data.length,
+            billingPage,
+            billingRowsPerPage,
+          );
+          const start = (billingPage - 1) * billingRowsPerPage;
+          const paged = data.slice(start, start + billingRowsPerPage);
 
-            tbody.innerHTML = paged.map(sale => {
-                // 🔥 NEW: Grab any status, normalize it, and force "completed" to be "Paid"
-                let currentStatus = sale.paymentStatus || 'Pending';
-                
-                if (currentStatus.toLowerCase() === 'paid' || currentStatus.toLowerCase() === 'completed') {
-                    currentStatus = 'Paid';
-                }
+          tbody.innerHTML = paged
+            .map((sale) => {
+              // 🔥 NEW: Grab any status, normalize it, and force "completed" to be "Paid"
+              let currentStatus = sale.paymentStatus || "Pending";
 
-                // This must result in "status-Paid" to trigger your CSS colors
-                const statusClass = `status-${currentStatus}`;
+              if (
+                currentStatus.toLowerCase() === "paid" ||
+                currentStatus.toLowerCase() === "completed"
+              ) {
+                currentStatus = "Paid";
+              }
 
-                let dateDisplay = "N/A";
-                const rawDate = sale.date || sale.createdAt;
-                if (rawDate) {
-                    const d = new Date(rawDate);
-                    if (!isNaN(d.getTime())) dateDisplay = d.toLocaleDateString();
-                }
+              // This must result in "status-Paid" to trigger your CSS colors
+              const statusClass = `status-${currentStatus}`;
 
-                const pName = sale.patientName || "Walk-in";
-                let pIdDisplay = "Guest";
-                if (sale.patient && sale.patient.patientId) {
-                    pIdDisplay = sale.patient.patientId;
-                } else if (typeof sale.patient === 'string') {
-                    pIdDisplay = sale.patient.substring(0, 6).toUpperCase();
-                }
+              let dateDisplay = "N/A";
+              const rawDate = sale.date || sale.createdAt;
+              if (rawDate) {
+                const d = new Date(rawDate);
+                if (!isNaN(d.getTime())) dateDisplay = d.toLocaleDateString();
+              }
 
-                let medicineHtml = '<span class="text-gray-400 italic">No items</span>';
-                if (sale.items && sale.items.length > 0) {
-                    const options = sale.items.map(item => {
-                        let name = item.name;
-                        if ((!name || name === "Unknown") && item.medicine && item.medicine.name) name = item.medicine.name;
-                        const finalName = name || "Unknown Medicine";
-                        return `<option>${finalName} (x${item.quantity})</option>`;
-                    }).join('');
-                    medicineHtml = `
+              const pName = sale.patientName || "Walk-in";
+              let pIdDisplay = "Guest";
+              if (sale.patient && sale.patient.patientId) {
+                pIdDisplay = sale.patient.patientId;
+              } else if (typeof sale.patient === "string") {
+                pIdDisplay = sale.patient.substring(0, 6).toUpperCase();
+              }
+
+              let medicineHtml =
+                '<span class="text-gray-400 italic">No items</span>';
+              if (sale.items && sale.items.length > 0) {
+                const options = sale.items
+                  .map((item) => {
+                    let name = item.name;
+                    if (
+                      (!name || name === "Unknown") &&
+                      item.medicine &&
+                      item.medicine.name
+                    )
+                      name = item.medicine.name;
+                    const finalName = name || "Unknown Medicine";
+                    return `<option>${finalName} (x${item.quantity})</option>`;
+                  })
+                  .join("");
+                medicineHtml = `
                         <select class="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             ${options}
                         </select>`;
@@ -950,7 +1544,64 @@ applyFilters() {
             // Normalize to local midnight — avoids UTC off-by-one (same fix as patient records)
             const d = new Date(raw.getFullYear(), raw.getMonth(), raw.getDate());
 
-            if (dateVal === 'today') {
+        onSearch(val) {
+          this.activeSearch = val.trim();
+          this.applyFilters();
+        }
+        onStatusFilter(status) {
+          this.activeStatus = status;
+          this.applyFilters();
+        }
+
+        applyFilters() {
+          billingPage = 1;
+          const dateVal =
+            document.getElementById("dateRangeFilter")?.value || "all";
+
+          let filtered = this.salesData;
+
+          if (this.activeStatus !== "all") {
+            const target = this.activeStatus.toLowerCase();
+            filtered = filtered.filter((s) => {
+              let raw = (s.paymentStatus || "Pending").trim().toLowerCase();
+              if (raw === "completed") raw = "paid";
+              return raw === target;
+            });
+          }
+
+          if (this.activeSearch) {
+            const lower = this.activeSearch.toLowerCase();
+            filtered = filtered.filter(
+              (s) =>
+                (s.patientName &&
+                  s.patientName.toLowerCase().includes(lower)) ||
+                (s._id && s._id.toLowerCase().includes(lower)) ||
+                (s.items &&
+                  s.items.some((i) =>
+                    this.getItemName(i).toLowerCase().includes(lower),
+                  )),
+            );
+          }
+
+          if (dateVal !== "all") {
+            const now = new Date();
+            const todayLocal = new Date(
+              now.getFullYear(),
+              now.getMonth(),
+              now.getDate(),
+            );
+
+            filtered = filtered.filter((s) => {
+              const raw = new Date(s.date || s.createdAt);
+              if (isNaN(raw.getTime())) return false;
+              // Normalize to local midnight — avoids UTC off-by-one (same fix as patient records)
+              const d = new Date(
+                raw.getFullYear(),
+                raw.getMonth(),
+                raw.getDate(),
+              );
+
+              if (dateVal === "today") {
                 return d.getTime() === todayLocal.getTime();
             }
             if (dateVal === 'week') {
@@ -982,13 +1633,12 @@ applyFilters() {
 }
 
         handleSearch(val) {
-    this.onSearch(val);
-}
+          this.onSearch(val);
+        }
 
-handleFilter(status) {
-    this.onStatusFilter(status);
-}
-
+        handleFilter(status) {
+          this.onStatusFilter(status);
+        }
 
         viewDetails(id) {
             const sale = this.salesData.find(s => s._id === id);
@@ -997,16 +1647,17 @@ handleFilter(status) {
                 `<div class="flex justify-between text-sm py-1 border-b border-gray-100 last:border-0">
                     <span>${i.name} <span class="text-gray-500 text-xs">x${i.quantity}</span></span>
                     <span>₱${(i.priceAtSale * i.quantity).toFixed(2)}</span>
-                </div>`
-            ).join('');
-            Swal.fire({
-                title: 'Transaction Details',
-                html: `
+                </div>`,
+            )
+            .join("");
+          Swal.fire({
+            title: "Transaction Details",
+            html: `
     <div class="text-left space-y-4 mb-2">
         <div style="background:#f9fafb;border-radius:10px;padding:14px 16px;space-y:0;">
             <div class="flex items-start gap-3" style="padding-bottom:8px;margin-bottom:8px;">
                 <span style="min-width:72px;font-size:12px;font-weight:600;color:#6b7280;">Patient</span>
-                <span style="font-size:14px;font-weight:700;color:#111827;">${sale.patientName || 'Walk-in Customer'}</span>
+                <span style="font-size:14px;font-weight:700;color:#111827;">${sale.patientName || "Walk-in Customer"}</span>
             </div>
             <div class="flex items-start gap-3" style="padding-bottom:8px;margin-bottom:8px;">
                 <span style="min-width:72px;font-size:12px;font-weight:600;color:#6b7280;">Ref ID</span>
@@ -1014,11 +1665,11 @@ handleFilter(status) {
             </div>
             <div class="flex items-start gap-3" style="padding-bottom:8px;margin-bottom:8px;">
                 <span style="min-width:72px;font-size:12px;font-weight:600;color:#6b7280;">Date</span>
-                <span style="font-size:14px;font-weight:700;color:#111827;">${sale.date || sale.createdAt ? new Date(sale.date || sale.createdAt).toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'}) + ' · ' + new Date(sale.date || sale.createdAt).toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit',hour12:true}) : 'N/A'}</span>
+                <span style="font-size:14px;font-weight:700;color:#111827;">${sale.date || sale.createdAt ? new Date(sale.date || sale.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) + " · " + new Date(sale.date || sale.createdAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true }) : "N/A"}</span>
             </div>
             <div class="flex items-start gap-3">
                 <span style="min-width:72px;font-size:12px;font-weight:600;color:#6b7280;">Status</span>
-                <span style="font-size:14px;font-weight:700;color:#111827;">${sale.paymentStatus || 'Pending'}</span>
+                <span style="font-size:14px;font-weight:700;color:#111827;">${sale.paymentStatus || "Pending"}</span>
             </div>
         </div>
         <div>
@@ -1027,11 +1678,11 @@ handleFilter(status) {
         </div>
         <div style="border-top:1px solid #e5e7eb;padding-top:12px;display:flex;justify-content:space-between;align-items:center;">
             <span style="font-size:13px;font-weight:700;color:#374151;">Total Amount</span>
-            <span style="font-size:16px;font-weight:800;color:#005a32;">₱${sale.totalAmount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+            <span style="font-size:16px;font-weight:800;color:#005a32;">₱${sale.totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
         </div>
     </div>`,
-                confirmButtonColor: '#005a32'
-            });
+            confirmButtonColor: "#005a32",
+          });
         }
     }
 
@@ -1063,44 +1714,53 @@ handleFilter(status) {
                 window.location.href = 'login.html';
             }
         });
-    }
+      }
 
-    // ── Custom Status Filter functions ──
-function toggleSF() {
-    const menu = document.getElementById('sfMenu'), btn = document.getElementById('sfBtn');
-    const open = menu.classList.toggle('open');
-    btn.classList.toggle('open', open);
-}
-function applySF(optEl) {
-    const value = optEl.dataset.value, iconName = optEl.dataset.icon,
-          iconCls = optEl.dataset.iconClass, label = optEl.dataset.label;
-    const btnIcon = document.getElementById('sfBtnIcon');
-    btnIcon.className = 'sf-btn-icon ' + iconCls;
-    document.getElementById('sfBtnIconName').textContent = iconName;
-    document.getElementById('sfBtnLabel').textContent = label;
-    document.getElementById('sfBtn').classList.toggle('sf-active', value !== 'all');
-    document.querySelectorAll('.sf-option').forEach(o => {
-        const sel = o.dataset.value === value;
-        o.classList.toggle('selected', sel);
-        const existing = o.querySelector('.sf-opt-check');
-        if (sel && !existing) { const chk = document.createElement('span'); chk.className = 'material-icons sf-opt-check'; chk.textContent = 'check'; o.appendChild(chk); }
-        else if (!sel && existing) existing.remove();
-    });
-    document.getElementById('sfMenu').classList.remove('open');
-    document.getElementById('sfBtn').classList.remove('open');
-    billingManager.onStatusFilter(value);
-}
-document.addEventListener('click', e => {
-    if (!document.getElementById('sfWrap')?.contains(e.target)) {
-        document.getElementById('sfMenu')?.classList.remove('open');
-        document.getElementById('sfBtn')?.classList.remove('open');
-    }
-});
+      // ── Custom Status Filter functions ──
+      function toggleSF() {
+        const menu = document.getElementById("sfMenu"),
+          btn = document.getElementById("sfBtn");
+        const open = menu.classList.toggle("open");
+        btn.classList.toggle("open", open);
+      }
+      function applySF(optEl) {
+        const value = optEl.dataset.value,
+          iconName = optEl.dataset.icon,
+          iconCls = optEl.dataset.iconClass,
+          label = optEl.dataset.label;
+        const btnIcon = document.getElementById("sfBtnIcon");
+        btnIcon.className = "sf-btn-icon " + iconCls;
+        document.getElementById("sfBtnIconName").textContent = iconName;
+        document.getElementById("sfBtnLabel").textContent = label;
+        document
+          .getElementById("sfBtn")
+          .classList.toggle("sf-active", value !== "all");
+        document.querySelectorAll(".sf-option").forEach((o) => {
+          const sel = o.dataset.value === value;
+          o.classList.toggle("selected", sel);
+          const existing = o.querySelector(".sf-opt-check");
+          if (sel && !existing) {
+            const chk = document.createElement("span");
+            chk.className = "material-icons sf-opt-check";
+            chk.textContent = "check";
+            o.appendChild(chk);
+          } else if (!sel && existing) existing.remove();
+        });
+        document.getElementById("sfMenu").classList.remove("open");
+        document.getElementById("sfBtn").classList.remove("open");
+        billingManager.onStatusFilter(value);
+      }
+      document.addEventListener("click", (e) => {
+        if (!document.getElementById("sfWrap")?.contains(e.target)) {
+          document.getElementById("sfMenu")?.classList.remove("open");
+          document.getElementById("sfBtn")?.classList.remove("open");
+        }
+      });
 
-const billingManager = new BillingManager();
-window.billingManager = billingManager;
+      const billingManager = new BillingManager();
+      window.billingManager = billingManager;
 
-    document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener("DOMContentLoaded", function () {
         // ── Dark mode ──
         const isDarkMode = sessionStorage.getItem('darkMode') === 'true';
         document.documentElement.classList.toggle('dark', isDarkMode);
@@ -1111,7 +1771,6 @@ window.billingManager = billingManager;
 
         // ── Navbar user info ──
         loadNavUserInfo();
-
 
         // ── Notification bell wiring ──
         const btn      = document.getElementById('notificationBtn');

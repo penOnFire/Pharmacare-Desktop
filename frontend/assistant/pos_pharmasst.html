@@ -1,447 +1,1065 @@
-<!DOCTYPE html>
+<!doctype html>
 <html class="light" lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Well Served - Point of Sale</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    tailwind.config = {
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Well Served - Point of Sale</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      tailwind.config = {
         darkMode: "class",
         theme: {
-            extend: {
-                colors: {
-                    primary: "#005a32",
-                    "pos-primary": "#319795",
-                    secondary: "#d62828",
-                    accent: "#8b5a2b",
-                    "background-light": "#f1f5f9",
-                    "background-dark": "#0f172a",
-                    "surface-light": "#FFFFFF",
-                    "surface-dark": "#1F2937",
-                    "text-light": "#1F2937",
-                    "text-dark": "#F9FAFB",
-                    "subtext-light": "#6B7280",
-                    "subtext-dark": "#9CA3AF",
-                    "border-light": "#E5E7EB",
-                    "border-dark": "#374151",
-                },
-                fontFamily: { display: ["Inter", "sans-serif"] },
+          extend: {
+            colors: {
+              primary: "#005a32",
+              "pos-primary": "#319795",
+              secondary: "#d62828",
+              accent: "#8b5a2b",
+              "background-light": "#f1f5f9",
+              "background-dark": "#0f172a",
+              "surface-light": "#FFFFFF",
+              "surface-dark": "#1F2937",
+              "text-light": "#1F2937",
+              "text-dark": "#F9FAFB",
+              "subtext-light": "#6B7280",
+              "subtext-dark": "#9CA3AF",
+              "border-light": "#E5E7EB",
+              "border-dark": "#374151",
             },
+            fontFamily: { display: ["Inter", "sans-serif"] },
+          },
         },
-    };
-</script>
-<style>
-    body { font-family: 'Inter', sans-serif; }
-    .drag-region { -webkit-app-region: drag; }
-    .no-drag     { -webkit-app-region: no-drag; }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-    .dark ::-webkit-scrollbar-thumb { background: #334155; }
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .drag-region {
+        -webkit-app-region: drag;
+      }
+      .no-drag {
+        -webkit-app-region: no-drag;
+      }
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+      .dark ::-webkit-scrollbar-thumb {
+        background: #334155;
+      }
 
-    #navClock { font-size: 15px; font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; }
-    #navDate  { font-size: 10px; font-weight: 500; letter-spacing: 0.06em; }
+      #navClock {
+        font-size: 15px;
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: -0.01em;
+      }
+      #navDate {
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+      }
 
-    .nav-divider { width: 1px; height: 28px; background: #e5e7eb; }
-    .dark .nav-divider { background: #374151; }
+      .nav-divider {
+        width: 1px;
+        height: 28px;
+        background: #e5e7eb;
+      }
+      .dark .nav-divider {
+        background: #374151;
+      }
 
-    @keyframes badge-pop { from { transform: scale(0); } to { transform: scale(1); } }
-    #notificationBadge { animation: badge-pop 0.3s cubic-bezier(.34,1.56,.64,1); }
-    .notif-dropdown { position: absolute; top: calc(100% + 10px); right: 0; width: 370px; background: #fff; border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.06); border: 1px solid #e5e7eb; z-index: 1000; overflow: hidden; opacity: 0; transform: translateY(-8px) scale(0.97); pointer-events: none; transition: opacity 0.22s ease, transform 0.22s cubic-bezier(.34,1.56,.64,1); transform-origin: top right; }
-    .dark .notif-dropdown { background: #1F2937; border-color: #374151; }
-    .notif-dropdown.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
-    .notif-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 14px; border-bottom: 1px solid #f0f0f0; }
-    .dark .notif-header { border-color: #374151; }
-    .notif-header h3 { font-size: 15px; font-weight: 700; color: #111827; }
-    .dark .notif-header h3 { color: #F9FAFB; }
-    .notif-header-meta { display: flex; align-items: center; gap: 10px; }
-    .unread-count-pill { background: #005a32; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
-    .mark-all-btn { font-size: 11px; color: #005a32; font-weight: 600; background: none; border: none; cursor: pointer; padding: 2px 4px; border-radius: 4px; transition: background 0.15s; }
-    .mark-all-btn:hover { background: #f0fdf4; }
-    .notif-tabs { display: flex; gap: 4px; padding: 10px 14px; background: #fafafa; border-bottom: 1px solid #f0f0f0; }
-    .dark .notif-tabs { background: #111827; border-color: #374151; }
-    .notif-tab-btn { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 99px; border: 1px solid transparent; cursor: pointer; background: none; color: #6b7280; transition: all 0.15s; }
-    .notif-tab-btn.active { background: #005a32; color: #fff; border-color: #005a32; }
-    .notif-tab-btn:not(.active):hover { background: #f3f4f6; border-color: #e5e7eb; color: #374151; }
-    .notif-list { max-height: 360px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #e5e7eb transparent; }
-    .notif-list::-webkit-scrollbar { width: 4px; }
-    .notif-list::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 2px; }
-    .notif-item { display: flex; gap: 12px; align-items: flex-start; padding: 13px 16px; border-bottom: 1px solid #f5f5f5; cursor: pointer; position: relative; transition: background 0.15s; }
-    .dark .notif-item { border-color: #374151; }
-    .notif-item:last-child { border-bottom: none; }
-    .notif-item:hover { background: #f9fafb; }
-    .dark .notif-item:hover { background: #111827; }
-    .notif-item.unread { background: #ffffff; }
-    .dark .notif-item.unread { background: #1F2937; }
-    .notif-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 0 2px 2px 0; }
-    .notif-item.critical::before { background: #EF4444; }
-    .notif-item.expiry::before   { background: #8b5a2b; }
-    .notif-item.shortage::before { background: #358E83; }
-    .notif-icon-wrap { flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-    .notif-icon-wrap .material-icons { font-size: 20px; }
-    .icon-critical { background: #fef2f2; } .icon-critical .material-icons { color: #EF4444; }
-    .icon-expiry   { background: #fdf6ec; } .icon-expiry   .material-icons { color: #8b5a2b; }
-    .icon-shortage { background: #f0fdfa; } .icon-shortage .material-icons { color: #358E83; }
-    .notif-body { flex: 1; min-width: 0; }
-    .notif-title { font-size: 13px; font-weight: 600; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .dark .notif-title { color: #F9FAFB; }
-    .notif-desc  { font-size: 12px; color: #6b7280; margin-top: 2px; line-height: 1.4; }
-    .notif-time  { font-size: 10px; color: #9ca3af; margin-top: 6px; }
-    .notif-action { margin-top: 8px; }
-    .notif-action-btn { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 6px; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 0.04em; transition: opacity 0.15s, transform 0.1s; }
-    .notif-action-btn:active { transform: scale(0.96); }
-    .notif-action-btn:hover  { opacity: 0.88; }
-    .btn-critical { background: #EF4444; color: #fff; }
-    .btn-expiry   { background: #8b5a2b; color: #fff; }
-    .btn-shortage { background: #005a32; color: #fff; }
-    .unread-dot { flex-shrink: 0; width: 7px; height: 7px; border-radius: 50%; background: #005a32; margin-top: 5px; }
-    .notif-empty { padding: 40px 20px; text-align: center; color: #9ca3af; }
-    .notif-empty .material-icons { font-size: 40px; margin-bottom: 8px; display: block; }
-    .notif-empty p { font-size: 13px; }
-    .notif-footer { border-top: 1px solid #f0f0f0; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; }
-    .dark .notif-footer { border-color: #374151; }
-    .view-all-link { font-size: 12px; font-weight: 600; color: #005a32; text-decoration: none; display: flex; align-items: center; gap: 4px; }
-    .view-all-link:hover { text-decoration: underline; }
-    .view-all-link .material-icons { font-size: 14px; }
-</style>
-</head>
-<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
-
-<!-- Title Bar -->
-<header id="title-bar" class="drag-region fixed top-0 left-0 w-full h-8 bg-white flex justify-between items-stretch z-40 border-b border-gray-200 select-none">
-    <div class="flex items-center pl-4 gap-2 text-gray-600">
+      @keyframes badge-pop {
+        from {
+          transform: scale(0);
+        }
+        to {
+          transform: scale(1);
+        }
+      }
+      #notificationBadge {
+        animation: badge-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .notif-dropdown {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        width: 370px;
+        background: #fff;
+        border-radius: 14px;
+        box-shadow:
+          0 20px 50px rgba(0, 0, 0, 0.14),
+          0 4px 12px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e5e7eb;
+        z-index: 1000;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(-8px) scale(0.97);
+        pointer-events: none;
+        transition:
+          opacity 0.22s ease,
+          transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+        transform-origin: top right;
+      }
+      .dark .notif-dropdown {
+        background: #1f2937;
+        border-color: #374151;
+      }
+      .notif-dropdown.open {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: all;
+      }
+      .notif-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 18px 14px;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      .dark .notif-header {
+        border-color: #374151;
+      }
+      .notif-header h3 {
+        font-size: 15px;
+        font-weight: 700;
+        color: #111827;
+      }
+      .dark .notif-header h3 {
+        color: #f9fafb;
+      }
+      .notif-header-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .unread-count-pill {
+        background: #005a32;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 99px;
+      }
+      .mark-all-btn {
+        font-size: 11px;
+        color: #005a32;
+        font-weight: 600;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 2px 4px;
+        border-radius: 4px;
+        transition: background 0.15s;
+      }
+      .mark-all-btn:hover {
+        background: #f0fdf4;
+      }
+      .notif-tabs {
+        display: flex;
+        gap: 4px;
+        padding: 10px 14px;
+        background: #fafafa;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      .dark .notif-tabs {
+        background: #111827;
+        border-color: #374151;
+      }
+      .notif-tab-btn {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 99px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        background: none;
+        color: #6b7280;
+        transition: all 0.15s;
+      }
+      .notif-tab-btn.active {
+        background: #005a32;
+        color: #fff;
+        border-color: #005a32;
+      }
+      .notif-tab-btn:not(.active):hover {
+        background: #f3f4f6;
+        border-color: #e5e7eb;
+        color: #374151;
+      }
+      .notif-list {
+        max-height: 360px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #e5e7eb transparent;
+      }
+      .notif-list::-webkit-scrollbar {
+        width: 4px;
+      }
+      .notif-list::-webkit-scrollbar-thumb {
+        background: #e5e7eb;
+        border-radius: 2px;
+      }
+      .notif-item {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        padding: 13px 16px;
+        border-bottom: 1px solid #f5f5f5;
+        cursor: pointer;
+        position: relative;
+        transition: background 0.15s;
+      }
+      .dark .notif-item {
+        border-color: #374151;
+      }
+      .notif-item:last-child {
+        border-bottom: none;
+      }
+      .notif-item:hover {
+        background: #f9fafb;
+      }
+      .dark .notif-item:hover {
+        background: #111827;
+      }
+      .notif-item.unread {
+        background: #ffffff;
+      }
+      .dark .notif-item.unread {
+        background: #1f2937;
+      }
+      .notif-item::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        border-radius: 0 2px 2px 0;
+      }
+      .notif-item.critical::before {
+        background: #ef4444;
+      }
+      .notif-item.expiry::before {
+        background: #8b5a2b;
+      }
+      .notif-item.shortage::before {
+        background: #358e83;
+      }
+      .notif-icon-wrap {
+        flex-shrink: 0;
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .notif-icon-wrap .material-icons {
+        font-size: 20px;
+      }
+      .icon-critical {
+        background: #fef2f2;
+      }
+      .icon-critical .material-icons {
+        color: #ef4444;
+      }
+      .icon-expiry {
+        background: #fdf6ec;
+      }
+      .icon-expiry .material-icons {
+        color: #8b5a2b;
+      }
+      .icon-shortage {
+        background: #f0fdfa;
+      }
+      .icon-shortage .material-icons {
+        color: #358e83;
+      }
+      .notif-body {
+        flex: 1;
+        min-width: 0;
+      }
+      .notif-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #111827;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .dark .notif-title {
+        color: #f9fafb;
+      }
+      .notif-desc {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 2px;
+        line-height: 1.4;
+      }
+      .notif-time {
+        font-size: 10px;
+        color: #9ca3af;
+        margin-top: 6px;
+      }
+      .notif-action {
+        margin-top: 8px;
+      }
+      .notif-action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 5px 12px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        transition:
+          opacity 0.15s,
+          transform 0.1s;
+      }
+      .notif-action-btn:active {
+        transform: scale(0.96);
+      }
+      .notif-action-btn:hover {
+        opacity: 0.88;
+      }
+      .btn-critical {
+        background: #ef4444;
+        color: #fff;
+      }
+      .btn-expiry {
+        background: #8b5a2b;
+        color: #fff;
+      }
+      .btn-shortage {
+        background: #005a32;
+        color: #fff;
+      }
+      .unread-dot {
+        flex-shrink: 0;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #005a32;
+        margin-top: 5px;
+      }
+      .notif-empty {
+        padding: 40px 20px;
+        text-align: center;
+        color: #9ca3af;
+      }
+      .notif-empty .material-icons {
+        font-size: 40px;
+        margin-bottom: 8px;
+        display: block;
+      }
+      .notif-empty p {
+        font-size: 13px;
+      }
+      .notif-footer {
+        border-top: 1px solid #f0f0f0;
+        padding: 12px 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .dark .notif-footer {
+        border-color: #374151;
+      }
+      .view-all-link {
+        font-size: 12px;
+        font-weight: 600;
+        color: #005a32;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .view-all-link:hover {
+        text-decoration: underline;
+      }
+      .view-all-link .material-icons {
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark"
+  >
+    <!-- Title Bar -->
+    <header
+      id="title-bar"
+      class="drag-region fixed top-0 left-0 w-full h-8 bg-white flex justify-between items-stretch z-40 border-b border-gray-200 select-none"
+    >
+      <div class="flex items-center pl-4 gap-2 text-gray-600">
         <span class="text-xs font-semibold">IHMS Pharmacy</span>
-    </div>
-    <div class="no-drag flex items-center relative z-50">
-        <button id="min-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200">
-            <span class="material-icons-outlined text-sm text-gray-600">remove</span>
+      </div>
+      <div class="no-drag flex items-center relative z-50">
+        <button
+          id="min-btn"
+          class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200"
+        >
+          <span class="material-icons-outlined text-sm text-gray-600"
+            >remove</span
+          >
         </button>
-        <button id="max-btn" class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200">
-            <span class="material-icons-outlined text-sm text-gray-600">crop_square</span>
+        <button
+          id="max-btn"
+          class="h-full w-12 flex justify-center items-center hover:bg-gray-200 transition-colors duration-200"
+        >
+          <span class="material-icons-outlined text-sm text-gray-600"
+            >crop_square</span
+          >
         </button>
-        <button id="close-btn" class="h-full w-12 flex justify-center items-center hover:bg-red-500 hover:text-white transition-colors duration-200 group">
-            <span class="material-icons-outlined text-sm text-gray-600 group-hover:text-white">close</span>
+        <button
+          id="close-btn"
+          class="h-full w-12 flex justify-center items-center hover:bg-red-500 hover:text-white transition-colors duration-200 group"
+        >
+          <span
+            class="material-icons-outlined text-sm text-gray-600 group-hover:text-white"
+            >close</span
+          >
         </button>
-    </div>
-</header>
+      </div>
+    </header>
 
-<div class="flex h-screen pt-8">
-
-    <!-- Sidebar -->
-    <aside class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-border-light dark:border-border-dark flex-shrink-0">
-        <div class="h-16 flex items-center px-6 border-b border-border-light dark:border-border-dark">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm">
-                    <img src="images/wellserved.png" alt="Well Served Logo" class="w-full h-full object-cover">
-                </div>
-                <div>
-                    <h1 class="font-bold text-primary dark:text-green-400 leading-tight">Well Served</h1>
-                    <p class="text-[10px] uppercase tracking-wider text-accent dark:text-amber-600 font-semibold">Since 1994</p>
-                </div>
+    <div class="flex h-screen pt-8">
+      <!-- Sidebar -->
+      <aside
+        class="w-64 bg-surface-light dark:bg-surface-dark flex flex-col border-r border-border-light dark:border-border-dark flex-shrink-0"
+      >
+        <div
+          class="h-16 flex items-center px-6 border-b border-border-light dark:border-border-dark"
+        >
+          <div class="flex items-center gap-3">
+            <div
+              class="w-12 h-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm"
+            >
+              <img
+                src="images/wellserved.png"
+                alt="Well Served Logo"
+                class="w-full h-full object-cover"
+              />
             </div>
+            <div>
+              <h1
+                class="font-bold text-primary dark:text-green-400 leading-tight"
+              >
+                Well Served
+              </h1>
+              <p
+                class="text-[10px] uppercase tracking-wider text-accent dark:text-amber-600 font-semibold"
+              >
+                Since 1994
+              </p>
+            </div>
+          </div>
         </div>
         <nav class="flex-1 px-4 py-6 space-y-2">
-            <div class="px-2 text-sm font-semibold text-subtext-light dark:text-subtext-dark mb-2">Pharmacy Assistant</div>
-            <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="dashboard_pharmasst.html">
-                <span class="material-icons mr-3">dashboard</span> Dashboard
-            </a>
-            <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="inventory_pharmasst.html">
-                <span class="material-icons mr-3">inventory_2</span> Inventory
-            </a>
-            <a class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold" href="pos_pharmasst.html">
-                <span class="material-icons mr-3">shopping_cart</span> Counter Dispensing
-            </a>
-            <a class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md" href="billing_pharmasst.html">
-                <span class="material-icons mr-3">point_of_sale</span> Sales &amp; Billing
-            </a>
+          <div
+            class="px-2 text-sm font-semibold text-subtext-light dark:text-subtext-dark mb-2"
+          >
+            Pharmacy Assistant
+          </div>
+          <a
+            class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md"
+            href="dashboard_pharmasst.html"
+          >
+            <span class="material-icons mr-3">dashboard</span> Dashboard
+          </a>
+          <a
+            class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md"
+            href="inventory_pharmasst.html"
+          >
+            <span class="material-icons mr-3">inventory_2</span> Inventory
+          </a>
+          <a
+            class="flex items-center px-4 py-2 bg-primary/10 text-primary rounded-md font-semibold"
+            href="pos_pharmasst.html"
+          >
+            <span class="material-icons mr-3">shopping_cart</span> Counter
+            Dispensing
+          </a>
+          <a
+            class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md"
+            href="billing_pharmasst.html"
+          >
+            <span class="material-icons mr-3">point_of_sale</span> Sales &amp;
+            Billing
+          </a>
         </nav>
         <div class="p-4 border-t border-border-light dark:border-border-dark">
-            <button onclick="logoutUser()"
-                class="flex items-center w-full px-4 py-2 gap-3 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors">
-                <span class="material-icons text-red-500">logout</span> Logout
-            </button>
+          <button
+            onclick="logoutUser()"
+            class="flex items-center w-full px-4 py-2 gap-3 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
+          >
+            <span class="material-icons text-red-500">logout</span> Logout
+          </button>
         </div>
-    </aside>
+      </aside>
 
-    <!-- Main Content -->
-    <div class="flex-1 flex flex-col overflow-hidden">
+      <!-- Main Content -->
+      <div class="flex-1 flex flex-col overflow-hidden">
+        <header
+          class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800 flex-shrink-0"
+        >
+          <div class="flex items-center gap-3">
+            <span class="material-icons text-primary">shopping_cart</span>
+            <div>
+              <h2
+                class="font-bold text-text-light dark:text-text-dark leading-tight"
+              >
+                Counter Dispensing
+              </h2>
+              <p class="text-xs text-subtext-light dark:text-subtext-dark">
+                Select items to dispense
+              </p>
+            </div>
+          </div>
 
-        <header class="h-16 bg-surface-light dark:bg-surface-dark flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
-            <div class="flex items-center gap-3">
-                <span class="material-icons text-primary">shopping_cart</span>
-                <div>
-                    <h2 class="font-bold text-text-light dark:text-text-dark leading-tight">Counter Dispensing</h2>
-                    <p class="text-xs text-subtext-light dark:text-subtext-dark">Select items to dispense</p>
-                </div>
+          <div class="flex items-center gap-4">
+            <div class="text-right">
+              <div
+                id="navClock"
+                class="text-text-light dark:text-text-dark"
+              ></div>
+              <div
+                id="navDate"
+                class="text-subtext-light dark:text-subtext-dark uppercase tracking-widest"
+              ></div>
             </div>
 
-            <div class="flex items-center gap-4">
-                <div class="text-right">
-                    <div id="navClock" class="text-text-light dark:text-text-dark"></div>
-                    <div id="navDate" class="text-subtext-light dark:text-subtext-dark uppercase tracking-widest"></div>
-                </div>
+            <div class="nav-divider"></div>
 
-                <div class="nav-divider"></div>
+            <div class="relative">
+              <button
+                id="notificationBtn"
+                class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                <span class="material-icons-outlined text-2xl"
+                  >notifications</span
+                >
+                <span
+                  id="notificationBadge"
+                  class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold"
+                  style="display: none"
+                  >0</span
+                >
+              </button>
 
-                <div class="relative">
-                    <button id="notificationBtn"
-                        class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                        <span class="material-icons-outlined text-2xl">notifications</span>
-                        <span id="notificationBadge"
-                            class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold"
-                            style="display:none;">0</span>
+              <div id="notificationDropdown" class="notif-dropdown">
+                <div class="notif-header">
+                  <h3>Notifications</h3>
+                  <div class="notif-header-meta">
+                    <span class="unread-count-pill" id="unreadPill"
+                      >Loading...</span
+                    >
+                    <button class="mark-all-btn" onclick="markAllRead()">
+                      Mark all read
                     </button>
-
-                    <div id="notificationDropdown" class="notif-dropdown">
-                        <div class="notif-header">
-                            <h3>Notifications</h3>
-                            <div class="notif-header-meta">
-                                <span class="unread-count-pill" id="unreadPill">Loading...</span>
-                                <button class="mark-all-btn" onclick="markAllRead()">Mark all read</button>
-                            </div>
-                        </div>
-                        <div class="notif-tabs">
-                            <button class="notif-tab-btn active" onclick="filterNotifTab(this,'all')">All</button>
-                            <button class="notif-tab-btn" onclick="filterNotifTab(this,'critical')">Critical</button>
-                            <button class="notif-tab-btn" onclick="filterNotifTab(this,'expiry')">Expiry</button>
-                            <button class="notif-tab-btn" onclick="filterNotifTab(this,'shortage')">Stock</button>
-                        </div>
-                        <div class="notif-list" id="notifList">
-                            <div style="padding:30px 20px;text-align:center;color:#9ca3af;">
-                                <span class="material-icons" style="font-size:32px;display:block;margin:0 auto 8px;">hourglass_empty</span>
-                                <p style="font-size:12px;">Loading alerts...</p>
-                            </div>
-                        </div>
-                        <div class="notif-footer">
-                            <a href="inventory_pharmasst.html" class="view-all-link">
-                                View inventory <span class="material-icons">arrow_forward</span>
-                            </a>
-                        </div>
-                    </div>
+                  </div>
                 </div>
-
-                <div class="nav-divider"></div>
-
-                <div class="text-right leading-tight">
-                    <div id="navUserName" class="text-sm font-bold text-text-light dark:text-text-dark">User</div>
-                    <div id="navUserRole" class="text-xs text-subtext-light dark:text-subtext-dark">Pharmacy Assistant</div>
+                <div class="notif-tabs">
+                  <button
+                    class="notif-tab-btn active"
+                    onclick="filterNotifTab(this, 'all')"
+                  >
+                    All
+                  </button>
+                  <button
+                    class="notif-tab-btn"
+                    onclick="filterNotifTab(this, 'critical')"
+                  >
+                    Critical
+                  </button>
+                  <button
+                    class="notif-tab-btn"
+                    onclick="filterNotifTab(this, 'expiry')"
+                  >
+                    Expiry
+                  </button>
+                  <button
+                    class="notif-tab-btn"
+                    onclick="filterNotifTab(this, 'shortage')"
+                  >
+                    Stock
+                  </button>
                 </div>
-
-                <div id="navAvatar" class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm select-none">U</div>
+                <div class="notif-list" id="notifList">
+                  <div
+                    style="
+                      padding: 30px 20px;
+                      text-align: center;
+                      color: #9ca3af;
+                    "
+                  >
+                    <span
+                      class="material-icons"
+                      style="
+                        font-size: 32px;
+                        display: block;
+                        margin: 0 auto 8px;
+                      "
+                      >hourglass_empty</span
+                    >
+                    <p style="font-size: 12px">Loading alerts...</p>
+                  </div>
+                </div>
+                <div class="notif-footer">
+                  <a href="inventory_pharmasst.html" class="view-all-link">
+                    View inventory
+                    <span class="material-icons">arrow_forward</span>
+                  </a>
+                </div>
+              </div>
             </div>
+
+            <div class="nav-divider"></div>
+
+            <div class="text-right leading-tight">
+              <div
+                id="navUserName"
+                class="text-sm font-bold text-text-light dark:text-text-dark"
+              >
+                User
+              </div>
+              <div
+                id="navUserRole"
+                class="text-xs text-subtext-light dark:text-subtext-dark"
+              >
+                Pharmacy Assistant
+              </div>
+            </div>
+
+            <div
+              id="navAvatar"
+              class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm select-none"
+            >
+              U
+            </div>
+          </div>
         </header>
 
         <!-- POS Content -->
         <div class="flex-1 overflow-hidden">
-            <div class="h-full max-w-[1600px] mx-auto p-6">
-                <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
-
-                    <!-- Left: Product Grid -->
-                    <div class="lg:col-span-8 flex flex-col gap-4 overflow-hidden">
-
-                        <!-- Search & Filter Bar -->
-                        <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-                            <div class="relative mb-4">
-                                <span class="material-icons-round absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
-                                <input id="searchInput" oninput="filterProducts()"
-                                    class="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border-none rounded-xl focus:ring-2 focus:ring-teal-500 text-sm transition-all shadow-inner"
-                                    placeholder="Search medicine by name, category, or generic name..."
-                                    type="text"/>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <div class="flex gap-2 overflow-x-auto pb-1 flex-1">
-                                    <button onclick="setCategory(this,'all')" class="category-btn px-5 py-2 rounded-full bg-teal-600 text-white text-sm font-medium shadow-md whitespace-nowrap" data-cat="all">All</button>
-                                    <button onclick="setCategory(this,'Antibiotics')" class="category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap" data-cat="Antibiotics">Antibiotics</button>
-                                    <button onclick="setCategory(this,'Pain Relief')" class="category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap" data-cat="Pain Relief">Pain Relief</button>
-                                    <button onclick="setCategory(this,'Antihistamine')" class="category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap" data-cat="Antihistamine">Antihistamine</button>
-                                    <button onclick="setCategory(this,'Gastrointestinal')" class="category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap" data-cat="Gastrointestinal">Gastrointestinal</button>
-                                    <button onclick="setCategory(this,'Diabetes')" class="category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap" data-cat="Diabetes">Diabetes</button>
-                                    <button onclick="setCategory(this,'Cardiovascular')" class="category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap" data-cat="Cardiovascular">Cardiovascular</button>
-                                </div>
-
-                                <!-- Form dropdown -->
-                                <div class="relative flex-shrink-0" id="formDropdownWrap">
-                                    <button onclick="toggleFormDropdown()"
-                                        id="formDropdownBtn"
-                                        class="flex items-center gap-1.5 px-4 py-2 rounded-full border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-sm font-medium hover:border-teal-500 hover:text-teal-600 transition-all whitespace-nowrap shadow-sm">
-                                        <span class="material-icons text-base">filter_list</span>
-                                        <span id="formDropdownLabel">Form</span>
-                                        <span class="material-icons text-sm">expand_more</span>
-                                    </button>
-                                    <div id="formDropdown"
-                                        class="hidden absolute right-0 top-full mt-2 w-44 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl z-50 overflow-hidden">
-                                        <div class="p-1">
-                                            <button onclick="setForm('all')" class="form-opt w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-teal-50 dark:hover:bg-teal-900/20 hover:text-teal-600 transition-colors" data-form="all">
-                                                <span class="material-icons text-base text-slate-400">apps</span> All Forms
-                                            </button>
-                                            <button onclick="setForm('tablet')" class="form-opt w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-teal-50 dark:hover:bg-teal-900/20 hover:text-teal-600 transition-colors" data-form="tablet">
-                                                <span class="material-icons text-base text-slate-400">circle</span> Tablet
-                                            </button>
-                                            <button onclick="setForm('capsule')" class="form-opt w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-teal-50 dark:hover:bg-teal-900/20 hover:text-teal-600 transition-colors" data-form="capsule">
-                                                <span class="material-icons text-base text-slate-400">medication</span> Capsule
-                                            </button>
-                                            <button onclick="setForm('syrup')" class="form-opt w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-teal-50 dark:hover:bg-teal-900/20 hover:text-teal-600 transition-colors" data-form="syrup">
-                                                <span class="material-icons text-base text-slate-400">water_drop</span> Syrup
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Product Cards -->
-                        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 overflow-y-auto pr-1 flex-1 content-start">
-                            <!-- Rendered by JS -->
-                        </div>
+          <div class="h-full max-w-[1600px] mx-auto p-6">
+            <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
+              <!-- Left: Product Grid -->
+              <div class="lg:col-span-8 flex flex-col gap-4 overflow-hidden">
+                <!-- Search & Filter Bar -->
+                <div
+                  class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700"
+                >
+                  <div class="relative mb-4">
+                    <span
+                      class="material-icons-round absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                      >search</span
+                    >
+                    <input
+                      id="searchInput"
+                      oninput="filterProducts()"
+                      class="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border-none rounded-xl focus:ring-2 focus:ring-teal-500 text-sm transition-all shadow-inner"
+                      placeholder="Search medicine by name, category, or generic name..."
+                      type="text"
+                    />
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <div class="flex gap-2 overflow-x-auto pb-1 flex-1">
+                      <button
+                        onclick="setCategory(this, 'all')"
+                        class="category-btn px-5 py-2 rounded-full bg-teal-600 text-white text-sm font-medium shadow-md whitespace-nowrap"
+                        data-cat="all"
+                      >
+                        All
+                      </button>
+                      <button
+                        onclick="setCategory(this, 'Antibiotics')"
+                        class="category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap"
+                        data-cat="Antibiotics"
+                      >
+                        Antibiotics
+                      </button>
+                      <button
+                        onclick="setCategory(this, 'Pain Relief')"
+                        class="category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap"
+                        data-cat="Pain Relief"
+                      >
+                        Pain Relief
+                      </button>
+                      <button
+                        onclick="setCategory(this, 'Antihistamine')"
+                        class="category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap"
+                        data-cat="Antihistamine"
+                      >
+                        Antihistamine
+                      </button>
+                      <button
+                        onclick="setCategory(this, 'Gastrointestinal')"
+                        class="category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap"
+                        data-cat="Gastrointestinal"
+                      >
+                        Gastrointestinal
+                      </button>
+                      <button
+                        onclick="setCategory(this, 'Diabetes')"
+                        class="category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap"
+                        data-cat="Diabetes"
+                      >
+                        Diabetes
+                      </button>
+                      <button
+                        onclick="setCategory(this, 'Cardiovascular')"
+                        class="category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap"
+                        data-cat="Cardiovascular"
+                      >
+                        Cardiovascular
+                      </button>
                     </div>
 
-                    <!-- Right: Order Panel -->
-                    <div class="lg:col-span-4 flex flex-col overflow-hidden">
-                        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl flex flex-col overflow-hidden h-full">
-
-                            <div class="p-5 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <span class="material-icons-round text-teal-600">shopping_basket</span>
-                                    <h2 class="text-lg font-bold">Current Order</h2>
-                                </div>
-                                <span id="cartCount" class="px-3 py-1 bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 text-xs font-bold rounded-full">0 Items</span>
-                            </div>
-
-                            <div id="cartItems" class="flex-1 overflow-y-auto p-5 space-y-3">
-                                <div class="flex flex-col items-center justify-center h-32 text-slate-400 text-sm gap-2">
-                                    <span class="material-icons-round text-4xl">shopping_basket</span>
-                                    <p>No items added yet</p>
-                                </div>
-                            </div>
-
-                            <div class="p-5 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700 space-y-4">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-base font-bold">Total Amount</span>
-                                    <span id="totalAmount" class="text-2xl font-black text-teal-600">₱0.00</span>
-                                </div>
-                                <button onclick="processDispense()"
-                                    class="w-full py-4 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-teal-500/20 transition-all active:scale-[0.98] transform flex items-center justify-center gap-2">
-                                    <span id="dispenseBtnText">Dispense Medicine</span>
-                                    <span class="material-icons-round">arrow_forward</span>
-                                </button>
-                            </div>
+                    <!-- Form dropdown -->
+                    <div class="relative flex-shrink-0" id="formDropdownWrap">
+                      <button
+                        onclick="toggleFormDropdown()"
+                        id="formDropdownBtn"
+                        class="flex items-center gap-1.5 px-4 py-2 rounded-full border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-sm font-medium hover:border-teal-500 hover:text-teal-600 transition-all whitespace-nowrap shadow-sm"
+                      >
+                        <span class="material-icons text-base"
+                          >filter_list</span
+                        >
+                        <span id="formDropdownLabel">Form</span>
+                        <span class="material-icons text-sm">expand_more</span>
+                      </button>
+                      <div
+                        id="formDropdown"
+                        class="hidden absolute right-0 top-full mt-2 w-44 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl z-50 overflow-hidden"
+                      >
+                        <div class="p-1">
+                          <button
+                            onclick="setForm('all')"
+                            class="form-opt w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-teal-50 dark:hover:bg-teal-900/20 hover:text-teal-600 transition-colors"
+                            data-form="all"
+                          >
+                            <span
+                              class="material-icons text-base text-slate-400"
+                              >apps</span
+                            >
+                            All Forms
+                          </button>
+                          <button
+                            onclick="setForm('tablet')"
+                            class="form-opt w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-teal-50 dark:hover:bg-teal-900/20 hover:text-teal-600 transition-colors"
+                            data-form="tablet"
+                          >
+                            <span
+                              class="material-icons text-base text-slate-400"
+                              >circle</span
+                            >
+                            Tablet
+                          </button>
+                          <button
+                            onclick="setForm('capsule')"
+                            class="form-opt w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-teal-50 dark:hover:bg-teal-900/20 hover:text-teal-600 transition-colors"
+                            data-form="capsule"
+                          >
+                            <span
+                              class="material-icons text-base text-slate-400"
+                              >medication</span
+                            >
+                            Capsule
+                          </button>
+                          <button
+                            onclick="setForm('syrup')"
+                            class="form-opt w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-teal-50 dark:hover:bg-teal-900/20 hover:text-teal-600 transition-colors"
+                            data-form="syrup"
+                          >
+                            <span
+                              class="material-icons text-base text-slate-400"
+                              >water_drop</span
+                            >
+                            Syrup
+                          </button>
                         </div>
+                      </div>
                     </div>
+                  </div>
+                </div>
 
-                </main>
-            </div>
+                <!-- Product Cards -->
+                <div
+                  id="productGrid"
+                  class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 overflow-y-auto pr-1 flex-1 content-start"
+                >
+                  <!-- Rendered by JS -->
+                </div>
+              </div>
+
+              <!-- Right: Order Panel -->
+              <div class="lg:col-span-4 flex flex-col overflow-hidden">
+                <div
+                  class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl flex flex-col overflow-hidden h-full"
+                >
+                  <div
+                    class="p-5 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between"
+                  >
+                    <div class="flex items-center gap-2">
+                      <span class="material-icons-round text-teal-600"
+                        >shopping_basket</span
+                      >
+                      <h2 class="text-lg font-bold">Current Order</h2>
+                    </div>
+                    <span
+                      id="cartCount"
+                      class="px-3 py-1 bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 text-xs font-bold rounded-full"
+                      >0 Items</span
+                    >
+                  </div>
+
+                  <div
+                    id="cartItems"
+                    class="flex-1 overflow-y-auto p-5 space-y-3"
+                  >
+                    <div
+                      class="flex flex-col items-center justify-center h-32 text-slate-400 text-sm gap-2"
+                    >
+                      <span class="material-icons-round text-4xl"
+                        >shopping_basket</span
+                      >
+                      <p>No items added yet</p>
+                    </div>
+                  </div>
+
+                  <div
+                    class="p-5 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700 space-y-4"
+                  >
+                    <div class="flex justify-between items-center">
+                      <span class="text-base font-bold">Total Amount</span>
+                      <span
+                        id="totalAmount"
+                        class="text-2xl font-black text-teal-600"
+                        >₱0.00</span
+                      >
+                    </div>
+                    <button
+                      onclick="processDispense()"
+                      class="w-full py-4 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-teal-500/20 transition-all active:scale-[0.98] transform flex items-center justify-center gap-2"
+                    >
+                      <span id="dispenseBtnText">Dispense Medicine</span>
+                      <span class="material-icons-round">arrow_forward</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </main>
+          </div>
         </div>
+      </div>
     </div>
-</div>
 
-<script>
-    const API_BASE_URL = 'http://localhost:5001';
+    <script>
+      const API_BASE_URL = "http://localhost:5001";
 
-    // ══════════════════════════════════════════════════════════
-    // LIVE CLOCK
-    // ══════════════════════════════════════════════════════════
-    function updateNavClock() {
+      // ══════════════════════════════════════════════════════════
+      // LIVE CLOCK
+      // ══════════════════════════════════════════════════════════
+      function updateNavClock() {
         const now = new Date();
-        document.getElementById('navClock').textContent = now.toLocaleTimeString('en-US', {
-            hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
-        });
-        document.getElementById('navDate').textContent = now.toLocaleDateString('en-US', {
-            month: 'short', day: 'numeric', year: 'numeric'
-        }).toUpperCase();
-    }
+        document.getElementById("navClock").textContent =
+          now.toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: true,
+          });
+        document.getElementById("navDate").textContent = now
+          .toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })
+          .toUpperCase();
+      }
 
-    // ══════════════════════════════════════════════════════════
-    // NAV USER INFO
-    // ══════════════════════════════════════════════════════════
-    function loadNavUserInfo() {
+      // ══════════════════════════════════════════════════════════
+      // NAV USER INFO
+      // ══════════════════════════════════════════════════════════
+      function loadNavUserInfo() {
         try {
-            const raw = sessionStorage.getItem('userInfo');
-            if (!raw) return;
-            const info    = JSON.parse(raw);
-            const name    = info.name || info.firstName || info.username || 'User';
-            const role    = info.role || info.position || 'Pharmacy Assistant';
-            const initial = name.charAt(0).toUpperCase();
-            document.getElementById('navUserName').textContent = name;
-            document.getElementById('navUserRole').textContent = role;
-            document.getElementById('navAvatar').textContent   = initial;
-        } catch(e) {}
-    }
+          const raw = sessionStorage.getItem("userInfo");
+          if (!raw) return;
+          const info = JSON.parse(raw);
+          const name = info.name || info.firstName || info.username || "User";
+          const role = info.role || info.position || "Pharmacy Assistant";
+          const initial = name.charAt(0).toUpperCase();
+          document.getElementById("navUserName").textContent = name;
+          document.getElementById("navUserRole").textContent = role;
+          document.getElementById("navAvatar").textContent = initial;
+        } catch (e) {}
+      }
 
-    // ══════════════════════════════════════════════════════════
-    // NOTIFICATIONS
-    // ══════════════════════════════════════════════════════════
-    let notifData         = [];
-    let activeNotifFilter = 'all';
+      // ══════════════════════════════════════════════════════════
+      // NOTIFICATIONS
+      // ══════════════════════════════════════════════════════════
+      let notifData = [];
+      let activeNotifFilter = "all";
 
-    function getNotifToken() {
-        const direct = sessionStorage.getItem('token');
+      function getNotifToken() {
+        const direct = sessionStorage.getItem("token");
         if (direct) return direct;
-        const userInfo = sessionStorage.getItem('userInfo');
-        if (userInfo) { try { return JSON.parse(userInfo).token || null; } catch(e) {} }
+        const userInfo = sessionStorage.getItem("userInfo");
+        if (userInfo) {
+          try {
+            return JSON.parse(userInfo).token || null;
+          } catch (e) {}
+        }
         return null;
-    }
+      }
 
-    function filterNotifTab(btn, type) {
+      function filterNotifTab(btn, type) {
         activeNotifFilter = type;
-        document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+        document
+          .querySelectorAll(".notif-tab-btn")
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
         renderNotifications();
-    }
+      }
 
-    function generateAlertsFromInventory(inventory) {
-        const alerts     = [];
-        const today      = new Date();
+      function generateAlertsFromInventory(inventory) {
+        const alerts = [];
+        const today = new Date();
         const thirtyDays = new Date();
         thirtyDays.setDate(today.getDate() + 30);
 
         inventory.forEach((item, idx) => {
-            const medName = item.medicine?.name || item.name || 'Unknown Medicine';
+          const medName =
+            item.medicine?.name || item.name || "Unknown Medicine";
 
-            if (item.expiryDate) {
-                const expiry = new Date(item.expiryDate);
-                if (expiry < today) {
-                    alerts.push({ id: `exp-${item._id || idx}`, type: 'expiry', unread: true, medicineName: medName, title: 'Medicine Expired', desc: `${medName} expired on ${expiry.toLocaleDateString('en-PH')}.`, time: 'Needs immediate attention', actionLabel: 'View Inventory', actionClass: 'btn-expiry', icon: 'event_busy', iconClass: 'icon-expiry' });
-                } else if (expiry <= thirtyDays) {
-                    const d = Math.ceil((expiry - today) / 864e5);
-                    alerts.push({ id: `exp-${item._id || idx}`, type: 'expiry', unread: true, medicineName: medName, title: 'Expiring Soon', desc: `${medName} expires in ${d} day${d === 1 ? '' : 's'}.`, time: `${d} days left`, actionLabel: 'View Inventory', actionClass: 'btn-expiry', icon: 'schedule', iconClass: 'icon-expiry' });
-                }
+          if (item.expiryDate) {
+            const expiry = new Date(item.expiryDate);
+            if (expiry < today) {
+              alerts.push({
+                id: `exp-${item._id || idx}`,
+                type: "expiry",
+                unread: true,
+                medicineName: medName,
+                title: "Medicine Expired",
+                desc: `${medName} expired on ${expiry.toLocaleDateString("en-PH")}.`,
+                time: "Needs immediate attention",
+                actionLabel: "View Inventory",
+                actionClass: "btn-expiry",
+                icon: "event_busy",
+                iconClass: "icon-expiry",
+              });
+            } else if (expiry <= thirtyDays) {
+              const d = Math.ceil((expiry - today) / 864e5);
+              alerts.push({
+                id: `exp-${item._id || idx}`,
+                type: "expiry",
+                unread: true,
+                medicineName: medName,
+                title: "Expiring Soon",
+                desc: `${medName} expires in ${d} day${d === 1 ? "" : "s"}.`,
+                time: `${d} days left`,
+                actionLabel: "View Inventory",
+                actionClass: "btn-expiry",
+                icon: "schedule",
+                iconClass: "icon-expiry",
+              });
             }
+          }
 
-            const qty       = parseInt(item.quantity || 0);
-            const minStock  = parseInt(item.minStockLevel || 10);
-            const isExpired = new Date(item.expiryDate) < today;
+          const qty = parseInt(item.quantity || 0);
+          const minStock = parseInt(item.minStockLevel || 10);
+          const isExpired = new Date(item.expiryDate) < today;
 
-            if (!isExpired && qty === 0) {
-                alerts.push({ id: `stk-${item._id || idx}`, type: 'critical', unread: true, medicineName: medName, title: 'Critical: Out of Stock', desc: `${medName} is completely out of stock.`, time: 'Immediate action required', actionLabel: 'View Inventory', actionClass: 'btn-critical', icon: 'warning', iconClass: 'icon-critical' });
-            } else if (!isExpired && qty <= minStock) {
-                alerts.push({ id: `stk-${item._id || idx}`, type: 'shortage', unread: true, medicineName: medName, title: 'Low Stock Alert', desc: `${medName} — only ${qty} unit${qty === 1 ? '' : 's'} remaining (min: ${minStock}).`, time: 'Reorder soon', actionLabel: 'View Inventory', actionClass: 'btn-shortage', icon: 'inventory_2', iconClass: 'icon-shortage' });
-            }
+          if (!isExpired && qty === 0) {
+            alerts.push({
+              id: `stk-${item._id || idx}`,
+              type: "critical",
+              unread: true,
+              medicineName: medName,
+              title: "Critical: Out of Stock",
+              desc: `${medName} is completely out of stock.`,
+              time: "Immediate action required",
+              actionLabel: "View Inventory",
+              actionClass: "btn-critical",
+              icon: "warning",
+              iconClass: "icon-critical",
+            });
+          } else if (!isExpired && qty <= minStock) {
+            alerts.push({
+              id: `stk-${item._id || idx}`,
+              type: "shortage",
+              unread: true,
+              medicineName: medName,
+              title: "Low Stock Alert",
+              desc: `${medName} — only ${qty} unit${qty === 1 ? "" : "s"} remaining (min: ${minStock}).`,
+              time: "Reorder soon",
+              actionLabel: "View Inventory",
+              actionClass: "btn-shortage",
+              icon: "inventory_2",
+              iconClass: "icon-shortage",
+            });
+          }
         });
 
         const order = { critical: 0, expiry: 1, shortage: 2 };
         alerts.sort((a, b) => (order[a.type] ?? 9) - (order[b.type] ?? 9));
         return alerts;
-    }
+      }
 
-    function renderNotifications() {
-        const list     = document.getElementById('notifList');
-        const filtered = activeNotifFilter === 'all' ? notifData : notifData.filter(n => n.type === activeNotifFilter);
+      function renderNotifications() {
+        const list = document.getElementById("notifList");
+        const filtered =
+          activeNotifFilter === "all"
+            ? notifData
+            : notifData.filter((n) => n.type === activeNotifFilter);
 
         if (!filtered.length) {
-            const msg = activeNotifFilter === 'all' ? 'All clear — no alerts right now!' : 'No notifications in this category.';
-            list.innerHTML = '<div class="notif-empty"><span class="material-icons">notifications_none</span><p>' + msg + '</p></div>';
-            updateNotifBadge();
-            return;
+          const msg =
+            activeNotifFilter === "all"
+              ? "All clear — no alerts right now!"
+              : "No notifications in this category.";
+          list.innerHTML =
+            '<div class="notif-empty"><span class="material-icons">notifications_none</span><p>' +
+            msg +
+            "</p></div>";
+          updateNotifBadge();
+          return;
         }
 
-        list.innerHTML = filtered.map(n => `
-            <div class="notif-item ${n.type} ${n.unread ? 'unread' : ''}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
+        list.innerHTML = filtered
+          .map(
+            (n) => `
+            <div class="notif-item ${n.type} ${n.unread ? "unread" : ""}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
                 <div class="notif-icon-wrap ${n.iconClass}"><span class="material-icons">${n.icon}</span></div>
                 <div class="notif-body">
                     <div class="notif-title">${n.title}</div>
@@ -451,395 +1069,527 @@
                         <button class="notif-action-btn ${n.actionClass}" onclick="handleNotifAction(event,'${n.id}')">${n.actionLabel}</button>
                     </div>
                 </div>
-                ${n.unread ? '<div class="unread-dot"></div>' : ''}
-            </div>`).join('');
+                ${n.unread ? '<div class="unread-dot"></div>' : ""}
+            </div>`,
+          )
+          .join("");
 
         updateNotifBadge();
-    }
+      }
 
-    function updateNotifBadge() {
-        const count = notifData.filter(n => n.unread).length;
-        const badge = document.getElementById('notificationBadge');
-        const pill  = document.getElementById('unreadPill');
-        if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none'; }
-        if (pill)  pill.textContent = count > 0 ? `${count} new` : 'All clear';
-    }
+      function updateNotifBadge() {
+        const count = notifData.filter((n) => n.unread).length;
+        const badge = document.getElementById("notificationBadge");
+        const pill = document.getElementById("unreadPill");
+        if (badge) {
+          badge.textContent = count;
+          badge.style.display = count > 0 ? "flex" : "none";
+        }
+        if (pill) pill.textContent = count > 0 ? `${count} new` : "All clear";
+      }
 
-    function getReadNotifIds() {
-        try { return new Set(JSON.parse(sessionStorage.getItem('readNotifIds') || '[]')); }
-        catch(e) { return new Set(); }
-    }
-    function saveReadNotifId(id) {
-        const ids = getReadNotifIds(); ids.add(id);
-        sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
-    }
-    function saveAllReadNotifIds() {
+      function getReadNotifIds() {
+        try {
+          return new Set(
+            JSON.parse(sessionStorage.getItem("readNotifIds") || "[]"),
+          );
+        } catch (e) {
+          return new Set();
+        }
+      }
+      function saveReadNotifId(id) {
         const ids = getReadNotifIds();
-        notifData.forEach(n => ids.add(n.id));
-        sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
-    }
-    function markNotifRead(id) {
-        const n = notifData.find(n => n.id === id);
-        if (n) { n.unread = false; saveReadNotifId(id); renderNotifications(); }
-    }
-    function markAllRead() {
-        notifData.forEach(n => n.unread = false);
+        ids.add(id);
+        sessionStorage.setItem("readNotifIds", JSON.stringify([...ids]));
+      }
+      function saveAllReadNotifIds() {
+        const ids = getReadNotifIds();
+        notifData.forEach((n) => ids.add(n.id));
+        sessionStorage.setItem("readNotifIds", JSON.stringify([...ids]));
+      }
+      function markNotifRead(id) {
+        const n = notifData.find((n) => n.id === id);
+        if (n) {
+          n.unread = false;
+          saveReadNotifId(id);
+          renderNotifications();
+        }
+      }
+      function markAllRead() {
+        notifData.forEach((n) => (n.unread = false));
         saveAllReadNotifIds();
         renderNotifications();
-    }
-    function handleNotifAction(event, id) {
+      }
+      function handleNotifAction(event, id) {
         event.stopPropagation();
         markNotifRead(id);
-        const n = notifData.find(n => n.id === id);
+        const n = notifData.find((n) => n.id === id);
         if (n) {
-            if (n.type === 'expiry') {
-                sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'batch', medicine: n.medicineName }));
-            } else if (n.type === 'critical' || n.type === 'shortage') {
-                sessionStorage.setItem('notifRedirect', JSON.stringify({ tab: 'summary', medicine: n.medicineName }));
-            }
+          if (n.type === "expiry") {
+            sessionStorage.setItem(
+              "notifRedirect",
+              JSON.stringify({ tab: "batch", medicine: n.medicineName }),
+            );
+          } else if (n.type === "critical" || n.type === "shortage") {
+            sessionStorage.setItem(
+              "notifRedirect",
+              JSON.stringify({ tab: "summary", medicine: n.medicineName }),
+            );
+          }
         }
-        document.getElementById('notificationDropdown').classList.remove('open');
-        window.location.href = 'inventory_pharmasst.html';
-    }
+        document
+          .getElementById("notificationDropdown")
+          .classList.remove("open");
+        window.location.href = "inventory_pharmasst.html";
+      }
 
-    async function refreshNotifications() {
+      async function refreshNotifications() {
         const token = getNotifToken();
         if (!token) return;
         try {
-            const res = await fetch(`${API_BASE_URL}/api/inventory`, { headers: { 'Authorization': `Bearer ${token}` } });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const raw       = await res.json();
-            const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
-            const readIds   = getReadNotifIds();
-            notifData       = generateAlertsFromInventory(inventory).slice(0, 15);
-            notifData.forEach(n => { if (readIds.has(n.id)) n.unread = false; });
-            renderNotifications();
+          const res = await fetch(`${API_BASE_URL}/api/inventory`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const raw = await res.json();
+          const inventory = Array.isArray(raw)
+            ? raw
+            : raw.medicines || raw.data || [];
+          const readIds = getReadNotifIds();
+          notifData = generateAlertsFromInventory(inventory).slice(0, 15);
+          notifData.forEach((n) => {
+            if (readIds.has(n.id)) n.unread = false;
+          });
+          renderNotifications();
         } catch (e) {
-            console.warn('Notification fetch failed:', e);
-            if (!notifData.length) {
-                const list = document.getElementById('notifList');
-                if (list) list.innerHTML = `<div class="notif-empty"><span class="material-icons">cloud_off</span><p>Could not load alerts.</p></div>`;
-            }
+          console.warn("Notification fetch failed:", e);
+          if (!notifData.length) {
+            const list = document.getElementById("notifList");
+            if (list)
+              list.innerHTML = `<div class="notif-empty"><span class="material-icons">cloud_off</span><p>Could not load alerts.</p></div>`;
+          }
         }
-    }
+      }
 
-    // ══════════════════════════════════════════════════════════
-    // AUTH & API
-    // ══════════════════════════════════════════════════════════
-    function getToken() {
-        const directToken = sessionStorage.getItem('token');
+      // ══════════════════════════════════════════════════════════
+      // AUTH & API
+      // ══════════════════════════════════════════════════════════
+      function getToken() {
+        const directToken = sessionStorage.getItem("token");
         if (directToken) return directToken;
-        const userInfoString = sessionStorage.getItem('userInfo');
-        if (userInfoString) { try { return JSON.parse(userInfoString).token; } catch(e){} }
+        const userInfoString = sessionStorage.getItem("userInfo");
+        if (userInfoString) {
+          try {
+            return JSON.parse(userInfoString).token;
+          } catch (e) {}
+        }
         return null;
-    }
+      }
 
-    async function apiCall(endpoint, method = 'GET', body = null) {
+      async function apiCall(endpoint, method = "GET", body = null) {
         const token = getToken();
-        if (!token) { window.location.href = 'login.html'; return null; }
+        if (!token) {
+          window.location.href = "login.html";
+          return null;
+        }
 
-        const options = { method, headers: { 'Authorization': `Bearer ${token}` } };
+        const options = {
+          method,
+          headers: { Authorization: `Bearer ${token}` },
+        };
         if (body) {
-            options.headers['Content-Type'] = 'application/json';
-            options.body = JSON.stringify(body);
+          options.headers["Content-Type"] = "application/json";
+          options.body = JSON.stringify(body);
         }
 
         try {
-            const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-            if (response.status === 401 || response.status === 403) { sessionStorage.clear(); window.location.href = 'login.html'; return null; }
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.message || 'API Error');
-            return data;
-        } catch (error) {
-            console.error("API Error:", error);
-            Swal.fire('Transaction Error', error.message, 'error');
+          const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+          if (response.status === 401 || response.status === 403) {
+            sessionStorage.clear();
+            window.location.href = "login.html";
             return null;
+          }
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.message || "API Error");
+          return data;
+        } catch (error) {
+          console.error("API Error:", error);
+          Swal.fire("Transaction Error", error.message, "error");
+          return null;
         }
-    }
+      }
 
-    // ══════════════════════════════════════════════════════════
-    // DATA
-    // ══════════════════════════════════════════════════════════
-    let products       = [];
-    let cart           = {};
-    let activeCategory = 'all';
-    let activeForm     = 'all';
+      // ══════════════════════════════════════════════════════════
+      // DATA
+      // ══════════════════════════════════════════════════════════
+      let products = [];
+      let cart = {};
+      let activeCategory = "all";
+      let activeForm = "all";
 
-    const catColors = {
-        blue:    { bg: 'bg-blue-50 dark:bg-blue-900/30',      text: 'text-blue-600 dark:text-blue-400' },
-        purple:  { bg: 'bg-purple-50 dark:bg-purple-900/30',  text: 'text-purple-600 dark:text-purple-400' },
-        indigo:  { bg: 'bg-indigo-50 dark:bg-indigo-900/30',  text: 'text-indigo-600 dark:text-indigo-400' },
-        emerald: { bg: 'bg-emerald-50 dark:bg-emerald-900/30', text: 'text-emerald-600 dark:text-emerald-400' },
-        rose:    { bg: 'bg-rose-50 dark:bg-rose-900/30',      text: 'text-rose-600 dark:text-rose-400' },
-        sky:     { bg: 'bg-sky-50 dark:bg-sky-900/30',        text: 'text-sky-600 dark:text-sky-400' },
-    };
+      const catColors = {
+        blue: {
+          bg: "bg-blue-50 dark:bg-blue-900/30",
+          text: "text-blue-600 dark:text-blue-400",
+        },
+        purple: {
+          bg: "bg-purple-50 dark:bg-purple-900/30",
+          text: "text-purple-600 dark:text-purple-400",
+        },
+        indigo: {
+          bg: "bg-indigo-50 dark:bg-indigo-900/30",
+          text: "text-indigo-600 dark:text-indigo-400",
+        },
+        emerald: {
+          bg: "bg-emerald-50 dark:bg-emerald-900/30",
+          text: "text-emerald-600 dark:text-emerald-400",
+        },
+        rose: {
+          bg: "bg-rose-50 dark:bg-rose-900/30",
+          text: "text-rose-600 dark:text-rose-400",
+        },
+        sky: {
+          bg: "bg-sky-50 dark:bg-sky-900/30",
+          text: "text-sky-600 dark:text-sky-400",
+        },
+      };
 
-    function getColorForCategory(cat) {
-        cat = (cat || '').toLowerCase();
-        if (cat.includes('anti'))   return 'blue';
-        if (cat.includes('pain'))   return 'purple';
-        if (cat.includes('gastro')) return 'emerald';
-        if (cat.includes('diabet')) return 'rose';
-        if (cat.includes('cardio')) return 'sky';
-        return 'indigo';
-    }
+      function getColorForCategory(cat) {
+        cat = (cat || "").toLowerCase();
+        if (cat.includes("anti")) return "blue";
+        if (cat.includes("pain")) return "purple";
+        if (cat.includes("gastro")) return "emerald";
+        if (cat.includes("diabet")) return "rose";
+        if (cat.includes("cardio")) return "sky";
+        return "indigo";
+      }
 
-    // ── detectForm: top-level so it's never re-declared inside a loop ──
-    function detectForm(name, raw) {
+      // ── detectForm: top-level so it's never re-declared inside a loop ──
+      function detectForm(name, raw) {
         if (raw) return raw;
         const n = name.toLowerCase();
-        if (n.includes('tablet')  || n.includes(' tab') || n.includes('tab.'))                                return 'tablet';
-        if (n.includes('capsule') || n.includes(' cap') || n.includes('cap.'))                                return 'capsule';
-        if (n.includes('syrup')   || n.includes('suspension') || n.includes('solution') || n.includes('drops')) return 'syrup';
-        return '';
-    }
+        if (n.includes("tablet") || n.includes(" tab") || n.includes("tab."))
+          return "tablet";
+        if (n.includes("capsule") || n.includes(" cap") || n.includes("cap."))
+          return "capsule";
+        if (
+          n.includes("syrup") ||
+          n.includes("suspension") ||
+          n.includes("solution") ||
+          n.includes("drops")
+        )
+          return "syrup";
+        return "";
+      }
 
-    // ══════════════════════════════════════════════════════════
-    // INIT
-    // ══════════════════════════════════════════════════════════
-    document.addEventListener('DOMContentLoaded', () => {
-        const isDarkMode = sessionStorage.getItem('darkMode') === 'true';
-        document.documentElement.classList.toggle('dark', isDarkMode);
+      // ══════════════════════════════════════════════════════════
+      // INIT
+      // ══════════════════════════════════════════════════════════
+      document.addEventListener("DOMContentLoaded", () => {
+        const isDarkMode = sessionStorage.getItem("darkMode") === "true";
+        document.documentElement.classList.toggle("dark", isDarkMode);
 
         updateNavClock();
         setInterval(updateNavClock, 1000);
         loadNavUserInfo();
 
-        const btn      = document.getElementById('notificationBtn');
-        const dropdown = document.getElementById('notificationDropdown');
+        const btn = document.getElementById("notificationBtn");
+        const dropdown = document.getElementById("notificationDropdown");
         if (btn && dropdown) {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                dropdown.classList.toggle('open');
-                if (dropdown.classList.contains('open')) refreshNotifications();
-            });
-            document.addEventListener('click', (e) => {
-                if (!dropdown.contains(e.target) && e.target !== btn) dropdown.classList.remove('open');
-            });
-            dropdown.addEventListener('click', e => e.stopPropagation());
-            setTimeout(refreshNotifications, 1000);
-            setInterval(refreshNotifications, 60000);
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle("open");
+            if (dropdown.classList.contains("open")) refreshNotifications();
+          });
+          document.addEventListener("click", (e) => {
+            if (!dropdown.contains(e.target) && e.target !== btn)
+              dropdown.classList.remove("open");
+          });
+          dropdown.addEventListener("click", (e) => e.stopPropagation());
+          setTimeout(refreshNotifications, 1000);
+          setInterval(refreshNotifications, 60000);
         }
 
         // Close form dropdown on outside click
-        document.addEventListener('click', (e) => {
-            const wrap = document.getElementById('formDropdownWrap');
-            if (wrap && !wrap.contains(e.target)) {
-                document.getElementById('formDropdown')?.classList.add('hidden');
-            }
+        document.addEventListener("click", (e) => {
+          const wrap = document.getElementById("formDropdownWrap");
+          if (wrap && !wrap.contains(e.target)) {
+            document.getElementById("formDropdown")?.classList.add("hidden");
+          }
         });
 
         loadInventory();
-    });
+      });
 
-    // ══════════════════════════════════════════════════════════
-    // INVENTORY FETCH
-    // ══════════════════════════════════════════════════════════
-    async function loadInventory() {
-        const inventoryData = await apiCall('/api/inventory');
+      // ══════════════════════════════════════════════════════════
+      // INVENTORY FETCH
+      // ══════════════════════════════════════════════════════════
+      async function loadInventory() {
+        const inventoryData = await apiCall("/api/inventory");
         if (!inventoryData) return;
 
-        const liveInventory = (Array.isArray(inventoryData) ? inventoryData : (inventoryData.medicines || []))
-            .filter(i => i.status !== 'Archived');
+        const liveInventory = (
+          Array.isArray(inventoryData)
+            ? inventoryData
+            : inventoryData.medicines || []
+        ).filter((i) => i.status !== "Archived");
         const grouped = {};
-        const today   = new Date();
+        const today = new Date();
 
-        liveInventory.forEach(item => {
-            if (!item.medicine) return;
-            const isExpired = new Date(item.expiryDate) < today;
-            if (isExpired) return;
+        liveInventory.forEach((item) => {
+          if (!item.medicine) return;
+          const isExpired = new Date(item.expiryDate) < today;
+          if (isExpired) return;
 
-            const medObj = typeof item.medicine === 'object'
-                ? item.medicine
-                : { _id: item.medicine, name: item.name, type: 'General', strength: '' };
-
-            const medId = String(medObj._id);
-            const qty   = parseInt(item.quantity || 0);
-            if (qty <= 0) return;
-
-            const price = parseFloat(item.sellingPrice || item.price || medObj.sellingPrice || 0);
-
-            if (!grouped[medId]) {
-                // medObj.type holds "Tablet" / "Capsule" / "Syrup" — use it as rawForm
-                const rawForm = (
-                    medObj.type        || medObj.form        || medObj.dosageForm  ||
-                    medObj.drugForm    || medObj.formulation || medObj.dosage_form ||
-                    item.form          || item.dosageForm    || item.dosage_form   || ''
-                ).toLowerCase();
-
-                const medName = `${medObj.name} ${medObj.strength || ''}`.trim();
-
-                grouped[medId] = {
-                    id:       medId,
-                    name:     medName,
-                    category: medObj.category || medObj.type || 'General',
-                    form:     detectForm(medName, rawForm),
-                    price:    price,
-                    stock:    0,
-                    lowStock: false,
-                    catColor: getColorForCategory(medObj.category || medObj.type)
+          const medObj =
+            typeof item.medicine === "object"
+              ? item.medicine
+              : {
+                  _id: item.medicine,
+                  name: item.name,
+                  type: "General",
+                  strength: "",
                 };
-            }
 
-            grouped[medId].stock += qty;
-            const minLevel = parseInt(item.minStockLevel || 10);
-            grouped[medId].lowStock = grouped[medId].stock <= minLevel;
+          const medId = String(medObj._id);
+          const qty = parseInt(item.quantity || 0);
+          if (qty <= 0) return;
+
+          const price = parseFloat(
+            item.sellingPrice || item.price || medObj.sellingPrice || 0,
+          );
+
+          if (!grouped[medId]) {
+            // medObj.type holds "Tablet" / "Capsule" / "Syrup" — use it as rawForm
+            const rawForm = (
+              medObj.type ||
+              medObj.form ||
+              medObj.dosageForm ||
+              medObj.drugForm ||
+              medObj.formulation ||
+              medObj.dosage_form ||
+              item.form ||
+              item.dosageForm ||
+              item.dosage_form ||
+              ""
+            ).toLowerCase();
+
+            const medName = `${medObj.name} ${medObj.strength || ""}`.trim();
+
+            grouped[medId] = {
+              id: medId,
+              name: medName,
+              category: medObj.category || medObj.type || "General",
+              form: detectForm(medName, rawForm),
+              price: price,
+              stock: 0,
+              lowStock: false,
+              catColor: getColorForCategory(medObj.category || medObj.type),
+            };
+          }
+
+          grouped[medId].stock += qty;
+          const minLevel = parseInt(item.minStockLevel || 10);
+          grouped[medId].lowStock = grouped[medId].stock <= minLevel;
         });
 
-        products = Object.values(grouped).sort((a, b) => a.name.localeCompare(b.name));
+        products = Object.values(grouped).sort((a, b) =>
+          a.name.localeCompare(b.name),
+        );
         renderProducts();
-    }
+      }
 
-    // ══════════════════════════════════════════════════════════
-    // RENDER PRODUCTS
-    // ══════════════════════════════════════════════════════════
-    function renderProducts() {
-        const grid  = document.getElementById('productGrid');
-        const query = (document.getElementById('searchInput')?.value || '').toLowerCase();
+      // ══════════════════════════════════════════════════════════
+      // RENDER PRODUCTS
+      // ══════════════════════════════════════════════════════════
+      function renderProducts() {
+        const grid = document.getElementById("productGrid");
+        const query = (
+          document.getElementById("searchInput")?.value || ""
+        ).toLowerCase();
 
-        const list = products.filter(p => {
-            const matchCat    = activeCategory === 'all' || p.category.toLowerCase() === activeCategory.toLowerCase();
-            const matchSearch = p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query);
-            const matchForm   = activeForm === 'all'
-                || (p.form !== '' && p.form.includes(activeForm))
-                || p.name.toLowerCase().includes(activeForm);
-            return matchCat && matchSearch && matchForm;
+        const list = products.filter((p) => {
+          const matchCat =
+            activeCategory === "all" ||
+            p.category.toLowerCase() === activeCategory.toLowerCase();
+          const matchSearch =
+            p.name.toLowerCase().includes(query) ||
+            p.category.toLowerCase().includes(query);
+          const matchForm =
+            activeForm === "all" ||
+            (p.form !== "" && p.form.includes(activeForm)) ||
+            p.name.toLowerCase().includes(activeForm);
+          return matchCat && matchSearch && matchForm;
         });
 
         if (!list.length) {
-            grid.innerHTML = `<div class="col-span-3 flex flex-col items-center justify-center h-40 text-slate-400 gap-2">
+          grid.innerHTML = `<div class="col-span-3 flex flex-col items-center justify-center h-40 text-slate-400 gap-2">
                 <span class="material-icons-round text-4xl">search_off</span>
                 <p class="text-sm">No active medicines found</p>
             </div>`;
-            return;
+          return;
         }
 
-        grid.innerHTML = list.map(p => {
-            const cc     = catColors[p.catColor] || catColors.blue;
+        grid.innerHTML = list
+          .map((p) => {
+            const cc = catColors[p.catColor] || catColors.blue;
             const inCart = cart[p.id]?.qty || 0;
             return `
             <div class="group bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-teal-500 transition-all shadow-sm hover:shadow-md h-[200px] flex flex-col justify-between overflow-hidden">
                 <div class="flex justify-between items-start mb-4">
                     <div class="flex gap-1.5 flex-wrap">
                         <span class="px-2.5 py-1 ${cc.bg} ${cc.text} text-[10px] font-bold uppercase tracking-wider rounded">${p.category}</span>
-                        <span class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wider rounded">${p.form || ''}</span>
+                        <span class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wider rounded">${p.form || ""}</span>
                     </div>
-                    ${p.lowStock ? `<span class="px-2 py-0.5 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-500 text-[10px] font-bold rounded shrink-0">Low Stock</span>` : ''}
+                    ${p.lowStock ? `<span class="px-2 py-0.5 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-500 text-[10px] font-bold rounded shrink-0">Low Stock</span>` : ""}
                 </div>
                 <h3 class="text-base font-bold mb-1 truncate" title="${p.name}">${p.name}</h3>
                 <p class="text-xs text-slate-400 mb-5">Available Stock: ${p.stock} units</p>
                 <div class="flex items-center justify-between">
                     <span class="text-xl font-bold text-slate-800 dark:text-slate-100">₱${p.price.toFixed(2)}</span>
                     <div class="flex items-center gap-2">
-                        ${inCart > 0 ? `
+                        ${
+                          inCart > 0
+                            ? `
                         <div class="flex items-center gap-1">
                             <button onclick="updateQty('${p.id}',-1)" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 flex items-center justify-center hover:bg-red-100 hover:text-red-500 font-bold transition-all">−</button>
                             <span class="w-6 text-center text-sm font-bold">${inCart}</span>
                             <button onclick="updateQty('${p.id}',1)" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 flex items-center justify-center hover:bg-teal-100 hover:text-teal-600 font-bold transition-all">+</button>
-                        </div>` : `
+                        </div>`
+                            : `
                         <button onclick="addToCart('${p.id}')" class="w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-900 text-teal-600 border border-slate-100 flex items-center justify-center hover:bg-teal-600 hover:text-white transition-all transform active:scale-95">
                             <span class="material-icons-round">add</span>
-                        </button>`}
+                        </button>`
+                        }
                     </div>
                 </div>
             </div>`;
-        }).join('');
-    }
+          })
+          .join("");
+      }
 
-    // ══════════════════════════════════════════════════════════
-    // FORM DROPDOWN
-    // ══════════════════════════════════════════════════════════
-    function toggleFormDropdown() {
-        document.getElementById('formDropdown').classList.toggle('hidden');
-    }
+      // ══════════════════════════════════════════════════════════
+      // FORM DROPDOWN
+      // ══════════════════════════════════════════════════════════
+      function toggleFormDropdown() {
+        document.getElementById("formDropdown").classList.toggle("hidden");
+      }
 
-    function setForm(form) {
+      function setForm(form) {
         activeForm = form;
-        const labels = { all: 'Form', tablet: 'Tablet', capsule: 'Capsule', syrup: 'Syrup' };
-        const btn    = document.getElementById('formDropdownBtn');
-        document.getElementById('formDropdownLabel').textContent = labels[form] || 'Form';
-        btn.classList.toggle('border-teal-500', form !== 'all');
-        btn.classList.toggle('text-teal-600',   form !== 'all');
-        document.querySelectorAll('.form-opt').forEach(o => {
-            const isActive = o.dataset.form === form;
-            o.classList.toggle('bg-teal-50',          isActive);
-            o.classList.toggle('dark:bg-teal-900/20', isActive);
-            o.classList.toggle('text-teal-600',        isActive);
+        const labels = {
+          all: "Form",
+          tablet: "Tablet",
+          capsule: "Capsule",
+          syrup: "Syrup",
+        };
+        const btn = document.getElementById("formDropdownBtn");
+        document.getElementById("formDropdownLabel").textContent =
+          labels[form] || "Form";
+        btn.classList.toggle("border-teal-500", form !== "all");
+        btn.classList.toggle("text-teal-600", form !== "all");
+        document.querySelectorAll(".form-opt").forEach((o) => {
+          const isActive = o.dataset.form === form;
+          o.classList.toggle("bg-teal-50", isActive);
+          o.classList.toggle("dark:bg-teal-900/20", isActive);
+          o.classList.toggle("text-teal-600", isActive);
         });
-        document.getElementById('formDropdown').classList.add('hidden');
+        document.getElementById("formDropdown").classList.add("hidden");
         renderProducts();
-    }
+      }
 
-    // ══════════════════════════════════════════════════════════
-    // CATEGORY FILTER
-    // ══════════════════════════════════════════════════════════
-    function setCategory(btn, cat) {
+      // ══════════════════════════════════════════════════════════
+      // CATEGORY FILTER
+      // ══════════════════════════════════════════════════════════
+      function setCategory(btn, cat) {
         activeCategory = cat;
-        document.querySelectorAll('.category-btn').forEach(b => {
-            b.className = 'category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap';
+        document.querySelectorAll(".category-btn").forEach((b) => {
+          b.className =
+            "category-btn px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap";
         });
-        btn.className = 'category-btn px-5 py-2 rounded-full bg-teal-600 text-white text-sm font-medium shadow-md whitespace-nowrap';
+        btn.className =
+          "category-btn px-5 py-2 rounded-full bg-teal-600 text-white text-sm font-medium shadow-md whitespace-nowrap";
         renderProducts();
-    }
+      }
 
-    function filterProducts() { renderProducts(); }
+      function filterProducts() {
+        renderProducts();
+      }
 
-    // ══════════════════════════════════════════════════════════
-    // CART
-    // ══════════════════════════════════════════════════════════
-    function addToCart(id) {
-        const p = products.find(x => x.id === id);
+      // ══════════════════════════════════════════════════════════
+      // CART
+      // ══════════════════════════════════════════════════════════
+      function addToCart(id) {
+        const p = products.find((x) => x.id === id);
         if (!p) return;
         if (!cart[id]) cart[id] = { product: p, qty: 0 };
         if (cart[id].qty >= p.stock) {
-            Swal.fire({ icon: 'warning', title: 'Stock Limit', text: 'Cannot exceed available active stock.' });
-            return;
+          Swal.fire({
+            icon: "warning",
+            title: "Stock Limit",
+            text: "Cannot exceed available active stock.",
+          });
+          return;
         }
         cart[id].qty++;
         updateUI();
-    }
+      }
 
-    function updateQty(id, delta) {
+      function updateQty(id, delta) {
         if (!cart[id]) return;
         const p = cart[id].product;
         if (delta > 0 && cart[id].qty >= p.stock) {
-            Swal.fire({ icon: 'warning', title: 'Stock Limit', text: 'Cannot exceed available active stock.' });
-            return;
+          Swal.fire({
+            icon: "warning",
+            title: "Stock Limit",
+            text: "Cannot exceed available active stock.",
+          });
+          return;
         }
         cart[id].qty += delta;
         if (cart[id].qty <= 0) delete cart[id];
         updateUI();
-    }
+      }
 
-    function removeFromCart(id) { delete cart[id]; updateUI(); }
-    function updateUI() { renderProducts(); renderCart(); updateTotals(); }
+      function removeFromCart(id) {
+        delete cart[id];
+        updateUI();
+      }
+      function updateUI() {
+        renderProducts();
+        renderCart();
+        updateTotals();
+      }
 
-    // ══════════════════════════════════════════════════════════
-    // RENDER CART — new card style
-    // ══════════════════════════════════════════════════════════
-    function renderCart() {
-        const container = document.getElementById('cartItems');
-        const items     = Object.values(cart);
+      // ══════════════════════════════════════════════════════════
+      // RENDER CART — new card style
+      // ══════════════════════════════════════════════════════════
+      function renderCart() {
+        const container = document.getElementById("cartItems");
+        const items = Object.values(cart);
 
         if (!items.length) {
-            container.innerHTML = `<div class="flex flex-col items-center justify-center h-32 text-slate-400 text-sm gap-2">
+          container.innerHTML = `<div class="flex flex-col items-center justify-center h-32 text-slate-400 text-sm gap-2">
                 <span class="material-icons-round text-4xl">shopping_basket</span>
                 <p>No items added yet</p>
             </div>`;
-            document.getElementById('cartCount').textContent = '0 Items';
-            return;
+          document.getElementById("cartCount").textContent = "0 Items";
+          return;
         }
 
         const total = items.reduce((s, i) => s + i.qty, 0);
-        document.getElementById('cartCount').textContent = `${total} Item${total !== 1 ? 's' : ''}`;
+        document.getElementById("cartCount").textContent =
+          `${total} Item${total !== 1 ? "s" : ""}`;
 
-        container.innerHTML = items.map(({ product: p, qty }) => `
+        container.innerHTML = items
+          .map(
+            ({ product: p, qty }) => `
             <div class="group flex gap-3 p-3 rounded-xl border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-teal-200 dark:hover:border-teal-800 hover:shadow-sm transition-all">
 
                 <!-- Icon -->
                 <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-teal-50 to-slate-100 dark:from-teal-900/30 dark:to-slate-700 border border-slate-100 dark:border-slate-600 flex-shrink-0 flex flex-col items-center justify-center gap-0.5">
                     <span class="material-icons text-teal-500 text-2xl">medication</span>
-                    <span class="text-[9px] font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wide">${p.form || 'med'}</span>
+                    <span class="text-[9px] font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wide">${p.form || "med"}</span>
                 </div>
 
                 <!-- Details -->
@@ -863,7 +1613,7 @@
                     <!-- Category + form tags -->
                     <div class="flex gap-1 mt-1 flex-wrap">
                         <span class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-[9px] font-semibold rounded uppercase tracking-wide">${p.category}</span>
-                        <span class="px-1.5 py-0.5 bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 text-[9px] font-semibold rounded uppercase tracking-wide">${p.form || 'General'}</span>
+                        <span class="px-1.5 py-0.5 bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 text-[9px] font-semibold rounded uppercase tracking-wide">${p.form || "General"}</span>
                     </div>
 
                     <!-- Qty stepper -->
@@ -878,74 +1628,91 @@
                     </div>
 
                 </div>
-            </div>`).join('');
-    }
+            </div>`,
+          )
+          .join("");
+      }
 
-    function updateTotals() {
-        const subtotal = Object.values(cart).reduce((s, i) => s + i.product.price * i.qty, 0);
-        document.getElementById('totalAmount').textContent = `₱${subtotal.toFixed(2)}`;
-    }
+      function updateTotals() {
+        const subtotal = Object.values(cart).reduce(
+          (s, i) => s + i.product.price * i.qty,
+          0,
+        );
+        document.getElementById("totalAmount").textContent =
+          `₱${subtotal.toFixed(2)}`;
+      }
 
-    // ══════════════════════════════════════════════════════════
-    // DISPENSE
-    // ══════════════════════════════════════════════════════════
-    async function processDispense() {
+      // ══════════════════════════════════════════════════════════
+      // DISPENSE
+      // ══════════════════════════════════════════════════════════
+      async function processDispense() {
         const items = Object.values(cart);
         if (!items.length) {
-            Swal.fire({ icon: 'warning', title: 'Empty Order', text: 'Please add items to dispense.' });
-            return;
+          Swal.fire({
+            icon: "warning",
+            title: "Empty Order",
+            text: "Please add items to dispense.",
+          });
+          return;
         }
 
         const subtotal = items.reduce((s, i) => s + i.product.price * i.qty, 0);
 
         const payload = {
-            items:          items.map(i => ({ medicineId: i.product.id, quantity: i.qty })),
-            paymentMethod:  'dispense',
-            amountReceived: subtotal
+          items: items.map((i) => ({
+            medicineId: i.product.id,
+            quantity: i.qty,
+          })),
+          paymentMethod: "dispense",
+          amountReceived: subtotal,
         };
 
-        const res = await apiCall('/api/sales/otc', 'POST', payload);
+        const res = await apiCall("/api/sales/otc", "POST", payload);
 
         if (res) {
-            Swal.fire({
-                icon:  'success',
-                title: 'Dispensed Successfully!',
-                html:  `<p class="text-lg font-bold text-teal-600">Total: ₱${subtotal.toFixed(2)}</p>
+          Swal.fire({
+            icon: "success",
+            title: "Dispensed Successfully!",
+            html: `<p class="text-lg font-bold text-teal-600">Total: ₱${subtotal.toFixed(2)}</p>
                         <p class="text-sm text-gray-500 mt-1">Medicine has been dispensed</p>`,
-                confirmButtonColor: '#005a32',
-                confirmButtonText:  'New Dispense'
-            }).then(() => {
-                cart = {};
-                updateUI();
-                loadInventory();
-            });
+            confirmButtonColor: "#005a32",
+            confirmButtonText: "New Dispense",
+          }).then(() => {
+            cart = {};
+            updateUI();
+            loadInventory();
+          });
         }
-    }
+      }
 
-    // ══════════════════════════════════════════════════════════
-    // UTILS
-    // ══════════════════════════════════════════════════════════
-    function toggleDarkMode() {
-        document.documentElement.classList.toggle('dark');
-        sessionStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
-    }
+      // ══════════════════════════════════════════════════════════
+      // UTILS
+      // ══════════════════════════════════════════════════════════
+      function toggleDarkMode() {
+        document.documentElement.classList.toggle("dark");
+        sessionStorage.setItem(
+          "darkMode",
+          document.documentElement.classList.contains("dark"),
+        );
+      }
 
-    function logoutUser() {
+      function logoutUser() {
         Swal.fire({
-            title: 'Logout?', icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#005a32',
-            confirmButtonText: 'Yes, logout'
-        }).then(r => {
-            if (r.isConfirmed) {
-                sessionStorage.clear();
-                window.location.href = '../html/login.html';
-            }
+          title: "Logout?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#005a32",
+          confirmButtonText: "Yes, logout",
+        }).then((r) => {
+          if (r.isConfirmed) {
+            sessionStorage.clear();
+            window.location.href = "../html/login.html";
+          }
         });
-    }
-</script>
-<script src="../audio/audio-system.js"></script>
-<script src="../audio/audio-manager.js"></script>
-<script src="../js/windowcontrollerbtn.js"></script>
-</body>
+      }
+    </script>
+    <script src="../audio/audio-system.js"></script>
+    <script src="../audio/audio-manager.js"></script>
+    <script src="../js/windowcontrollerbtn.js"></script>
+  </body>
 </html>
