@@ -464,8 +464,32 @@
     });
 
     function logoutUser() {
-        Swal.fire({title:"Logout?",icon:"warning",showCancelButton:true,confirmButtonColor:"#005a32",confirmButtonText:"Yes, logout"})
-        .then(r=>{if(r.isConfirmed){sessionStorage.clear();window.location.href='../html/login.html';}});
+        Swal.fire({
+            title: "Logout?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#005a32",
+            confirmButtonText: "Yes, logout"
+        }).then(async (r) => { 
+            if (r.isConfirmed) { 
+                try {
+                    // Tell the backend we are logging out so it can record the Activity Log
+                    const token = getToken();
+                    if (token) {
+                        await fetch(`${API_BASE_URL}/api/users/logout`, {
+                            method: 'POST',
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                    }
+                } catch(e) {
+                    console.warn("Could not log logout activity", e);
+                }
+                
+                // Clear the session and redirect
+                sessionStorage.clear(); 
+                window.location.href = '../html/login.html'; 
+            } 
+        });
     }
 
     // ══════════════════════════════════════════════════════════

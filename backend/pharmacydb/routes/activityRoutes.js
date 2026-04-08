@@ -82,32 +82,37 @@ router.get('/stats', protect, admin, async (req, res) => {
   try {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    
+    // Get the exact timestamp for 24 hours ago
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-    const [total, todayCount, byRole, byModule, recentFailed] = await Promise.all([
-      // Total logs ever
-      ActivityLog.countDocuments(),
-
-      // Today's activity count
-      ActivityLog.countDocuments({ createdAt: { $gte: today } }),
-
-      // Count grouped by role
-      ActivityLog.aggregate([
-        { $group: { _id: '$userRole', count: { $sum: 1 } } }
-      ]),
-
-      // Count grouped by module
-      ActivityLog.aggregate([
-        { $group: { _id: '$module', count: { $sum: 1 } } }
-      ]),
-
-      // Failed actions in last 24 hours
-      ActivityLog.countDocuments({
-        status:    'failed',
-        createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
-      }),
+    const total = await ActivityLog.countDocuments();
+    const todayCount = await ActivityLog.countDocuments({ createdAt: { $gte: today } });
+    
+    const byRole = await ActivityLog.aggregate([
+      { $group: { _id: '$userRole', count: { $sum: 1 } } }
+    ]);
+    
+    const byModule = await ActivityLog.aggregate([
+      { $group: { _id: '$module', count: { $sum: 1 } } }
     ]);
 
-    res.json({ total, todayCount, byRole, byModule, recentFailed });
+    // 🔥 FIX 1: Use case-insensitive regex so "Failed" and "failed" both match!
+    const recentFailed = await ActivityLog.countDocuments({
+      status: { $regex: /^failed$/i },
+      createdAt: { $gte: twentyFourHoursAgo }
+    });
+
+    // 🔥 FIX 2: Get unique active users who logged in today
+    // distinct('userId') ensures that if a user logs in 5 times, they only count as 1 active user!
+    const activeUsersToday = await ActivityLog.distinct('userId', {
+      action: 'LOGIN',
+      createdAt: { $gte: today }
+    });
+    const activeUsersCount = activeUsersToday.length;
+
+    // Send the new activeUsersCount to the frontend
+    res.json({ total, todayCount, byRole, byModule, recentFailed, activeUsersCount });
   } catch (err) {
     console.error('Activity stats error:', err);
     res.status(500).json({ message: 'Server error fetching activity stats' });

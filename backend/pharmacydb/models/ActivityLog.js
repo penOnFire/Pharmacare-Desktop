@@ -11,7 +11,8 @@ const activityLogSchema = new mongoose.Schema(
     userName: { type: String, required: true },
     userRole: {
       type: String,
-      enum: ['admin', 'pharmacist', 'pharmacy_assistant'],
+      // 🔥 FIX: Added 'pharmacy assistant' (with a space) to match the User model
+      enum: ['admin', 'pharmacist', 'pharmacy assistant', 'pharmacy_assistant'],
       required: true,
     },
 

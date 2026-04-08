@@ -2181,219 +2181,52 @@
       </main>
     </div>
 
-    <!-- ADD/EDIT MEDICINE MODAL (existing) -->
-    <div
-      id="medicineModal"
-      class="hidden fixed inset-0 z-50 flex items-center justify-center p-4"
-      style="background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px)"
-    >
-      <div
-        class="bg-surface-light dark:bg-surface-dark rounded-xl p-6 max-w-md w-full border border-border-light dark:border-border-dark max-h-[90vh] overflow-y-auto"
-      >
+    <div id="medicineModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px)">
+      <div class="bg-surface-light dark:bg-surface-dark rounded-xl p-6 max-w-md w-full border border-border-light dark:border-border-dark max-h-[90vh] overflow-y-auto">
         <div class="flex items-center justify-between mb-4">
-          <h2
-            id="modalTitle"
-            class="text-xl font-semibold text-text-light dark:text-text-dark"
-          >
-            Add New Medicine
-          </h2>
-          <button
-            id="closeModalBtn"
-            class="text-subtext-light dark:text-subtext-dark hover:text-text-light"
-          >
-            <span class="material-icons">close</span>
-          </button>
+          <h2 id="modalTitle" class="text-xl font-semibold text-text-light dark:text-text-dark">Add New Medicine</h2>
+          <button id="closeModalBtn" class="text-subtext-light dark:text-subtext-dark hover:text-text-light"><span class="material-icons">close</span></button>
         </div>
         <div class="space-y-4">
           <div>
-            <label class="block text-sm text-subtext-light mb-1"
-              >Select Medicine</label
-            >
+            <label class="block text-sm text-subtext-light mb-1">Select Medicine</label>
             <div class="relative">
-              <input
-                type="text"
-                id="medicineSearchInput"
-                class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg pl-3 pr-10 py-2 text-sm focus:ring-primary focus:border-primary"
-                placeholder="Type to search..."
-                autocomplete="off"
-              />
+              <input type="text" id="medicineSearchInput" class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg pl-3 pr-10 py-2 text-sm focus:ring-primary focus:border-primary" placeholder="Type to search..." autocomplete="off" />
               <input type="hidden" id="medicineSelect" />
-              <div
-                class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"
-              >
-                <span class="material-icons text-gray-400 text-sm"
-                  >expand_more</span
-                >
-              </div>
+              <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"><span class="material-icons text-gray-400 text-sm">expand_more</span></div>
             </div>
-            <div
-              id="medicineDropdownList"
-              class="hidden absolute z-50 w-72 mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg max-h-60 overflow-y-auto"
-            ></div>
+            <div id="medicineDropdownList" class="hidden absolute z-50 w-72 mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg max-h-60 overflow-y-auto"></div>
           </div>
-          <div>
-            <label class="block text-sm text-subtext-light mb-1"
-              >Batch Number</label
-            ><input
-              type="text"
-              id="batchNumber"
-              class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg px-3 py-2 text-sm"
-              placeholder="Batch number"
-            />
-          </div>
+          <div><label class="block text-sm text-subtext-light mb-1">Batch Number</label><input type="text" id="batchNumber" class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg px-3 py-2 text-sm" placeholder="Batch number" /></div>
           <div class="grid grid-cols-3 gap-4">
-            <div>
-              <label class="block text-sm text-subtext-light mb-1"
-                >Quantity</label
-              ><input
-                type="number"
-                id="quantity"
-                min="1"
-                class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg px-3 py-2 text-sm"
-                placeholder="0"
-              />
-            </div>
-            <div>
-              <label class="block text-sm text-subtext-light mb-1"
-                >Cost Price (₱)</label
-              ><input
-                type="number"
-                id="costPrice"
-                step="0.01"
-                min="0"
-                class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg px-3 py-2 text-sm"
-                placeholder="0.00"
-              />
-            </div>
-            <div>
-              <label class="block text-sm text-subtext-light mb-1"
-                >Selling Price (₱)</label
-              ><input
-                type="number"
-                id="sellingPrice"
-                step="0.01"
-                min="0"
-                class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg px-3 py-2 text-sm"
-                placeholder="0.00"
-              />
-            </div>
+            <div><label class="block text-sm text-subtext-light mb-1">Quantity</label><input type="number" id="quantity" min="1" class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg px-3 py-2 text-sm" placeholder="0" /></div>
+            <div><label class="block text-sm text-subtext-light mb-1">Cost Price (₱)</label><input type="number" id="costPrice" step="0.01" min="0" class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg px-3 py-2 text-sm" placeholder="0.00" /></div>
+            <div><label class="block text-sm text-subtext-light mb-1">Selling Price (₱)</label><input type="number" id="sellingPrice" step="0.01" min="0" class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg px-3 py-2 text-sm" placeholder="0.00" /></div>
           </div>
-          <div>
-            <label class="block text-sm text-subtext-light mb-1"
-              >Expiry Date</label
-            ><input
-              type="date"
-              id="expiryDate"
-              class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg px-3 py-2 text-sm"
-            />
-          </div>
-          <div>
-            <label class="block text-sm text-subtext-light mb-1"
-              >Minimum Stock Level</label
-            ><input
-              type="number"
-              id="minStockLevel"
-              min="1"
-              value="10"
-              class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg px-3 py-2 text-sm"
-            />
-          </div>
+          <div><label class="block text-sm text-subtext-light mb-1">Expiry Date</label><input type="date" id="expiryDate" class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg px-3 py-2 text-sm" /></div>
+          <div><label class="block text-sm text-subtext-light mb-1">Minimum Stock Level</label><input type="number" id="minStockLevel" min="1" value="10" class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg px-3 py-2 text-sm" /></div>
         </div>
         <div class="flex gap-3 mt-6">
-          <button
-            type="button"
-            id="cancelMedicineBtn"
-            class="flex-1 px-4 py-2 border border-border-light dark:border-border-dark rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-text-light dark:text-text-dark"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            id="saveMedicineBtn"
-            class="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
-          >
-            Save Medicine
-          </button>
+          <button type="button" id="cancelMedicineBtn" class="flex-1 px-4 py-2 border border-border-light dark:border-border-dark rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-text-light dark:text-text-dark">Cancel</button>
+          <button type="button" id="saveMedicineBtn" class="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">Save Medicine</button>
         </div>
       </div>
     </div>
 
-    <!-- ══════════════════════════════════════════════════════
-         ADD NEW MEDICINE TO SUPPLIES MODAL
-         Styled to match "Add New User" modal design
-    ══════════════════════════════════════════════════════ -->
-    <div
-      id="addSupplyModal"
-      class="hidden fixed inset-0 z-50 flex items-center justify-center p-4"
-      style="background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(4px)"
-      onclick="handleAddSupplyBackdropClick(event)"
-    >
-      <div
-        class="as-card dark:bg-surface-dark"
-        style="
-          background: #fff;
-          border-radius: 16px;
-          width: 100%;
-          max-width: 460px;
-          overflow: hidden;
-          box-shadow:
-            0 24px 60px rgba(0, 0, 0, 0.16),
-            0 4px 16px rgba(0, 0, 0, 0.06);
-        "
-      >
-        <!-- Header -->
-        <div
-          style="
-            background: #f0fdf4;
-            padding: 20px 28px 18px;
-            border-bottom: 1px solid #dcfce7;
-          "
-        >
-          <h2
-            style="
-              font-size: 16px;
-              font-weight: 700;
-              color: #005a32;
-              margin: 0;
-              letter-spacing: -0.01em;
-            "
-            class="dark:text-green-400"
-          >
-            Add New Medicine to Supplies
-          </h2>
+    <div id="addSupplyModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(4px)" onclick="handleAddSupplyBackdropClick(event)">
+      <div class="as-card dark:bg-surface-dark" style="background: #fff; border-radius: 16px; width: 100%; max-width: 460px; overflow: hidden; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.16), 0 4px 16px rgba(0, 0, 0, 0.06);">
+        <div style="background: #f0fdf4; padding: 20px 28px 18px; border-bottom: 1px solid #dcfce7;">
+          <h2 style="font-size: 16px; font-weight: 700; color: #005a32; margin: 0; letter-spacing: -0.01em;" class="dark:text-green-400">Add New Medicine to Supplies</h2>
         </div>
-
-        <!-- Body -->
-        <div
-          style="
-            padding: 22px 28px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-          "
-        >
-          <!-- Medicine Name -->
+        <div style="padding: 22px 28px; display: flex; flex-direction: column; gap: 15px;">
           <div>
             <label class="as-label">Medicine Name</label>
-            <input
-              type="text"
-              id="addSupplyName"
-              class="as-input"
-              placeholder="e.g., Aspirin 100mg"
-            />
-            <p class="as-error" id="addSupplyNameErr">
-              Please enter a medicine name.
-            </p>
+            <input type="text" id="addSupplyName" class="as-input" placeholder="e.g., Aspirin 100mg" />
+            <p class="as-error" id="addSupplyNameErr">Please enter a medicine name.</p>
           </div>
-
-          <!-- Category -->
           <div>
             <label class="as-label">Category</label>
-            <select
-              id="addSupplyCategory"
-              class="as-input"
-              style="appearance: auto"
-            >
+            <select id="addSupplyCategory" class="as-input" style="appearance: auto">
               <option value="">-- Select Category --</option>
               <option value="Antibiotics">Antibiotics</option>
               <option value="Pain Relief">Pain Relief</option>
@@ -2402,424 +2235,125 @@
               <option value="Diabetes">Diabetes</option>
               <option value="Cardiovascular">Cardiovascular</option>
             </select>
-            <p class="as-error" id="addSupplyCategoryErr">
-              Please select a category.
-            </p>
+            <p class="as-error" id="addSupplyCategoryErr">Please select a category.</p>
           </div>
-
-          <!-- Quantity + Reorder Level (2 columns, like Role + Status) -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px;">
+            <div>
+              <label class="as-label">Type <span style="color:#dc2626;">*</span></label>
+              <select id="addSupplyType" class="as-input" style="appearance: auto;">
+                <option value="Tablet">Tablet</option>
+                <option value="Capsule">Capsule</option>
+                <option value="Syrup">Syrup</option>
+                <option value="Drops">Drops</option>
+                <option value="Ointment">Ointment</option>
+                <option value="Cream">Cream</option>
+              </select>
+            </div>
+            <div>
+              <label class="as-label">Strength <span style="color:#dc2626;">*</span></label>
+              <select id="addSupplyStrength" class="as-input" style="appearance: auto;">
+                <option value="10mg">10mg</option>
+                <option value="20mg">20mg</option>
+                <option value="100mg">100mg</option>
+                <option value="250mg">250mg</option>
+                <option value="500mg" selected>500mg</option>
+                <option value="1000mg">1000mg</option>
+                <option value="10mg/5ml">10mg/5ml</option>
+              </select>
+            </div>
+          </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px">
             <div>
               <label class="as-label">Initial Quantity</label>
-              <input
-                type="number"
-                id="addSupplyQuantity"
-                class="as-input"
-                value="0"
-                min="0"
-                placeholder="0"
-              />
-              <p class="as-error" id="addSupplyQuantityErr">
-                Quantity cannot be negative.
-              </p>
+              <input type="number" id="addSupplyQuantity" class="as-input" value="0" min="0" placeholder="0" />
+              <p class="as-error" id="addSupplyQuantityErr">Quantity cannot be negative.</p>
             </div>
             <div>
               <label class="as-label">Reorder Level</label>
-              <input
-                type="number"
-                id="addSupplyReorderLevel"
-                class="as-input"
-                value="50"
-                min="1"
-                placeholder="50"
-              />
-              <p class="as-error" id="addSupplyReorderErr">
-                Must be greater than 0.
-              </p>
+              <input type="number" id="addSupplyReorderLevel" class="as-input" value="50" min="1" placeholder="50" />
+              <p class="as-error" id="addSupplyReorderErr">Must be greater than 0.</p>
             </div>
           </div>
-
-          <!-- Unit Cost -->
           <div>
             <label class="as-label">Unit Cost (₱)</label>
-            <input
-              type="number"
-              id="addSupplyUnitCost"
-              class="as-input"
-              value="0"
-              step="0.01"
-              min="0"
-              placeholder="0.00"
-            />
-            <p class="as-error" id="addSupplyUnitCostErr">
-              Unit cost cannot be negative.
-            </p>
+            <input type="number" id="addSupplyUnitCost" class="as-input" value="0" step="0.01" min="0" placeholder="0.00" />
+            <p class="as-error" id="addSupplyUnitCostErr">Unit cost cannot be negative.</p>
           </div>
         </div>
-
-        <!-- Footer -->
-        <div
-          style="
-            padding: 12px 28px 22px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            align-items: center;
-          "
-        >
-          <button
-            id="addSupplyCancelBtn"
-            style="
-              padding: 9px 20px;
-              background: none;
-              border: none;
-              font-size: 14px;
-              font-weight: 500;
-              color: #6b7280;
-              cursor: pointer;
-              border-radius: 8px;
-              transition: background 0.15s;
-              font-family: &quot;Inter&quot;, sans-serif;
-            "
-            onmouseover="this.style.background = '#f3f4f6'"
-            onmouseout="this.style.background = 'none'"
-            onclick="closeAddSupplyModal()"
-          >
-            Cancel
-          </button>
-          <button
-            id="addSupplySubmitBtn"
-            style="
-              padding: 9px 22px;
-              background: #005a32;
-              color: #fff;
-              border: none;
-              border-radius: 8px;
-              font-size: 14px;
-              font-weight: 600;
-              cursor: pointer;
-              transition: background 0.15s;
-              font-family: &quot;Inter&quot;, sans-serif;
-              letter-spacing: 0.01em;
-            "
-            onmouseover="this.style.background = '#004526'"
-            onmouseout="this.style.background = '#005a32'"
-            onclick="submitAddSupply()"
-          >
-            Add Medicine
-          </button>
+        <div style="padding: 12px 28px 22px; display: flex; justify-content: flex-end; gap: 10px; align-items: center;">
+          <button id="addSupplyCancelBtn" style="padding: 9px 20px; background: none; border: none; font-size: 14px; font-weight: 500; color: #6b7280; cursor: pointer; border-radius: 8px; transition: background 0.15s; font-family: 'Inter', sans-serif;" onmouseover="this.style.background = '#f3f4f6'" onmouseout="this.style.background = 'none'" onclick="closeAddSupplyModal()">Cancel</button>
+          <button id="addSupplySubmitBtn" style="padding: 9px 22px; background: #005a32; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.15s; font-family: 'Inter', sans-serif; letter-spacing: 0.01em;" onmouseover="this.style.background = '#004526'" onmouseout="this.style.background = '#005a32'" onclick="submitAddSupply()">Add Medicine</button>
         </div>
       </div>
     </div>
 
-    <!-- ══════════════════════════════════════════════════════
-         RESTOCK MODAL — Styled to match "Add New User" design
-    ══════════════════════════════════════════════════════ -->
-    <div
-      id="restockModal"
-      class="hidden fixed inset-0 z-50 flex items-center justify-center p-4"
-      style="background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(4px)"
-      onclick="if (event.target === this) closeRestockModal();"
-    >
-      <div
-        class="as-card dark:bg-surface-dark"
-        style="
-          background: #fff;
-          border-radius: 16px;
-          width: 100%;
-          max-width: 480px;
-          overflow: hidden;
-          box-shadow:
-            0 24px 60px rgba(0, 0, 0, 0.16),
-            0 4px 16px rgba(0, 0, 0, 0.06);
-        "
-      >
-        <!-- Header -->
-        <div
-          style="
-            background: #f0fdf4;
-            padding: 20px 28px 18px;
-            border-bottom: 1px solid #dcfce7;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-          "
-        >
+    <div id="restockModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(4px)" onclick="if (event.target === this) closeRestockModal();">
+      <div class="as-card dark:bg-surface-dark" style="background: #fff; border-radius: 16px; width: 100%; max-width: 480px; overflow: hidden; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.16), 0 4px 16px rgba(0, 0, 0, 0.06);">
+        <div style="background: #f0fdf4; padding: 20px 28px 18px; border-bottom: 1px solid #dcfce7; display: flex; align-items: center; justify-content: space-between;">
           <div>
-            <h2
-              style="
-                font-size: 16px;
-                font-weight: 700;
-                color: #005a32;
-                margin: 0;
-                letter-spacing: -0.01em;
-              "
-              class="dark:text-green-400"
-            >
-              Restock Medicine
-            </h2>
-            <p
-              id="restockModalSubtitle"
-              style="
-                font-size: 12px;
-                color: #16a34a;
-                margin: 3px 0 0;
-                font-weight: 500;
-              "
-            ></p>
+            <h2 style="font-size: 16px; font-weight: 700; color: #005a32; margin: 0; letter-spacing: -0.01em;" class="dark:text-green-400">Restock Medicine</h2>
+            <p id="restockModalSubtitle" style="font-size: 12px; color: #16a34a; margin: 3px 0 0; font-weight: 500;"></p>
           </div>
-          <span
-            class="material-icons"
-            style="color: #16a34a; font-size: 22px; opacity: 0.7"
-            >add_shopping_cart</span
-          >
+          <span class="material-icons" style="color: #16a34a; font-size: 22px; opacity: 0.7">add_shopping_cart</span>
         </div>
-
-        <!-- Body -->
-        <div
-          style="
-            padding: 20px 28px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            max-height: 70vh;
-            overflow-y: auto;
-          "
-        >
-          <!-- Stock info banner -->
+        <div style="padding: 20px 28px; display: flex; flex-direction: column; gap: 14px; max-height: 70vh; overflow-y: auto;">
           <div class="as-info-banner" id="restockInfoBanner">
             <span class="material-icons">info</span>
             <p id="restockInfoText"></p>
           </div>
-
-          <!-- Quantity + Unit Cost (2 col) -->
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px">
             <div>
-              <label class="as-label"
-                >Quantity Purchased <span style="color: #dc2626">*</span></label
-              >
-              <input
-                type="number"
-                id="restockQuantity"
-                class="as-input"
-                value="10"
-                min="1"
-                placeholder="0"
-              />
-              <p class="as-error" id="restockQuantityErr">
-                Enter a valid quantity (≥1).
-              </p>
+              <label class="as-label">Quantity Purchased <span style="color: #dc2626">*</span></label>
+              <input type="number" id="restockQuantity" class="as-input" value="10" min="1" placeholder="0" />
+              <p class="as-error" id="restockQuantityErr">Enter a valid quantity (≥1).</p>
             </div>
             <div>
-              <label class="as-label"
-                >Unit Cost (₱) <span style="color: #dc2626">*</span></label
-              >
-              <input
-                type="number"
-                id="restockUnitCost"
-                class="as-input"
-                step="0.01"
-                min="0"
-                placeholder="0.00"
-              />
-              <p class="as-error" id="restockUnitCostErr">
-                Enter a valid unit cost.
-              </p>
+              <label class="as-label">Unit Cost (₱) <span style="color: #dc2626">*</span></label>
+              <input type="number" id="restockUnitCost" class="as-input" step="0.01" min="0" placeholder="0.00" />
+              <p class="as-error" id="restockUnitCostErr">Enter a valid unit cost.</p>
             </div>
           </div>
-
-          <!-- Supplier -->
           <div>
             <label class="as-label">Supplier</label>
-            <input
-              type="text"
-              id="restockSupplier"
-              class="as-input"
-              placeholder="e.g., MediSource Inc."
-            />
+            <input type="text" id="restockSupplier" class="as-input" placeholder="e.g., MediSource Inc." />
           </div>
-
-          <!-- Purchase Date -->
           <div>
-            <label class="as-label"
-              >Purchase Date <span style="color: #dc2626">*</span></label
-            >
+            <label class="as-label">Expiration Date <span style="color: #dc2626">*</span></label>
             <input type="date" id="restockDate" class="as-input" />
-            <p class="as-error" id="restockDateErr">
-              Please select a purchase date.
-            </p>
+            <p class="as-error" id="restockDateErr">Please select a purchase date.</p>
           </div>
-
-          <!-- Notes -->
           <div>
             <label class="as-label">Notes</label>
-            <textarea
-              id="restockNotes"
-              class="as-input"
-              rows="2"
-              style="resize: vertical; min-height: 60px"
-              placeholder="Additional notes..."
-            ></textarea>
+            <textarea id="restockNotes" class="as-input" rows="2" style="resize: vertical; min-height: 60px" placeholder="Additional notes..."></textarea>
           </div>
         </div>
-
-        <!-- Footer -->
-        <div
-          style="
-            padding: 14px 28px 22px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            align-items: center;
-            border-top: 1px solid #f0f0f0;
-          "
-        >
-          <button
-            style="
-              padding: 9px 20px;
-              background: none;
-              border: none;
-              font-size: 14px;
-              font-weight: 500;
-              color: #6b7280;
-              cursor: pointer;
-              border-radius: 8px;
-              transition: background 0.15s;
-              font-family: &quot;Inter&quot;, sans-serif;
-            "
-            onmouseover="this.style.background = '#f3f4f6'"
-            onmouseout="this.style.background = 'none'"
-            onclick="closeRestockModal()"
-          >
-            Cancel
-          </button>
-          <button
-            style="
-              padding: 9px 22px;
-              background: #005a32;
-              color: #fff;
-              border: none;
-              border-radius: 8px;
-              font-size: 14px;
-              font-weight: 600;
-              cursor: pointer;
-              transition: background 0.15s;
-              font-family: &quot;Inter&quot;, sans-serif;
-              display: flex;
-              align-items: center;
-              gap: 6px;
-            "
-            onmouseover="this.style.background = '#004526'"
-            onmouseout="this.style.background = '#005a32'"
-            onclick="submitRestock()"
-          >
-            <span class="material-icons" style="font-size: 16px"
-              >add_shopping_cart</span
-            >
-            Restock
+        <div style="padding: 14px 28px 22px; display: flex; justify-content: flex-end; gap: 10px; align-items: center; border-top: 1px solid #f0f0f0;">
+          <button style="padding: 9px 20px; background: none; border: none; font-size: 14px; font-weight: 500; color: #6b7280; cursor: pointer; border-radius: 8px; transition: background 0.15s; font-family: 'Inter', sans-serif;" onmouseover="this.style.background = '#f3f4f6'" onmouseout="this.style.background = 'none'" onclick="closeRestockModal()">Cancel</button>
+          <button style="padding: 9px 22px; background: #005a32; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.15s; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 6px;" onmouseover="this.style.background = '#004526'" onmouseout="this.style.background = '#005a32'" onclick="submitRestock()">
+            <span class="material-icons" style="font-size: 16px">add_shopping_cart</span> Restock
           </button>
         </div>
       </div>
     </div>
 
-    <!-- ══════════════════════════════════════════════════════
-         UPDATE SUPPLY MODAL — Styled to match "Add New User"
-    ══════════════════════════════════════════════════════ -->
-    <div
-      id="updateSupplyModal"
-      class="hidden fixed inset-0 z-50 flex items-center justify-center p-4"
-      style="background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(4px)"
-      onclick="if (event.target === this) closeUpdateSupplyModal();"
-    >
-      <div
-        class="as-card dark:bg-surface-dark"
-        style="
-          background: #fff;
-          border-radius: 16px;
-          width: 100%;
-          max-width: 480px;
-          overflow: hidden;
-          box-shadow:
-            0 24px 60px rgba(0, 0, 0, 0.16),
-            0 4px 16px rgba(0, 0, 0, 0.06);
-        "
-      >
-        <!-- Header -->
-        <div
-          style="
-            background: #f0fdf4;
-            padding: 20px 28px 18px;
-            border-bottom: 1px solid #dcfce7;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-          "
-        >
+    <div id="updateSupplyModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(4px)" onclick="if (event.target === this) closeUpdateSupplyModal();">
+      <div class="as-card dark:bg-surface-dark" style="background: #fff; border-radius: 16px; width: 100%; max-width: 480px; overflow: hidden; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.16), 0 4px 16px rgba(0, 0, 0, 0.06);">
+        <div style="background: #f0fdf4; padding: 20px 28px 18px; border-bottom: 1px solid #dcfce7; display: flex; align-items: center; justify-content: space-between;">
           <div>
-            <h2
-              style="
-                font-size: 16px;
-                font-weight: 700;
-                color: #005a32;
-                margin: 0;
-                letter-spacing: -0.01em;
-              "
-              class="dark:text-green-400"
-            >
-              Update Medicine
-            </h2>
-            <p
-              id="updateModalSubtitle"
-              style="
-                font-size: 12px;
-                color: #16a34a;
-                margin: 3px 0 0;
-                font-weight: 500;
-              "
-            ></p>
+            <h2 style="font-size: 16px; font-weight: 700; color: #005a32; margin: 0; letter-spacing: -0.01em;" class="dark:text-green-400">Update Medicine</h2>
+            <p id="updateModalSubtitle" style="font-size: 12px; color: #16a34a; margin: 3px 0 0; font-weight: 500;"></p>
           </div>
-          <span
-            class="material-icons"
-            style="color: #16a34a; font-size: 22px; opacity: 0.7"
-            >edit</span
-          >
+          <span class="material-icons" style="color: #16a34a; font-size: 22px; opacity: 0.7">edit</span>
         </div>
-
-        <!-- Body -->
-        <div
-          style="
-            padding: 20px 28px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-          "
-        >
-          <!-- Medicine Name -->
+        <div style="padding: 20px 28px; display: flex; flex-direction: column; gap: 14px;">
           <div>
-            <label class="as-label"
-              >Medicine Name <span style="color: #dc2626">*</span></label
-            >
-            <input
-              type="text"
-              id="updateSupplyName"
-              class="as-input"
-              placeholder="e.g., Aspirin 100mg"
-            />
-            <p class="as-error" id="updateSupplyNameErr">
-              Please enter a medicine name.
-            </p>
+            <label class="as-label">Medicine Name <span style="color: #dc2626">*</span></label>
+            <input type="text" id="updateSupplyName" class="as-input" placeholder="e.g., Aspirin 100mg" />
+            <p class="as-error" id="updateSupplyNameErr">Please enter a medicine name.</p>
           </div>
-
-          <!-- Category -->
           <div>
-            <label class="as-label"
-              >Category <span style="color: #dc2626">*</span></label
-            >
-            <select
-              id="updateSupplyCategory"
-              class="as-input"
-              style="appearance: auto"
-            >
+            <label class="as-label">Category <span style="color: #dc2626">*</span></label>
+            <select id="updateSupplyCategory" class="as-input" style="appearance: auto">
               <option value="Antibiotics">Antibiotics</option>
               <option value="Pain Relief">Pain Relief</option>
               <option value="Antihistamine">Antihistamine</option>
@@ -2828,124 +2362,57 @@
               <option value="Cardiovascular">Cardiovascular</option>
             </select>
           </div>
-
-          <!-- Quantity + Reorder Level (2 col) -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px;">
+            <div>
+              <label class="as-label">Type <span style="color:#dc2626;">*</span></label>
+              <select id="updateSupplyType" class="as-input" style="appearance: auto;">
+                <option value="Tablet">Tablet</option>
+                <option value="Capsule">Capsule</option>
+                <option value="Syrup">Syrup</option>
+                <option value="Drops">Drops</option>
+                <option value="Ointment">Ointment</option>
+                <option value="Cream">Cream</option>
+              </select>
+            </div>
+            <div>
+              <label class="as-label">Strength <span style="color:#dc2626;">*</span></label>
+              <select id="updateSupplyStrength" class="as-input" style="appearance: auto;">
+                <option value="10mg">10mg</option>
+                <option value="20mg">20mg</option>
+                <option value="100mg">100mg</option>
+                <option value="250mg">250mg</option>
+                <option value="500mg" selected>500mg</option>
+                <option value="1000mg">1000mg</option>
+                <option value="10mg/5ml">10mg/5ml</option>
+              </select>
+            </div>
+          </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px">
             <div>
-              <label class="as-label"
-                >Quantity in Stock <span style="color: #dc2626">*</span></label
-              >
-              <input
-                type="number"
-                id="updateSupplyQuantity"
-                class="as-input"
-                min="0"
-                placeholder="0"
-              />
-              <p class="as-error" id="updateSupplyQuantityErr">
-                Quantity cannot be negative.
-              </p>
+              <label class="as-label">Quantity in Stock <span style="color: #dc2626">*</span></label>
+              <input type="number" id="updateSupplyQuantity" class="as-input" min="0" placeholder="0" />
+              <p class="as-error" id="updateSupplyQuantityErr">Quantity cannot be negative.</p>
             </div>
             <div>
-              <label class="as-label"
-                >Reorder Level <span style="color: #dc2626">*</span></label
-              >
-              <input
-                type="number"
-                id="updateSupplyReorderLevel"
-                class="as-input"
-                min="0"
-                placeholder="50"
-              />
-              <p class="as-error" id="updateSupplyReorderErr">
-                Cannot be negative.
-              </p>
+              <label class="as-label">Reorder Level <span style="color: #dc2626">*</span></label>
+              <input type="number" id="updateSupplyReorderLevel" class="as-input" min="0" placeholder="50" />
+              <p class="as-error" id="updateSupplyReorderErr">Cannot be negative.</p>
             </div>
           </div>
-
-          <!-- Unit Cost -->
           <div>
-            <label class="as-label"
-              >Unit Cost (₱) <span style="color: #dc2626">*</span></label
-            >
-            <input
-              type="number"
-              id="updateSupplyUnitCost"
-              class="as-input"
-              step="0.01"
-              min="0"
-              placeholder="0.00"
-            />
-            <p class="as-error" id="updateSupplyUnitCostErr">
-              Unit cost cannot be negative.
-            </p>
+            <label class="as-label">Unit Cost (₱) <span style="color: #dc2626">*</span></label>
+            <input type="number" id="updateSupplyUnitCost" class="as-input" step="0.01" min="0" placeholder="0.00" />
+            <p class="as-error" id="updateSupplyUnitCostErr">Unit cost cannot be negative.</p>
           </div>
         </div>
-
-        <!-- Footer — Cancel | Delete | Update -->
-        <div
-          style="
-            padding: 14px 28px 22px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid #f0f0f0;
-          "
-        >
-          <!-- Left: Delete -->
-          <button
-            class="as-delete-btn"
-            onclick="confirmDeleteSupply()"
-            style="display: flex; align-items: center; gap: 6px"
-          >
-            <span class="material-icons" style="font-size: 16px"
-              >delete_outline</span
-            >
-            Delete
+        <div style="padding: 14px 28px 22px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f0f0f0;">
+          <button class="as-delete-btn" onclick="confirmDeleteSupply()" style="display: flex; align-items: center; gap: 6px">
+            <span class="material-icons" style="font-size: 16px">delete_outline</span> Delete
           </button>
-          <!-- Right: Cancel + Update -->
           <div style="display: flex; gap: 10px; align-items: center">
-            <button
-              style="
-                padding: 9px 20px;
-                background: none;
-                border: none;
-                font-size: 14px;
-                font-weight: 500;
-                color: #6b7280;
-                cursor: pointer;
-                border-radius: 8px;
-                transition: background 0.15s;
-                font-family: &quot;Inter&quot;, sans-serif;
-              "
-              onmouseover="this.style.background = '#f3f4f6'"
-              onmouseout="this.style.background = 'none'"
-              onclick="closeUpdateSupplyModal()"
-            >
-              Cancel
-            </button>
-            <button
-              style="
-                padding: 9px 22px;
-                background: #005a32;
-                color: #fff;
-                border: none;
-                border-radius: 8px;
-                font-size: 14px;
-                font-weight: 600;
-                cursor: pointer;
-                transition: background 0.15s;
-                font-family: &quot;Inter&quot;, sans-serif;
-                display: flex;
-                align-items: center;
-                gap: 6px;
-              "
-              onmouseover="this.style.background = '#004526'"
-              onmouseout="this.style.background = '#005a32'"
-              onclick="submitUpdateSupply()"
-            >
-              <span class="material-icons" style="font-size: 16px">check</span>
-              Update
+            <button style="padding: 9px 20px; background: none; border: none; font-size: 14px; font-weight: 500; color: #6b7280; cursor: pointer; border-radius: 8px; transition: background 0.15s; font-family: 'Inter', sans-serif;" onmouseover="this.style.background = '#f3f4f6'" onmouseout="this.style.background = 'none'" onclick="closeUpdateSupplyModal()">Cancel</button>
+            <button style="padding: 9px 22px; background: #005a32; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.15s; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 6px;" onmouseover="this.style.background = '#004526'" onmouseout="this.style.background = '#005a32'" onclick="submitUpdateSupply()">
+              <span class="material-icons" style="font-size: 16px">check</span> Update
             </button>
           </div>
         </div>
@@ -2956,616 +2423,371 @@
       const API_BASE_URL = "http://localhost:5001";
 
       function getToken() {
-        const d = sessionStorage.getItem("token");
-        if (d) return d;
+        const d = sessionStorage.getItem("token"); if (d) return d;
         const u = sessionStorage.getItem("userInfo");
-        if (u) {
-          try {
-            return JSON.parse(u).token || null;
-          } catch (e) {}
-        }
+        if (u) { try { return JSON.parse(u).token || null; } catch (e) {} }
         return null;
       }
 
       function updateNavClock() {
         const now = new Date();
-        document.getElementById("navClock").textContent =
-          now.toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: true,
-          });
-        document.getElementById("navDate").textContent = now
-          .toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          })
-          .toUpperCase();
+        document.getElementById("navClock").textContent = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true });
+        document.getElementById("navDate").textContent = now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }).toUpperCase();
       }
 
       function loadNavUserInfo() {
         try {
-          const raw = sessionStorage.getItem("userInfo");
-          if (!raw) return;
+          const raw = sessionStorage.getItem("userInfo"); if (!raw) return;
           const info = JSON.parse(raw);
           const name = info.name || info.firstName || info.username || "Admin";
           document.getElementById("navUserName").textContent = name;
-          document.getElementById("navUserRole").textContent =
-            info.role || info.position || "Administrator";
-          document.getElementById("navAvatar").textContent = name
-            .charAt(0)
-            .toUpperCase();
+          document.getElementById("navUserRole").textContent = info.role || info.position || "Administrator";
+          document.getElementById("navAvatar").textContent = name.charAt(0).toUpperCase();
         } catch (e) {}
       }
 
       function logoutUser() {
         Swal.fire({
-          title: "Logout?",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#005a32",
-          confirmButtonText: "Yes, logout",
-        }).then((r) => {
-          if (r.isConfirmed) {
-            sessionStorage.clear();
-            window.location.href = "../html/login.html";
-          }
+            title: "Logout?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#005a32",
+            confirmButtonText: "Yes, logout"
+        }).then(async (r) => { 
+            if (r.isConfirmed) { 
+                try {
+                    // Tell the backend we are logging out so it can record the Activity Log
+                    const token = getToken();
+                    if (token) {
+                        await fetch(`${API_BASE_URL}/api/users/logout`, {
+                            method: 'POST',
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                    }
+                } catch(e) {
+                    console.warn("Could not log logout activity", e);
+                }
+                
+                // Clear the session and redirect
+                sessionStorage.clear(); 
+                window.location.href = '../html/login.html'; 
+            } 
         });
-      }
+    }
 
-      document.getElementById("min-btn").addEventListener("click", () => {
-        if (window.electronAPI) window.electronAPI.minimize();
-      });
+      document.getElementById("min-btn").addEventListener("click", () => { if (window.electronAPI) window.electronAPI.minimize(); });
       document.getElementById("max-btn").addEventListener("click", () => {
         if (window.electronAPI) window.electronAPI.maximize();
         else {
-          if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(() => {});
-            document.getElementById("maxIcon").textContent = "filter_none";
-          } else {
-            document.exitFullscreen();
-            document.getElementById("maxIcon").textContent = "crop_square";
-          }
+          if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(() => {}); document.getElementById("maxIcon").textContent = "filter_none"; } 
+          else { document.exitFullscreen(); document.getElementById("maxIcon").textContent = "crop_square"; }
         }
       });
       document.getElementById("close-btn").addEventListener("click", () => {
-        Swal.fire({
-          title: "Close Application?",
-          icon: "question",
-          showCancelButton: true,
-          confirmButtonColor: "#005a32",
-          confirmButtonText: "Yes, close",
-        }).then((r) => {
-          if (r.isConfirmed) {
-            sessionStorage.clear();
-            window.location.href = "../html/login.html";
-          }
-        });
+        Swal.fire({ title: "Close Application?", icon: "question", showCancelButton: true, confirmButtonColor: "#005a32", confirmButtonText: "Yes, close",
+        }).then((r) => { if (r.isConfirmed) { sessionStorage.clear(); window.location.href = "../html/login.html"; } });
       });
 
-      // ══════════════════════════════════════════════════════════
-      // EXPORT HELPERS  (PDF only)
-      // ══════════════════════════════════════════════════════════
-
+      // ── EXPORT HELPERS  (PDF only) ──
       function formatPeso(amount) {
         if (isNaN(amount) || amount === null) return "₱0.00";
-        return (
-          "₱" +
-          parseFloat(amount).toLocaleString("en-PH", {
-            minimumFractionDigits: 2,
-          })
-        );
+        return "₱" + parseFloat(amount).toLocaleString("en-PH", { minimumFractionDigits: 2 });
       }
 
       function toggleExportMenu(menuId, forceClose = false) {
-        document.querySelectorAll(".export-menu.open").forEach((m) => {
-          if (m.id !== menuId) m.classList.remove("open");
-        });
+        document.querySelectorAll(".export-menu.open").forEach((m) => { if (m.id !== menuId) m.classList.remove("open"); });
         const menu = document.getElementById(menuId);
         if (!menu) return;
-        if (forceClose) {
-          menu.classList.remove("open");
-          return;
-        }
+        if (forceClose) { menu.classList.remove("open"); return; }
         menu.classList.toggle("open");
       }
 
       function getChecked(menuId) {
-        return [
-          ...document.querySelectorAll(
-            `#${menuId} input[type="checkbox"]:checked`,
-          ),
-        ].map((cb) => cb.value);
+        return [...document.querySelectorAll(`#${menuId} input[type="checkbox"]:checked`)].map((cb) => cb.value);
       }
 
       document.addEventListener("click", (e) => {
-        if (!e.target.closest(".export-wrap")) {
-          document
-            .querySelectorAll(".export-menu.open")
-            .forEach((m) => m.classList.remove("open"));
-        }
+        if (!e.target.closest(".export-wrap")) { document.querySelectorAll(".export-menu.open").forEach((m) => m.classList.remove("open")); }
       });
 
       function exportInventoryData(source, filters = []) {
-        if (!inventoryManager)
-          return Swal.fire(
-            "Not Ready",
-            "Inventory is still loading.",
-            "warning",
-          );
-        if (!filters.length)
-          return Swal.fire(
-            "Nothing selected",
-            "Please check at least one filter.",
-            "info",
-          );
+        if (!inventoryManager) return Swal.fire("Not Ready", "Inventory is still loading.", "warning");
+        if (!filters.length) return Swal.fire("Nothing selected", "Please check at least one filter.", "info");
 
-        toggleExportMenu(
-          source === "summary" ? "summaryExportMenu" : "batchExportMenu",
-          true,
-        );
+        toggleExportMenu(source === "summary" ? "summaryExportMenu" : "batchExportMenu", true);
 
-        const today = new Date();
-        const thirtyDays = new Date();
-        thirtyDays.setDate(today.getDate() + 30);
+        const today = new Date(); const thirtyDays = new Date(); thirtyDays.setDate(today.getDate() + 30);
         const timestamp = new Date().toISOString().split("T")[0];
 
         if (source === "summary") {
           const summary = {};
           inventoryManager.liveInventory.forEach((item) => {
-            const name = inventoryManager._getName(item);
-            const price = parseFloat(inventoryManager._getPrice(item) || 0);
-            const qty = parseInt(item.quantity || 0);
-            const isExp = new Date(item.expiryDate) < today;
-            if (!summary[name])
-              summary[name] = {
-                name,
-                batchCount: 0,
-                totalQty: 0,
-                totalValue: 0,
-                earliestExpiry: item.expiryDate,
-                minStock: item.minStockLevel || 10,
-                hasExpired: false,
-                hasExpiring: false,
-              };
+            const name = inventoryManager._getName(item); const price = parseFloat(inventoryManager._getPrice(item) || 0); const qty = parseInt(item.quantity || 0); const isExp = new Date(item.expiryDate) < today;
+            if (!summary[name]) summary[name] = { name, batchCount: 0, totalQty: 0, totalValue: 0, earliestExpiry: item.expiryDate, minStock: item.minStockLevel || 10, hasExpired: false, hasExpiring: false };
             summary[name].batchCount++;
-            if (!isExp) {
-              summary[name].totalQty += qty;
-              summary[name].totalValue += qty * price;
-            }
-            if (
-              new Date(item.expiryDate) < new Date(summary[name].earliestExpiry)
-            )
-              summary[name].earliestExpiry = item.expiryDate;
+            if (!isExp) { summary[name].totalQty += qty; summary[name].totalValue += qty * price; }
+            if (new Date(item.expiryDate) < new Date(summary[name].earliestExpiry)) summary[name].earliestExpiry = item.expiryDate;
             if (isExp && qty > 0) summary[name].hasExpired = true;
-            const daysLeft = Math.ceil(
-              (new Date(item.expiryDate) - today) / 864e5,
-            );
-            if (daysLeft >= 0 && daysLeft <= 30 && qty > 0)
-              summary[name].hasExpiring = true;
+            const daysLeft = Math.ceil((new Date(item.expiryDate) - today) / 864e5);
+            if (daysLeft >= 0 && daysLeft <= 30 && qty > 0) summary[name].hasExpiring = true;
           });
 
           const arr = Object.values(summary).filter((item) =>
             filters.some((f) => {
               if (f === "in-stock") return item.totalQty > item.minStock;
-              if (f === "low-stock")
-                return item.totalQty > 0 && item.totalQty <= item.minStock;
+              if (f === "low-stock") return item.totalQty > 0 && item.totalQty <= item.minStock;
               if (f === "out-of-stock") return item.totalQty === 0;
               if (f === "expiring") return item.hasExpiring;
               if (f === "expired") return item.hasExpired;
               return false;
-            }),
+            })
           );
 
-          if (!arr.length)
-            return Swal.fire(
-              "No Data",
-              "No medicines match the selected filters.",
-              "info",
-            );
-
-          const filterLabel = filters
-            .map(
-              (f) =>
-                ({
-                  "in-stock": "In Stock",
-                  "low-stock": "Low Stock",
-                  "out-of-stock": "Out of Stock",
-                  expiring: "Expiring Soon",
-                  expired: "Expired",
-                })[f],
-            )
-            .join(", ");
+          if (!arr.length) return Swal.fire("No Data", "No medicines match the selected filters.", "info");
+          const filterLabel = filters.map((f) => ({ "in-stock": "In Stock", "low-stock": "Low Stock", "out-of-stock": "Out of Stock", expiring: "Expiring Soon", expired: "Expired" }[f])).join(", ");
           const rows = arr.map((item) => {
             let status = "In Stock";
-            if (item.totalQty === 0) status = "Out of Stock";
-            else if (item.totalQty <= item.minStock) status = "Low Stock";
+            if (item.totalQty === 0) status = "Out of Stock"; else if (item.totalQty <= item.minStock) status = "Low Stock";
             const avg = item.totalQty > 0 ? item.totalValue / item.totalQty : 0;
-            return [
-              item.name,
-              item.batchCount,
-              item.totalQty,
-              inventoryManager.formatDate(item.earliestExpiry),
-              formatPeso(avg),
-              formatPeso(item.totalValue),
-              status,
-            ];
+            return [ item.name, item.batchCount, item.totalQty, inventoryManager.formatDate(item.earliestExpiry), formatPeso(avg), formatPeso(item.totalValue), status ];
           });
 
-          _exportInventoryPDF(
-            `WellServed_Summary_${timestamp}`,
-            `Medicine Inventory — ${filterLabel}`,
-            [
-              "Medicine Name",
-              "Total Batches",
-              "Total Quantity",
-              "Earliest Expiry",
-              "Avg Price",
-              "Total Value",
-              "Status",
-            ],
-            rows,
-          );
+          _exportInventoryPDF(`WellServed_Summary_${timestamp}`, `Medicine Inventory — ${filterLabel}`, [ "Medicine Name", "Total Batches", "Total Quantity", "Earliest Expiry", "Avg Price", "Total Value", "Status" ], rows);
         } else if (source === "batch") {
-          const source_data = [...inventoryManager.liveInventory].sort(
-            (a, b) => new Date(a.expiryDate) - new Date(b.expiryDate),
-          );
-
+          const source_data = [...inventoryManager.liveInventory].sort((a, b) => new Date(a.expiryDate) - new Date(b.expiryDate));
           const batches = source_data.filter((item) => {
-            const daysLeft = Math.ceil(
-              (new Date(item.expiryDate) - today) / 864e5,
-            );
+            const daysLeft = Math.ceil((new Date(item.expiryDate) - today) / 864e5);
             return filters.some((f) => {
-              if (f === "active") return daysLeft > 30;
-              if (f === "expiring") return daysLeft >= 0 && daysLeft <= 30;
-              if (f === "expired") return daysLeft < 0;
-              return false;
+              if (f === "active") return daysLeft > 30; if (f === "expiring") return daysLeft >= 0 && daysLeft <= 30; if (f === "expired") return daysLeft < 0; return false;
             });
           });
 
-          if (!batches.length)
-            return Swal.fire(
-              "No Data",
-              "No batches match the selected filters.",
-              "info",
-            );
-
-          const filterLabel = filters
-            .map(
-              (f) =>
-                ({
-                  active: "Active",
-                  expiring: "Expiring Soon",
-                  expired: "Expired",
-                })[f],
-            )
-            .join(", ");
+          if (!batches.length) return Swal.fire("No Data", "No batches match the selected filters.", "info");
+          const filterLabel = filters.map((f) => ({ active: "Active", expiring: "Expiring Soon", expired: "Expired" }[f])).join(", ");
           const rows = batches.map((item, i) => {
-            const daysLeft = Math.ceil(
-              (new Date(item.expiryDate) - today) / 864e5,
-            );
-            return [
-              i + 1,
-              inventoryManager._getName(item),
-              item.batchNumber || "N/A",
-              item.quantity,
-              inventoryManager.formatDate(item.expiryDate),
-              daysLeft < 0 ? "EXPIRED" : daysLeft,
-              formatPeso(inventoryManager._getPrice(item) || 0),
-              item.supplier || "Unknown",
-              daysLeft < 0
-                ? "Expired"
-                : daysLeft <= 30
-                  ? `Expiring (${daysLeft}d)`
-                  : "Active",
-            ];
+            const daysLeft = Math.ceil((new Date(item.expiryDate) - today) / 864e5);
+            return [ i + 1, inventoryManager._getName(item), item.batchNumber || "N/A", item.quantity, inventoryManager.formatDate(item.expiryDate), daysLeft < 0 ? "EXPIRED" : daysLeft, formatPeso(inventoryManager._getPrice(item) || 0), item.supplier || "Unknown", daysLeft < 0 ? "Expired" : daysLeft <= 30 ? `Expiring (${daysLeft}d)` : "Active" ];
           });
 
-          _exportInventoryPDF(
-            `WellServed_Batches_${timestamp}`,
-            `Batch Details (FEFO) — ${filterLabel}`,
-            [
-              "#",
-              "Medicine",
-              "Batch No.",
-              "Qty",
-              "Expiry",
-              "Days Left",
-              "Price",
-              "Supplier",
-              "Status",
-            ],
-            rows,
-          );
+          _exportInventoryPDF(`WellServed_Batches_${timestamp}`, `Batch Details (FEFO) — ${filterLabel}`, [ "#", "Medicine", "Batch No.", "Qty", "Expiry", "Days Left", "Price", "Supplier", "Status" ], rows);
         }
       }
 
       function _exportInventoryPDF(filename, title, headers, bodyRows) {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({ orientation: "landscape" });
-
-        doc.setFillColor(0, 90, 50);
-        doc.rect(0, 0, 297, 20, "F");
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(15);
-        doc.setFont("helvetica", "bold");
-        doc.text("Well Served Pharmacy", 14, 13);
-
-        doc.setTextColor(0, 0, 0);
-        doc.setFontSize(10);
-        doc.setFont("helvetica", "normal");
-        doc.text(title, 14, 28);
-        doc.text(`Generated: ${new Date().toLocaleString("en-PH")}`, 14, 34);
-        doc.text(`Total Records: ${bodyRows.length}`, 14, 40);
-
-        doc.autoTable({
-          head: [headers],
-          body: bodyRows,
-          startY: 46,
-          theme: "grid",
-          headStyles: {
-            fillColor: [0, 90, 50],
-            textColor: 255,
-            fontStyle: "bold",
-            fontSize: 8,
-          },
-          bodyStyles: { fontSize: 8 },
-          alternateRowStyles: { fillColor: [245, 250, 247] },
-          styles: { overflow: "linebreak", cellPadding: 3 },
-        });
-
+        const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: "landscape" });
+        doc.setFillColor(0, 90, 50); doc.rect(0, 0, 297, 20, "F"); doc.setTextColor(255, 255, 255); doc.setFontSize(15); doc.setFont("helvetica", "bold"); doc.text("Well Served Pharmacy", 14, 13);
+        doc.setTextColor(0, 0, 0); doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.text(title, 14, 28); doc.text(`Generated: ${new Date().toLocaleString("en-PH")}`, 14, 34); doc.text(`Total Records: ${bodyRows.length}`, 14, 40);
+        doc.autoTable({ head: [headers], body: bodyRows, startY: 46, theme: "grid", headStyles: { fillColor: [0, 90, 50], textColor: 255, fontStyle: "bold", fontSize: 8 }, bodyStyles: { fontSize: 8 }, alternateRowStyles: { fillColor: [245, 250, 247] }, styles: { overflow: "linebreak", cellPadding: 3 } });
         const pageCount = doc.internal.getNumberOfPages();
-        for (let i = 1; i <= pageCount; i++) {
-          doc.setPage(i);
-          doc.setFontSize(8);
-          doc.setTextColor(150);
-          doc.text(
-            `Page ${i} of ${pageCount}`,
-            doc.internal.pageSize.getWidth() - 30,
-            doc.internal.pageSize.getHeight() - 8,
-          );
-        }
-
-        doc.autoPrint();
-        const blobUrl = doc.output("bloburl");
-        const printWin = window.open(blobUrl, "_blank");
-        if (!printWin)
-          Swal.fire(
-            "Popup Blocked",
-            "Please allow popups for this page to print.",
-            "warning",
-          );
+        for (let i = 1; i <= pageCount; i++) { doc.setPage(i); doc.setFontSize(8); doc.setTextColor(150); doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.getWidth() - 30, doc.internal.pageSize.getHeight() - 8); }
+        doc.autoPrint(); const blobUrl = doc.output("bloburl"); const printWin = window.open(blobUrl, "_blank");
+        if (!printWin) Swal.fire("Popup Blocked", "Please allow popups for this page to print.", "warning");
       }
 
-      // ══════════════════════════════════════════════════════════
-      // ADD SUPPLY MODAL — Custom styled (matches "Add New User")
-      // ══════════════════════════════════════════════════════════
+      // 🔥 HELPER FUNCTION: Forces dropdowns to reset safely
+      function safelySetSelect(elementId, value, defaultVal) {
+          const select = document.getElementById(elementId);
+          if (!select) return;
+          const cleanValue = String(value || '').trim().toLowerCase();
+          const match = Array.from(select.options).find(opt => opt.value.trim().toLowerCase() === cleanValue);
+          if (match) select.value = match.value;
+          else select.value = defaultVal;
+      }
 
       function openAddSupplyModal() {
-        // Reset all fields
         document.getElementById("addSupplyName").value = "";
-        document.getElementById("addSupplyCategory").value = "";
         document.getElementById("addSupplyQuantity").value = "0";
         document.getElementById("addSupplyReorderLevel").value = "50";
         document.getElementById("addSupplyUnitCost").value = "0";
 
-        // Hide all error messages
-        [
-          "addSupplyNameErr",
-          "addSupplyCategoryErr",
-          "addSupplyQuantityErr",
-          "addSupplyReorderErr",
-          "addSupplyUnitCostErr",
-        ].forEach((id) => {
-          const el = document.getElementById(id);
-          if (el) el.style.display = "none";
+        if(document.getElementById("addSupplyCategory")) document.getElementById("addSupplyCategory").selectedIndex = 0;
+        if(document.getElementById("addSupplyType"))     document.getElementById("addSupplyType").selectedIndex = 0;
+        if(document.getElementById("addSupplyStrength")) document.getElementById("addSupplyStrength").value = "500mg";
+
+        [ "addSupplyNameErr", "addSupplyCategoryErr", "addSupplyQuantityErr", "addSupplyReorderErr", "addSupplyUnitCostErr" ].forEach((id) => {
+          const el = document.getElementById(id); if (el) el.style.display = "none";
         });
 
-        // Clear error highlight
-        [
-          "addSupplyName",
-          "addSupplyCategory",
-          "addSupplyQuantity",
-          "addSupplyReorderLevel",
-          "addSupplyUnitCost",
-        ].forEach((id) => {
-          const el = document.getElementById(id);
-          if (el) el.style.borderColor = "";
+        [ "addSupplyName", "addSupplyCategory", "addSupplyQuantity", "addSupplyReorderLevel", "addSupplyUnitCost" ].forEach((id) => {
+          const el = document.getElementById(id); if (el) el.style.borderColor = "";
         });
 
         document.getElementById("addSupplyModal").classList.remove("hidden");
         setTimeout(() => document.getElementById("addSupplyName").focus(), 60);
       }
 
-      function closeAddSupplyModal() {
-        document.getElementById("addSupplyModal").classList.add("hidden");
-      }
-
-      function handleAddSupplyBackdropClick(e) {
-        if (e.target === document.getElementById("addSupplyModal"))
-          closeAddSupplyModal();
-      }
-
+      function closeAddSupplyModal() { document.getElementById("addSupplyModal").classList.add("hidden"); }
+      function handleAddSupplyBackdropClick(e) { if (e.target === document.getElementById("addSupplyModal")) closeAddSupplyModal(); }
+      
       function _addSupplySetError(inputId, errId, show) {
-        const input = document.getElementById(inputId);
-        const err = document.getElementById(errId);
+        const input = document.getElementById(inputId), err = document.getElementById(errId);
         if (input) input.style.borderColor = show ? "#dc2626" : "";
         if (err) err.style.display = show ? "block" : "none";
       }
 
-      function submitAddSupply() {
+      async function submitAddSupply() {
         const name = document.getElementById("addSupplyName").value.trim();
         const category = document.getElementById("addSupplyCategory").value;
-        const quantity = parseInt(
-          document.getElementById("addSupplyQuantity").value,
-        );
-        const reorderLevel = parseInt(
-          document.getElementById("addSupplyReorderLevel").value,
-        );
-        const unitCost = parseFloat(
-          document.getElementById("addSupplyUnitCost").value,
-        );
-
-        let valid = true;
+        const type = document.getElementById("addSupplyType").value;
+        const strength = document.getElementById("addSupplyStrength").value;
+        const quantity = parseInt(document.getElementById("addSupplyQuantity").value);
+        const reorderLevel = parseInt(document.getElementById("addSupplyReorderLevel").value);
+        const unitCost = parseFloat(document.getElementById("addSupplyUnitCost").value);
 
         _addSupplySetError("addSupplyName", "addSupplyNameErr", !name);
-        _addSupplySetError(
-          "addSupplyCategory",
-          "addSupplyCategoryErr",
-          !category,
-        );
-        _addSupplySetError(
-          "addSupplyQuantity",
-          "addSupplyQuantityErr",
-          quantity < 0 || isNaN(quantity),
-        );
-        _addSupplySetError(
-          "addSupplyReorderLevel",
-          "addSupplyReorderErr",
-          reorderLevel <= 0 || isNaN(reorderLevel),
-        );
-        _addSupplySetError(
-          "addSupplyUnitCost",
-          "addSupplyUnitCostErr",
-          unitCost < 0 || isNaN(unitCost),
-        );
+        _addSupplySetError("addSupplyCategory", "addSupplyCategoryErr", !category);
+        _addSupplySetError("addSupplyQuantity", "addSupplyQuantityErr", quantity < 0 || isNaN(quantity));
+        _addSupplySetError("addSupplyReorderLevel", "addSupplyReorderErr", reorderLevel <= 0 || isNaN(reorderLevel));
+        _addSupplySetError("addSupplyUnitCost", "addSupplyUnitCostErr", unitCost < 0 || isNaN(unitCost));
 
-        if (
-          !name ||
-          !category ||
-          quantity < 0 ||
-          isNaN(quantity) ||
-          reorderLevel <= 0 ||
-          isNaN(reorderLevel) ||
-          unitCost < 0 ||
-          isNaN(unitCost)
-        )
-          return;
+        if (!name || !category || !type || !strength || quantity < 0 || isNaN(quantity) || reorderLevel <= 0 || isNaN(reorderLevel) || unitCost < 0 || isNaN(unitCost)) {
+            Swal.fire('Validation Error', 'Please complete all required fields.', 'warning');
+            return;
+        }
 
-        closeAddSupplyModal();
-        suppliesManager.add({
-          name,
-          category,
-          quantity,
-          reorderLevel,
-          unitCost,
-        });
-        Swal.fire({
-          icon: "success",
-          title: "Added!",
-          text: `${name} has been added to supplies.`,
-          confirmButtonColor: "#005a32",
-        });
+        Swal.fire({ title: 'Creating Medicine...', text: 'Adding to database...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
+
+        try {
+            await suppliesManager.add({ name, category, type, strength, quantity, reorderLevel, unitCost });
+            closeAddSupplyModal();
+            Swal.fire({ icon: 'success', title: 'Added!', text: `${name} has been added to supplies.`, confirmButtonColor: '#005a32' });
+        } catch(err) {
+            Swal.fire('Database Error', err.message, 'error');
+        }
       }
 
       // ══════════════════════════════════════════════════════════
-      // SUPPLIES MANAGER
+      // SUPPLIES MANAGER (STRICT DATABASE SYNC)
       // ══════════════════════════════════════════════════════════
       class SuppliesManager {
         constructor() {
-          this.supplies = [
-            {
-              id: 1,
-              name: "Amoxicillin 500mg",
-              category: "Antibiotics",
-              quantity: 245,
-              reorderLevel: 50,
-              unitCost: 15.5,
-            },
-            {
-              id: 2,
-              name: "Ibuprofen 200mg",
-              category: "Pain Relief",
-              quantity: 12,
-              reorderLevel: 25,
-              unitCost: 8.0,
-            },
-            {
-              id: 3,
-              name: "Cetirizine 10mg",
-              category: "Antihistamine",
-              quantity: 0,
-              reorderLevel: 30,
-              unitCost: 5.5,
-            },
-            {
-              id: 4,
-              name: "Omeprazole 20mg",
-              category: "Gastrointestinal",
-              quantity: 180,
-              reorderLevel: 40,
-              unitCost: 12.0,
-            },
-            {
-              id: 5,
-              name: "Metformin 500mg",
-              category: "Diabetes",
-              quantity: 95,
-              reorderLevel: 60,
-              unitCost: 10.0,
-            },
-            {
-              id: 6,
-              name: "Amlodipine 5mg",
-              category: "Cardiovascular",
-              quantity: 220,
-              reorderLevel: 50,
-              unitCost: 14.0,
-            },
-            {
-              id: 7,
-              name: "Paracetamol 500mg",
-              category: "Pain Relief",
-              quantity: 15,
-              reorderLevel: 100,
-              unitCost: 3.5,
-            },
-            {
-              id: 8,
-              name: "Losartan 50mg",
-              category: "Cardiovascular",
-              quantity: 140,
-              reorderLevel: 45,
-              unitCost: 18.0,
-            },
-          ];
-          this.nextId = 9;
+          this.supplies = [];
+          this.fetchSupplies();
         }
 
-        getAll() {
-          return this.supplies;
-        }
-        getById(id) {
-          return this.supplies.find((s) => s.id === id);
-        }
-        add(supply) {
-          supply.id = this.nextId++;
-          this.supplies.push(supply);
-          this.renderSupplies();
-          this.updateSuppliesStats();
-        }
-        update(id, updates) {
-          const i = this.supplies.findIndex((s) => s.id === id);
-          if (i !== -1) {
-            this.supplies[i] = { ...this.supplies[i], ...updates };
-            this.renderSupplies();
+        async fetchSupplies() {
+          try {
+            const token = getToken(); if (!token) return;
+            const [medsRes, invRes] = await Promise.all([
+                fetch(`${API_BASE_URL}/api/medicines`, { headers: { 'Authorization': `Bearer ${token}` } }),
+                fetch(`${API_BASE_URL}/api/inventory`, { headers: { 'Authorization': `Bearer ${token}` } })
+            ]);
+            if (!medsRes.ok || !invRes.ok) return;
+            
+            const medicinesData = await medsRes.json();
+            const invRaw = await invRes.json();
+            const medicines = Array.isArray(medicinesData) ? medicinesData : (medicinesData.data || []);
+            const inventory = Array.isArray(invRaw) ? invRaw : (invRaw.data || []);
+            
+            this.supplies = medicines.map(med => {
+                const batches = inventory.filter(i => {
+                    const medId = (i.medicine && i.medicine._id) ? i.medicine._id : i.medicine;
+                    return String(medId) === String(med._id);
+                });
+                
+                const activeBatches = batches.filter(b => b.status !== 'Archived' && !b.isArchived);
+                const totalQty = activeBatches.reduce((sum, b) => sum + (Number(b.quantity) || 0), 0);
+                const latestBatch = activeBatches.length ? activeBatches[activeBatches.length - 1] : null;
+                
+                return {
+                    id: med._id,
+                    latestInvId: latestBatch ? latestBatch._id : null,
+                    name: med.name,
+                    category: med.category || 'Uncategorized',
+                    type: med.type || 'Tablet',
+                    strength: med.strength || '500mg',
+                    quantity: totalQty,
+                    reorderLevel: latestBatch ? (latestBatch.minStockLevel || 50) : (med.minStockLevel || 50),
+                    unitCost: latestBatch ? (latestBatch.costPrice || 0) : 0
+                };
+            });
+            this.renderSupplies(); 
             this.updateSuppliesStats();
-          }
+          } catch(e) { console.error('Supplies fetch error:', e); }
         }
-        restock(id, qty) {
-          const s = this.getById(id);
-          if (s) {
-            s.quantity += qty;
-            this.renderSupplies();
-            this.updateSuppliesStats();
+
+        getAll()    { return this.supplies; }
+        getById(id) { return this.supplies.find(s => String(s.id) === String(id)); }
+
+        async add(supply) {
+          const token = getToken();
+          const medRes = await fetch(`${API_BASE_URL}/api/medicines`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+              body: JSON.stringify({ name: supply.name, category: supply.category, type: supply.type, strength: supply.strength })
+          });
+          if(!medRes.ok) { const err = await medRes.json(); throw new Error(err.message || 'Failed to create medicine.'); }
+          const newMedData = await medRes.json();
+          const newMedId = newMedData._id || newMedData.data?._id || newMedData.medicine?._id;
+
+          if(supply.quantity >= 0) {
+              const invRes = await fetch(`${API_BASE_URL}/api/inventory`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                  body: JSON.stringify({
+                      medicineId: newMedId, batchNumber: `INIT-${Date.now().toString().slice(-4)}`,
+                      quantity: supply.quantity, costPrice: supply.unitCost,
+                      sellingPrice: supply.unitCost > 0 ? supply.unitCost * 1.3 : 0, 
+                      minStockLevel: supply.reorderLevel, expiryDate: new Date(Date.now() + 365*24*60*60*1000).toISOString()
+                  })
+              });
+              if(!invRes.ok) throw new Error('Medicine created, but failed to add initial inventory stock.');
           }
+          await this.fetchSupplies();
+          if (window.inventoryManager) window.inventoryManager.fetchInventory();
         }
-        delete(id) {
-          this.supplies = this.supplies.filter((s) => s.id !== id);
-          this.renderSupplies();
-          this.updateSuppliesStats();
+
+        async update(id, updates) {
+          const supply = this.getById(id);
+          if (!supply) throw new Error("Medicine not found locally.");
+          const token = getToken();
+
+          if (supply.latestInvId) {
+              const invRes = await fetch(`${API_BASE_URL}/api/inventory/${supply.latestInvId}`, {
+                  method: 'PUT',
+                  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                  body: JSON.stringify({ quantity: updates.quantity, minStockLevel: updates.reorderLevel, costPrice: updates.unitCost, sellingPrice: updates.unitCost > 0 ? updates.unitCost * 1.3 : 0 })
+              });
+              if(!invRes.ok) { const errData = await invRes.json().catch(()=>({})); throw new Error(errData.message || "Database rejected inventory update."); }
+          }
+
+          const medRes = await fetch(`${API_BASE_URL}/api/medicines/${id}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+              body: JSON.stringify({ name: updates.name, category: updates.category, type: updates.type, strength: updates.strength })
+          });
+          if(!medRes.ok) { const errData = await medRes.json().catch(()=>({})); throw new Error(errData.message || "Failed to update Medicine details."); }
+          
+          await this.fetchSupplies();
+          if (window.inventoryManager) window.inventoryManager.fetchInventory();
+        }
+
+        async restock(id, restockData) {
+          const supply = this.getById(id);
+          if(!supply) throw new Error("Medicine not found locally.");
+          const token = getToken();
+          const res = await fetch(`${API_BASE_URL}/api/inventory`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+              body: JSON.stringify({
+                  medicineId: id, batchNumber: `RESTOCK-${Date.now().toString().slice(-4)}`,
+                  quantity: restockData.quantity, costPrice: restockData.unitCost,
+                  sellingPrice: restockData.unitCost > 0 ? restockData.unitCost * 1.3 : 0,
+                  minStockLevel: supply.reorderLevel, supplier: restockData.supplier || '',
+                  expiryDate: restockData.date ? new Date(restockData.date).toISOString() : new Date(Date.now() + 365*24*60*60*1000).toISOString()
+              })
+          });
+          if(!res.ok) throw new Error("Database rejected the restock request.");
+          await this.fetchSupplies();
+          if (window.inventoryManager) window.inventoryManager.fetchInventory();
+        }
+
+        async delete(id) {
+          const token = getToken();
+          const res = await fetch(`${API_BASE_URL}/api/medicines/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+          if(!res.ok) throw new Error("Database failed to delete medicine.");
+          await this.fetchSupplies();
+          if (window.inventoryManager) window.inventoryManager.fetchInventory();
         }
 
         getStatus(qty, reorderLevel) {
@@ -3576,39 +2798,30 @@
 
         renderSupplies() {
           const tbody = document.getElementById("suppliesTableBody");
-          const search =
-            document.getElementById("suppliesSearch")?.value.toLowerCase() ||
-            "";
-          const statusFilter =
-            document.getElementById("suppliesStatusFilter")?.value || "";
+          const search = document.getElementById("suppliesSearch")?.value.toLowerCase() || "";
+          const statusFilter = document.getElementById("suppliesStatusFilter")?.value || "";
           let filtered = this.supplies.filter((item) => {
-            const matchesSearch =
-              item.name.toLowerCase().includes(search) ||
-              item.category.toLowerCase().includes(search);
-            const matchesStatus =
-              !statusFilter ||
-              this.getStatus(item.quantity, item.reorderLevel) === statusFilter;
+            const matchesSearch = item.name.toLowerCase().includes(search) || item.category.toLowerCase().includes(search);
+            const matchesStatus = !statusFilter || this.getStatus(item.quantity, item.reorderLevel) === statusFilter;
             return matchesSearch && matchesStatus;
           });
+
           if (!filtered.length) {
             tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-500">No supplies found.</td></tr>`;
             return;
           }
-          tbody.innerHTML = filtered
-            .map((item) => {
+
+          tbody.innerHTML = filtered.map((item) => {
               const status = this.getStatus(item.quantity, item.reorderLevel);
-              let sb = "",
-                st = "";
+              let sb = "", st = "";
               if (status === "In Stock") {
-                sb = "bg-green-100 dark:bg-green-900/30";
-                st = "text-green-700 dark:text-green-400";
+                sb = "bg-green-100 dark:bg-green-900/30"; st = "text-green-700 dark:text-green-400";
               } else if (status === "Low Stock") {
-                sb = "bg-yellow-100 dark:bg-yellow-900/30";
-                st = "text-yellow-700 dark:text-yellow-400";
+                sb = "bg-yellow-100 dark:bg-yellow-900/30"; st = "text-yellow-700 dark:text-yellow-400";
               } else {
-                sb = "bg-red-100 dark:bg-red-900/30";
-                st = "text-red-700 dark:text-red-400";
+                sb = "bg-red-100 dark:bg-red-900/30"; st = "text-red-700 dark:text-red-400";
               }
+              // 🔥 FIXED: Added quotes around '${item.id}'
               return `<tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
                 <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${item.name}</td>
                 <td class="px-6 py-4 text-gray-600 dark:text-gray-400">${item.category}</td>
@@ -3617,33 +2830,24 @@
                 <td class="px-6 py-4 text-center"><span class="px-3 py-1 text-xs font-semibold rounded-full ${sb} ${st}">${status}</span></td>
                 <td class="px-6 py-4 text-center">
                     <div class="flex items-center justify-center gap-3">
-                        <button onclick="openRestockModal(${item.id})" class="text-primary hover:text-primary/80 font-medium text-sm flex items-center gap-1"><span class="material-icons text-lg">add_shopping_cart</span> Restock</button>
-                        <button onclick="openUpdateSupplyModal(${item.id})" class="text-accent hover:text-accent/80 font-medium text-sm flex items-center gap-1"><span class="material-icons text-lg">edit</span> Update</button>
+                        <button onclick="openRestockModal('${item.id}')" class="text-primary hover:text-primary/80 font-medium text-sm flex items-center gap-1"><span class="material-icons text-lg">add_shopping_cart</span> Restock</button>
+                        <button onclick="openUpdateSupplyModal('${item.id}')" class="text-accent hover:text-accent/80 font-medium text-sm flex items-center gap-1"><span class="material-icons text-lg">edit</span> Update</button>
                     </div>
                 </td>
             </tr>`;
-            })
-            .join("");
+            }).join("");
         }
 
         updateSuppliesStats() {
           const total = this.supplies.length;
-          const inStock = this.supplies.filter(
-            (s) => this.getStatus(s.quantity, s.reorderLevel) === "In Stock",
-          ).length;
-          const lowStock = this.supplies.filter(
-            (s) => this.getStatus(s.quantity, s.reorderLevel) === "Low Stock",
-          ).length;
-          const outOfStock = this.supplies.filter(
-            (s) =>
-              this.getStatus(s.quantity, s.reorderLevel) === "Out of Stock",
-          ).length;
+          const inStock = this.supplies.filter((s) => this.getStatus(s.quantity, s.reorderLevel) === "In Stock").length;
+          const lowStock = this.supplies.filter((s) => this.getStatus(s.quantity, s.reorderLevel) === "Low Stock").length;
+          const outOfStock = this.supplies.filter((s) => this.getStatus(s.quantity, s.reorderLevel) === "Out of Stock").length;
+          
           document.getElementById("suppliesTotalCount").textContent = total;
           document.getElementById("suppliesInStockCount").textContent = inStock;
-          document.getElementById("suppliesLowStockCount").textContent =
-            lowStock;
-          document.getElementById("suppliesOutOfStockCount").textContent =
-            outOfStock;
+          document.getElementById("suppliesLowStockCount").textContent = lowStock;
+          document.getElementById("suppliesOutOfStockCount").textContent = outOfStock;
         }
       }
 
@@ -3652,18 +2856,13 @@
         if (!suppliesManager) {
           suppliesManager = new SuppliesManager();
           window.suppliesManager = suppliesManager;
+        } else {
+            suppliesManager.fetchSupplies();
         }
-        suppliesManager.renderSupplies();
-        suppliesManager.updateSuppliesStats();
       }
-      function searchSupplies() {
-        if (suppliesManager) suppliesManager.renderSupplies();
-      }
-      function filterSuppliesByStatus() {
-        if (suppliesManager) suppliesManager.renderSupplies();
-      }
+      function searchSupplies() { if (suppliesManager) suppliesManager.renderSupplies(); }
+      function filterSuppliesByStatus() { if (suppliesManager) suppliesManager.renderSupplies(); }
 
-      // ── RESTOCK MODAL ──────────────────────────────────────────
       let _restockingSupplyId = null;
 
       function openRestockModal(supplyId) {
@@ -3671,51 +2870,35 @@
         if (!supply) return;
         _restockingSupplyId = supplyId;
 
-        // Populate subtitle
-        document.getElementById("restockModalSubtitle").textContent =
-          supply.name;
+        document.getElementById("restockModalSubtitle").textContent = supply.name;
+        const status = suppliesManager.getStatus(supply.quantity, supply.reorderLevel);
+        const statusColor = status === "In Stock" ? "#16a34a" : status === "Low Stock" ? "#b45309" : "#dc2626";
+        document.getElementById("restockInfoText").innerHTML = `<strong>Current Stock:</strong> ${supply.quantity} units &nbsp;·&nbsp; <strong>Reorder Level:</strong> ${supply.reorderLevel} units &nbsp;·&nbsp; <strong>Status:</strong> <span style="color:${statusColor};font-weight:600;">${status}</span>`;
 
-        // Populate info banner
-        const status = suppliesManager.getStatus(
-          supply.quantity,
-          supply.reorderLevel,
-        );
-        const statusColor =
-          status === "In Stock"
-            ? "#16a34a"
-            : status === "Low Stock"
-              ? "#b45309"
-              : "#dc2626";
-        document.getElementById("restockInfoText").innerHTML =
-          `<strong>Current Stock:</strong> ${supply.quantity} units &nbsp;·&nbsp; <strong>Reorder Level:</strong> ${supply.reorderLevel} units &nbsp;·&nbsp; <strong>Status:</strong> <span style="color:${statusColor};font-weight:600;">${status}</span>`;
-
-        // Reset fields
         document.getElementById("restockQuantity").value = "10";
-        document.getElementById("restockUnitCost").value =
-          supply.unitCost || "0";
+        document.getElementById("restockUnitCost").value = supply.unitCost || "0";
         document.getElementById("restockSupplier").value = "";
-        document.getElementById("restockDate").value = new Date()
-          .toISOString()
-          .split("T")[0];
+
+        // 🔥 SMART EXPIRY USING DATABASE TYPE
+        const medType = (supply.type || 'Tablet').toLowerCase();
+        let yearsToExpiry = 2; 
+        if (medType === 'syrup' || medType === 'drops') { yearsToExpiry = 1; } 
+        else if (medType === 'tablet' || medType === 'capsule') { yearsToExpiry = 3; }
+
+        const expDate = new Date();
+        expDate.setFullYear(expDate.getFullYear() + yearsToExpiry);
+        document.getElementById("restockDate").value = expDate.toISOString().split("T")[0];
         document.getElementById("restockNotes").value = "";
 
-        // Hide errors
-        ["restockQuantityErr", "restockUnitCostErr", "restockDateErr"].forEach(
-          (id) => {
-            const el = document.getElementById(id);
-            if (el) el.style.display = "none";
-          },
-        );
+        ["restockQuantityErr", "restockUnitCostErr", "restockDateErr"].forEach((id) => {
+          const el = document.getElementById(id); if (el) el.style.display = "none";
+        });
         ["restockQuantity", "restockUnitCost", "restockDate"].forEach((id) => {
-          const el = document.getElementById(id);
-          if (el) el.style.borderColor = "";
+          const el = document.getElementById(id); if (el) el.style.borderColor = "";
         });
 
         document.getElementById("restockModal").classList.remove("hidden");
-        setTimeout(
-          () => document.getElementById("restockQuantity").focus(),
-          60,
-        );
+        setTimeout(() => document.getElementById("restockQuantity").focus(), 60);
       }
 
       function closeRestockModal() {
@@ -3730,14 +2913,11 @@
         if (err) err.style.display = show ? "block" : "none";
       }
 
-      function submitRestock() {
-        const quantity = parseInt(
-          document.getElementById("restockQuantity").value,
-        );
-        const unitCost = parseFloat(
-          document.getElementById("restockUnitCost").value,
-        );
+      async function submitRestock() {
+        const quantity = parseInt(document.getElementById("restockQuantity").value);
+        const unitCost = parseFloat(document.getElementById("restockUnitCost").value);
         const date = document.getElementById("restockDate").value;
+        const supplier = document.getElementById("restockSupplier").value.trim();
 
         const qErr = !quantity || quantity <= 0 || isNaN(quantity);
         const ucErr = isNaN(unitCost) || unitCost < 0;
@@ -3750,29 +2930,27 @@
         if (qErr || ucErr || dErr) return;
 
         const supply = suppliesManager.getById(_restockingSupplyId);
-        const supplier = document
-          .getElementById("restockSupplier")
-          .value.trim();
 
-        closeRestockModal();
-        suppliesManager.restock(_restockingSupplyId, quantity);
-        if (unitCost !== supply.unitCost)
-          suppliesManager.update(_restockingSupplyId, { unitCost });
+        Swal.fire({ title: 'Processing Restock...', text: 'Updating database...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
 
-        Swal.fire({
-          icon: "success",
-          title: "Restocked Successfully!",
-          html: `<div class="text-left" style="font-size:14px;line-height:1.8;">
-            <p><strong>Medicine:</strong> ${supply.name}</p>
-            <p><strong>Quantity Added:</strong> ${quantity} units</p>
-            <p><strong>Total Cost:</strong> ₱${(quantity * unitCost).toFixed(2)}</p>
-            ${supplier ? `<p><strong>Supplier:</strong> ${supplier}</p>` : ""}
-        </div>`,
-          confirmButtonColor: "#005a32",
-        });
+        try {
+            await suppliesManager.restock(_restockingSupplyId, { quantity, unitCost, date, supplier });
+            closeRestockModal();
+            Swal.fire({
+                icon: "success", title: "Restocked Successfully!",
+                html: `<div class="text-left" style="font-size:14px;line-height:1.8;">
+                    <p><strong>Medicine:</strong> ${supply.name}</p>
+                    <p><strong>Quantity Added:</strong> ${quantity} units</p>
+                    <p><strong>Total Cost:</strong> ₱${(quantity * unitCost).toFixed(2)}</p>
+                    ${supplier ? `<p><strong>Supplier:</strong> ${supplier}</p>` : ""}
+                </div>`,
+                confirmButtonColor: "#005a32",
+            });
+        } catch(err) {
+            Swal.fire('Database Error', err.message, 'error');
+        }
       }
 
-      // ── UPDATE SUPPLY MODAL ────────────────────────────────────
       let _updatingSupplyId = null;
 
       function openUpdateSupplyModal(supplyId) {
@@ -3780,41 +2958,26 @@
         if (!supply) return;
         _updatingSupplyId = supplyId;
 
-        document.getElementById("updateModalSubtitle").textContent =
-          `Editing: ${supply.name}`;
+        document.getElementById("updateModalSubtitle").textContent = `Editing: ${supply.name}`;
         document.getElementById("updateSupplyName").value = supply.name;
-        document.getElementById("updateSupplyCategory").value = supply.category;
-        document.getElementById("updateSupplyQuantity").value = supply.quantity;
-        document.getElementById("updateSupplyReorderLevel").value =
-          supply.reorderLevel;
-        document.getElementById("updateSupplyUnitCost").value =
-          supply.unitCost || "0";
+        
+        // 🔥 SAFELY SET SCHEMA DROPDOWNS
+        safelySetSelect('updateSupplyCategory', supply.category, 'Antibiotics');
+        safelySetSelect('updateSupplyType', supply.type, 'Tablet');
+        safelySetSelect('updateSupplyStrength', supply.strength, '500mg');
 
-        // Hide errors + clear border
-        [
-          "updateSupplyNameErr",
-          "updateSupplyQuantityErr",
-          "updateSupplyReorderErr",
-          "updateSupplyUnitCostErr",
-        ].forEach((id) => {
-          const el = document.getElementById(id);
-          if (el) el.style.display = "none";
+        document.getElementById("updateSupplyQuantity").value = supply.quantity;
+        document.getElementById("updateSupplyReorderLevel").value = supply.reorderLevel;
+        document.getElementById("updateSupplyUnitCost").value = supply.unitCost || "0";
+
+        ["updateSupplyQuantityErr","updateSupplyReorderErr","updateSupplyUnitCostErr"].forEach((id) => {
+          const el = document.getElementById(id); if (el) el.style.display = "none";
         });
-        [
-          "updateSupplyName",
-          "updateSupplyQuantity",
-          "updateSupplyReorderLevel",
-          "updateSupplyUnitCost",
-        ].forEach((id) => {
-          const el = document.getElementById(id);
-          if (el) el.style.borderColor = "";
+        ["updateSupplyQuantity","updateSupplyReorderLevel","updateSupplyUnitCost"].forEach((id) => {
+          const el = document.getElementById(id); if (el) el.style.borderColor = "";
         });
 
         document.getElementById("updateSupplyModal").classList.remove("hidden");
-        setTimeout(
-          () => document.getElementById("updateSupplyName").focus(),
-          60,
-        );
       }
 
       function closeUpdateSupplyModal() {
@@ -3829,57 +2992,37 @@
         if (err) err.style.display = show ? "block" : "none";
       }
 
-      function submitUpdateSupply() {
-        const name = document.getElementById("updateSupplyName").value.trim();
-        const category = document.getElementById("updateSupplyCategory").value;
-        const quantity = parseInt(
-          document.getElementById("updateSupplyQuantity").value,
-        );
-        const reorderLevel = parseInt(
-          document.getElementById("updateSupplyReorderLevel").value,
-        );
-        const unitCost = parseFloat(
-          document.getElementById("updateSupplyUnitCost").value,
-        );
+      async function submitUpdateSupply() {
+        const name         = document.getElementById("updateSupplyName").value.trim();
+        const category     = document.getElementById("updateSupplyCategory").value;
+        const type         = document.getElementById("updateSupplyType").value;
+        const strength     = document.getElementById("updateSupplyStrength").value;
+        const quantity     = parseInt(document.getElementById("updateSupplyQuantity").value);
+        const reorderLevel = parseInt(document.getElementById("updateSupplyReorderLevel").value);
+        const unitCost     = parseFloat(document.getElementById("updateSupplyUnitCost").value);
 
-        const nErr = !name;
         const qErr = isNaN(quantity) || quantity < 0;
         const rErr = isNaN(reorderLevel) || reorderLevel < 0;
         const ucErr = isNaN(unitCost) || unitCost < 0;
 
-        _updateSetError("updateSupplyName", "updateSupplyNameErr", nErr);
-        _updateSetError(
-          "updateSupplyQuantity",
-          "updateSupplyQuantityErr",
-          qErr,
-        );
-        _updateSetError(
-          "updateSupplyReorderLevel",
-          "updateSupplyReorderErr",
-          rErr,
-        );
-        _updateSetError(
-          "updateSupplyUnitCost",
-          "updateSupplyUnitCostErr",
-          ucErr,
-        );
+        _updateSetError("updateSupplyQuantity", "updateSupplyQuantityErr", qErr);
+        _updateSetError("updateSupplyReorderLevel", "updateSupplyReorderErr", rErr);
+        _updateSetError("updateSupplyUnitCost", "updateSupplyUnitCostErr", ucErr);
 
-        if (nErr || qErr || rErr || ucErr) return;
+        if (!type || !strength || !category || qErr || rErr || ucErr) {
+            Swal.fire('Validation Error', 'Please ensure all required fields are filled correctly.', 'warning');
+            return;
+        }
 
-        closeUpdateSupplyModal();
-        suppliesManager.update(_updatingSupplyId, {
-          name,
-          category,
-          quantity,
-          reorderLevel,
-          unitCost,
-        });
-        Swal.fire({
-          icon: "success",
-          title: "Updated!",
-          text: `${name} has been updated.`,
-          confirmButtonColor: "#005a32",
-        });
+        Swal.fire({ title: 'Updating...', text: 'Saving changes to database...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
+
+        try {
+            await suppliesManager.update(_updatingSupplyId, { name, category, type, strength, quantity, reorderLevel, unitCost });
+            closeUpdateSupplyModal();
+            Swal.fire({ icon: "success", title: "Updated!", text: `${name} has been updated.`, confirmButtonColor: "#005a32" });
+        } catch(err) {
+            Swal.fire('Database Error', err.message, 'error');
+        }
       }
 
       async function confirmDeleteSupply() {
@@ -3895,13 +3038,13 @@
           confirmButtonText: "Yes, delete it",
         });
         if (cf.isConfirmed) {
-          suppliesManager.delete(supply.id);
-          Swal.fire({
-            icon: "success",
-            title: "Deleted!",
-            text: `${supply.name} has been removed.`,
-            confirmButtonColor: "#005a32",
-          });
+            Swal.fire({ title: 'Deleting...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
+            try {
+                await suppliesManager.delete(supply.id);
+                Swal.fire({ icon: "success", title: "Deleted!", text: `${supply.name} has been removed.`, confirmButtonColor: "#005a32" });
+            } catch(err) {
+                Swal.fire('Database Error', err.message, 'error');
+            }
         }
       }
 
@@ -4329,21 +3472,26 @@
 
         async fetchInventory() {
           try {
-            const res = await fetch(`${API_BASE_URL}/api/inventory`, {
-              headers: { Authorization: `Bearer ${getToken()}` },
-            });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const data = await res.json();
-            const all = Array.isArray(data)
-              ? data
-              : data.medicines || data.data || [];
-            this.liveInventory = all.filter((i) => i.status !== "Archived");
-            this.archivedInventory = all.filter((i) => i.status === "Archived");
+            const token = getToken();
+            if (!token) return;
+
+            // 🔥 Fetch BOTH Active and Archived batches from their correct backend endpoints
+            const [liveRes, archRes] = await Promise.all([
+                fetch(`${API_BASE_URL}/api/inventory`, { headers: { 'Authorization': `Bearer ${token}` } }),
+                fetch(`${API_BASE_URL}/api/inventory/archived`, { headers: { 'Authorization': `Bearer ${token}` } })
+            ]);
+            
+            if (!liveRes.ok || !archRes.ok) throw new Error(`HTTP Error fetching inventory`);
+            
+            const liveData = await liveRes.json();
+            const archData = await archRes.json();
+            
+            this.liveInventory     = Array.isArray(liveData) ? liveData : (liveData.data || []);
+            this.archivedInventory = Array.isArray(archData) ? archData : (archData.data || []);
+            
             this.renderTables();
             this.updateDashboardStats();
-          } catch (e) {
-            console.error("Inventory fetch error:", e);
-          }
+          } catch(e) { console.error('Inventory fetch error:', e); }
         }
 
         async apiCall(endpoint, method = "GET", body = null) {
@@ -4568,242 +3716,154 @@
 
         renderArchive() {
           const tbody = document.getElementById("archiveTableBody");
-          const search = document
-            .getElementById("archiveSearch")
-            .value.toLowerCase();
+          const search = document.getElementById("archiveSearch").value.toLowerCase();
           tbody.innerHTML = "";
           let archives = [...this.archivedInventory];
-          if (search)
-            archives = archives.filter((i) =>
-              this._getName(i).toLowerCase().includes(search),
-            );
+          if (search) archives = archives.filter((i) => this._getName(i).toLowerCase().includes(search));
           if (!archives.length) {
             tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-500">Archive is empty.</td></tr>`;
-            buildPagination(
-              0,
-              1,
-              archiveRowsPerPage,
-              "archivePaginationInfo",
-              "archivePaginationControls",
-              "goArchivePage",
-            );
+            buildPagination(0, 1, archiveRowsPerPage, "archivePaginationInfo", "archivePaginationControls", "goArchivePage");
             return;
           }
-          archivePage = buildPagination(
-            archives.length,
-            archivePage,
-            archiveRowsPerPage,
-            "archivePaginationInfo",
-            "archivePaginationControls",
-            "goArchivePage",
-          );
-          const pageItems = archives.slice(
-            (archivePage - 1) * archiveRowsPerPage,
-            archivePage * archiveRowsPerPage,
-          );
+          archivePage = buildPagination(archives.length, archivePage, archiveRowsPerPage, "archivePaginationInfo", "archivePaginationControls", "goArchivePage");
+          const pageItems = archives.slice((archivePage - 1) * archiveRowsPerPage, archivePage * archiveRowsPerPage);
           pageItems.forEach((item) => {
             const itemId = item._id || item.id;
+            // 🔥 Restored the "Restore" Button to the UI
             tbody.innerHTML += `<tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 opacity-75">
                 <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${this._getName(item)}</td>
                 <td class="px-6 py-4 text-gray-500">${item.batchNumber || "N/A"}</td>
                 <td class="px-6 py-4">${item.quantity}</td>
                 <td class="px-6 py-4 text-gray-500">${this.formatDate(item.expiryDate)}</td>
-                <td class="px-6 py-4">—</td>
+                <td class="px-6 py-4">
+                    <button onclick="inventoryManager.restoreBatch('${itemId}')" class="action-btn restore-btn flex items-center gap-1" title="Restore to Active">
+                        <span class="material-icons text-sm">unarchive</span> Restore
+                    </button>
+                </td>
             </tr>`;
           });
         }
 
         updateDashboardStats() {
-          const today = new Date(),
-            thirtyDays = new Date();
-          thirtyDays.setDate(today.getDate() + 30);
+          const today = new Date(), thirtyDays = new Date(); thirtyDays.setDate(today.getDate() + 30);
           const totalVal = this.liveInventory.reduce((acc, i) => {
             if (new Date(i.expiryDate) < today) return acc;
-            let p =
-              i.sellingPrice ||
-              i.price ||
-              (i.medicine && i.medicine.price) ||
-              0;
+            let p = i.sellingPrice || i.price || (i.medicine && i.medicine.price) || 0;
             return acc + i.quantity * parseFloat(p || 0);
           }, 0);
-          const lowStock = this.liveInventory.filter(
-            (i) =>
-              !new Date(i.expiryDate) < today &&
-              i.quantity <= (i.minStockLevel || 10) &&
-              i.quantity > 0,
-          ).length;
+          const lowStock = this.liveInventory.filter((i) => !new Date(i.expiryDate) < today && i.quantity <= (i.minStockLevel || 10) && i.quantity > 0).length;
           const expiring = this.liveInventory.filter((i) => {
             const d = new Date(i.expiryDate);
-            return (
-              d > today && d <= thirtyDays && parseInt(i.quantity || 0) > 0
-            );
+            return d > today && d <= thirtyDays && parseInt(i.quantity || 0) > 0;
           }).length;
-          const expiredWS = this.liveInventory.filter(
-            (i) =>
-              new Date(i.expiryDate) < today && parseInt(i.quantity || 0) > 0,
-          ).length;
-          document.getElementById("totalItems").textContent =
-            this.liveInventory.length;
-          document.getElementById("totalValue").textContent =
-            `₱${totalVal.toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+          const expiredWS = this.liveInventory.filter((i) => new Date(i.expiryDate) < today && parseInt(i.quantity || 0) > 0).length;
+          document.getElementById("totalItems").textContent = this.liveInventory.length;
+          document.getElementById("totalValue").textContent = `₱${totalVal.toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
           document.getElementById("lowStockCount").textContent = lowStock;
-          document.getElementById("expiringCount").textContent =
-            expiring + expiredWS;
+          document.getElementById("expiringCount").textContent = expiring + expiredWS;
           this.updateAlertLists();
         }
 
         updateAlertLists() {
-          const lsl = document.getElementById("lowStockList"),
-            el = document.getElementById("expiryList");
-          lsl.innerHTML = "";
-          el.innerHTML = "";
-          let hasLS = false,
-            hasExp = false;
-          const today = new Date(),
-            totals = {};
+          const lsl = document.getElementById("lowStockList"), el = document.getElementById("expiryList");
+          lsl.innerHTML = ""; el.innerHTML = "";
+          let hasLS = false, hasExp = false;
+          const today = new Date(), totals = {};
           this.liveInventory.forEach((item) => {
-            const name = this._getName(item),
-              qty = parseInt(item.quantity || 0),
-              min = item.minStockLevel || 10,
-              isExp = new Date(item.expiryDate) < today;
+            const name = this._getName(item), qty = parseInt(item.quantity || 0), min = item.minStockLevel || 10, isExp = new Date(item.expiryDate) < today;
             if (!totals[name]) totals[name] = { usableQty: 0, min };
             if (!isExp) totals[name].usableQty += qty;
           });
           Object.entries(totals).forEach(([name, data]) => {
-            if (data.usableQty === 0) {
-              hasLS = true;
-              lsl.innerHTML += `<li class="text-sm py-1 text-red-500">${name} &mdash; Out of Stock</li>`;
-            } else if (data.usableQty <= data.min) {
-              hasLS = true;
-              lsl.innerHTML += `<li class="text-sm py-1 text-accent">${name} (${data.usableQty} left &mdash; Low Stock)</li>`;
-            }
+            if (data.usableQty === 0) { hasLS = true; lsl.innerHTML += `<li class="text-sm py-1 text-red-500">${name} &mdash; Out of Stock</li>`; } 
+            else if (data.usableQty <= data.min) { hasLS = true; lsl.innerHTML += `<li class="text-sm py-1 text-accent">${name} (${data.usableQty} left &mdash; Low Stock)</li>`; }
           });
           this.liveInventory.forEach((item) => {
-            const name = this._getName(item),
-              qty = parseInt(item.quantity || 0);
+            const name = this._getName(item), qty = parseInt(item.quantity || 0);
             if (qty <= 0) return;
             const d = Math.ceil((new Date(item.expiryDate) - today) / 864e5);
-            if (d < 0) {
-              hasExp = true;
-              el.innerHTML += `<li class="text-sm py-1 font-semibold text-red-600">&#9888; EXPIRED &mdash; ${name} Batch ${item.batchNumber || "N/A"}</li>`;
-            } else if (d <= 30) {
-              hasExp = true;
-              el.innerHTML += `<li class="text-sm py-1 text-secondary">${name} &mdash; Batch ${item.batchNumber || "N/A"} (${d} days left)</li>`;
-            }
+            if (d < 0) { hasExp = true; el.innerHTML += `<li class="text-sm py-1 font-semibold text-red-600">&#9888; EXPIRED &mdash; ${name} Batch ${item.batchNumber || "N/A"}</li>`; } 
+            else if (d <= 30) { hasExp = true; el.innerHTML += `<li class="text-sm py-1 text-secondary">${name} &mdash; Batch ${item.batchNumber || "N/A"} (${d} days left)</li>`; }
           });
-          if (!hasLS)
-            lsl.innerHTML =
-              '<li class="text-gray-500 italic">Stock levels are healthy.</li>';
-          if (!hasExp)
-            el.innerHTML =
-              '<li class="text-gray-500 italic">No immediate expiries.</li>';
+          if (!hasLS) lsl.innerHTML = '<li class="text-gray-500 italic">Stock levels are healthy.</li>';
+          if (!hasExp) el.innerHTML = '<li class="text-gray-500 italic">No immediate expiries.</li>';
         }
 
         viewBatchDetails(medicineName) {
           this.switchTab("batch");
           const s = document.getElementById("batchSearch");
-          if (s) {
-            s.value = medicineName;
-            this.renderBatches();
-          }
+          if (s) { s.value = medicineName; this.renderBatches(); }
         }
 
         switchTab(tabName) {
           this.currentTab = tabName;
           ["summary", "batch", "archive"].forEach((t) => {
-            document
-              .getElementById(t + "Tab")
-              .classList.toggle("active", t === tabName);
-            document
-              .getElementById(t + "Section")
-              .classList.toggle("hidden", t !== tabName);
+            document.getElementById(t + "Tab").classList.toggle("active", t === tabName);
+            document.getElementById(t + "Section").classList.toggle("hidden", t !== tabName);
           });
           if (tabName === "summary") this.renderSummary();
-          if (tabName === "batch") {
-            document.getElementById("batchSearch").value = "";
-            this.renderBatches();
-          }
+          if (tabName === "batch") { document.getElementById("batchSearch").value = ""; this.renderBatches(); }
           if (tabName === "archive") this.renderArchive();
-
           if (tabName !== "summary") {
             const s = document.getElementById("summarySearch");
-            if (s) {
-              s.value = "";
-              summaryPage = 1;
-            }
+            if (s) { s.value = ""; summaryPage = 1; }
           }
         }
 
         async archiveBatch(id) {
-          const r = await Swal.fire({
-            title: "Archive Batch?",
-            text: "This batch will be moved to the Archive tab.",
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonColor: "#005a32",
-            confirmButtonText: "Yes, archive it",
-          });
-          if (!r.isConfirmed) return;
-          const idx = this.liveInventory.findIndex(
-            (i) => (i._id || i.id) === id,
-          );
-          if (idx === -1) {
-            Swal.fire("Error", "Item not found.", "error");
-            return;
-          }
-          const item = { ...this.liveInventory[idx], status: "Archived" };
-          this.liveInventory.splice(idx, 1);
-          this.archivedInventory.unshift(item);
-          this.renderTables();
-          this.updateDashboardStats();
-          this.apiCall(`/api/inventory/${id}`, "PATCH", {
-            status: "Archived",
-          }).catch(() => {});
-          await Swal.fire({
-            icon: "success",
-            title: "Archived!",
-            text: "Batch has been moved to the archive.",
-            confirmButtonColor: "#005a32",
-            timer: 1600,
-            showConfirmButton: false,
-          });
-          this.switchTab("archive");
+            const r = await Swal.fire({ title:'Archive Batch?', text:'This batch will be moved to the Archive tab.', icon:'question', showCancelButton:true, confirmButtonColor:'#005a32', confirmButtonText:'Yes, archive it' });
+            if (!r.isConfirmed) return;
+            
+            const idx = this.liveInventory.findIndex(i => (i._id || i.id) === id);
+            if (idx === -1) { Swal.fire('Error', 'Item not found.', 'error'); return; }
+            
+            Swal.fire({ title: 'Archiving...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
+            
+            try {
+                // 🔥 Send request to correct backend endpoint
+                await this.apiCall(`/api/inventory/${id}/archive`, 'PATCH');
+                
+                const item = { ...this.liveInventory[idx], isArchived: true };
+                this.liveInventory.splice(idx, 1);
+                this.archivedInventory.unshift(item);
+                
+                this.renderTables();
+                this.updateDashboardStats();
+                if (window.suppliesManager) window.suppliesManager.fetchSupplies(); // Sync supplies tab too!
+                
+                await Swal.fire({ icon:'success', title:'Archived!', text:'Batch has been moved to the archive.', confirmButtonColor:'#005a32', timer:1600, showConfirmButton:false });
+                this.switchTab('archive');
+            } catch (error) {
+                Swal.fire('Database Error', error.message || 'Failed to archive batch', 'error');
+            }
         }
 
         async restoreBatch(id) {
-          const r = await Swal.fire({
-            title: "Restore Batch?",
-            text: "This batch will be moved back to the FEFO (Batch Details) tab.",
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonColor: "#005a32",
-            confirmButtonText: "Yes, restore it",
-          });
-          if (!r.isConfirmed) return;
-          const idx = this.archivedInventory.findIndex(
-            (i) => (i._id || i.id) === id,
-          );
-          if (idx === -1) {
-            Swal.fire("Error", "Item not found.", "error");
-            return;
-          }
-          const item = { ...this.archivedInventory[idx], status: "In Stock" };
-          this.archivedInventory.splice(idx, 1);
-          this.liveInventory.push(item);
-          this.renderTables();
-          this.updateDashboardStats();
-          this.apiCall(`/api/inventory/${id}`, "PATCH", {
-            status: "In Stock",
-          }).catch(() => {});
-          await Swal.fire({
-            icon: "success",
-            title: "Restored!",
-            text: "Batch has been moved back to active inventory.",
-            confirmButtonColor: "#005a32",
-            timer: 1600,
-            showConfirmButton: false,
-          });
-          this.switchTab("batch");
+            const r = await Swal.fire({ title:'Restore Batch?', text:'This batch will be moved back to the FEFO (Batch Details) tab.', icon:'question', showCancelButton:true, confirmButtonColor:'#005a32', confirmButtonText:'Yes, restore it' });
+            if (!r.isConfirmed) return;
+            
+            const idx = this.archivedInventory.findIndex(i => (i._id || i.id) === id);
+            if (idx === -1) { Swal.fire('Error', 'Item not found.', 'error'); return; }
+            
+            Swal.fire({ title: 'Restoring...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
+            
+            try {
+                // 🔥 Send request to correct backend endpoint
+                await this.apiCall(`/api/inventory/${id}/restore`, 'PATCH');
+                
+                const item = { ...this.archivedInventory[idx], isArchived: false };
+                this.archivedInventory.splice(idx, 1);
+                this.liveInventory.push(item);
+                
+                this.renderTables();
+                this.updateDashboardStats();
+                if (window.suppliesManager) window.suppliesManager.fetchSupplies(); // Sync supplies tab too!
+                
+                await Swal.fire({ icon:'success', title:'Restored!', text:'Batch has been moved back to active inventory.', confirmButtonColor:'#005a32', timer:1600, showConfirmButton:false });
+                this.switchTab('batch');
+            } catch (error) {
+                Swal.fire('Database Error', error.message || 'Failed to restore batch', 'error');
+            }
         }
 
         async deleteBatch(id) {
@@ -4825,7 +3885,7 @@
             }
           }
         }
-
+        
         async openMedicineModal(editId = null) {
           document.getElementById("medicineModal").classList.remove("hidden");
           this.currentEditingId = editId;

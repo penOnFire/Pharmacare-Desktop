@@ -2350,21 +2350,35 @@
           return null;
         }
 
-        logoutUser() {
-          Swal.fire({
+        async logoutUser() {
+          const result = await Swal.fire({
             title: "Logout?",
             text: "Are you sure you want to log out?",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#005a32",
             confirmButtonText: "Yes, log out",
-          }).then((result) => {
-            if (result.isConfirmed) {
-              sessionStorage.removeItem("userInfo");
-              sessionStorage.removeItem("token");
-              window.location.href = "login.html";
-            }
           });
+
+          if (result.isConfirmed) {
+            try {
+                // Ping the backend to record the logout activity
+                const token = this.getToken();
+                if (token) {
+                    await fetch(`${API_BASE_URL}/api/users/logout`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                }
+            } catch(e) {
+                console.warn("Could not log logout activity", e);
+            }
+            
+            // Clear session and redirect
+            sessionStorage.removeItem("userInfo");
+            sessionStorage.removeItem("token");
+            window.location.href = "login.html";
+          }
         }
 
         async apiCall(endpoint, method = "GET", body = null) {

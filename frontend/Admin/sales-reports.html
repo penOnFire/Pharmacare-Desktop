@@ -12,6 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -487,8 +488,32 @@
     });
 
     function logoutUser() {
-        Swal.fire({ title:"Logout?", icon:"warning", showCancelButton:true, confirmButtonColor:"#005a32", confirmButtonText:"Yes, logout" })
-        .then(r => { if (r.isConfirmed) { sessionStorage.clear(); window.location.href = '../html/login.html'; } });
+        Swal.fire({
+            title: "Logout?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#005a32",
+            confirmButtonText: "Yes, logout"
+        }).then(async (r) => { 
+            if (r.isConfirmed) { 
+                try {
+                    // Tell the backend we are logging out so it can record the Activity Log
+                    const token = getToken();
+                    if (token) {
+                        await fetch(`${API_BASE_URL}/api/users/logout`, {
+                            method: 'POST',
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                    }
+                } catch(e) {
+                    console.warn("Could not log logout activity", e);
+                }
+                
+                // Clear the session and redirect
+                sessionStorage.clear(); 
+                window.location.href = '../html/login.html'; 
+            } 
+        });
     }
 
     // ══════════════════════════════════════════════════════════
@@ -703,21 +728,44 @@ notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
 
         async fetchSalesData() {
             const salesData = await this.apiCall('/api/sales');
-            if (salesData) {
+            
+            if (salesData && Array.isArray(salesData)) {
                 this.salesTransactions = [];
                 salesData.forEach(sale => {
-                    sale.items.forEach(item => {
-                        const qty = parseInt(item.quantity) || 0;
-                        const price = parseFloat(item.priceAtSale) || 0;
-                        this.salesTransactions.push({
-                            id: sale._id, date: sale.date.split('T')[0],
-                            medicineName: item.name || 'Unknown',
-                            category: this.getMedicineCategory(item.name || ''),
-                            quantity: qty, revenue: qty * price,
-                            pharmacist: sale.pharmacist ? sale.pharmacist.name : 'Unknown',
-                            fullDate: new Date(sale.date)
+                    // Safe date parsing to prevent crashes
+                    const rawDate = sale.date || sale.createdAt || Date.now();
+                    const parsedDate = new Date(rawDate);
+                    const safeDateString = parsedDate.toISOString().split('T')[0];
+
+                    if (sale.items && Array.isArray(sale.items)) {
+                        sale.items.forEach(item => {
+                            const qty = parseInt(item.quantity) || 0;
+                            const price = parseFloat(item.priceAtSale) || 0;
+                            
+                            let pharmName = 'Unknown';
+                            if (sale.pharmacist && sale.pharmacist.name) {
+                                // Format the role nicely
+                                let roleLabel = 'Pharmacist';
+                                if (sale.pharmacist.role === 'pharmacy_assistant') roleLabel = 'Pharmacy Assistant';
+                                if (sale.pharmacist.role === 'admin') roleLabel = 'Admin';
+                                
+                                pharmName = `${sale.pharmacist.name} (${roleLabel})`;
+                            } else if (typeof sale.pharmacist === 'string') {
+                                pharmName = 'Pharmacist ID: ' + sale.pharmacist.slice(-4);
+                            }
+
+                            this.salesTransactions.push({
+                                id: sale._id, 
+                                date: safeDateString,
+                                medicineName: item.name || 'Unknown',
+                                category: this.getMedicineCategory(item.name || ''),
+                                quantity: qty, 
+                                revenue: qty * price,
+                                pharmacist: pharmName,
+                                fullDate: parsedDate
+                            });
                         });
-                    });
+                    }
                 });
                 this.updateSalesData('30');
             }
@@ -828,10 +876,45 @@ notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
         renderCharts(data) {
             const salesCtx = document.getElementById('salesTrendChart').getContext('2d');
             if (this.trendChart) this.trendChart.destroy();
+            
             this.trendChart = new Chart(salesCtx, {
                 type: 'line',
-                data: { labels: data.salesTrend.labels, datasets: [{ label: 'Revenue', data: data.salesTrend.data, borderColor: '#005a32', backgroundColor: 'rgba(0,90,50,0.1)', fill: true, tension: 0.3 }] },
-                options: { responsive: true, maintainAspectRatio: false }
+                data: { 
+                    labels: data.salesTrend.labels, 
+                    datasets: [{ 
+                        label: 'Revenue', 
+                        data: data.salesTrend.data, 
+                        borderColor: '#005a32', 
+                        backgroundColor: 'rgba(0,90,50,0.1)', 
+                        fill: true, 
+                        tension: 0.3 
+                    }] 
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false } // Hides the redundant "Revenue" box at the top
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false }, // Removes messy vertical grid lines
+                            ticks: {
+                                autoSkip: true,
+                                maxTicksLimit: 7, // Forces the chart to show a max of 7 evenly spaced dates
+                                maxRotation: 0,   // Prevents the dates from slanting
+                                minRotation: 0
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                // Adds the Peso sign to the Y-axis numbers
+                                callback: function(value) { return '₱' + value.toLocaleString(); }
+                            }
+                        }
+                    }
+                }
             });
             const catCtx = document.getElementById('categoryChart').getContext('2d');
             if (this.catChart) this.catChart.destroy();

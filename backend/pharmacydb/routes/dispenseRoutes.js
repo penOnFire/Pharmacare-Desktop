@@ -1,20 +1,20 @@
 // dispenseRoutes.js
 import express from "express";
 import mongoose from "mongoose";
-import Prescription from "../models/Prescription.js"; // adjust path/name if different
-import Medicine from "../models/Medicine.js"; // adjust if different
+import { protect } from '../middleware/authMiddleware.js';
+import { logActivity } from '../utils/logActivity.js'; // 🔥 Added logging utility
+import Prescription from "../models/Prescription.js";
+import Medicine from "../models/Medicine.js";
 
 const router = express.Router();
 
 /**
  * Dispense a single prescription item
  * POST /api/prescriptions/:prescriptionId/items/:itemId/dispense
- * Body: { qty: Number }  // optional, default = remaining qty
- *
- * Returns JSON: { prescription: <updatedPrescription>, dispensed: { item, qty, timestamp } }
  */
 router.post(
   "/prescriptions/:prescriptionId/items/:itemId/dispense",
+  protect, // 🔥 Added protect to get req.user
   async (req, res) => {
     try {
       const { prescriptionId, itemId } = req.params;
@@ -27,7 +27,6 @@ router.post(
       const prescription = await Prescription.findById(prescriptionId).lean();
       if (!prescription) return res.status(404).json({ message: "Prescription not found" });
 
-      // Find item inside prescription
       const item = (prescription.items || []).find(i => String(i._id) === String(itemId));
       if (!item) return res.status(404).json({ message: "Item not found in prescription" });
 
@@ -38,12 +37,10 @@ router.post(
 
       const dispenseQty = requestedQty > 0 ? Math.min(requestedQty, remaining) : remaining;
 
-      // Update prescription item: increment dispensedQty, set item.status if fully dispensed
       const updatePath1 = {};
       updatePath1[`items.$[it].dispensedQty`] = (item.dispensedQty || 0) + dispenseQty;
       if (dispenseQty === remaining) updatePath1[`items.$[it].status`] = "dispensed";
 
-      // If your model uses different keys change above. Using arrayFilters to update the specific item.
       const updated = await Prescription.findOneAndUpdate(
         { _id: prescriptionId },
         { $set: updatePath1 },
@@ -54,14 +51,12 @@ router.post(
         }
       ).lean();
 
-      // Re-evaluate overall prescription status: if all items dispensed => completed, else partial
       const updatedItems = updated.items || [];
       const allDispensed = updatedItems.every(it => (it.qty || 0) === (it.dispensedQty || 0));
       const newStatus = allDispensed ? "completed" : "partial";
 
       await Prescription.findByIdAndUpdate(prescriptionId, { status: newStatus });
 
-      // OPTIONAL: decrement medicine stock (simple approach). If your system uses batch-level logic adapt here.
       try {
         if (item.medicineId) {
           await Medicine.findByIdAndUpdate(item.medicineId, {
@@ -69,11 +64,9 @@ router.post(
           });
         }
       } catch (e) {
-        // do not fail entire request if inventory update fails; log and continue
         console.error("Stock decrement error:", e);
       }
 
-      // Create a small dispensed record to return to frontend
       const dispensedRecord = {
         prescriptionId: updated._id,
         itemId,
@@ -81,11 +74,18 @@ router.post(
         medicineId: item.medicineId || null,
         qty: dispenseQty,
         timestamp: new Date().toISOString(),
-        dispensedBy: req.user ? req.user._id : null // if you have auth
+        dispensedBy: req.user ? req.user._id : null
       };
 
-      // Fetch final version of prescription to return
       const finalPrescription = await Prescription.findById(prescriptionId).lean();
+
+      // 🔥 LOG SINGLE ITEM DISPENSE ACTIVITY
+      await logActivity(req, {
+          action: 'DISPENSE_PRESCRIPTION',
+          module: 'Patient Records', // 🔥 Changed from 'Counter Dispensing'
+          description: `Dispensed ${dispenseQty} unit(s) of '${item.name || item.medicineName || "Unknown"}' for an active prescription.`,
+          targetId: prescriptionId.toString()
+      });
 
       return res.json({
         message: "Dispensed",
@@ -103,7 +103,7 @@ router.post(
  * Dispense all items for a prescription
  * POST /api/prescriptions/:prescriptionId/dispense-all
  */
-router.post("/prescriptions/:prescriptionId/dispense-all", async (req, res) => {
+router.post("/prescriptions/:prescriptionId/dispense-all", protect, async (req, res) => { // 🔥 Added protect
   try {
     const { prescriptionId } = req.params;
     if (!mongoose.isValidObjectId(prescriptionId)) return res.status(400).json({ message: "Invalid id" });
@@ -112,6 +112,7 @@ router.post("/prescriptions/:prescriptionId/dispense-all", async (req, res) => {
     if (!prescription) return res.status(404).json({ message: "Prescription not found" });
 
     const dispensedRecords = [];
+    let itemsDispensedCount = 0;
 
     for (const it of prescription.items) {
       const remaining = (it.qty || 0) - (it.dispensedQty || 0);
@@ -119,8 +120,8 @@ router.post("/prescriptions/:prescriptionId/dispense-all", async (req, res) => {
 
       it.dispensedQty = (it.dispensedQty || 0) + remaining;
       it.status = "dispensed";
+      itemsDispensedCount++;
 
-      // decrement stock per item (simple)
       if (it.medicineId) {
         try {
           await Medicine.findByIdAndUpdate(it.medicineId, { $inc: { stock: -remaining } });
@@ -142,6 +143,17 @@ router.post("/prescriptions/:prescriptionId/dispense-all", async (req, res) => {
 
     prescription.status = "completed";
     await prescription.save();
+
+    // 🔥 LOG DISPENSE ALL ACTIVITY WITH MEDICINE NAMES
+    if (itemsDispensedCount > 0) {
+        const medNames = [...new Set(dispensedRecords.map(r => r.name))].join(', ');
+        await logActivity(req, {
+            action: 'DISPENSE_PRESCRIPTION',
+            module: 'Patient Records', // 🔥 Changed from 'Counter Dispensing'
+            description: `Fully dispensed all remaining items (${medNames}) for a single prescription.`,
+            targetId: prescription._id.toString()
+        });
+    }
 
     return res.json({
       message: "All items dispensed",

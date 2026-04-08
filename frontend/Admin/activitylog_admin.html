@@ -252,11 +252,10 @@
                     <div class="bg-surface-light dark:bg-surface-dark p-5 rounded-xl border border-slate-200 dark:border-slate-800 border-t-4 border-t-accent">
                         <p class="text-xs text-subtext-light font-medium uppercase tracking-wide">Active Users</p>
                         <p id="statActiveUsers" class="text-3xl font-bold mt-1 text-text-light dark:text-text-dark">—</p>
-                        <p class="text-xs text-subtext-light mt-1">Logged actions today</p>
+                        <p class="text-xs text-subtext-light mt-1">Logged users today</p>
                     </div>
                 </div>
 
-                <!-- Filters -->
                 <div class="bg-surface-light dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 mb-4">
                     <div class="p-4 border-b border-slate-200 dark:border-slate-800">
                         <h2 class="font-semibold text-text-light dark:text-text-dark flex items-center gap-2">
@@ -265,43 +264,40 @@
                     </div>
                     <div class="p-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
                         <div class="lg:col-span-2">
-                            <input id="filterSearch" type="text" placeholder="Search user or description..."
+                            <input id="filterSearch" type="text" placeholder="Search user or description..." oninput="debouncedApplyFilters()"
                                 class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-background-light dark:bg-background-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
                         </div>
-                        <select id="filterRole" class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-background-light dark:bg-background-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                        <select id="filterRole" onchange="applyFilters()" class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-background-light dark:bg-background-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary">
                             <option value="">All Roles</option>
                             <option value="pharmacist">Pharmacist</option>
-                            <option value="pharmacy_assistant">Pharmacy Assistant</option>
+                            <option value="pharmacy assistant">Pharmacy Assistant</option>
                             <option value="admin">Admin</option>
                         </select>
-                        <select id="filterModule" class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-background-light dark:bg-background-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                        <select id="filterModule" onchange="applyFilters()" class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-background-light dark:bg-background-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary">
                             <option value="">All Modules</option>
                             <option value="Authentication">Authentication</option>
                             <option value="Inventory">Inventory</option>
                             <option value="Sales & Billing">Sales & Billing</option>
-                            
                             <option value="Patient Records">Patient Records</option>
                             <option value="User Management">User Management</option>
                             <option value="Counter Dispensing">Counter Dispensing</option>
                         </select>
-                        <select id="filterStatus" class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-background-light dark:bg-background-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                        <select id="filterStatus" onchange="applyFilters()" class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-background-light dark:bg-background-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary">
                             <option value="">All Status</option>
                             <option value="success">Success</option>
                             <option value="failed">Failed</option>
                         </select>
                         <div class="flex gap-2 lg:col-span-1">
-                            <input id="filterStartDate" type="date" title="From date"
+                            <input id="filterStartDate" type="date" title="From date" onchange="applyFilters()"
                                 class="w-full px-2 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-background-light dark:bg-background-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
                         </div>
                     </div>
                     <div class="px-4 pb-4 flex gap-2 justify-end">
-                        <input id="filterEndDate" type="date" title="To date"
+                        <input id="filterEndDate" type="date" title="To date" onchange="applyFilters()"
                             class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-background-light dark:bg-background-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
-                        <button onclick="applyFilters()" class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition flex items-center gap-1">
-                            <span class="material-icons text-base">search</span> Apply
-                        </button>
+                        
                         <button onclick="resetFilters()" class="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition flex items-center gap-1">
-                            <span class="material-icons text-base">refresh</span> Reset
+                            <span class="material-icons text-base">refresh</span> Reset Filters
                         </button>
                     </div>
                 </div>
@@ -400,8 +396,32 @@
     }
 
     function logoutUser() {
-        Swal.fire({title:'Logout?',icon:'warning',showCancelButton:true,confirmButtonColor:'#005a32',confirmButtonText:'Yes, logout'})
-        .then(r=>{ if(r.isConfirmed){ sessionStorage.clear(); window.location.href='../html/login.html'; } });
+        Swal.fire({
+            title: "Logout?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#005a32",
+            confirmButtonText: "Yes, logout"
+        }).then(async (r) => { 
+            if (r.isConfirmed) { 
+                try {
+                    // Tell the backend we are logging out so it can record the Activity Log
+                    const token = getToken();
+                    if (token) {
+                        await fetch(`${API_BASE_URL}/api/users/logout`, {
+                            method: 'POST',
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                    }
+                } catch(e) {
+                    console.warn("Could not log logout activity", e);
+                }
+                
+                // Clear the session and redirect
+                sessionStorage.clear(); 
+                window.location.href = '../html/login.html'; 
+            } 
+        });
     }
 
     document.getElementById('min-btn').addEventListener('click', () => { if(window.electronAPI) window.electronAPI.minimize(); });
@@ -540,10 +560,20 @@ notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
     }
 
     function roleBadge(role) {
-        if (role === 'admin')              return `<span class="badge badge-admin">Admin</span>`;
-        if (role === 'pharmacist')         return `<span class="badge badge-pharmacist">Pharmacist</span>`;
-        if (role === 'pharmacy_assistant') return `<span class="badge badge-assistant">Asst.</span>`;
-        return `<span class="badge">${role}</span>`;
+        if (!role) return `<span class="badge bg-gray-100 text-gray-800">Unknown</span>`;
+        
+        const cleanRole = role.toLowerCase();
+        
+        if (cleanRole === 'admin') {
+            return `<span class="badge bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">Admin</span>`;
+        } else if (cleanRole === 'pharmacist') {
+            return `<span class="badge bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">Pharmacist</span>`;
+        } else if (cleanRole === 'pharmacy assistant' || cleanRole === 'pharmacy_assistant') {
+            // 🔥 The new Purple badge for assistants!
+            return `<span class="badge bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400">Assistant</span>`;
+        }
+        
+        return `<span class="badge bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300">${role}</span>`;
     }
 
     function statusBadge(status) {
@@ -561,10 +591,14 @@ notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
             const res = await fetch(`${API_BASE_URL}/api/activity/stats`, { headers: { 'Authorization': `Bearer ${getToken()}` } });
             if (!res.ok) throw new Error();
             const data = await res.json();
+            
             document.getElementById('statTotal').textContent       = (data.total ?? 0).toLocaleString();
             document.getElementById('statToday').textContent       = (data.todayCount ?? 0).toLocaleString();
             document.getElementById('statFailed').textContent      = (data.recentFailed ?? 0).toLocaleString();
-            document.getElementById('statActiveUsers').textContent = (data.byRole || []).reduce((a,r) => a + r.count, 0).toLocaleString();
+            
+            // 🔥 Use the exact count of unique users who logged in today
+            document.getElementById('statActiveUsers').textContent = (data.activeUsersCount ?? 0).toLocaleString();
+            
         } catch(e) { console.warn('Stats fetch failed:', e); }
     }
 
@@ -598,18 +632,27 @@ notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
 
     function renderLogs(logs) {
         const tbody = document.getElementById('logTableBody');
+        if (!logs.length) { 
+            document.getElementById('logCount').textContent = `0 records`;
+            tbody.innerHTML = `<tr><td colspan="8" class="px-4 py-12 text-center text-subtext-light"><span class="material-icons text-4xl block mb-2 opacity-30">search_off</span>No activity logs found for the selected filters.</td></tr>`; 
+            return; 
+        }
+        
         document.getElementById('logCount').textContent = `${logs.length} records`;
-        if (!logs.length) { tbody.innerHTML = `<tr><td colspan="8" class="px-4 py-12 text-center text-subtext-light"><span class="material-icons text-4xl block mb-2 opacity-30">search_off</span>No activity logs found for the selected filters.</td></tr>`; return; }
+        
+        // 🔥 Added 'whitespace-nowrap' to Role, Module, Action, Status, and IP columns to prevent badge squishing
         tbody.innerHTML = logs.map(log => `
             <tr class="border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-                <td class="px-4 py-3 text-xs text-subtext-light whitespace-nowrap">${formatDate(log.createdAt)}</td>
-                <td class="px-4 py-3"><div class="font-semibold text-text-light dark:text-text-dark text-sm">${log.userName || '—'}</div></td>
-                <td class="px-4 py-3">${roleBadge(log.userRole)}</td>
-                <td class="px-4 py-3"><div class="flex items-center gap-1 text-xs text-subtext-light"><span class="material-icons text-sm">${moduleIcon(log.module)}</span>${log.module || '—'}</div></td>
-                <td class="px-4 py-3"><span class="action-chip">${log.action || '—'}</span></td>
-                <td class="px-4 py-3 text-sm text-text-light dark:text-text-dark max-w-xs truncate" title="${log.description || ''}">${log.description || '—'}</td>
-                <td class="px-4 py-3">${statusBadge(log.status)}</td>
-                <td class="px-4 py-3 text-xs text-subtext-light">${log.ipAddress || '—'}</td>
+                <td class="px-4 py-3 text-xs text-subtext-light whitespace-nowrap align-top">${formatDate(log.createdAt)}</td>
+                <td class="px-4 py-3 align-top"><div class="font-semibold text-text-light dark:text-text-dark text-sm">${log.userName || '—'}</div></td>
+                <td class="px-4 py-3 align-top whitespace-nowrap">${roleBadge(log.userRole)}</td>
+                <td class="px-4 py-3 align-top whitespace-nowrap"><div class="flex items-center gap-1 text-xs text-subtext-light"><span class="material-icons text-sm">${moduleIcon(log.module)}</span>${log.module || '—'}</div></td>
+                <td class="px-4 py-3 align-top whitespace-nowrap"><span class="action-chip">${log.action || '—'}</span></td>
+                <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-normal break-words min-w-[280px] max-w-[450px] align-top">
+                    ${log.description}
+                </td>
+                <td class="px-4 py-3 align-top whitespace-nowrap">${statusBadge(log.status)}</td>
+                <td class="px-4 py-3 text-xs text-subtext-light align-top whitespace-nowrap">${log.ipAddress || '—'}</td>
             </tr>`).join('');
     }
 
@@ -628,6 +671,15 @@ notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
         const newPage = currentPage + dir;
         if (newPage < 1 || newPage > totalPages) return;
         currentPage = newPage; fetchLogs();
+    }
+
+    // 🔥 Debounce function to prevent backend spam while typing
+    let searchTimeout;
+    function debouncedApplyFilters() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            applyFilters();
+        }, 300); // Waits 300ms after you stop typing before updating the table
     }
 
     function applyFilters() { currentPage = 1; fetchLogs(); }
