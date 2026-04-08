@@ -1,6 +1,7 @@
 import express from 'express';
 import { protect } from '../middleware/authMiddleware.js';
 import Medicine from '../models/Medicine.js';
+import { logActivity } from '../utils/logActivity.js'; // 🔥 Logger Imported!
 
 const router = express.Router();
 
@@ -32,10 +33,20 @@ router.post('/', protect, async (req, res) => {
     });
 
     const medicine = await newMedicine.save();
+
+    // 🔥 LOG THE ACTION
+    await logActivity(req, {
+      action: 'ADD_MEDICINE',
+      module: 'Inventory',
+      description: `Added new medicine: ${medicine.name} (${medicine.strength})`,
+      targetId: medicine._id.toString(),
+      status: 'success'
+    });
+
     res.status(201).json(medicine);
   } catch (err) {
     console.error(err.message);
-    res.status(500).json({ message: 'Server Error' });
+    res.status(400).json({ message: err.message || 'Server Error' });
   }
 });
 
@@ -51,6 +62,64 @@ router.get('/dropdown', protect, async (req, res) => {
     res.json(dropdownList);
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+});
+
+// @route   PUT /api/medicines/:id
+// @desc    Update an existing medicine's details
+router.put('/:id', protect, async (req, res) => {
+  try {
+    const { name, genericName, category, type, strength, supplier, requiresPrescription } = req.body;
+
+    const updatedMedicine = await Medicine.findByIdAndUpdate(
+      req.params.id,
+      { name, genericName, category, type, strength, supplier, requiresPrescription },
+      { new: true, runValidators: true } 
+    );
+
+    if (!updatedMedicine) {
+      return res.status(404).json({ message: 'Medicine not found in database.' });
+    }
+
+    // 🔥 LOG THE UPDATE
+    await logActivity(req, {
+      action: 'EDIT_MEDICINE',
+      module: 'Inventory',
+      description: `Updated medicine details: ${updatedMedicine.name}`,
+      targetId: updatedMedicine._id.toString(),
+      status: 'success'
+    });
+
+    res.json({ message: 'Medicine updated successfully', data: updatedMedicine });
+  } catch (err) {
+    console.error("Update Error:", err.message);
+    res.status(400).json({ message: err.message }); 
+  }
+});
+
+// @route   DELETE /api/medicines/:id
+// @desc    Delete a medicine entirely
+router.delete('/:id', protect, async (req, res) => {
+  try {
+    const medicine = await Medicine.findByIdAndDelete(req.params.id);
+    
+    if (!medicine) {
+      return res.status(404).json({ message: 'Medicine not found.' });
+    }
+
+    // 🔥 LOG THE DELETION
+    await logActivity(req, {
+      action: 'DELETE_MEDICINE',
+      module: 'Inventory',
+      description: `Deleted medicine: ${medicine.name}`,
+      targetId: req.params.id,
+      status: 'success'
+    });
+
+    res.json({ message: 'Medicine deleted successfully.' });
+  } catch (err) {
+    console.error("Delete Error:", err.message);
+    res.status(500).json({ message: 'Server error while deleting medicine.' });
   }
 });
 

@@ -911,21 +911,33 @@
         }
 
         function logoutUser() {
-            Swal.fire({
-                title: "Logout Confirmation",
-                text: "Are you sure you want to log out?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#007A7A",
-                cancelButtonColor: "#6B7280",
-                confirmButtonText: "Yes, log out",
-                cancelButtonText: "Cancel"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = "login.html";
+        Swal.fire({
+            title: "Logout?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#005a32",
+            confirmButtonText: "Yes, logout"
+        }).then(async (r) => { 
+            if (r.isConfirmed) { 
+                try {
+                    // Tell the backend we are logging out so it can record the Activity Log
+                    const token = getToken();
+                    if (token) {
+                        await fetch(`${API_BASE_URL}/api/users/logout`, {
+                            method: 'POST',
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                    }
+                } catch(e) {
+                    console.warn("Could not log logout activity", e);
                 }
-            });
-        }
+                
+                // Clear the session and redirect
+                sessionStorage.clear(); 
+                window.location.href = '../html/login.html'; 
+            } 
+        });
+    }
 
         document.getElementById("logoutBtn").addEventListener("click", logoutUser);
     </script>

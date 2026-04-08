@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import { protect } from '../middleware/authMiddleware.js';
+import { logActivity } from '../utils/logActivity.js'; // 🔥 Added logging utility
 import Prescription from '../models/Prescription.js';
 import Inventory from '../models/Inventory.js';
 import Sale from '../models/Sale.js';
@@ -39,7 +40,7 @@ if (billingDbUri) {
 // ==============================================================================
 router.get('/', async (req, res) => {
     try {
-        const sales = await Sale.find().sort({ createdAt: -1 });
+        const sales = await Sale.find().populate('pharmacist', 'name role').sort({ createdAt: -1 });
         const salesData = sales.map(sale => sale.toObject());
 
         if (ExternalPayment) {
@@ -214,6 +215,15 @@ router.post('/dispense/:patientId', protect, async (req, res) => {
             console.log(`✅ Updated ${prescriptionIds.length} EMR records to 'Dispensed'`);
         }
 
+        // 🔥 LOG EMR DISPENSE ACTIVITY WITH MEDICINE NAMES
+        const medNames = [...new Set(itemsSold.map(item => item.name))].join(', ');
+        await logActivity(req, {
+            action: 'DISPENSE_PRESCRIPTION',
+            module: 'Patient Records', // 🔥 Changed from 'Counter Dispensing'
+            description: `Dispensed prescription(s) for EMR patient '${emrPatient.firstname} ${emrPatient.lastname}'. Items: ${medNames}. Total: ₱${totalAmount.toFixed(2)}`,
+            targetId: sale._id.toString()
+        });
+
         console.log(`✅ Sale Created: ${sale._id}. Waiting for Billing System to pick it up.`);
         res.status(200).json({ message: 'Dispensing successful', sale });
 
@@ -223,7 +233,7 @@ router.post('/dispense/:patientId', protect, async (req, res) => {
     }
 });
 
-// Helper Function: Auto-Order (Unchanged)
+// Helper Function: Auto-Order
 async function checkAndAutoOrder(medicineId, lastSoldPrice = 0) {
     try {
         const allBatches = await Inventory.find({ medicine: medicineId, isArchived: false });
@@ -271,6 +281,13 @@ router.post('/dispense-all', protect, async (req, res) => {
             return res.status(200).json({ message: "No pending prescriptions found." });
         }
 
+        // 🔥 LOG BATCH DISPENSE ACTIVITY
+        await logActivity(req, {
+            action: 'DISPENSE_PRESCRIPTION',
+            module: 'Patient Records', // 🔥 Changed from 'Counter Dispensing'
+            description: `Batch dispensed ${result.modifiedCount} pending prescription(s) system-wide.`
+        });
+
         res.status(200).json({ 
             message: `Successfully dispensed ${result.modifiedCount} prescriptions.` 
         });
@@ -287,7 +304,6 @@ router.post('/dispense-all', protect, async (req, res) => {
 router.post('/otc', protect, async (req, res) => {
     try {
         const { items, paymentMethod, amountReceived } = req.body;
-        // items expects an array: [{ medicineId, quantity }]
         
         if (!items || items.length === 0) {
             return res.status(400).json({ message: 'Cart is empty' });
@@ -345,6 +361,15 @@ router.post('/otc', protect, async (req, res) => {
             totalAmount: totalAmount,
             paymentStatus: 'Paid', // OTC is paid instantly
             date: Date.now()
+        });
+
+        // 🔥 LOG OTC SALE ACTIVITY WITH MEDICINE NAMES
+        const medNames = [...new Set(itemsSold.map(item => item.name))].join(', ');
+        await logActivity(req, {
+            action: 'CREATE_SALE',
+            module: 'Counter Dispensing',
+            description: `Processed OTC sale for Walk-in Customer. Items: ${medNames}. Total: ₱${totalAmount.toFixed(2)}`,
+            targetId: sale._id.toString()
         });
 
         res.status(200).json({ message: 'OTC Transaction successful', sale });
