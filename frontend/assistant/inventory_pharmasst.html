@@ -449,7 +449,8 @@
                                         <th class="px-6 py-4 font-medium">Avg Price</th>
                                         <th class="px-6 py-4 font-medium">Total Value</th>
                                         <th class="px-6 py-4 font-medium">Status</th>
-                                        <th class="px-6 py-4 font-medium">Actions</th>
+                                         <th class="px-6 py-4 font-medium">Actions</th>
+                                      
                                     </tr>
                                 </thead>
                                 <tbody id="summaryTableBody"></tbody>
@@ -468,7 +469,7 @@
                         </div>
                     </div>
 
-                    <!-- Batch Table -->
+                    <!-- Batch Table -->                  
                     <div id="batchSection" class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 hidden">
                         <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center flex-wrap gap-3">
                             <div>
@@ -549,7 +550,7 @@
                                         <th class="px-6 py-4 font-medium">Price</th>
                                         <th class="px-6 py-4 font-medium">Supplier</th>
                                         <th class="px-6 py-4 font-medium">Status</th>
-                                        <th class="px-6 py-4 font-medium">Actions</th>
+                                      
                                     </tr>
                                 </thead>
                                 <tbody id="batchTableBody"></tbody>
@@ -2630,7 +2631,7 @@
             const avg = item.totalQty > 0 ? item.totalValue / item.totalQty : 0;
             tbody.innerHTML += `<tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
                 <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${item.name}</td>
-                <td class="px-6 py-4 text-gray-500">${item.category}</td>
+                
                 <td class="px-6 py-4 text-gray-500">${item.batchCount}</td>
                 <td class="px-6 py-4 font-bold">${item.totalQty}</td>
                 <td class="px-6 py-4 text-gray-500">${this.formatDate(item.earliestExpiry)}</td>
@@ -2713,9 +2714,7 @@
                 <td class="px-6 py-4 text-gray-500">₱${parseFloat(this._getPrice(item) || 0).toFixed(2)}</td>
                 <td class="px-6 py-4 text-gray-500">${item.supplier || "Unknown"}</td>
                 <td class="px-6 py-4">${sl}</td>
-                <td class="px-6 py-4">
-                    <button onclick="inventoryManager.archiveBatch('${itemId}')" class="action-btn archive-btn" title="Move to Archive"><span class="material-icons text-sm">archive</span></button>
-                </td>
+                
             </tr>`;
           });
         }
@@ -2727,7 +2726,7 @@
           let archives = [...this.archivedInventory];
           if (search) archives = archives.filter((i) => this._getName(i).toLowerCase().includes(search));
           if (!archives.length) {
-            tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-500">Archive is empty.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-gray-500">Archive is empty.</td></tr>`;
             buildPagination(0, 1, archiveRowsPerPage, "archivePaginationInfo", "archivePaginationControls", "goArchivePage");
             return;
           }
@@ -2740,11 +2739,8 @@
                 <td class="px-6 py-4 text-gray-500">${item.batchNumber || "N/A"}</td>
                 <td class="px-6 py-4">${item.quantity}</td>
                 <td class="px-6 py-4 text-gray-500">${this.formatDate(item.expiryDate)}</td>
-                <td class="px-6 py-4">
-                    <button onclick="inventoryManager.restoreBatch('${itemId}')" class="action-btn restore-btn flex items-center gap-1" title="Restore to Active">
-                        <span class="material-icons text-sm">unarchive</span> Restore
-                    </button>
-                </td>
+                
+                   
             </tr>`;
           });
         }

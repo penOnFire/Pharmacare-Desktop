@@ -637,13 +637,29 @@ function markAllRead() {
     }
 
     function updateCharts(chartData) {
-        const salesCtx = document.getElementById('salesChart').getContext('2d');
-        if (salesChartInstance) salesChartInstance.destroy();
-        salesChartInstance = new Chart(salesCtx, {
-            type: 'line',
-            data: { labels: chartData.salesTrend?.labels?.length ? chartData.salesTrend.labels : ['No Data'], datasets: [{ label:'Revenue (₱)', data: chartData.salesTrend?.data?.length ? chartData.salesTrend.data : [0], borderColor:'#005a32', backgroundColor:'rgba(0,90,50,0.1)', fill:true, tension:0.4 }] },
-            options: { responsive:true, maintainAspectRatio:false }
-        });
+    const salesCtx = document.getElementById('salesChart').getContext('2d');
+    if (salesChartInstance) salesChartInstance.destroy();
+
+    // Fixed Mon–Sun labels; pad or trim API data to always fill all 7 days
+    const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const rawSalesData = chartData.salesTrend?.data || [];
+    const salesData = weekDays.map((_, i) => rawSalesData[i] ?? 0);
+
+    salesChartInstance = new Chart(salesCtx, {
+        type: 'line',
+        data: {
+            labels: weekDays,
+            datasets: [{
+                label: 'Revenue (₱)',
+                data: salesData,
+                borderColor: '#005a32',
+                backgroundColor: 'rgba(0,90,50,0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
         const invCtx = document.getElementById('inventoryChart').getContext('2d');
         if (inventoryChartInstance) inventoryChartInstance.destroy();
         const sl = chartData.stockDistribution?.labels?.length ? chartData.stockDistribution.labels : ['No Stock'];
