@@ -290,67 +290,67 @@
                                 <span class="material-icons text-sm">arrow_drop_down</span>
                             </button>
                             <div id="salesExportMenu" class="export-menu">
-                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Include in report</p>
-                                <label class="export-check-row"><input type="checkbox" value="summary" checked> <span style="color:#16a34a" class="material-icons">bar_chart</span> Executive Summary</label>
-                                <label class="export-check-row"><input type="checkbox" value="medicines" checked> <span style="color:#005a32" class="material-icons">medication</span> Top Selling Medicines</label>
-                                <label class="export-check-row"><input type="checkbox" value="weekly" checked> <span style="color:#2563eb" class="material-icons">calendar_today</span> Weekly Performance</label>
-                                <label class="export-check-row"><input type="checkbox" value="pharmacist" checked> <span style="color:#7c3aed" class="material-icons">people</span> Pharmacist Performance</label>
-                                <div class="export-menu-divider"></div>
-                                <button onclick="exportFullReportPDF(getChecked('salesExportMenu'))" class="export-apply-btn">
-                                    <span class="material-icons">print</span> Print / Export PDF
-                                </button>
-                            </div>
+    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Include in report</p>
+    <label class="export-check-row"><input type="checkbox" value="summary" checked> <span style="color:#16a34a" class="material-icons">bar_chart</span> Executive Summary</label>
+    <label class="export-check-row"><input type="checkbox" value="medicines" checked> <span style="color:#005a32" class="material-icons">medication</span> Top Selling Medicines</label>
+    <label class="export-check-row"><input type="checkbox" value="weekly" checked> <span style="color:#2563eb" class="material-icons">calendar_today</span> Weekly Performance</label>
+    <label class="export-check-row"><input type="checkbox" value="pharmacist" checked> <span style="color:#7c3aed" class="material-icons">people</span> Pharmacist Performance</label>
+    <div class="export-menu-divider"></div>
+    <button onclick="exportFullReportPDF(getChecked('salesExportMenu'))" class="export-apply-btn">
+        <span class="material-icons">print</span> Print / Export PDF
+    </button>
+</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- STAT CARDS -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 border-t-4 border-t-green-600">
+                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 border-t-4 border-t-primary">
                         <div class="flex items-start justify-between gap-4">
                             <div class="flex-1 min-w-0 relative group cursor-help">
                                 <p class="text-sm text-subtext-light font-medium mb-1 truncate">TOTAL REVENUE</p>
                                 <p class="text-4xl font-bold text-text-light dark:text-text-dark truncate" id="totalRevenue">₱0.00</p>
-                                <div class="flex items-center mt-2 text-sm"><span id="revenueGrowth" class="text-green-600">-</span></div>
+                                <div class="flex items-center mt-2 text-sm"><span id="revenueGrowth" class="text-primary">-</span></div>
                                 <div id="tooltipRevenue" class="absolute z-[99] left-0 top-full mt-2 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200 bg-gray-900 text-white text-sm font-semibold rounded py-1.5 px-3 whitespace-nowrap shadow-xl pointer-events-none">₱0.00</div>
                             </div>
-                            <div class="p-3 bg-green-100 rounded-lg flex-shrink-0"><span class="material-icons text-green-600" style="font-size:28px;">payments</span></div>
+                            <div class="p-3 bg-primary/10 rounded-lg flex-shrink-0"><span class="material-icons text-primary" style="font-size:28px;">payments</span></div>
                         </div>
                     </div>
-                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 border-t-4 border-t-blue-600">
+                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 border-t-4 border-t-secondary">
                         <div class="flex items-start justify-between gap-4">
                             <div class="flex-1 min-w-0 relative group cursor-help">
                                 <p class="text-sm text-subtext-light font-medium mb-1 truncate">TOTAL TRANSACTIONS</p>
                                 <p class="text-4xl font-bold text-text-light dark:text-text-dark truncate" id="totalTransactions">0</p>
-                                <div class="flex items-center mt-2 text-sm"><span id="transactionsGrowth" class="text-blue-600">-</span></div>
+                                <div class="flex items-center mt-2 text-sm"><span id="transactionsGrowth" class="text-secondary">-</span></div>
                                 <div id="tooltipTransactions" class="absolute z-[99] left-0 top-full mt-2 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200 bg-gray-900 text-white text-sm font-semibold rounded py-1.5 px-3 whitespace-nowrap shadow-xl pointer-events-none">0</div>
                             </div>
-                            <div class="p-3 bg-blue-100 rounded-lg flex-shrink-0"><span class="material-icons text-blue-600" style="font-size:28px;">receipt</span></div>
+                            <div class="p-3 bg-secondary/10 rounded-lg flex-shrink-0"><span class="material-icons text-secondary" style="font-size:28px;">receipt</span></div>
                         </div>
                     </div>
-                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 border-t-4 border-t-purple-600">
+                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 border-t-4 border-t-accent">
                         <div class="flex items-start justify-between gap-4">
                             <div class="flex-1 min-w-0 relative group cursor-help">
                                 <p class="text-sm text-subtext-light font-medium mb-1 truncate">AVERAGE ORDER VALUE</p>
                                 <p class="text-4xl font-bold text-text-light dark:text-text-dark truncate" id="avgOrderValue">₱0.00</p>
-                                <div class="flex items-center mt-2 text-sm"><span id="avgOrderGrowth" class="text-purple-600">-</span></div>
+                                <div class="flex items-center mt-2 text-sm"><span id="avgOrderGrowth" class="text-accent">-</span></div>
                                 <div id="tooltipAvgOrder" class="absolute z-[99] left-0 top-full mt-2 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200 bg-gray-900 text-white text-sm font-semibold rounded py-1.5 px-3 whitespace-nowrap shadow-xl pointer-events-none">₱0.00</div>
                             </div>
-                            <div class="p-3 bg-purple-100 rounded-lg flex-shrink-0"><span class="material-icons text-purple-600" style="font-size:28px;">trending_up</span></div>
+                            <div class="p-3 bg-accent/10 rounded-lg flex-shrink-0"><span class="material-icons text-accent" style="font-size:28px;">trending_up</span></div>
                         </div>
                     </div>
-                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 border-t-4 border-t-orange-600">
+                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 border-t-4 border-t-primary">
                         <div class="flex items-start justify-between gap-4">
                             <div class="flex-1 min-w-0 relative group cursor-help">
                                 <p class="text-sm text-subtext-light font-medium mb-1 truncate">TOP SELLING MEDICINE</p>
                                 <p class="text-2xl font-bold text-text-light dark:text-text-dark truncate" id="topMedicine">N/A</p>
                                 <div class="flex items-center mt-2 text-sm truncate">
-                                    <span class="material-icons text-base text-orange-600 flex-shrink-0">inventory_2</span>
-                                    <span class="ml-1 text-orange-600 truncate" id="topMedicineSales">0 units sold</span>
+                                    <span class="material-icons text-base text-primary flex-shrink-0">inventory_2</span>
+                                    <span class="ml-1 text-primary truncate" id="topMedicineSales">0 units sold</span>
                                 </div>
                                 <div id="tooltipTopMed" class="absolute z-[99] left-0 top-full mt-2 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200 bg-gray-900 text-white text-sm font-semibold rounded py-1.5 px-3 whitespace-nowrap shadow-xl pointer-events-none">N/A</div>
                             </div>
-                            <div class="p-3 bg-orange-100 rounded-lg flex-shrink-0"><span class="material-icons text-orange-600" style="font-size:28px;">medication</span></div>
+                            <div class="p-3 bg-primary/10 rounded-lg flex-shrink-0"><span class="material-icons text-primary" style="font-size:28px;">medication</span></div>
                         </div>
                     </div>
                 </div>
@@ -360,7 +360,7 @@
                     <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="font-semibold text-text-light dark:text-text-dark">Top Selling Medicines</h3>
-                            <button onclick="salesManager.exportData('medicines')" class="text-primary text-sm font-medium hover:underline">Export</button>
+                            
                         </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-sm">
@@ -379,7 +379,7 @@
                     <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="font-semibold text-text-light dark:text-text-dark">Weekly Sales Performance</h3>
-                            <button onclick="salesManager.exportData('weekly')" class="text-primary text-sm font-medium hover:underline">Export</button>
+                          
                         </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-sm">
@@ -400,19 +400,17 @@
                 <!-- CHARTS ROW -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                     <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="font-semibold text-text-light dark:text-text-dark">Sales Trend</h3>
-                            <button onclick="salesManager.exportData('trend')" class="text-primary text-sm font-medium hover:underline">Export Data</button>
-                        </div>
-                        <div class="h-64"><canvas id="salesTrendChart"></canvas></div>
-                    </div>
-                    <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="font-semibold text-text-light dark:text-text-dark">Medicine Sales Distribution</h3>
-                            <button onclick="salesManager.exportData('medicine-dist')" class="text-primary text-sm font-medium hover:underline">Export Data</button>
-                        </div>
-                        <div class="h-64"><canvas id="categoryChart"></canvas></div>
-                    </div>
+    <div class="mb-4">
+        <h3 class="font-semibold text-text-light dark:text-text-dark">Sales Trend</h3>
+    </div>
+    <div class="h-64"><canvas id="salesTrendChart"></canvas></div>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+    <div class="mb-4">
+        <h3 class="font-semibold text-text-light dark:text-text-dark">Medicine Sales Distribution</h3>
+    </div>
+    <div class="h-64"><canvas id="categoryChart"></canvas></div>
+</div>
                 </div>
 
                 <!-- PHARMACIST PERFORMANCE -->
@@ -954,25 +952,34 @@ notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
 
     // Global function for PDF export (called by the main Export PDF button)
     function exportFullReportPDF(filters = ['summary','medicines','weekly','pharmacist']) {
-        if (!salesManager || !salesManager.currentStats) {
-            Swal.fire('No Data', 'Please wait for data to load.', 'warning');
-            return;
-        }
-        if (!filters.length) {
-            Swal.fire('Nothing selected', 'Please check at least one section.', 'info');
-            return;
-        }
+    if (!salesManager || !salesManager.currentStats) {
+        Swal.fire('No Data', 'Please wait for data to load.', 'warning');
+        return;
+    }
+    if (!filters.length) {
+        Swal.fire('Nothing selected', 'Please check at least one section.', 'info');
+        return;
+    }
 
-        toggleExportMenu('salesExportMenu'); // close dropdown
+    // Chart data exports go via XLSX, not PDF — handle them separately then continue
+    if (filters.includes('trend')) salesManager.exportData('trend');
+    if (filters.includes('medicine-dist')) salesManager.exportData('medicine-dist');
 
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF('p', 'mm', 'a4');
-        const timestamp = new Date().toISOString().split('T')[0];
-        const filename  = `WellServed_Sales_Report_${timestamp}`;
-        const stats     = salesManager.currentStats;
-        const timeLabel = { '7':'Last 7 Days', '30':'Last 30 Days', '90':'Last 3 Months', '365':'Last Year' }[document.getElementById('timeRange').value] || 'Custom Range';
-        const sectionLabels = { summary:'Executive Summary', medicines:'Top Selling Medicines', weekly:'Weekly Performance', pharmacist:'Pharmacist Performance' };
-        const included = filters.map(f => sectionLabels[f]).filter(Boolean).join(', ');
+    // If only chart exports were checked, stop here — no PDF needed
+    const pdfFilters = filters.filter(f => !['trend','medicine-dist'].includes(f));
+    if (!pdfFilters.length) { toggleExportMenu('salesExportMenu'); return; }
+
+    toggleExportMenu('salesExportMenu'); // close dropdown
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const timestamp = new Date().toISOString().split('T')[0];
+    const filename  = `WellServed_Sales_Report_${timestamp}`;
+    const stats     = salesManager.currentStats;
+    const timeLabel = { '7':'Last 7 Days', '30':'Last 30 Days', '90':'Last 3 Months', '365':'Last Year' }[document.getElementById('timeRange').value] || 'Custom Range';
+    const sectionLabels = { summary:'Executive Summary', medicines:'Top Selling Medicines', weekly:'Weekly Performance', pharmacist:'Pharmacist Performance' };
+    const included = pdfFilters.map(f => sectionLabels[f]).filter(Boolean).join(', ');
+    filters = pdfFilters; // use only PDF-relevant filters for the rest of the function
 
         // Header bar
         doc.setFillColor(0, 90, 50);

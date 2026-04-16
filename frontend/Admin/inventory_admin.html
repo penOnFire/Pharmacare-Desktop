@@ -1819,7 +1819,7 @@
                       <th class="px-6 py-4 font-medium">Price</th>
                       <th class="px-6 py-4 font-medium">Supplier</th>
                       <th class="px-6 py-4 font-medium">Status</th>
-                      <th class="px-6 py-4 font-medium">Actions</th>
+                    
                     </tr>
                   </thead>
                   <tbody id="batchTableBody"></tbody>
@@ -1882,7 +1882,7 @@
                       <th class="px-6 py-4 font-medium">Batch Number</th>
                       <th class="px-6 py-4 font-medium">Quantity</th>
                       <th class="px-6 py-4 font-medium">Expiry Date</th>
-                      <th class="px-6 py-4 font-medium">Actions</th>
+                      
                     </tr>
                   </thead>
                   <tbody id="archiveTableBody"></tbody>
@@ -2219,11 +2219,32 @@
           <h2 style="font-size: 16px; font-weight: 700; color: #005a32; margin: 0; letter-spacing: -0.01em;" class="dark:text-green-400">Add New Medicine to Supplies</h2>
         </div>
         <div style="padding: 22px 28px; display: flex; flex-direction: column; gap: 15px;">
-          <div>
-            <label class="as-label">Medicine Name</label>
-            <input type="text" id="addSupplyName" class="as-input" placeholder="e.g., Aspirin 100mg" />
-            <p class="as-error" id="addSupplyNameErr">Please enter a medicine name.</p>
-          </div>
+          <div style="position: relative;">
+  <label class="as-label">Medicine Name</label>
+  <input type="text" id="addSupplyName" class="as-input" placeholder="e.g., Paracetamol 500mg"
+    autocomplete="off"
+    oninput="filterAddSupplyDropdown()"
+    onfocus="showAddSupplyDropdown()"
+  />
+  <p class="as-error" id="addSupplyNameErr">Please enter a medicine name.</p>
+  <!-- Autocomplete dropdown -->
+  <div id="addSupplyDropdown" style="
+    display: none;
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0; right: 0;
+    background: #fff;
+    border: 1.5px solid #d1fae5;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,90,50,0.12);
+    z-index: 200;
+    max-height: 190px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  ">
+    <div id="addSupplyDropdownList"></div>
+  </div>
+</div>
           <div>
             <label class="as-label">Category</label>
             <select id="addSupplyCategory" class="as-input" style="appearance: auto">
@@ -2244,9 +2265,7 @@
                 <option value="Tablet">Tablet</option>
                 <option value="Capsule">Capsule</option>
                 <option value="Syrup">Syrup</option>
-                <option value="Drops">Drops</option>
-                <option value="Ointment">Ointment</option>
-                <option value="Cream">Cream</option>
+                
               </select>
             </div>
             <div>
@@ -2594,27 +2613,141 @@
           else select.value = defaultVal;
       }
 
-      function openAddSupplyModal() {
-        document.getElementById("addSupplyName").value = "";
-        document.getElementById("addSupplyQuantity").value = "0";
-        document.getElementById("addSupplyReorderLevel").value = "50";
-        document.getElementById("addSupplyUnitCost").value = "0";
+      // ── Cache for the medicines list used by Add Supply autocomplete ──
+let _addSupplyMedicineCache = [];
 
-        if(document.getElementById("addSupplyCategory")) document.getElementById("addSupplyCategory").selectedIndex = 0;
-        if(document.getElementById("addSupplyType"))     document.getElementById("addSupplyType").selectedIndex = 0;
-        if(document.getElementById("addSupplyStrength")) document.getElementById("addSupplyStrength").value = "500mg";
+async function openAddSupplyModal() {
+  document.getElementById("addSupplyName").value = "";
+  document.getElementById("addSupplyQuantity").value = "0";
+  document.getElementById("addSupplyReorderLevel").value = "50";
+  document.getElementById("addSupplyUnitCost").value = "0";
 
-        [ "addSupplyNameErr", "addSupplyCategoryErr", "addSupplyQuantityErr", "addSupplyReorderErr", "addSupplyUnitCostErr" ].forEach((id) => {
-          const el = document.getElementById(id); if (el) el.style.display = "none";
-        });
+  if (document.getElementById("addSupplyCategory")) document.getElementById("addSupplyCategory").selectedIndex = 0;
+  if (document.getElementById("addSupplyType"))     document.getElementById("addSupplyType").selectedIndex = 0;
+  if (document.getElementById("addSupplyStrength")) document.getElementById("addSupplyStrength").value = "500mg";
 
-        [ "addSupplyName", "addSupplyCategory", "addSupplyQuantity", "addSupplyReorderLevel", "addSupplyUnitCost" ].forEach((id) => {
-          const el = document.getElementById(id); if (el) el.style.borderColor = "";
-        });
+  ["addSupplyNameErr","addSupplyCategoryErr","addSupplyQuantityErr","addSupplyReorderErr","addSupplyUnitCostErr"].forEach((id) => {
+    const el = document.getElementById(id); if (el) el.style.display = "none";
+  });
+  ["addSupplyName","addSupplyCategory","addSupplyQuantity","addSupplyReorderLevel","addSupplyUnitCost"].forEach((id) => {
+    const el = document.getElementById(id); if (el) el.style.borderColor = "";
+  });
 
-        document.getElementById("addSupplyModal").classList.remove("hidden");
-        setTimeout(() => document.getElementById("addSupplyName").focus(), 60);
-      }
+  // Hide dropdown on open
+  hideAddSupplyDropdown();
+
+  document.getElementById("addSupplyModal").classList.remove("hidden");
+  setTimeout(() => document.getElementById("addSupplyName").focus(), 60);
+
+  // Pre-fetch existing medicines for the autocomplete
+  try {
+    const token = getToken();
+    const res = await fetch(`${API_BASE_URL}/api/medicines`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      _addSupplyMedicineCache = Array.isArray(data) ? data : (data.data || []);
+    }
+  } catch(e) {
+    _addSupplyMedicineCache = [];
+  }
+}
+
+function showAddSupplyDropdown() {
+  const q = document.getElementById("addSupplyName").value.trim().toLowerCase();
+  if (!q) return; // Don't show on empty focus
+  filterAddSupplyDropdown();
+}
+
+function hideAddSupplyDropdown() {
+  const dd = document.getElementById("addSupplyDropdown");
+  if (dd) dd.style.display = "none";
+}
+
+function filterAddSupplyDropdown() {
+  const q = document.getElementById("addSupplyName").value.trim().toLowerCase();
+  const dd = document.getElementById("addSupplyDropdown");
+  const list = document.getElementById("addSupplyDropdownList");
+  if (!dd || !list) return;
+
+  if (!q || !_addSupplyMedicineCache.length) {
+    dd.style.display = "none";
+    return;
+  }
+
+  const matches = _addSupplyMedicineCache.filter(m =>
+    (m.name || '').toLowerCase().includes(q)
+  );
+
+  if (!matches.length) {
+    dd.style.display = "none";
+    return;
+  }
+
+  list.innerHTML = matches.map(m => {
+    const typeStr     = m.type     ? `<span style="color:#9ca3af;font-size:10px;"> · ${m.type}</span>` : '';
+    const strengthStr = m.strength ? `<span style="color:#9ca3af;font-size:10px;"> · ${m.strength}</span>` : '';
+    const catStr      = m.category ? `<span style="color:#6b7280;font-size:11px;margin-top:1px;display:block;">${m.category}</span>` : '';
+    return `
+      <div class="as-dd-item"
+        onmousedown="selectAddSupplyMedicine(${JSON.stringify(m).replace(/"/g, '&quot;')})"
+        style="
+          padding: 9px 14px;
+          cursor: pointer;
+          border-bottom: 1px solid #f0fdf4;
+          transition: background 0.12s;
+        "
+        onmouseover="this.style.background='#f0fdf4'"
+        onmouseout="this.style.background=''"
+      >
+        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
+          <span style="font-size:13px;font-weight:600;color:#111827;">${m.name}</span>
+          ${typeStr}${strengthStr}
+        </div>
+        ${catStr}
+        <span style="font-size:10px;color:#22c55e;font-weight:600;background:#f0fdf4;border-radius:99px;padding:1px 7px;margin-top:3px;display:inline-block;">
+          ✓ Existing
+        </span>
+      </div>
+    `;
+  }).join('');
+
+  dd.style.display = "block";
+}
+
+function selectAddSupplyMedicine(med) {
+  // Fill the name field
+  document.getElementById("addSupplyName").value = med.name || '';
+
+  // Auto-fill category, type, strength if they match available options
+  safelySetSelect('addSupplyCategory', med.category, '');
+  safelySetSelect('addSupplyType', med.type, 'Tablet');
+  safelySetSelect('addSupplyStrength', med.strength, '500mg');
+
+  hideAddSupplyDropdown();
+
+  // Subtle highlight so user knows fields were auto-filled
+  ['addSupplyCategory','addSupplyType','addSupplyStrength'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.borderColor = '#22c55e';
+    el.style.boxShadow = '0 0 0 3px rgba(34,197,94,0.15)';
+    setTimeout(() => { el.style.borderColor = ''; el.style.boxShadow = ''; }, 1800);
+  });
+
+  // Focus quantity next
+  setTimeout(() => document.getElementById("addSupplyQuantity").focus(), 80);
+}
+
+// Close dropdown when clicking outside the modal's name field area
+document.addEventListener("click", (e) => {
+  const nameInput = document.getElementById("addSupplyName");
+  const dd = document.getElementById("addSupplyDropdown");
+  if (dd && nameInput && !nameInput.contains(e.target) && !dd.contains(e.target)) {
+    hideAddSupplyDropdown();
+  }
+});
 
       function closeAddSupplyModal() { document.getElementById("addSupplyModal").classList.add("hidden"); }
       function handleAddSupplyBackdropClick(e) { if (e.target === document.getElementById("addSupplyModal")) closeAddSupplyModal(); }
@@ -3654,7 +3787,7 @@
               );
             });
           if (!batches.length) {
-            tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-gray-500">No active batches found.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="9" class="p-8 text-center text-gray-500">No active batches found.</td></tr>`;
             buildPagination(
               0,
               1,
@@ -3707,9 +3840,6 @@
                 <td class="px-6 py-4 text-gray-500">₱${parseFloat(this._getPrice(item) || 0).toFixed(2)}</td>
                 <td class="px-6 py-4 text-gray-500">${item.supplier || "Unknown"}</td>
                 <td class="px-6 py-4">${sl}</td>
-                <td class="px-6 py-4">
-                    <button onclick="inventoryManager.archiveBatch('${itemId}')" class="action-btn archive-btn" title="Move to Archive"><span class="material-icons text-sm">archive</span></button>
-                </td>
             </tr>`;
           });
         }
@@ -3721,7 +3851,7 @@
           let archives = [...this.archivedInventory];
           if (search) archives = archives.filter((i) => this._getName(i).toLowerCase().includes(search));
           if (!archives.length) {
-            tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-500">Archive is empty.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-gray-500">Archive is empty.</td></tr>`;
             buildPagination(0, 1, archiveRowsPerPage, "archivePaginationInfo", "archivePaginationControls", "goArchivePage");
             return;
           }
@@ -3735,11 +3865,6 @@
                 <td class="px-6 py-4 text-gray-500">${item.batchNumber || "N/A"}</td>
                 <td class="px-6 py-4">${item.quantity}</td>
                 <td class="px-6 py-4 text-gray-500">${this.formatDate(item.expiryDate)}</td>
-                <td class="px-6 py-4">
-                    <button onclick="inventoryManager.restoreBatch('${itemId}')" class="action-btn restore-btn flex items-center gap-1" title="Restore to Active">
-                        <span class="material-icons text-sm">unarchive</span> Restore
-                    </button>
-                </td>
             </tr>`;
           });
         }
