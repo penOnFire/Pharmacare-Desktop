@@ -1014,38 +1014,35 @@
         margin-bottom: 0.25rem;
       }
 
-      #tableView {
-        max-height: 300px;
-        overflow-y: auto;
-        position: relative;
-        border-bottom: 1px solid #e5e7eb;
-      }
+      /* AFTER */
+      
+#tableView thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  /* Each th carries the same full-width gradient — they tile seamlessly */
+  background-image: linear-gradient(
+    to right,
+    rgba(0, 90, 50, 0.2),
+    rgba(255, 255, 255, 0.5),
+    rgba(214, 40, 40, 0.2)
+  );
+  background-size: 100vw 100%;
+  background-attachment: fixed;
+}
 
-      #tableView thead th {
-        position: sticky;
-        top: 0;
-        background: transparent !important;
-        z-index: 10;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-      }
+.dark #tableView thead th {
+  background-image: linear-gradient(
+    to right,
+    rgba(0, 90, 50, 0.3),
+    rgba(15, 23, 42, 0.8),
+    rgba(214, 40, 40, 0.3)
+  );
+  background-size: 100vw 100%;
+  background-attachment: fixed;
+}
 
-      #tableView thead tr {
-        background: linear-gradient(
-          to right,
-          rgba(0, 90, 50, 0.2),
-          rgba(255, 255, 255, 0.5),
-          rgba(214, 40, 40, 0.2)
-        );
-      }
-
-      .dark #tableView thead tr {
-        background: linear-gradient(
-          to right,
-          rgba(0, 90, 50, 0.3),
-          rgba(15, 23, 42, 0.8),
-          rgba(214, 40, 40, 0.3)
-        );
-      }
+/* thead tr no longer needs a background — th carries it now */
       #dispensedMedicinesList {
         max-height: 300px;
         overflow-y: auto;
@@ -1475,10 +1472,12 @@
               </table>
             </div>
 
-            <div
-              id="cardView"
-              class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            ></div>
+            <div id="cardView" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+<div id="paginationControls" class="flex items-center justify-between mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+    <span id="paginationInfo" class="text-sm text-subtext-light dark:text-subtext-dark"></span>
+    <div id="paginationButtons" class="flex items-center gap-1"></div>
+</div>
           </div>
 
           <div
@@ -1794,7 +1793,9 @@
         constructor() {
           this.livePatients = [];
           this.currentView = "table";
-
+          this.currentPage = 1;
+          this.itemsPerPage = 10; // table default
+          this.itemsPerPageByView = { table: 10, card: 6 };
           this.notificationManager = {
             notifications: [],
             loadNotifications: () => {},
@@ -2060,10 +2061,66 @@
           sessionStorage.setItem("dispensedMedicines", JSON.stringify(history));
         }
 
-        updatePatientDisplay(patients) {
-          this.updatePatientsTable(patients);
-          this.updatePatientsCards(patients);
+        // AFTER — updatePatientDisplay resets to page 1 on new data
+updatePatientDisplay(patients) {
+    this.currentPage = 1;
+    this.renderPage(patients);
+}
+
+// Slices data for the current page, then renders both views + controls
+renderPage(patients) {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const pageData = patients.slice(start, start + this.itemsPerPage);
+    this.updatePatientsTable(pageData);
+    this.updatePatientsCards(pageData);
+    this.renderPagination(patients.length);
+}
+
+// Builds the pagination bar
+renderPagination(total) {
+    const totalPages = Math.ceil(total / this.itemsPerPage);
+    const info    = document.getElementById('paginationInfo');
+    const buttons = document.getElementById('paginationButtons');
+    if (!info || !buttons) return;
+
+    const start = Math.min((this.currentPage - 1) * this.itemsPerPage + 1, total);
+    const end   = Math.min(this.currentPage * this.itemsPerPage, total);
+    info.textContent = total > 0 ? `Showing ${start}–${end} of ${total} patients` : '';
+
+    const makeBtn = (label, page, disabled, active = false) =>
+        `<button onclick="patientManager.goToPage(${page})" ${disabled ? 'disabled' : ''}
+            class="px-3 py-1.5 text-sm rounded-lg border transition-colors
+            ${active
+                ? 'bg-primary text-white border-primary'
+                : 'border-slate-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 hover:bg-primary/10 hover:border-primary disabled:opacity-40 disabled:cursor-not-allowed'}">
+            ${label}
+        </button>`;
+
+    let html = makeBtn('‹ Prev', this.currentPage - 1, this.currentPage === 1);
+
+    for (let i = 1; i <= totalPages; i++) {
+        // Always show first, last, and pages near current; collapse the rest with …
+        if (i === 1 || i === totalPages || Math.abs(i - this.currentPage) <= 1) {
+            html += makeBtn(i, i, false, i === this.currentPage);
+        } else if (Math.abs(i - this.currentPage) === 2) {
+            html += `<span class="px-2 text-gray-400 select-none">…</span>`;
         }
+    }
+
+    html += makeBtn('Next ›', this.currentPage + 1, this.currentPage === totalPages);
+    buttons.innerHTML = html;
+}
+
+// Called by pagination buttons
+goToPage(page) {
+    const totalPages = Math.ceil(this.livePatients.length / this.itemsPerPage);
+    if (page < 1 || page > totalPages) return;
+    this.currentPage = page;
+    this.renderPage(this.livePatients);
+    // Scroll the patient panel into view smoothly
+    document.getElementById('tableView')?.closest('.rounded-xl')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
         updatePatientsTable(patients) {
           const tableBody = document.getElementById("patientsTable");
@@ -2483,6 +2540,9 @@
           if (view === "table") {
             tableView.classList.remove("hidden");
             cardView.classList.add("hidden");
+            this.itemsPerPage = this.itemsPerPageByView.table;
+            this.currentPage = 1;
+            this.renderPage(this.livePatients);
             tableBtn.classList.add("bg-primary", "text-white");
             tableBtn.classList.remove(
               "bg-gray-200",
@@ -2500,6 +2560,9 @@
           } else {
             tableView.classList.add("hidden");
             cardView.classList.remove("hidden");
+            this.itemsPerPage = this.itemsPerPageByView.card;
+            this.currentPage = 1;
+            this.renderPage(this.livePatients);
             cardBtn.classList.add("bg-primary", "text-white");
             cardBtn.classList.remove(
               "bg-gray-200",
