@@ -23,7 +23,8 @@
     "asar": true,
     "asarUnpack": [
       "backend/**/*",
-      "node_modules/**/*"
+      "node_modules/**/*",
+      "**/backend/**"
     ],
     "files": [
       "electron/**/*",
