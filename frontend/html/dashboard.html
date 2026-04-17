@@ -1336,18 +1336,21 @@
 
       // ── CHART UPDATES ──
       function updateMainCharts(chartData) {
-        if (salesChartInstance && chartData.salesTrend) {
-          salesChartInstance.data.labels = chartData.salesTrend.labels;
-          salesChartInstance.data.datasets[0].data = chartData.salesTrend.data;
-          salesChartInstance.update();
-        }
-        if (stockChartInstance && chartData.stockDistribution) {
-          stockChartInstance.data.labels = chartData.stockDistribution.labels;
-          stockChartInstance.data.datasets[0].data =
-            chartData.stockDistribution.data;
-          stockChartInstance.update();
-        }
-      }
+    if (salesChartInstance && chartData.salesTrend) {
+        const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const rawData = chartData.salesTrend.data || [];
+        const paddedData = weekDays.map((_, i) => rawData[i] ?? 0);
+
+        salesChartInstance.data.labels = weekDays;
+        salesChartInstance.data.datasets[0].data = paddedData;
+        salesChartInstance.update();
+    }
+    if (stockChartInstance && chartData.stockDistribution) {
+        stockChartInstance.data.labels = chartData.stockDistribution.labels;
+        stockChartInstance.data.datasets[0].data = chartData.stockDistribution.data;
+        stockChartInstance.update();
+    }
+}
 
       function updateTopSellingChart(labels, data) {
         if (topSellingChartInstance) {

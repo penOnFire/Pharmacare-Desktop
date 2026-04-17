@@ -193,6 +193,33 @@
     /* checkmark on the right for selected */
     .sf-opt-check { font-size: 16px; color: #005a32; }
     .dark .sf-opt-check { color: #4ade80; }
+
+    /* ── PAGINATION ── */
+.pagination-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 6px 2px; flex-wrap: wrap; gap: 8px;
+}
+.pagination-info { font-size: 13px; color: #6b7280; }
+.pagination-controls { display: flex; align-items: center; gap: 4px; }
+.pg-btn {
+    min-width: 34px; height: 34px; padding: 0 8px; border-radius: 8px;
+    border: 1px solid #e5e7eb; background: #fff; color: #374151;
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+}
+.dark .pg-btn { background: #1F2937; border-color: #374151; color: #F9FAFB; }
+.pg-btn:hover:not(:disabled):not(.active) { background: #f3f4f6; border-color: #d1d5db; }
+.dark .pg-btn:hover:not(:disabled):not(.active) { background: #374151; }
+.pg-btn.active { background: #005a32; border-color: #005a32; color: #fff; font-weight: 700; }
+.pg-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.pg-ellipsis { font-size: 13px; color: #9ca3af; padding: 0 4px; }
+.rows-per-page { font-size: 13px; color: #6b7280; display: flex; align-items: center; gap: 6px; }
+.rows-per-page select {
+    border: 1px solid #e5e7eb; border-radius: 6px; padding: 4px 8px;
+    font-size: 13px; background: #fff; color: #374151; cursor: pointer;
+}
+.dark .rows-per-page select { background: #1F2937; border-color: #374151; color: #F9FAFB; }
 </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark font-display">
@@ -560,11 +587,14 @@
     // ══════════════════════════════════════════════════════════
     class BillingManager {
         constructor() {
-            this.salesData     = [];
-            this.activeStatus  = 'all';   // current status filter
-            this.activeSearch  = '';      // current search term
-            this.init();
-        }
+    this.salesData     = [];
+    this.activeStatus  = 'all';
+    this.activeSearch  = '';
+    this.currentPage   = 1;
+    this.itemsPerPage  = 10;
+    this.filteredData  = [];
+    this.init();
+}
 
         async init() {
             if (!this.getToken()) { window.location.href = '../html/login.html'; return; }
@@ -656,19 +686,31 @@
         }
 
         renderTable(data) {
-            const tbody     = document.getElementById('transactionsTableBody');
-            const noResults = document.getElementById('noResults');
-            const countEl   = document.getElementById('recordCount');
-            if (countEl) countEl.textContent = `${(data || []).length} record${(data || []).length !== 1 ? 's' : ''}`;
+    const tbody     = document.getElementById('transactionsTableBody');
+    const noResults = document.getElementById('noResults');
+    const countEl   = document.getElementById('recordCount');
 
-            if (!data || data.length === 0) {
-                tbody.innerHTML = '';
-                noResults.classList.remove('hidden');
-                return;
-            }
-            noResults.classList.add('hidden');
+    this.filteredData = data || [];
+    const total = this.filteredData.length;
 
-            tbody.innerHTML = data.map(sale => {
+    // Clamp currentPage if the filtered set shrank
+    const totalPages = Math.max(1, Math.ceil(total / this.itemsPerPage));
+    if (this.currentPage > totalPages) this.currentPage = totalPages;
+
+    if (countEl) countEl.textContent = `${total} record${total !== 1 ? 's' : ''}`;
+
+    if (total === 0) {
+        tbody.innerHTML = '';
+        noResults.classList.remove('hidden');
+        this.renderPagination(0, 0);
+        return;
+    }
+    noResults.classList.add('hidden');
+
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const pageData = this.filteredData.slice(start, start + this.itemsPerPage);
+
+    tbody.innerHTML = pageData.map(sale => {
                 const rawPs = (sale.paymentStatus || 'Pending').trim();
                 const ps    = rawPs.charAt(0).toUpperCase() + rawPs.slice(1).toLowerCase();
                 const normalizedPs  = (ps === 'Completed') ? 'Paid' : ps;
@@ -718,6 +760,91 @@
                     </td>
                 </tr>`;
             }).join('');
+
+    this.renderPagination(total, totalPages);
+}
+
+renderPagination(total, totalPages) {
+    let container = document.getElementById('paginationContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'paginationContainer';
+        document.getElementById('transactionsTableBody').closest('table').after(container);
+    }
+
+    if (total === 0) { container.innerHTML = ''; return; }
+
+    const start = (this.currentPage - 1) * this.itemsPerPage + 1;
+    const end   = Math.min(this.currentPage * this.itemsPerPage, total);
+
+    // Build page number buttons (show at most 5 around current page)
+    let pages = '';
+    const delta = 2;
+    for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= this.currentPage - delta && i <= this.currentPage + delta)) {
+            pages += `<button onclick="billingManager.goToPage(${i})"
+                class="w-9 h-9 rounded-lg text-sm font-semibold transition-colors
+                       ${i === this.currentPage
+                           ? 'bg-primary text-white'
+                           : 'text-subtext-light dark:text-subtext-dark hover:bg-gray-100 dark:hover:bg-gray-700'}"
+            >${i}</button>`;
+        } else if (
+            (i === this.currentPage - delta - 1 && i > 1) ||
+            (i === this.currentPage + delta + 1 && i < totalPages)
+        ) {
+            pages += `<span class="w-9 h-9 flex items-center justify-center text-subtext-light dark:text-subtext-dark text-sm">…</span>`;
+        }
+    }
+
+    container.innerHTML = `
+        <div class="flex items-center justify-between mt-5 pt-4 border-t border-slate-200 dark:border-slate-700 flex-wrap gap-3">
+            <p class="text-sm text-subtext-light dark:text-subtext-dark">
+                Showing <span class="font-semibold text-text-light dark:text-text-dark">${start}–${end}</span>
+                of <span class="font-semibold text-text-light dark:text-text-dark">${total}</span> records
+            </p>
+            <div class="flex items-center gap-1">
+                <button onclick="billingManager.goToPage(${this.currentPage - 1})"
+                    ${this.currentPage === 1 ? 'disabled' : ''}
+                    class="w-9 h-9 flex items-center justify-center rounded-lg text-subtext-light dark:text-subtext-dark
+                           hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+                    <span class="material-icons text-base">chevron_left</span>
+                </button>
+                ${pages}
+                <button onclick="billingManager.goToPage(${this.currentPage + 1})"
+                    ${this.currentPage === totalPages ? 'disabled' : ''}
+                    class="w-9 h-9 flex items-center justify-center rounded-lg text-subtext-light dark:text-subtext-dark
+                           hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+                    <span class="material-icons text-base">chevron_right</span>
+                </button>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-subtext-light dark:text-subtext-dark">
+                <span>Rows per page:</span>
+                <select onchange="billingManager.setPageSize(+this.value)"
+                    class="bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-700
+                           rounded-lg px-2 py-1 text-sm text-text-light dark:text-text-dark focus:ring-primary">
+                    ${[10, 25, 50].map(n =>
+                        `<option value="${n}" ${n === this.itemsPerPage ? 'selected' : ''}>${n}</option>`
+                    ).join('')}
+                </select>
+            </div>
+        </div>`;
+}
+
+goToPage(page) {
+    const totalPages = Math.ceil(this.filteredData.length / this.itemsPerPage);
+    if (page < 1 || page > totalPages) return;
+    this.currentPage = page;
+    this.renderTable(this.filteredData);
+    // Scroll back to top of table
+    document.getElementById('transactionsTableBody')?.closest('.bg-surface-light')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+setPageSize(size) {
+    this.itemsPerPage = size;
+    this.currentPage  = 1;
+    this.renderTable(this.filteredData);
+
+            
         }
 
         viewDetails(id) {

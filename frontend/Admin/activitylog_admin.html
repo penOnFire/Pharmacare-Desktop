@@ -253,7 +253,7 @@
                         <p class="text-xs text-subtext-light font-medium uppercase tracking-wide">Active Users</p>
                         <p id="statActiveUsers" class="text-3xl font-bold mt-1 text-text-light dark:text-text-dark">—</p>
                         <p class="text-xs text-subtext-light mt-1">Logged users today</p>
-                    </div>
+                    </div> 
                 </div>
 
                 <div class="bg-surface-light dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 mb-4">
@@ -328,7 +328,7 @@
                                     <th class="px-4 py-3 font-medium">Action</th>
                                     <th class="px-4 py-3 font-medium">Description</th>
                                     <th class="px-4 py-3 font-medium">Status</th>
-                                    <th class="px-4 py-3 font-medium">IP</th>
+                                    
                                 </tr>
                             </thead>
                             <tbody id="logTableBody">
@@ -652,7 +652,7 @@ notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
                     ${log.description}
                 </td>
                 <td class="px-4 py-3 align-top whitespace-nowrap">${statusBadge(log.status)}</td>
-                <td class="px-4 py-3 text-xs text-subtext-light align-top whitespace-nowrap">${log.ipAddress || '—'}</td>
+                
             </tr>`).join('');
     }
 

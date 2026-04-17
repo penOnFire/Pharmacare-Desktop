@@ -978,20 +978,41 @@
         // Create or Update Sales Trend Chart
         const salesCtx = document.getElementById("salesTrendChart").getContext("2d");
         if (salesChartInstance) salesChartInstance.destroy();
-        salesChartInstance = new Chart(salesCtx, {
-          type: "line",
-          data: {
-            labels: chartData.salesTrend.labels,
-            datasets: [{
-              label: "Daily Sales (₱)",
-              data: chartData.salesTrend.data,
-              borderColor: "#005a32",
-              backgroundColor: "rgba(0,90,50,0.1)",
-              borderWidth: 2,
-              fill: true,
-              tension: 0.4,
-            }],
-          },
+        // Build Mon–Sun labels anchored to today, map backend data onto them
+const DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const today = new Date();
+
+// Generate the last 7 days in order (oldest → today)
+const weekLabels = [];
+const weekDayKeys = [];
+for (let i = 6; i >= 0; i--) {
+  const d = new Date(today);
+  d.setDate(today.getDate() - i);
+  weekLabels.push(DOW[d.getDay()]);
+  // ISO date string "YYYY-MM-DD" used to match backend keys if they exist
+  weekDayKeys.push(d.toISOString().slice(0, 10));
+}
+
+// If backend data is a keyed object use it; otherwise fall back to the raw array
+const rawData = chartData.salesTrend.data;
+const weekData = Array.isArray(rawData) && rawData.length === 7
+  ? rawData                                          // already 7 values in order
+  : weekDayKeys.map(k => (rawData?.[k] ?? 0));      // keyed object fallback
+
+salesChartInstance = new Chart(salesCtx, {
+  type: "line",
+  data: {
+    labels: weekLabels,   // ← always Mon Tue Wed Thu Fri Sat Sun
+    datasets: [{
+      label: "Daily Sales (₱)",
+      data: weekData,
+      borderColor: "#005a32",
+      backgroundColor: "rgba(0,90,50,0.1)",
+      borderWidth: 2,
+      fill: true,
+      tension: 0.4,
+    }],
+  },
           options: {
             responsive: true,
             maintainAspectRatio: false,
