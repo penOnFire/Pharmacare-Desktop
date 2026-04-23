@@ -65,7 +65,7 @@ function createWindow() {
     win.webContents.send("is-restored");
   });
 
-  win.loadFile(path.join(__dirname, "../frontend/html/index.html"));
+  win.loadFile(path.join(__dirname, "../frontend/html/login.html"));
 }
 
 // ✅ Start everything

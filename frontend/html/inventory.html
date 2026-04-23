@@ -1132,6 +1132,8 @@
               </button>
             </div>
 
+            
+
             <div
               id="alertsSection"
               class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8"
@@ -1349,12 +1351,19 @@
                 </div>
                 <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
                   <input
-                    id="batchSearch"
-                    onkeyup="searchBatch()"
-                    class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary flex-1 min-w-[150px]"
-                    placeholder="Search batches..."
-                    type="text"
-                  />
+  id="batchSearch"
+  onkeyup="searchBatch()"
+  class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary flex-1 min-w-[150px]"
+  placeholder="Search batches..."
+  type="text"
+/>
+<select id="batchStatusFilter" onchange="filterBatchByStatus()" class="border border-border-light dark:border-border-dark rounded-lg px-4 py-2 bg-background-light dark:bg-background-dark text-sm">
+  <option value="">All Status</option>
+  <option value="active">Active</option>
+  <option value="expiring">Expiring Soon</option>
+  <option value="expired">Expired</option>
+</select>
+
                   <div class="export-wrap">
                     <button
                       onclick="openBatchExportMenu()"
@@ -2633,7 +2642,11 @@
                 <td class="px-6 py-4 text-gray-500">₱${avg.toFixed(2)}</td>
                 <td class="px-6 py-4 text-gray-500">₱${item.totalValue.toFixed(2)}</td>
                 <td class="px-6 py-4"><span class="status ${sc}">${status}</span></td>
-                <td class="px-6 py-4"><button onclick="inventoryManager.viewBatchDetails('${item.name}')" class="text-primary hover:underline text-sm font-medium">View Batches</button></td>
+                <td class="px-6 py-4">
+  <button onclick="inventoryManager.viewBatchDetails('${item.name}')" title="View Batches" class="p-1.5 rounded-lg text-primary hover:bg-primary/10 transition-colors">
+    <span class="material-icons" style="font-size:20px;">layers</span>
+  </button>
+</td>
             </tr>`;
           });
         }
@@ -2655,6 +2668,19 @@
                 (i.batchNumber || "").toLowerCase().includes(search)
               );
             });
+
+            const statusFilter = document.getElementById("batchStatusFilter")?.value || "";
+if (statusFilter) {
+  const today = new Date();
+  batches = batches.filter((i) => {
+    const daysLeft = Math.ceil((new Date(i.expiryDate) - today) / 864e5);
+    if (statusFilter === "active")   return daysLeft > 30;
+    if (statusFilter === "expiring") return daysLeft >= 0 && daysLeft <= 30;
+    if (statusFilter === "expired")  return daysLeft < 0;
+    return true;
+  });
+}
+
           if (!batches.length) {
             tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-gray-500">No active batches found.</td></tr>`;
             buildPagination(
@@ -2883,10 +2909,11 @@
               .classList.remove("hidden");
             this.renderSummary();
           } else if (tabName === "batch") {
-            document.getElementById("batchSection").classList.remove("hidden");
-            document.getElementById("batchSearch").value = "";
-            this.renderBatches();
-          }
+  document.getElementById("batchSection").classList.remove("hidden");
+  document.getElementById("batchSearch").value = "";
+  document.getElementById("batchStatusFilter").value = "";
+  this.renderBatches();
+}
         }
 
         formatDate(dateString) {
@@ -3172,6 +3199,8 @@
           batchPage = 1;
           inventoryManager.renderBatches();
         };
+        window.filterBatchByStatus = () => { batchPage = 1; inventoryManager.renderBatches(); };
+
         window.exportBatchData = (filters) =>
           inventoryManager.exportBatchData(filters);
         window.searchArchive = () => {

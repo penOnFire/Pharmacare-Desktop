@@ -220,7 +220,7 @@ router.post('/dispense/:patientId', protect, async (req, res) => {
         await logActivity(req, {
             action: 'DISPENSE_PRESCRIPTION',
             module: 'Patient Records', // 🔥 Changed from 'Counter Dispensing'
-            description: `Dispensed prescription(s) for EMR patient '${emrPatient.firstname} ${emrPatient.lastname}'. Items: ${medNames}. Total: ₱${totalAmount.toFixed(2)}`,
+            description: `Dispensed prescription(s) for APT patient '${emrPatient.firstname} ${emrPatient.lastname}'. Items: ${medNames}. Total: ₱${totalAmount.toFixed(2)}`,
             targetId: sale._id.toString()
         });
 

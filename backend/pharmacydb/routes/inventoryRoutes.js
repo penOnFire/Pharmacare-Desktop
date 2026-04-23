@@ -7,6 +7,7 @@ import User from '../models/User.js';
 import Supplier from '../models/Supplier.js'; // Correct Import
 import Order from '../models/Order.js';
 import BillingProduct from '../models/BillingProduct.js';
+import { checkAndArchiveExpired } from '../utils/autoArchive.js';
 
 const router = express.Router();
 
@@ -15,6 +16,8 @@ const router = express.Router();
 // @access  Private/Admin
 router.get('/', protect, async (req, res) => {
   try {
+    await checkAndArchiveExpired(); // Ensure expired items are archived before fetching
+
     let query = { isArchived: false };
     
     const today = new Date();
@@ -131,6 +134,14 @@ router.post('/', protect, async (req, res) => {
     const populatedItem = await Inventory.findById(newInventoryItem._id).populate({
       path: 'medicine',
       populate: { path: 'supplier' }
+    });
+    
+    // 🔥 LOG THE RESTOCK ACTIVITY
+    await logActivity(req, {
+        action: 'RESTOCK_MEDICINE',
+        module: 'Inventory',
+        description: `Restocked ${quantity} units of '${medicine.name}' (Batch: ${batchNumber}).`,
+        targetId: newInventoryItem._id.toString()
     });
     
     res.status(201).json(populatedItem);

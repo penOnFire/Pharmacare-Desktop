@@ -6,13 +6,13 @@ const activityLogSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+      required: false,
     },
     userName: { type: String, required: true },
     userRole: {
       type: String,
       // 🔥 FIX: Added 'pharmacy assistant' (with a space) to match the User model
-      enum: ['admin', 'pharmacist', 'pharmacy assistant', 'pharmacy_assistant'],
+      enum: ['admin', 'pharmacist', 'pharmacy assistant', 'pharmacy_assistant', 'System'],
       required: true,
     },
 
@@ -31,6 +31,8 @@ const activityLogSchema = new mongoose.Schema(
         'ARCHIVE_MEDICINE',
         'RESTORE_MEDICINE',
         'DELETE_MEDICINE',
+        'RESTOCK_MEDICINE',
+        'AUTO_ARCHIVE_EXPIRED',
         // Sales & Billing
         'CREATE_SALE',
         'VOID_SALE',

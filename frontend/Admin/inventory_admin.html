@@ -1334,6 +1334,69 @@
               </button>
             </div>
 
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <div
+                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
+              >
+                <p
+                  class="text-sm text-subtext-light dark:text-subtext-dark font-medium"
+                >
+                  Total Items
+                </p>
+                <p
+                  id="totalItems"
+                  class="text-3xl font-bold text-text-light dark:text-text-dark mt-2"
+                >
+                  0
+                </p>
+              </div>
+              <div
+                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
+              >
+                <p
+                  class="text-sm text-subtext-light dark:text-subtext-dark font-medium"
+                >
+                  Total Value
+                </p>
+                <p
+                  id="totalValue"
+                  class="text-3xl font-bold text-text-light dark:text-text-dark mt-2"
+                >
+                  ₱0.00
+                </p>
+              </div>
+              <div
+                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
+              >
+                <p
+                  class="text-sm text-subtext-light dark:text-subtext-dark font-medium"
+                >
+                  Low Stock Items
+                </p>
+                <p
+                  id="lowStockCount"
+                  class="text-3xl font-bold text-accent dark:text-amber-400 mt-2"
+                >
+                  0
+                </p>
+              </div>
+              <div
+                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
+              >
+                <p
+                  class="text-sm text-subtext-light dark:text-subtext-dark font-medium"
+                >
+                  Expiring Soon
+                </p>
+                <p
+                  id="expiringCount"
+                  class="text-3xl font-bold text-secondary dark:text-red-400 mt-2"
+                >
+                  0
+                </p>
+              </div>
+            </div>
+
             <div
               id="alertsSection"
               class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8"
@@ -1546,13 +1609,27 @@
                   </p>
                 </div>
                 <div class="flex items-center gap-4">
-                  <input
-                    id="batchSearch"
-                    onkeyup="searchBatch()"
-                    class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="Search batches..."
-                    type="text"
-                  />
+                  <div class="flex items-center gap-3">
+  <input
+    id="batchSearch"
+    onkeyup="searchBatch()"
+    class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+    placeholder="Search batches..."
+    type="text"
+  />
+  <select
+    id="batchStatusFilter"
+    onchange="filterBatchByStatus()"
+    class="border border-border-light dark:border-border-dark rounded-lg px-4 py-2 bg-background-light dark:bg-background-dark text-sm"
+  >
+    <option value="">All Status</option>
+    <option value="active">Active</option>
+    <option value="expiring">Expiring Soon</option>
+    <option value="expired">Expired</option>
+  </select>
+</div>
+
+                  
                   <div class="export-wrap">
                     <button
                       onclick="openBatchExportMenu()"
@@ -1819,7 +1896,6 @@
                       <th class="px-6 py-4 font-medium">Price</th>
                       <th class="px-6 py-4 font-medium">Supplier</th>
                       <th class="px-6 py-4 font-medium">Status</th>
-                    
                     </tr>
                   </thead>
                   <tbody id="batchTableBody"></tbody>
@@ -1854,22 +1930,104 @@
               id="archiveSection"
               class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 hidden"
             >
-              <div
-                class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center"
-              >
-                <h2
-                  class="text-xl font-semibold text-text-light dark:text-text-dark"
-                >
-                  Archived Medicines
-                </h2>
-                <input
-                  id="archiveSearch"
-                  onkeyup="searchArchive()"
-                  class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary"
-                  placeholder="Search archive..."
-                  type="text"
-                />
-              </div>
+              <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+  <div>
+    <h2 class="text-xl font-semibold text-text-light dark:text-text-dark">
+      Archived Medicines
+    </h2>
+    <p class="text-xs text-accent mt-1">Batches removed from active inventory</p>
+  </div>
+  <div class="flex items-center gap-4">
+    <input
+      id="archiveSearch"
+      onkeyup="searchArchive()"
+      class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary"
+      placeholder="Search archive..."
+      type="text"
+    />
+    <div class="export-wrap">
+      <button
+        onclick="openArchiveExportMenu()"
+        class="border border-primary px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/10 transition-colors text-primary font-semibold text-sm"
+      >
+        <span class="material-icons text-sm">print</span> Export / Print
+        <span class="material-icons text-sm">arrow_drop_down</span>
+      </button>
+      <div id="archiveExportMenu"
+  class="export-menu"
+  style="min-width: 310px; padding: 12px 14px"
+>
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider" style="margin: 0;">
+      Select Archived Batches
+    </p>
+    <div style="display: flex; gap: 6px">
+      <button onclick="setArchiveExportAll(true)" style="font-size: 10px; color: #005a32; font-weight: 600; background: none; border: none; cursor: pointer;">All</button>
+      <span style="font-size: 10px; color: #9ca3af">|</span>
+      <button onclick="setArchiveExportAll(false)" style="font-size: 10px; color: #6b7280; font-weight: 600; background: none; border: none; cursor: pointer;">None</button>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div style="position: relative; margin-bottom: 8px">
+    <span class="material-icons" style="position: absolute; left: 7px; top: 50%; transform: translateY(-50%); font-size: 15px; color: #9ca3af; pointer-events: none;">search</span>
+    <input
+      id="archiveExportSearch"
+      type="text"
+      placeholder="Search medicine or batch no..."
+      oninput="filterArchiveExportList()"
+      style="width: 100%; box-sizing: border-box; padding: 6px 10px 6px 28px; font-size: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb; color: #1f2937; outline: none;"
+    />
+  </div>
+
+  <!-- ── NEW: Date range filter ── -->
+  <!-- Filter by date archived — makes sense for archive tab -->
+<div style="background: #f9fafb; border-radius: 8px; padding: 10px; border: 1px solid #e5e7eb; margin-bottom: 8px;">
+  <p style="font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 8px;">
+    Filter by date archived
+  </p>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px;">
+    <div>
+      <label style="font-size: 10px; color: #6b7280; display: block; margin-bottom: 3px;">From</label>
+      <input
+        id="archiveExportDateFrom"
+        type="date"
+        oninput="filterArchiveExportList()"
+        style="width: 100%; box-sizing: border-box; padding: 5px 7px; font-size: 11px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fff; color: #1f2937; outline: none;"
+      />
+    </div>
+    <div>
+      <label style="font-size: 10px; color: #6b7280; display: block; margin-bottom: 3px;">To</label>
+      <input
+        id="archiveExportDateTo"
+        type="date"
+        oninput="filterArchiveExportList()"
+        style="width: 100%; box-sizing: border-box; padding: 5px 7px; font-size: 11px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fff; color: #1f2937; outline: none;"
+      />
+    </div>
+  </div>
+  <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+    <button class="bexp-qp" onclick="setArchiveExportQuick(this, 'today')">Today</button>
+    <button class="bexp-qp" onclick="setArchiveExportQuick(this, '7')">Past 7d</button>
+    <button class="bexp-qp" onclick="setArchiveExportQuick(this, '30')">Past 30d</button>
+    <button class="bexp-qp" onclick="setArchiveExportQuick(this, 'year')">This Year</button>
+    <button class="bexp-qp" onclick="setArchiveExportQuick(this, 'clear')">Clear</button>
+  </div>
+</div>
+
+  <div id="archiveExportCheckList" style="max-height: 160px; overflow-y: auto; scrollbar-width: thin; margin-bottom: 8px;"></div>
+
+  <div class="export-menu-divider" style="margin: 8px 0"></div>
+  <button onclick="exportArchiveData()" class="export-apply-btn">
+    <span class="material-icons">print</span> Print / Export
+  </button>
+  <p id="archiveExportSelCount" style="text-align: center; font-size: 11px; color: #9ca3af; margin: 6px 0 0;">
+    0 batches selected
+  </p>
+</div>
+    </div>
+  </div>
+</div>
               <div class="table-container">
                 <table
                   class="w-full text-left text-sm text-gray-500 dark:text-gray-400"
@@ -1882,7 +2040,6 @@
                       <th class="px-6 py-4 font-medium">Batch Number</th>
                       <th class="px-6 py-4 font-medium">Quantity</th>
                       <th class="px-6 py-4 font-medium">Expiry Date</th>
-                      
                     </tr>
                   </thead>
                   <tbody id="archiveTableBody"></tbody>
@@ -1909,69 +2066,6 @@
                   class="pagination-controls"
                   id="archivePaginationControls"
                 ></div>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
-              <div
-                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
-              >
-                <p
-                  class="text-sm text-subtext-light dark:text-subtext-dark font-medium"
-                >
-                  Total Items
-                </p>
-                <p
-                  id="totalItems"
-                  class="text-3xl font-bold text-text-light dark:text-text-dark mt-2"
-                >
-                  0
-                </p>
-              </div>
-              <div
-                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
-              >
-                <p
-                  class="text-sm text-subtext-light dark:text-subtext-dark font-medium"
-                >
-                  Total Value
-                </p>
-                <p
-                  id="totalValue"
-                  class="text-3xl font-bold text-text-light dark:text-text-dark mt-2"
-                >
-                  ₱0.00
-                </p>
-              </div>
-              <div
-                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
-              >
-                <p
-                  class="text-sm text-subtext-light dark:text-subtext-dark font-medium"
-                >
-                  Low Stock Items
-                </p>
-                <p
-                  id="lowStockCount"
-                  class="text-3xl font-bold text-accent dark:text-amber-400 mt-2"
-                >
-                  0
-                </p>
-              </div>
-              <div
-                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
-              >
-                <p
-                  class="text-sm text-subtext-light dark:text-subtext-dark font-medium"
-                >
-                  Expiring Soon
-                </p>
-                <p
-                  id="expiringCount"
-                  class="text-3xl font-bold text-secondary dark:text-red-400 mt-2"
-                >
-                  0
-                </p>
               </div>
             </div>
           </div>
@@ -3764,7 +3858,15 @@ document.addEventListener("click", (e) => {
                 <td class="px-6 py-4 text-gray-500">₱${avg.toFixed(2)}</td>
                 <td class="px-6 py-4 text-gray-500">₱${item.totalValue.toFixed(2)}</td>
                 <td class="px-6 py-4"><span class="status ${sc}">${status}</span></td>
-                <td class="px-6 py-4"><button onclick="inventoryManager.viewBatchDetails('${item.name}')" class="text-primary hover:underline text-sm font-medium">View Batches</button></td>
+                <td class="px-6 py-4">
+  <button 
+    onclick="inventoryManager.viewBatchDetails('${item.name}')" 
+    title="View Batches"
+    class="p-1.5 rounded-lg text-primary hover:bg-primary/10 transition-colors"
+  >
+    <span class="material-icons" style="font-size:20px;">layers</span>
+  </button>
+</td>
             </tr>`;
           });
         }
@@ -3786,6 +3888,19 @@ document.addEventListener("click", (e) => {
                 (i.batchNumber || "").toLowerCase().includes(search)
               );
             });
+
+            const statusFilter = document.getElementById("batchStatusFilter")?.value || "";
+if (statusFilter) {
+  const today = new Date();
+  batches = batches.filter((i) => {
+    const daysLeft = Math.ceil((new Date(i.expiryDate) - today) / 864e5);
+    if (statusFilter === "active")   return daysLeft > 30;
+    if (statusFilter === "expiring") return daysLeft >= 0 && daysLeft <= 30;
+    if (statusFilter === "expired")  return daysLeft < 0;
+    return true;
+  });
+}
+
           if (!batches.length) {
             tbody.innerHTML = `<tr><td colspan="9" class="p-8 text-center text-gray-500">No active batches found.</td></tr>`;
             buildPagination(
@@ -3927,7 +4042,7 @@ document.addEventListener("click", (e) => {
             document.getElementById(t + "Section").classList.toggle("hidden", t !== tabName);
           });
           if (tabName === "summary") this.renderSummary();
-          if (tabName === "batch") { document.getElementById("batchSearch").value = ""; this.renderBatches(); }
+         if (tabName === "batch") { document.getElementById("batchSearch").value = ""; document.getElementById("batchStatusFilter").value = ""; this.renderBatches(); }
           if (tabName === "archive") this.renderArchive();
           if (tabName !== "summary") {
             const s = document.getElementById("summarySearch");
@@ -4371,6 +4486,401 @@ document.addEventListener("click", (e) => {
         );
       }
 
+      // ══════════════════════════════════════════════════════════
+      // ARCHIVE EXPORT
+      // ══════════════════════════════════════════════════════════
+      function openArchiveExportMenu() {
+  document.querySelectorAll(".export-menu.open").forEach((m) => m.classList.remove("open"));
+  const menu = document.getElementById("archiveExportMenu");
+  if (!menu || !inventoryManager) return;
+  document.getElementById("archiveExportSearch").value = "";
+  document.getElementById("archiveExportDateFrom").value = "";
+  document.getElementById("archiveExportDateTo").value = "";
+  document.querySelectorAll("#archiveExportMenu .bexp-qp").forEach((b) => b.classList.remove("active"));
+  populateArchiveExportList();
+  menu.classList.add("open");
+}
+
+      function populateArchiveExportList() {
+  const list = document.getElementById("archiveExportCheckList");
+  if (!list || !inventoryManager) return;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const sorted = [...inventoryManager.archivedInventory].sort(
+    (a, b) => new Date(a.expiryDate) - new Date(b.expiryDate)
+  );
+
+  if (!sorted.length) {
+    list.innerHTML = '<p style="font-size:12px;color:#9ca3af;text-align:center;padding:8px 0;">No archived batches available.</p>';
+    updateArchiveExportCount();
+    return;
+  }
+
+  list.innerHTML = sorted.map((item) => {
+    const id    = item._id || item.id;
+    const name  = inventoryManager._getName(item);
+    const batch = item.batchNumber || "N/A";
+    const qty   = item.quantity;
+
+    // ── Expiry-based color (same as batch export) ──
+    const expDate = new Date(item.expiryDate);
+    expDate.setHours(0, 0, 0, 0);
+    const daysLeft = Math.ceil((expDate - today) / 864e5);
+    const color = daysLeft < 0   ? "#dc2626"  // expired  → red
+                : daysLeft <= 30 ? "#8b5a2b"  // expiring → amber
+                : "#16a34a";                   // active   → green
+
+    const expStr = expDate.toLocaleDateString("en-PH", { year: "numeric", month: "short", day: "numeric" });
+
+    // ── Archived date (used for date filter) ──
+    const archivedAt   = item.archivedAt || item.updatedAt || item.archived_at || new Date().toISOString();
+    const archivedDate = new Date(archivedAt);
+    archivedDate.setHours(0, 0, 0, 0);
+    const archivedIso = archivedDate.toISOString().split("T")[0];
+    const archivedStr = archivedDate.toLocaleDateString("en-PH", { year: "numeric", month: "short", day: "numeric" });
+
+    return `
+      <label class="export-check-row arch-exp-row"
+        data-text="${name.toLowerCase()} ${batch.toLowerCase()}"
+        data-archived="${archivedIso}"
+        style="align-items:flex-start;gap:6px;padding:5px 2px;">
+        <input type="checkbox" value="${id}"
+          style="margin-top:2px;width:14px;height:14px;accent-color:#005a32;flex-shrink:0;"
+          onchange="updateArchiveExportCount()">
+        <span style="width:7px;height:7px;border-radius:50%;background:${color};flex-shrink:0;margin-top:4px;"></span>
+        <span style="font-size:12px;line-height:1.3;">
+          <span style="font-weight:600;color:inherit;">${name}</span>
+          <span style="display:block;font-size:10px;color:#9ca3af;">
+            Batch ${batch} &nbsp;·&nbsp; Qty ${qty} &nbsp;·&nbsp; <span style="color:${color}">${expStr}</span> &nbsp;·&nbsp; Archived: ${archivedStr}
+          </span>
+        </span>
+      </label>`;
+  }).join("") +
+  `<div id="archiveExportEmpty" style="display:none;font-size:12px;color:#9ca3af;text-align:center;padding:12px 0;">No batches match.</div>`;
+
+  updateArchiveExportCount();
+}
+
+      function filterArchiveExportList() {
+  const q       = (document.getElementById("archiveExportSearch")?.value || "").toLowerCase();
+  const fromVal = document.getElementById("archiveExportDateFrom")?.value;
+  const toVal   = document.getElementById("archiveExportDateTo")?.value;
+  const from    = fromVal ? new Date(fromVal) : null;
+  const to      = toVal   ? new Date(toVal)   : null;
+
+  let visible = 0;
+  document.querySelectorAll(".arch-exp-row").forEach((row) => {
+    const archived  = new Date(row.dataset.archived);   // ← read archived date
+    const matchQ    = !q    || row.dataset.text.includes(q);
+    const matchFrom = !from || archived >= from;
+    const matchTo   = !to   || archived <= to;
+    const show = matchQ && matchFrom && matchTo;
+    row.style.display = show ? "" : "none";
+    if (show) visible++;
+  });
+
+  const empty = document.getElementById("archiveExportEmpty");
+  if (empty) empty.style.display = visible === 0 ? "" : "none";
+  updateArchiveExportCount();
+}
+
+      function setArchiveExportQuick(btn, type) {
+  document.querySelectorAll("#archiveExportMenu .bexp-qp").forEach((b) => b.classList.remove("active"));
+  if (type !== "clear") btn.classList.add("active");
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const toISO = (d) => d.toISOString().split("T")[0];
+
+  const df = document.getElementById("archiveExportDateFrom");
+  const dt = document.getElementById("archiveExportDateTo");
+  if (!df || !dt) return;
+
+  if (type === "clear") {
+    df.value = ""; dt.value = "";
+  } else if (type === "today") {
+    df.value = toISO(today);
+    dt.value = toISO(today);
+  } else if (type === "year") {
+    df.value = toISO(new Date(today.getFullYear(), 0, 1));   // Jan 1 this year
+    dt.value = toISO(today);
+  } else {
+    // "7" → past 7 days, "30" → past 30 days
+    df.value = toISO(new Date(today.getTime() - parseInt(type) * 864e5));
+    dt.value = toISO(today);
+  }
+  filterArchiveExportList();
+}
+
+      function setArchiveExportAll(checked) {
+        document.querySelectorAll(".arch-exp-row").forEach((row) => {
+          if (row.style.display !== "none") {
+            const cb = row.querySelector('input[type="checkbox"]');
+            if (cb) cb.checked = checked;
+          }
+        });
+        updateArchiveExportCount();
+      }
+
+      function updateArchiveExportCount() {
+        const n = document.querySelectorAll('#archiveExportCheckList input[type="checkbox"]:checked').length;
+        const el = document.getElementById("archiveExportSelCount");
+        if (el) el.textContent = `${n} batch${n !== 1 ? "es" : ""} selected`;
+      }
+
+      async function exportArchiveData() {
+  toggleExportMenu("archiveExportMenu", true);
+
+  const checkedIds = new Set(
+    [...document.querySelectorAll('#archiveExportCheckList input[type="checkbox"]:checked')].map((cb) => cb.value)
+  );
+  if (!checkedIds.size) return Swal.fire("Nothing selected", "Please check at least one batch.", "info");
+
+  const today = new Date();
+  const timestamp = new Date().toISOString().split("T")[0];
+  const token = getToken();
+
+  const sorted = [...inventoryManager.archivedInventory].sort(
+    (a, b) => new Date(a.expiryDate) - new Date(b.expiryDate)
+  );
+  const selectedBatches = sorted.filter((item) => checkedIds.has(item._id || item.id));
+  if (!selectedBatches.length) return Swal.fire("No Data", "No batches matched your selection.", "info");
+
+  // Show loading while fetching sales records
+  Swal.fire({ title: "Preparing Report...", text: "Fetching dispensing records...", allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+  // Fetch all sales/dispensing records from the backend
+  let allSales = [];
+  try {
+    const salesRes = await fetch(`${API_BASE_URL}/api/sales`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (salesRes.ok) {
+      const salesData = await salesRes.json();
+      allSales = Array.isArray(salesData) ? salesData : (salesData.data || salesData.sales || []);
+    }
+  } catch (e) {
+    console.warn("Could not fetch sales records:", e);
+  }
+
+  Swal.close();
+
+  // ── BUILD PDF with two separate sections ──
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: "landscape" });
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+
+  // ── COVER HEADER ──
+  doc.setFillColor(0, 90, 50);
+  doc.rect(0, 0, pageW, 20, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(15);
+  doc.setFont("helvetica", "bold");
+  doc.text("Well Served Pharmacy", 14, 13);
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "normal");
+  doc.text("Archived Batch Report", pageW - 14, 13, { align: "right" });
+
+  doc.setTextColor(0, 0, 0);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text(`Generated: ${new Date().toLocaleString("en-PH")}`, 14, 28);
+  doc.text(`Batches Included: ${selectedBatches.length}`, 14, 34);
+
+  let cursorY = 42;
+
+  selectedBatches.forEach((batch, batchIdx) => {
+    const batchId   = batch._id || batch.id;
+    const batchNo   = batch.batchNumber || "N/A";
+    const medName   = inventoryManager._getName(batch);
+    const expDate   = inventoryManager.formatDate(batch.expiryDate);
+    const supplier  = batch.supplier || "Unknown";
+    const origQty   = batch.originalQuantity || batch.quantity || 0; // original stock when batch was added
+
+    // ── Match sales records to this batch ──
+    // Sales items may reference batchId, batchNumber, or medicine name — adjust field names to match your actual sales schema
+    const dispensedRecords = allSales.flatMap(sale => {
+      const saleDate = sale.createdAt || sale.date || sale.soldAt || "";
+      return (sale.items || sale.medicines || [])
+        .filter(item => {
+          const itemBatchId  = item.batchId  || item.inventoryId || item.batch?._id || "";
+          const itemBatchNo  = item.batchNumber || item.batch?.batchNumber || "";
+          const itemMedName  = item.medicineName || item.medicine?.name || item.name || "";
+          // Match by batch ID first, fall back to batch number + medicine name
+          return String(itemBatchId) === String(batchId) ||
+                 (itemBatchNo === batchNo && itemMedName.toLowerCase() === medName.toLowerCase());
+        })
+        .map(item => ({
+          date:       new Date(saleDate).toLocaleDateString("en-PH", { year:"numeric", month:"short", day:"numeric" }) || "N/A",
+          qty:        item.quantity || item.qty || 0,
+          unitPrice:  item.unitPrice || item.sellingPrice || item.price || 0,
+          soldBy:     sale.soldBy || sale.cashier || sale.servedBy || "N/A",
+          patient:    sale.patientName || sale.customer || "Walk-in",
+          receiptNo:  sale.receiptNumber || sale.receiptNo || sale._id?.toString().slice(-6).toUpperCase() || "N/A",
+        }));
+    });
+
+    // ── Expired: any remaining quantity once batch was archived past expiry ──
+    const isExpiredBatch = new Date(batch.expiryDate) < today;
+    const totalDispensed = dispensedRecords.reduce((sum, r) => sum + Number(r.qty), 0);
+    const expiredQty = isExpiredBatch ? Math.max(0, Number(origQty) - totalDispensed) : 0;
+
+    // ── Page break check — need space for batch header + at least one table ──
+    if (batchIdx > 0 && cursorY > pageH - 80) {
+      doc.addPage();
+      cursorY = 20;
+    }
+
+    // ── BATCH HEADER BAND ──
+    doc.setFillColor(240, 253, 244);
+    doc.rect(0, cursorY, pageW, 14, "F");
+    doc.setDrawColor(0, 90, 50);
+    doc.setLineWidth(0.8);
+    doc.line(0, cursorY, 0, cursorY + 14);
+    doc.setLineWidth(0.2);
+
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(0, 90, 50);
+    doc.text(`${medName}`, 14, cursorY + 9);
+
+    doc.setFontSize(8.5);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(80, 80, 80);
+    doc.text(`Batch No: ${batchNo}   |   Expiry: ${expDate}   |   Supplier: ${supplier}   |   Original Stock: ${origQty} units`, pageW - 14, cursorY + 9, { align: "right" });
+
+    cursorY += 18;
+
+    // ══════════════════════════════════
+    // SECTION 1 — DISPENSED MEDICINES
+    // ══════════════════════════════════
+    doc.setFontSize(9.5);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(0, 90, 50);
+    doc.text("SECTION 1 — Dispensed / Sold Records", 14, cursorY);
+    cursorY += 4;
+
+    if (dispensedRecords.length === 0) {
+      doc.setFontSize(8.5);
+      doc.setFont("helvetica", "italic");
+      doc.setTextColor(150, 150, 150);
+      doc.text("   No dispensing records found for this batch.", 14, cursorY + 6);
+      cursorY += 14;
+    } else {
+      const dispensedRows = dispensedRecords.map((r, i) => [
+        i + 1,
+        r.date,
+        r.receiptNo,
+        r.patient,
+        r.soldBy,
+        r.qty,
+        `₱${parseFloat(r.unitPrice).toFixed(2)}`,
+        `₱${(r.qty * r.unitPrice).toFixed(2)}`,
+      ]);
+
+      const dispensedTotal = dispensedRecords.reduce((sum, r) => sum + r.qty * r.unitPrice, 0);
+      dispensedRows.push([
+        "", "", "", "", { content: "TOTAL DISPENSED", styles: { fontStyle: "bold" } },
+        { content: totalDispensed, styles: { fontStyle: "bold", textColor: [0, 90, 50] } },
+        "",
+        { content: `₱${dispensedTotal.toFixed(2)}`, styles: { fontStyle: "bold", textColor: [0, 90, 50] } },
+      ]);
+
+      doc.autoTable({
+        head: [["#", "Date Dispensed", "Receipt No.", "Patient / Customer", "Served By", "Qty", "Unit Price", "Total"]],
+        body: dispensedRows,
+        startY: cursorY,
+        theme: "grid",
+        headStyles: { fillColor: [0, 90, 50], textColor: 255, fontStyle: "bold", fontSize: 7.5 },
+        bodyStyles: { fontSize: 7.5 },
+        alternateRowStyles: { fillColor: [245, 250, 247] },
+        styles: { cellPadding: 2.5, overflow: "linebreak" },
+        margin: { left: 14, right: 14 },
+      });
+
+      cursorY = doc.lastAutoTable.finalY + 8;
+    }
+
+    // ══════════════════════════════════
+    // SECTION 2 — EXPIRED MEDICINES
+    // ══════════════════════════════════
+    if (cursorY > pageH - 55) { doc.addPage(); cursorY = 20; }
+
+    doc.setFontSize(9.5);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(214, 40, 40);
+    doc.text("SECTION 2 — Expired Stock", 14, cursorY);
+    cursorY += 4;
+
+    if (!isExpiredBatch) {
+      doc.setFontSize(8.5);
+      doc.setFont("helvetica", "italic");
+      doc.setTextColor(150, 150, 150);
+      doc.text("   This batch has not expired yet.", 14, cursorY + 6);
+      cursorY += 14;
+    } else if (expiredQty <= 0) {
+      doc.setFontSize(8.5);
+      doc.setFont("helvetica", "italic");
+      doc.setTextColor(150, 150, 150);
+      doc.text("   All units from this batch were dispensed before expiry. No waste recorded.", 14, cursorY + 6);
+      cursorY += 14;
+    } else {
+      const expiredRows = [
+        [
+          medName,
+          batchNo,
+          expDate,
+          origQty,
+          totalDispensed,
+          { content: expiredQty, styles: { fontStyle: "bold", textColor: [214, 40, 40] } },
+          supplier,
+        ],
+      ];
+
+      doc.autoTable({
+        head: [["Medicine", "Batch No.", "Expiry Date", "Original Qty", "Dispensed Qty", "Expired / Wasted Qty", "Supplier"]],
+        body: expiredRows,
+        startY: cursorY,
+        theme: "grid",
+        headStyles: { fillColor: [214, 40, 40], textColor: 255, fontStyle: "bold", fontSize: 7.5 },
+        bodyStyles: { fontSize: 7.5 },
+        alternateRowStyles: { fillColor: [255, 245, 245] },
+        styles: { cellPadding: 2.5 },
+        margin: { left: 14, right: 14 },
+      });
+
+      cursorY = doc.lastAutoTable.finalY + 8;
+    }
+
+    // ── Divider between batches ──
+    if (batchIdx < selectedBatches.length - 1) {
+      doc.setDrawColor(200, 200, 200);
+      doc.setLineWidth(0.3);
+      doc.line(14, cursorY, pageW - 14, cursorY);
+      cursorY += 10;
+    }
+  });
+
+  // ── PAGE NUMBERS ──
+  const pageCount = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFontSize(7.5);
+    doc.setTextColor(150);
+    doc.text(`Page ${i} of ${pageCount}`, pageW - 14, pageH - 8, { align: "right" });
+    doc.text("Well Served Pharmacy — Confidential", 14, pageH - 8);
+  }
+
+  // ── PRINT ──
+  doc.autoPrint();
+  const blobUrl = doc.output("bloburl");
+  const win = window.open(blobUrl, "_blank");
+  if (!win) Swal.fire("Popup Blocked", "Please allow popups to print.", "warning");
+}
+
       // ── INIT ──
       let inventoryManager;
       document.addEventListener("DOMContentLoaded", () => {
@@ -4395,6 +4905,11 @@ document.addEventListener("click", (e) => {
           batchPage = 1;
           inventoryManager.renderBatches();
         };
+
+        window.filterBatchByStatus = () => {
+  batchPage = 1;
+  inventoryManager.renderBatches();
+};
         window.searchArchive = () => {
           archivePage = 1;
           inventoryManager.renderArchive();
