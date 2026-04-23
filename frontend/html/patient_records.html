@@ -2418,12 +2418,15 @@ goToPage(page) {
                 });
 
               // Safely handle EMR patients vs Walk-in customers
-              const patientName = sale.patient
-                ? sale.patient.name
-                : sale.patientName;
-              const patientId = sale.patient
-                ? sale.patient.patientId
-                : "Walk-in";
+const patientName =
+  (sale.patient && sale.patient.name)
+    ? sale.patient.name
+    : (sale.patientName || "Unknown Patient");
+
+const patientId =
+  (sale.patient && sale.patient.patientId)
+    ? sale.patient.patientId
+    : (sale.patientId || "Walk-in");
 
               // Map the sold items to HTML
               const medsHtml = sale.items
