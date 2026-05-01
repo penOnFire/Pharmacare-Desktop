@@ -9,6 +9,8 @@ import Medicine from '../models/Medicine.js';
 import Order from '../models/Order.js';
 import Patient from '../models/Patient.js';
 import SystemSettings from '../models/SystemSettings.js';
+import Payment from '../models/Payment.js';
+import PharmacyPatient from '../models/PharmacyPatient.js';
 
 const router = express.Router();
 
@@ -83,20 +85,12 @@ router.get('/', async (req, res) => {
 });
 
 // ==============================================================================
-// 3. SYNC STATUS (Billing Integration)
+// 3. SYNC STATUS (Billing Integration) - NAME MATCHING
 // ==============================================================================
 router.post('/sync', protect, async (req, res) => {
     try {
-        const settings = await SystemSettings.findOne();
-        if (!settings || !settings.billing.enabled) {
-            return res.status(400).json({ 
-                message: "Billing integration is currently DISABLED in System Settings.",
-                updated: 0 
-            });
-        }
-
         if (!ExternalPayment) {
-            return res.status(503).json({ message: "Billing DB connection not configured in .env." });
+            return res.status(503).json({ message: "Billing DB connection not configured." });
         }
 
         const pendingSales = await Sale.find({ paymentStatus: 'Pending' });
@@ -104,20 +98,44 @@ router.post('/sync', protect, async (req, res) => {
             return res.json({ message: "No pending sales to sync.", updated: 0 });
         }
 
+        // 1. Fetch ALL completed payments from the EMR/Billing DB at once
+        const allPayments = await ExternalPayment.find({
+            status: { $in: ["completed", "Completed", "paid", "Paid"] }
+        }).lean();
+
         let updatedCount = 0;
+        
         for (const sale of pendingSales) {
-            const paymentRecord = await ExternalPayment.findOne({ 
-                pharmacyReferenceId: sale._id.toString() 
+            const myName = (sale.patientName || '').toLowerCase().trim();
+
+            // Skip anonymous walk-ins as they aren't easily tracked in hospital billing databases
+            if (myName.includes('walk-in') || myName === '') continue;
+
+            // 2. THE FIX: Match strictly by Name! We completely ignore the Amount
+            // because the Hospital bill lumps medicine with ICU, Surgeries, etc.
+            const match = allPayments.find(p => {
+                const theirName = (p.patientName || '').toLowerCase().trim();
+                // Check if the names overlap (e.g. "Juan Santos" matches "Juan Santos")
+                return theirName.includes(myName) || myName.includes(theirName);
             });
 
-            if (paymentRecord && (paymentRecord.status === 'Paid' || paymentRecord.status === 'Completed')) {
+            // 3. If they paid their hospital bill, mark the pharmacy sale as Paid!
+            if (match) {
                 sale.paymentStatus = 'Paid';
-                sale.billingReference = paymentRecord._id || paymentRecord.transactionId; 
                 await sale.save();
+                
+                // Log the success in the Activity Logs
+                await logActivity(req, {
+                    action: 'SYNC_BILLING',
+                    module: 'Sales & Billing',
+                    description: `Automated Sync: Marked sale for ${sale.patientName} as PAID (Matched with Hospital Bill).`,
+                    targetId: sale._id.toString()
+                });
+                
                 updatedCount++;
             }
         }
-        res.json({ message: "Sync complete", updated: updatedCount });
+        res.json({ message: "Sync complete.", updated: updatedCount });
 
     } catch (err) {
         console.error("Sync Error:", err);
@@ -359,7 +377,7 @@ router.post('/otc', protect, async (req, res) => {
             pharmacist: req.user._id,
             items: itemsSold,
             totalAmount: totalAmount,
-            paymentStatus: 'Paid', // OTC is paid instantly
+            paymentStatus: 'Pending',
             date: Date.now()
         });
 

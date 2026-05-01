@@ -996,15 +996,16 @@
         <div class="flex-1 p-8 overflow-y-auto">
           <div class="flex justify-between items-center mb-6">
             <div>
-              <h1
-                class="text-3xl font-bold text-text-light dark:text-text-dark"
-              >
+              <h1 class="text-3xl font-bold text-text-light dark:text-text-dark">
                 Sales & Billing Records
               </h1>
               <p class="text-subtext-light dark:text-subtext-dark mt-1">
                 Track sales transactions auto-linked to billing system
               </p>
             </div>
+            <button onclick="billingManager.syncWithBilling()" class="px-4 py-2 bg-primary text-white rounded-lg font-semibold flex items-center gap-2 hover:bg-primary/90 transition-colors shadow-md">
+                <span class="material-icons">sync</span> Sync EMR Payments
+            </button>
           </div>
 
           <div
@@ -1566,44 +1567,40 @@
         }
 
         async syncWithBilling() {
-          const btn = document.getElementById("syncBtn");
-          const icon = document.getElementById("syncIcon");
-          const staticIcon = document.getElementById("staticSyncIcon");
-
-          btn.disabled = true;
-          btn.classList.add("opacity-75");
-          icon.style.display = "inline-block";
-          staticIcon.style.display = "none";
-
-          try {
-            const res = await fetch(`${API_BASE_URL}/api/sales/sync`, {
-              method: "POST",
-              headers: { Authorization: `Bearer ${this.getToken()}` },
+            // 1. Show a beautiful loading popup so the user knows it's working
+            Swal.fire({ 
+                title: 'Syncing with EMR Billing...', 
+                text: 'Scanning payment records...',
+                allowOutsideClick: false, 
+                didOpen: () => Swal.showLoading() 
             });
-            const result = await res.json();
-            if (res.ok) {
-              Swal.fire({
-                title: "Sync Complete",
-                text:
-                  result.message +
-                  (result.updated > 0 ? ` (${result.updated} updated)` : ""),
-                icon: "success",
-                timer: 2000,
-                showConfirmButton: false,
-                confirmButtonColor: "#005a32",
-              });
-              await this.fetchSales();
-            } else {
-              Swal.fire("Sync Failed", result.message, "error");
+
+            try {
+                // 2. Call the backend route we just made
+                const res = await fetch(`${API_BASE_URL}/api/sales/sync`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${this.getToken()}` }
+                });
+                
+                const result = await res.json();
+                
+                if (!res.ok) throw new Error(result.message || 'Sync failed');
+                
+                // 3. Show Success Popup
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Sync Complete',
+                    text: result.message + (result.updated > 0 ? ` (${result.updated} updated)` : ''),
+                    confirmButtonColor: '#005a32'
+                });
+                
+                // 4. Instantly refresh the table to show the new "Paid" badges
+                await this.fetchSales(); 
+                
+            } catch (error) {
+                console.error("Sync Error:", error);
+                Swal.fire('Sync Error', error.message || 'Could not connect to server', 'error');
             }
-          } catch (err) {
-            Swal.fire("Error", "Could not connect to server", "error");
-          } finally {
-            btn.disabled = false;
-            btn.classList.remove("opacity-75");
-            icon.style.display = "none";
-            staticIcon.style.display = "inline-block";
-          }
         }
 
         updateStats() {
