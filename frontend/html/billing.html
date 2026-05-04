@@ -996,15 +996,14 @@
         <div class="flex-1 p-8 overflow-y-auto">
           <div class="flex justify-between items-center mb-6">
             <div>
-              <h1
-                class="text-3xl font-bold text-text-light dark:text-text-dark"
-              >
+              <h1 class="text-3xl font-bold text-text-light dark:text-text-dark">
                 Sales & Billing Records
               </h1>
               <p class="text-subtext-light dark:text-subtext-dark mt-1">
                 Track sales transactions auto-linked to billing system
               </p>
             </div>
+            
           </div>
 
           <div
@@ -1565,45 +1564,51 @@
           }
         }
 
-        async syncWithBilling() {
-          const btn = document.getElementById("syncBtn");
-          const icon = document.getElementById("syncIcon");
-          const staticIcon = document.getElementById("staticSyncIcon");
-
-          btn.disabled = true;
-          btn.classList.add("opacity-75");
-          icon.style.display = "inline-block";
-          staticIcon.style.display = "none";
-
-          try {
-            const res = await fetch(`${API_BASE_URL}/api/sales/sync`, {
-              method: "POST",
-              headers: { Authorization: `Bearer ${this.getToken()}` },
-            });
-            const result = await res.json();
-            if (res.ok) {
-              Swal.fire({
-                title: "Sync Complete",
-                text:
-                  result.message +
-                  (result.updated > 0 ? ` (${result.updated} updated)` : ""),
-                icon: "success",
-                timer: 2000,
-                showConfirmButton: false,
-                confirmButtonColor: "#005a32",
-              });
-              await this.fetchSales();
-            } else {
-              Swal.fire("Sync Failed", result.message, "error");
+        async syncWithBilling(isSilent = false) {
+            // 1. Only show the loading popup if this was a manual click
+            if (!isSilent) {
+                Swal.fire({
+                    title: 'Syncing with EMR Billing...',
+                    text: 'Scanning payment records...',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading()
+                });
             }
-          } catch (err) {
-            Swal.fire("Error", "Could not connect to server", "error");
-          } finally {
-            btn.disabled = false;
-            btn.classList.remove("opacity-75");
-            icon.style.display = "none";
-            staticIcon.style.display = "inline-block";
-          }
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/sales/sync`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${this.getToken()}` }
+                });
+                
+                const result = await res.json();
+                
+                if (!res.ok) throw new Error(result.message || 'Sync failed');
+                
+                // 2. Only show the Success popup if it was a manual click
+                if (!isSilent) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sync Complete',
+                        text: result.message + (result.updated > 0 ? ` (${result.updated} updated)` : ''),
+                        confirmButtonColor: '#005a32'
+                    });
+                } 
+
+                // 3. If records were updated (or if it was a manual click), refresh the table!
+                if (!isSilent || result.updated > 0) {
+                    await this.fetchSales();
+                    
+                    // Optional: Show a tiny non-intrusive toast notification when a background sync succeeds
+                    if (isSilent && result.updated > 0 && typeof showToast === 'function') {
+                        showToast(`💳 ${result.updated} payment(s) automatically verified!`);
+                    }
+                }
+                
+            } catch (error) {
+                console.error("Sync Error:", error);
+                if (!isSilent) Swal.fire('Sync Error', error.message || 'Could not connect to server', 'error');
+            }
         }
 
         updateStats() {
@@ -2012,6 +2017,10 @@
           setTimeout(refreshNotifications, 1000);
           setInterval(refreshNotifications, 60000);
         }
+
+        // Start the automated, silent background sync every 15 seconds
+        setInterval(() => billingManager.syncWithBilling(true), 5000);
+        
       });
     </script>
     <script src="../audio/audio-system.js"></script>
