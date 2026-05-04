@@ -1003,9 +1003,7 @@
                 Track sales transactions auto-linked to billing system
               </p>
             </div>
-            <button onclick="billingManager.syncWithBilling()" class="px-4 py-2 bg-primary text-white rounded-lg font-semibold flex items-center gap-2 hover:bg-primary/90 transition-colors shadow-md">
-                <span class="material-icons">sync</span> Sync EMR Payments
-            </button>
+            
           </div>
 
           <div
@@ -1566,17 +1564,18 @@
           }
         }
 
-        async syncWithBilling() {
-            // 1. Show a beautiful loading popup so the user knows it's working
-            Swal.fire({ 
-                title: 'Syncing with EMR Billing...', 
-                text: 'Scanning payment records...',
-                allowOutsideClick: false, 
-                didOpen: () => Swal.showLoading() 
-            });
+        async syncWithBilling(isSilent = false) {
+            // 1. Only show the loading popup if this was a manual click
+            if (!isSilent) {
+                Swal.fire({
+                    title: 'Syncing with EMR Billing...',
+                    text: 'Scanning payment records...',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading()
+                });
+            }
 
             try {
-                // 2. Call the backend route we just made
                 const res = await fetch(`${API_BASE_URL}/api/sales/sync`, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${this.getToken()}` }
@@ -1586,20 +1585,29 @@
                 
                 if (!res.ok) throw new Error(result.message || 'Sync failed');
                 
-                // 3. Show Success Popup
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Sync Complete',
-                    text: result.message + (result.updated > 0 ? ` (${result.updated} updated)` : ''),
-                    confirmButtonColor: '#005a32'
-                });
-                
-                // 4. Instantly refresh the table to show the new "Paid" badges
-                await this.fetchSales(); 
+                // 2. Only show the Success popup if it was a manual click
+                if (!isSilent) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sync Complete',
+                        text: result.message + (result.updated > 0 ? ` (${result.updated} updated)` : ''),
+                        confirmButtonColor: '#005a32'
+                    });
+                } 
+
+                // 3. If records were updated (or if it was a manual click), refresh the table!
+                if (!isSilent || result.updated > 0) {
+                    await this.fetchSales();
+                    
+                    // Optional: Show a tiny non-intrusive toast notification when a background sync succeeds
+                    if (isSilent && result.updated > 0 && typeof showToast === 'function') {
+                        showToast(`💳 ${result.updated} payment(s) automatically verified!`);
+                    }
+                }
                 
             } catch (error) {
                 console.error("Sync Error:", error);
-                Swal.fire('Sync Error', error.message || 'Could not connect to server', 'error');
+                if (!isSilent) Swal.fire('Sync Error', error.message || 'Could not connect to server', 'error');
             }
         }
 
@@ -2009,6 +2017,10 @@
           setTimeout(refreshNotifications, 1000);
           setInterval(refreshNotifications, 60000);
         }
+
+        // Start the automated, silent background sync every 15 seconds
+        setInterval(() => billingManager.syncWithBilling(true), 5000);
+        
       });
     </script>
     <script src="../audio/audio-system.js"></script>

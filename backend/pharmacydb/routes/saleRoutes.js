@@ -85,7 +85,7 @@ router.get('/', async (req, res) => {
 });
 
 // ==============================================================================
-// 3. SYNC STATUS (Billing Integration) - NAME MATCHING
+// 3. SYNC STATUS (Billing Integration) - HYBRID MATCHING (VAT AWARE)
 // ==============================================================================
 router.post('/sync', protect, async (req, res) => {
     try {
@@ -98,37 +98,50 @@ router.post('/sync', protect, async (req, res) => {
             return res.json({ message: "No pending sales to sync.", updated: 0 });
         }
 
-        // 1. Fetch ALL completed payments from the EMR/Billing DB at once
         const allPayments = await ExternalPayment.find({
-            status: { $in: ["completed", "Completed", "paid", "Paid"] }
-        }).lean();
+            status: { $regex: /completed|paid/i }
+        }).sort({ createdAt: -1 }).lean();
 
         let updatedCount = 0;
         
         for (const sale of pendingSales) {
             const myName = (sale.patientName || '').toLowerCase().trim();
+            const myAmount = Number(sale.totalAmount) || 0;
+            const isWalkIn = myName.includes('walk') || myName.includes('guest') || myName === '';
 
-            // Skip anonymous walk-ins as they aren't easily tracked in hospital billing databases
-            if (myName.includes('walk-in') || myName === '') continue;
-
-            // 2. THE FIX: Match strictly by Name! We completely ignore the Amount
-            // because the Hospital bill lumps medicine with ICU, Surgeries, etc.
+            // Inside router.post('/sync', ...
             const match = allPayments.find(p => {
                 const theirName = (p.patientName || '').toLowerCase().trim();
-                // Check if the names overlap (e.g. "Juan Santos" matches "Juan Santos")
-                return theirName.includes(myName) || myName.includes(theirName);
+                const nameMatch = theirName.includes(myName) || myName.includes(theirName);
+                
+                // 🔥 ADD THIS DATE CHECK:
+                // Only match if the payment in Billing was created AFTER the sale in Pharmacy
+                const paymentDate = new Date(p.createdAt || p.date);
+                const saleDate = new Date(sale.createdAt || sale.date);
+                const isRecent = paymentDate >= saleDate;
+
+                if (isWalkIn) {
+                    const theirAmount = Number(p.amount) || 0;
+                    const amountWithVAT = myAmount * 1.12;
+                    const isExactMatch = Math.abs(theirAmount - myAmount) < 1.0;
+                    const isVatMatch = Math.abs(theirAmount - amountWithVAT) < 1.0;
+                    const isGenericName = theirName.includes('walk') || theirName.includes('guest');
+                    
+                    return (nameMatch || isGenericName) && (isExactMatch || isVatMatch) && isRecent;
+                } else {
+                    // For registered patients, match by Name AND ensure it's a recent payment
+                    return nameMatch && isRecent;
+                }
             });
 
-            // 3. If they paid their hospital bill, mark the pharmacy sale as Paid!
             if (match) {
                 sale.paymentStatus = 'Paid';
                 await sale.save();
                 
-                // Log the success in the Activity Logs
                 await logActivity(req, {
                     action: 'SYNC_BILLING',
                     module: 'Sales & Billing',
-                    description: `Automated Sync: Marked sale for ${sale.patientName} as PAID (Matched with Hospital Bill).`,
+                    description: `Automated Sync: Marked sale for ${sale.patientName} as PAID.`,
                     targetId: sale._id.toString()
                 });
                 
@@ -371,9 +384,12 @@ router.post('/otc', protect, async (req, res) => {
             if (quantityNeeded > 0) throw new Error(`Insufficient stock for ${medicineDoc.name}`);
         }
 
+        const dummyPatientId = new mongoose.Types.ObjectId(); 
+
         // Create Sale Record for Walk-in
         const sale = await Sale.create({
-            patientName: `Walk-in Customer`, // No EMR ID needed!
+            patient: dummyPatientId, // <-- We now send the dummy ID to Billing!
+            patientName: `Walk-in Customer`, 
             pharmacist: req.user._id,
             items: itemsSold,
             totalAmount: totalAmount,
