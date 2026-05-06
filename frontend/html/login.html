@@ -591,12 +591,16 @@ body {
                     }
                 } 
                 else if (response.status === 403) {
-                    // Account Locked
+                    // Account Locked or Deactivated
+                    // 🔥 Dynamically display the exact message sent by the backend!
                     errorBox.innerHTML = `<span style="color: #DC2626; font-weight: bold;">Login Failed</span><br>${data.message}`;
                     emailInput.classList.add("is-invalid");
                     passwordInput.classList.add("is-invalid");
-                    attemptsContainer.style.display = 'none';
-                } 
+                    
+                    if (attemptsContainer) {
+                        attemptsContainer.style.display = 'none';
+                    }
+                }
                 else {
                     // Invalid Credentials
                     errorBox.textContent = data.message || "Invalid credentials.";

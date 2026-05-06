@@ -119,27 +119,49 @@ router.get('/stats', protect, admin, async (req, res) => {
   }
 });
 
-// ══════════════════════════════════════════════════════════
-// DELETE /api/activity/clear
-// Admin only — clear logs older than 90 days
-// ══════════════════════════════════════════════════════════
+
+// @route   DELETE /api/activity/clear
+// @desc    Clear old activity logs based on dynamic timeframe
 router.delete('/clear', protect, admin, async (req, res) => {
-  try {
-    const ninetyDaysAgo = new Date();
-    ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+    try {
+        const { days } = req.query;
 
-    const result = await ActivityLog.deleteMany({
-      createdAt: { $lt: ninetyDaysAgo }
-    });
+        // If no days parameter is provided, return an error
+        if (!days) {
+            return res.status(400).json({ message: 'Please specify a timeframe to clear logs.' });
+        }
 
-    res.json({
-      message: `Cleared ${result.deletedCount} log entries older than 90 days.`,
-      deletedCount: result.deletedCount,
-    });
-  } catch (err) {
-    console.error('Activity clear error:', err);
-    res.status(500).json({ message: 'Server error clearing logs' });
-  }
+        let deleteQuery = {};
+        let messageSuffix = 'all activity logs';
+
+        // If they chose a specific number of days, calculate the cutoff date
+        if (days !== 'all') {
+            const daysInt = parseInt(days, 10);
+            
+            if (isNaN(daysInt)) {
+                return res.status(400).json({ message: 'Invalid timeframe provided.' });
+            }
+
+            const cutoffDate = new Date();
+            cutoffDate.setDate(cutoffDate.getDate() - daysInt);
+
+            // Delete logs strictly older than the cutoff date
+            deleteQuery = { createdAt: { $lt: cutoffDate } };
+            messageSuffix = `logs older than ${daysInt} days`;
+        }
+
+        // Execute the deletion
+        const result = await ActivityLog.deleteMany(deleteQuery);
+
+        // Send back the dynamic success message to the frontend!
+        res.json({
+            message: `Successfully cleared ${result.deletedCount} ${messageSuffix}.`
+        });
+
+    } catch (error) {
+        console.error('Error clearing activity logs:', error);
+        res.status(500).json({ message: 'Server error: Failed to clear activity logs.' });
+    }
 });
 
 export default router;

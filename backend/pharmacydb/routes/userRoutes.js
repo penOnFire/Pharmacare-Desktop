@@ -57,7 +57,14 @@ router.post('/login', async (req, res) => {
         
         // 🔥 DETAILED LOG
         await logLoginActivity({ userId: user._id, userName: user.name, userRole: user.role, action: 'FAILED_LOGIN', description: 'Failed login attempt on a locked account.', status: 'failed', ipAddress });
-        return res.status(403).json({ message: 'Account is locked. Use temporary password.' });
+        
+        // 🔥 SMART ERROR MESSAGE: Check if the Admin has already issued a temporary password
+        const isTempPassIssued = user.tempPassword && user.tempPassword.trim() !== '';
+        const errorMessage = isTempPassIssued 
+            ? 'Incorrect temporary password. Please try again.' 
+            : 'Account is locked. Please contact an Admin to unlock your account.';
+
+        return res.status(403).json({ message: errorMessage });
     }
 
     // 2. Inactive Check

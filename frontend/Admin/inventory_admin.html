@@ -2255,7 +2255,9 @@
                   >
                     <tr>
                       <th class="px-6 py-4 font-medium">Medicine Name</th>
+                      
                       <th class="px-6 py-4 font-medium">Category</th>
+                      <th class="px-6 py-4 font-medium">Supplier</th>
                       <th class="px-6 py-4 font-medium text-center">
                         Quantity in Stock
                       </th>
@@ -2387,11 +2389,17 @@
               <p class="as-error" id="addSupplyReorderErr">Must be greater than 0.</p>
             </div>
           </div>
-          <div>
-            <label class="as-label">Unit Cost (₱)</label>
-            <input type="number" id="addSupplyUnitCost" class="as-input" value="0" step="0.01" min="0" placeholder="0.00" />
-            <p class="as-error" id="addSupplyUnitCostErr">Unit cost cannot be negative.</p>
-          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <div>
+                        <label class="as-label">Unit Cost (₱)</label>
+                        <input type="number" id="addSupplyUnitCost" class="as-input" value="0" step="0.01" min="0" placeholder="0.00">
+                        <p class="as-error" id="addSupplyUnitCostErr">Unit cost cannot be negative.</p>
+                    </div>
+                    <div>
+                        <label class="as-label">Supplier Name</label>
+                        <input type="text" id="addSupplySupplier" class="as-input" placeholder="e.g., MediSource Inc.">
+                    </div>
+                </div>
         </div>
         <div style="padding: 12px 28px 22px; display: flex; justify-content: flex-end; gap: 10px; align-items: center;">
           <button id="addSupplyCancelBtn" style="padding: 9px 20px; background: none; border: none; font-size: 14px; font-weight: 500; color: #6b7280; cursor: pointer; border-radius: 8px; transition: background 0.15s; font-family: 'Inter', sans-serif;" onmouseover="this.style.background = '#f3f4f6'" onmouseout="this.style.background = 'none'" onclick="closeAddSupplyModal()">Cancel</button>
@@ -2426,10 +2434,7 @@
               <p class="as-error" id="restockUnitCostErr">Enter a valid unit cost.</p>
             </div>
           </div>
-          <div>
-            <label class="as-label">Supplier</label>
-            <input type="text" id="restockSupplier" class="as-input" placeholder="e.g., MediSource Inc." />
-          </div>
+          
           <div>
             <label class="as-label">Expiration Date <span style="color: #dc2626">*</span></label>
             <input type="date" id="restockDate" class="as-input" />
@@ -2517,6 +2522,10 @@
             <input type="number" id="updateSupplyUnitCost" class="as-input" step="0.01" min="0" placeholder="0.00" />
             <p class="as-error" id="updateSupplyUnitCostErr">Unit cost cannot be negative.</p>
           </div>
+          <div>
+            <label class="as-label">Supplier Name</label>
+            <input type="text" id="updateSupplySupplier" class="as-input" placeholder="Enter supplier">
+        </div>
         </div>
         <div style="padding: 14px 28px 22px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f0f0f0;">
           <button class="as-delete-btn" onclick="confirmDeleteSupply()" style="display: flex; align-items: center; gap: 6px">
@@ -2715,6 +2724,7 @@ async function openAddSupplyModal() {
   document.getElementById("addSupplyQuantity").value = "0";
   document.getElementById("addSupplyReorderLevel").value = "50";
   document.getElementById("addSupplyUnitCost").value = "0";
+  document.getElementById("addSupplySupplier").value = "";
 
   if (document.getElementById("addSupplyCategory")) document.getElementById("addSupplyCategory").selectedIndex = 0;
   if (document.getElementById("addSupplyType"))     document.getElementById("addSupplyType").selectedIndex = 0;
@@ -2860,6 +2870,7 @@ document.addEventListener("click", (e) => {
         const quantity = parseInt(document.getElementById("addSupplyQuantity").value);
         const reorderLevel = parseInt(document.getElementById("addSupplyReorderLevel").value);
         const unitCost = parseFloat(document.getElementById("addSupplyUnitCost").value);
+        const supplier = document.getElementById("addSupplySupplier").value.trim();
 
         _addSupplySetError("addSupplyName", "addSupplyNameErr", !name);
         _addSupplySetError("addSupplyCategory", "addSupplyCategoryErr", !category);
@@ -2875,7 +2886,7 @@ document.addEventListener("click", (e) => {
         Swal.fire({ title: 'Creating Medicine...', text: 'Adding to database...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
 
         try {
-            await suppliesManager.add({ name, category, type, strength, quantity, reorderLevel, unitCost });
+            await suppliesManager.add({ name, category, type, strength, quantity, reorderLevel, unitCost, supplier });
             closeAddSupplyModal();
             Swal.fire({ icon: 'success', title: 'Added!', text: `${name} has been added to supplies.`, confirmButtonColor: '#005a32' });
         } catch(err) {
@@ -2925,7 +2936,8 @@ document.addEventListener("click", (e) => {
                     strength: med.strength || '500mg',
                     quantity: totalQty,
                     reorderLevel: latestBatch ? (latestBatch.minStockLevel || 50) : (med.minStockLevel || 50),
-                    unitCost: latestBatch ? (latestBatch.costPrice || 0) : 0
+                    unitCost: latestBatch ? (latestBatch.costPrice || 0) : 0,
+                    supplier: med.supplier || (latestBatch ? latestBatch.supplier : "") || "N/A"
                 };
             });
             this.renderSupplies(); 
@@ -2941,7 +2953,7 @@ document.addEventListener("click", (e) => {
           const medRes = await fetch(`${API_BASE_URL}/api/medicines`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-              body: JSON.stringify({ name: supply.name, category: supply.category, type: supply.type, strength: supply.strength })
+              body: JSON.stringify({ name: supply.name, category: supply.category, type: supply.type, strength: supply.strength,supplier: supply.supplier })
           });
           if(!medRes.ok) { const err = await medRes.json(); throw new Error(err.message || 'Failed to create medicine.'); }
           const newMedData = await medRes.json();
@@ -2981,7 +2993,7 @@ document.addEventListener("click", (e) => {
           const medRes = await fetch(`${API_BASE_URL}/api/medicines/${id}`, {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-              body: JSON.stringify({ name: updates.name, category: updates.category, type: updates.type, strength: updates.strength })
+              body: JSON.stringify({ name: updates.name, category: updates.category, type: updates.type, strength: updates.strength, supplier: updates.supplier })
           });
           if(!medRes.ok) { const errData = await medRes.json().catch(()=>({})); throw new Error(errData.message || "Failed to update Medicine details."); }
           
@@ -3001,7 +3013,8 @@ document.addEventListener("click", (e) => {
                   quantity: restockData.quantity, costPrice: restockData.unitCost,
                   sellingPrice: restockData.unitCost > 0 ? restockData.unitCost * 1.3 : 0,
                   minStockLevel: supply.reorderLevel, supplier: restockData.supplier || '',
-                  expiryDate: restockData.date ? new Date(restockData.date).toISOString() : new Date(Date.now() + 365*24*60*60*1000).toISOString()
+                  expiryDate: restockData.date ? new Date(restockData.date).toISOString() : new Date(Date.now() + 365*24*60*60*1000).toISOString(),
+                  supplier: supply.supplier
               })
           });
           if(!res.ok) throw new Error("Database rejected the restock request.");
@@ -3052,6 +3065,7 @@ document.addEventListener("click", (e) => {
               return `<tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
                 <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${item.name}</td>
                 <td class="px-6 py-4 text-gray-600 dark:text-gray-400">${item.category}</td>
+                <td class="px-6 py-4 text-gray-600 dark:text-gray-400">${item.supplier}</td>
                 <td class="px-6 py-4 text-center font-semibold text-text-light dark:text-text-dark">${item.quantity} units</td>
                 <td class="px-6 py-4 text-center text-gray-600 dark:text-gray-400">${item.reorderLevel} units</td>
                 <td class="px-6 py-4 text-center"><span class="px-3 py-1 text-xs font-semibold rounded-full ${sb} ${st}">${status}</span></td>
@@ -3104,7 +3118,7 @@ document.addEventListener("click", (e) => {
 
         document.getElementById("restockQuantity").value = "10";
         document.getElementById("restockUnitCost").value = supply.unitCost || "0";
-        document.getElementById("restockSupplier").value = "";
+        
 
         // 🔥 SMART EXPIRY USING DATABASE TYPE
         const medType = (supply.type || 'Tablet').toLowerCase();
@@ -3144,7 +3158,7 @@ document.addEventListener("click", (e) => {
         const quantity = parseInt(document.getElementById("restockQuantity").value);
         const unitCost = parseFloat(document.getElementById("restockUnitCost").value);
         const date = document.getElementById("restockDate").value;
-        const supplier = document.getElementById("restockSupplier").value.trim();
+        
 
         const qErr = !quantity || quantity <= 0 || isNaN(quantity);
         const ucErr = isNaN(unitCost) || unitCost < 0;
@@ -3157,11 +3171,12 @@ document.addEventListener("click", (e) => {
         if (qErr || ucErr || dErr) return;
 
         const supply = suppliesManager.getById(_restockingSupplyId);
+        
 
         Swal.fire({ title: 'Processing Restock...', text: 'Updating database...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
 
         try {
-            await suppliesManager.restock(_restockingSupplyId, { quantity, unitCost, date, supplier });
+            await suppliesManager.restock(_restockingSupplyId, { quantity, unitCost, date, supplier: supply.supplier });
             closeRestockModal();
             Swal.fire({
                 icon: "success", title: "Restocked Successfully!",
@@ -3187,6 +3202,7 @@ document.addEventListener("click", (e) => {
 
         document.getElementById("updateModalSubtitle").textContent = `Editing: ${supply.name}`;
         document.getElementById("updateSupplyName").value = supply.name;
+        document.getElementById("updateSupplySupplier").value = supply.supplier || "";
         
         // 🔥 SAFELY SET SCHEMA DROPDOWNS
         safelySetSelect('updateSupplyCategory', supply.category, 'Antibiotics');
@@ -3196,6 +3212,7 @@ document.addEventListener("click", (e) => {
         document.getElementById("updateSupplyQuantity").value = supply.quantity;
         document.getElementById("updateSupplyReorderLevel").value = supply.reorderLevel;
         document.getElementById("updateSupplyUnitCost").value = supply.unitCost || "0";
+        
 
         ["updateSupplyQuantityErr","updateSupplyReorderErr","updateSupplyUnitCostErr"].forEach((id) => {
           const el = document.getElementById(id); if (el) el.style.display = "none";
@@ -3209,6 +3226,7 @@ document.addEventListener("click", (e) => {
 
       function closeUpdateSupplyModal() {
         document.getElementById("updateSupplyModal").classList.add("hidden");
+        document.getElementById("updateSupplySupplier").value = "";
         _updatingSupplyId = null;
       }
 
@@ -3227,6 +3245,9 @@ document.addEventListener("click", (e) => {
         const quantity     = parseInt(document.getElementById("updateSupplyQuantity").value);
         const reorderLevel = parseInt(document.getElementById("updateSupplyReorderLevel").value);
         const unitCost     = parseFloat(document.getElementById("updateSupplyUnitCost").value);
+        const supplier = document.getElementById("updateSupplySupplier").value.trim();
+        // Update the function call at the bottom:
+        await suppliesManager.update(_updatingSupplyId, { name, category, type, strength, quantity, reorderLevel, unitCost, supplier });
 
         const qErr = isNaN(quantity) || quantity < 0;
         const rErr = isNaN(reorderLevel) || reorderLevel < 0;
@@ -3244,7 +3265,7 @@ document.addEventListener("click", (e) => {
         Swal.fire({ title: 'Updating...', text: 'Saving changes to database...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
 
         try {
-            await suppliesManager.update(_updatingSupplyId, { name, category, type, strength, quantity, reorderLevel, unitCost });
+            await suppliesManager.update(_updatingSupplyId, { name, category, type, strength, quantity, reorderLevel, unitCost, supplier });
             closeUpdateSupplyModal();
             Swal.fire({ icon: "success", title: "Updated!", text: `${name} has been updated.`, confirmButtonColor: "#005a32" });
         } catch(err) {
@@ -3953,7 +3974,7 @@ if (statusFilter) {
                 <td class="px-6 py-4 text-gray-500">${this.formatDate(item.expiryDate)}</td>
                 <td class="px-6 py-4 ${dc}">${dt}</td>
                 <td class="px-6 py-4 text-gray-500">₱${parseFloat(this._getPrice(item) || 0).toFixed(2)}</td>
-                <td class="px-6 py-4 text-gray-500">${item.supplier || "Unknown"}</td>
+                <td class="px-6 py-4 text-gray-500">${item.supplier || (item.medicine && item.medicine.supplier) || "N/A"}</td>
                 <td class="px-6 py-4">${sl}</td>
             </tr>`;
           });

@@ -24,10 +24,8 @@ const medicineSchema = new mongoose.Schema(
       enum: ['100mg', '250mg', '500mg', '1000mg','10mg', '10mg/5ml', '20mg'], // The allowed list
       default: '500mg' // Optional default
     },
-    supplier: {
-      type: mongoose.Schema.Types.ObjectId, // This is a reference
-      ref: 'Supplier', // Tells Mongoose which model to connect to
-      required: false,
+    supplier: { 
+      type: String, default: 'N/A' 
     },
     requiresPrescription: {
       type: Boolean,

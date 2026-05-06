@@ -731,6 +731,7 @@
                                     <tr>
                                         <th class="px-6 py-4 font-medium">Medicine Name</th>
                                         <th class="px-6 py-4 font-medium">Category</th>
+                                        <th class="px-6 py-4 font-medium">Supplier</th>
                                         <th class="px-6 py-4 font-medium text-center">Quantity in Stock</th>
                                         <th class="px-6 py-4 font-medium text-center">Reorder Level</th>
                                         <th class="px-6 py-4 font-medium text-center">Status</th>
@@ -813,10 +814,16 @@
                         <p class="as-error" id="addSupplyReorderErr">Must be greater than 0.</p>
                     </div>
                 </div>
-                <div>
-                    <label class="as-label">Unit Cost (₱)</label>
-                    <input type="number" id="addSupplyUnitCost" class="as-input" value="0" step="0.01" min="0" placeholder="0.00">
-                    <p class="as-error" id="addSupplyUnitCostErr">Unit cost cannot be negative.</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <div>
+                        <label class="as-label">Unit Cost (₱)</label>
+                        <input type="number" id="addSupplyUnitCost" class="as-input" value="0" step="0.01" min="0" placeholder="0.00">
+                        <p class="as-error" id="addSupplyUnitCostErr">Unit cost cannot be negative.</p>
+                    </div>
+                    <div>
+                        <label class="as-label">Supplier Name</label>
+                        <input type="text" id="addSupplySupplier" class="as-input" placeholder="e.g., MediSource Inc.">
+                    </div>
                 </div>
             </div>
             <div style="padding: 12px 28px 22px; display: flex; justify-content: flex-end; gap: 10px; align-items: center;">
@@ -862,10 +869,7 @@
                         <p class="as-error" id="restockUnitCostErr">Enter a valid unit cost.</p>
                     </div>
                 </div>
-                <div>
-                    <label class="as-label">Supplier</label>
-                    <input type="text" id="restockSupplier" class="as-input" placeholder="e.g., MediSource Inc.">
-                </div>
+                
                 <div>
                     <label class="as-label">Purchase Date <span style="color:#dc2626;">*</span></label>
                     <input type="date" id="restockDate" class="as-input">
@@ -961,6 +965,10 @@
                     <label class="as-label">Unit Cost (₱) <span style="color:#dc2626;">*</span></label>
                     <input type="number" id="updateSupplyUnitCost" class="as-input" step="0.01" min="0" placeholder="0.00">
                     <p class="as-error" id="updateSupplyUnitCostErr">Unit cost cannot be negative.</p>
+                </div>
+                <div>
+                    <label class="as-label">Supplier Name</label>
+                    <input type="text" id="updateSupplySupplier" class="as-input" placeholder="Enter supplier">
                 </div>
             </div>
             <div style="padding: 14px 28px 22px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f0f0f0;">
@@ -1382,6 +1390,7 @@
         document.getElementById("addSupplyQuantity").value = "0";
         document.getElementById("addSupplyReorderLevel").value = "50";
         document.getElementById("addSupplyUnitCost").value = "0";
+        document.getElementById("addSupplySupplier").value = "";
 
         if (document.getElementById("addSupplyCategory"))
           document.getElementById("addSupplyCategory").selectedIndex = 0;
@@ -1445,6 +1454,7 @@
         const unitCost = parseFloat(
           document.getElementById("addSupplyUnitCost").value,
         );
+        const supplier = document.getElementById("addSupplySupplier").value.trim();
 
         _addSupplySetError("addSupplyName", "addSupplyNameErr", !name);
         _addSupplySetError(
@@ -1506,6 +1516,7 @@
             quantity,
             reorderLevel,
             unitCost,
+            supplier
           });
           closeAddSupplyModal();
           Swal.fire({
@@ -1576,6 +1587,7 @@
                   ? latestBatch.minStockLevel || 50
                   : med.minStockLevel || 50,
                 unitCost: latestBatch ? latestBatch.costPrice || 0 : 0,
+                supplier: med.supplier || (latestBatch ? latestBatch.supplier : "") || "N/A"
               };
             });
             this.renderSupplies();
@@ -1605,6 +1617,7 @@
               category: supply.category,
               type: supply.type,
               strength: supply.strength,
+              supplier: supply.supplier
             }),
           });
           if (!medRes.ok) {
@@ -1632,6 +1645,7 @@
                 expiryDate: new Date(
                   Date.now() + 365 * 24 * 60 * 60 * 1000,
                 ).toISOString(),
+                supplier: supply.supplier
               }),
             });
             if (!invRes.ok)
@@ -1685,6 +1699,7 @@
               category: updates.category,
               type: updates.type,
               strength: updates.strength,
+              supplier: updates.supplier
             }),
           });
           if (!medRes.ok) {
@@ -1783,6 +1798,7 @@
               return `<tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
                 <td class="px-6 py-4 font-medium text-text-light dark:text-text-dark">${item.name}</td>
                 <td class="px-6 py-4 text-gray-600 dark:text-gray-400">${item.category}</td>
+                <td class="px-6 py-4 text-gray-600 dark:text-gray-400">${item.supplier}</td>
                 <td class="px-6 py-4 text-center font-semibold text-text-light dark:text-text-dark">${item.quantity} units</td>
                 <td class="px-6 py-4 text-center text-gray-600 dark:text-gray-400">${item.reorderLevel} units</td>
                 <td class="px-6 py-4 text-center"><span class="px-3 py-1 text-xs font-semibold rounded-full ${sb} ${st}">${status}</span></td>
@@ -1856,7 +1872,7 @@
 
         document.getElementById("restockQuantity").value = "10";
         document.getElementById("restockUnitCost").value = supply.unitCost || "0";
-        document.getElementById("restockSupplier").value = "";
+        
 
         const medType = (supply.type || "Tablet").toLowerCase();
         let yearsToExpiry = 2;
@@ -1908,7 +1924,7 @@
           document.getElementById("restockUnitCost").value,
         );
         const date = document.getElementById("restockDate").value;
-        const supplier = document.getElementById("restockSupplier").value.trim();
+        
 
         const qErr = !quantity || quantity <= 0 || isNaN(quantity);
         const ucErr = isNaN(unitCost) || unitCost < 0;
@@ -1921,7 +1937,7 @@
         if (qErr || ucErr || dErr) return;
 
         const supply = suppliesManager.getById(_restockingSupplyId);
-
+        
         Swal.fire({
           title: "Processing Restock...",
           text: "Updating database...",
@@ -1936,7 +1952,7 @@
             quantity,
             unitCost,
             date,
-            supplier,
+            supplier: supply.supplier
           });
           closeRestockModal();
           Swal.fire({
@@ -1965,6 +1981,7 @@
         document.getElementById("updateModalSubtitle").textContent =
           `Editing: ${supply.name}`;
         document.getElementById("updateSupplyName").value = supply.name;
+        document.getElementById("updateSupplySupplier").value = supply.supplier || "";
 
         safelySetSelect("updateSupplyCategory", supply.category, "Antibiotics");
         safelySetSelect("updateSupplyType", supply.type, "Tablet");
@@ -1975,6 +1992,7 @@
           supply.reorderLevel;
         document.getElementById("updateSupplyUnitCost").value =
           supply.unitCost || "0";
+        
 
         [
           "updateSupplyQuantityErr",
@@ -1998,6 +2016,7 @@
 
       function closeUpdateSupplyModal() {
         document.getElementById("updateSupplyModal").classList.add("hidden");
+        document.getElementById("updateSupplySupplier").value = "";
         _updatingSupplyId = null;
       }
 
@@ -2013,6 +2032,9 @@
         const category = document.getElementById("updateSupplyCategory").value;
         const type = document.getElementById("updateSupplyType").value;
         const strength = document.getElementById("updateSupplyStrength").value;
+        const supplier = document.getElementById("updateSupplySupplier").value.trim();
+// Update the function call at the bottom:
+        await suppliesManager.update(_updatingSupplyId, { name, category, type, strength, quantity, reorderLevel, unitCost, supplier });
         const quantity = parseInt(
           document.getElementById("updateSupplyQuantity").value,
         );
@@ -2066,6 +2088,7 @@
             quantity,
             reorderLevel,
             unitCost,
+            supplier
           });
           closeUpdateSupplyModal();
           Swal.fire({
@@ -2790,7 +2813,7 @@ if (statusFilter) {
                 <td class="px-6 py-4 text-gray-500">${this.formatDate(item.expiryDate)}</td>
                 <td class="px-6 py-4 ${dc}">${dt}</td>
                 <td class="px-6 py-4 text-gray-500">₱${parseFloat(this._getPrice(item) || 0).toFixed(2)}</td>
-                <td class="px-6 py-4 text-gray-500">${item.supplier || "Unknown"}</td>
+                <td class="px-6 py-4 text-gray-500">${item.supplier || (item.medicine && item.medicine.supplier) || "N/A"}</td>
                 <td class="px-6 py-4">${sl}</td>
                 
             </tr>`;

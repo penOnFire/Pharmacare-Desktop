@@ -650,6 +650,38 @@
         }
 
         loadInventory();
+
+        // 🔥 UPGRADED: Aggressively intercept sidebar navigation
+        document.querySelectorAll('aside nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                
+                // Check if cart has items and the link isn't pointing to the current page
+                if (Object.keys(cart).length > 0 && !this.href.includes(window.location.pathname)) {
+                    
+                    e.preventDefault(); // Stop standard HTML link behavior
+                    e.stopPropagation(); // Stop event bubbling
+                    e.stopImmediatePropagation(); // 🔥 BLOCK all other scripts from firing
+                    
+                    const targetUrl = this.href;
+                    
+                    Swal.fire({
+                        title: 'Leave page?',
+                        text: 'You have selected medicines in your order panel. If you leave now, they will be cleared.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#005a32',
+                        
+                        confirmButtonText: 'Yes, leave anyway',
+                        cancelButtonText: 'No, stay here'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // If they click yes, force the navigation manually
+                            window.location.href = targetUrl; 
+                        }
+                    });
+                }
+            }, true); // 🔥 'true' forces this listener to run BEFORE any other scripts (Capture Phase)
+        });
     });
 
     // ══════════════════════════════════════════════════════════
@@ -952,8 +984,15 @@
     }
 
     function logoutUser() {
+        // Check if there are items in the cart
+        const hasItems = Object.keys(cart).length > 0;
+        const textMsg = hasItems 
+            ? "You have unsaved medicines in your cart. They will be cleared. Are you sure you want to logout?" 
+            : "";
+
         Swal.fire({
             title: "Logout?",
+            text: textMsg,
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#005a32",
