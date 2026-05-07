@@ -9,6 +9,9 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -112,6 +115,15 @@
         .view-all-link { font-size: 12px; font-weight: 600; color: #005a32; text-decoration: none; display: flex; align-items: center; gap: 4px; }
         .view-all-link:hover { text-decoration: underline; }
         .view-all-link .material-icons { font-size: 14px; }
+        /* ── EXPORT DROPDOWN (copied style) ── */
+        .export-wrap { position: relative; display: inline-block; }
+        .export-menu { display: none; position: absolute; top: calc(100% + 6px); right: 0; min-width: 220px; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.12); z-index: 200; overflow: hidden; padding: 12px 14px; }
+        .dark .export-menu { background: #1f2937; border-color: #374151; }
+        .export-menu.open { display: block; }
+        .export-menu-divider { height: 1px; background: #f0f0f0; margin: 10px 0; }
+        .dark .export-menu-divider { background: #374151; }
+        .export-apply-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px; background: #005a32; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+        .export-apply-btn:hover { background: #004526; }
     </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
@@ -321,6 +333,22 @@
                             <button id="refreshBtn" onclick="fetchLogs()" class="flex items-center gap-1 px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold hover:opacity-90 shadow-sm transition">
                                 <span id="refreshIcon" class="material-icons text-sm">refresh</span> Refresh
                             </button>
+                            <div class="export-wrap">
+                                <button onclick="toggleExportMenu('activityExportMenu')" title="Export / Print" class="border border-slate-300 dark:border-slate-600 px-3 py-1.5 rounded-lg flex items-center gap-2 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition">
+                                    <span class="material-icons text-sm">download</span> Export
+                                    <span class="material-icons text-sm">arrow_drop_down</span>
+                                </button>
+                                <div id="activityExportMenu" class="export-menu">
+                                    <button onclick="exportCSV()" class="export-apply-btn" style="margin-bottom:8px;background:#fff;color:#111;border:1px solid #e5e7eb;padding:8px;">
+                                        <span class="material-icons">file_download</span> Export CSV
+                                    </button>
+                                    <button onclick="exportExcel()" class="export-apply-btn" style="margin-bottom:8px;background:#fff;color:#111;border:1px solid #e5e7eb;padding:8px;"> 
+                                        <span class="material-icons">grid_on</span> Export Excel
+                                    </button>
+                                    <div class="export-menu-divider"></div>
+                                    <button onclick="exportPDF()" class="export-apply-btn"> <span class="material-icons">picture_as_pdf</span> Export PDF</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -378,6 +406,7 @@
 <script>
     let currentPage = 1;
     let totalPages  = 1;
+    let lastFetchedLogs = [];
 
     function getToken() {
         const d = sessionStorage.getItem('token'); if (d) return d;
@@ -630,7 +659,8 @@ notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
             const res = await fetch(`${API_BASE_URL}/api/activity?${params.toString()}`, { headers: { 'Authorization': `Bearer ${getToken()}` } });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
-            renderLogs(data.logs || []);
+            lastFetchedLogs = data.logs || [];
+            renderLogs(lastFetchedLogs);
             updatePagination(data.pagination);
         } catch(e) {
             document.getElementById('logTableBody').innerHTML = `<tr><td colspan="8" class="px-4 py-12 text-center text-subtext-light"><span class="material-icons text-4xl block mb-2 opacity-30">cloud_off</span>Could not load activity logs. Check server connection.</td></tr>`;
@@ -661,6 +691,62 @@ notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
                 <td class="px-4 py-3 align-top whitespace-nowrap">${statusBadge(log.status)}</td>
                 
             </tr>`).join('');
+    }
+
+    function toggleExportMenu(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.toggle('open');
+        // close when clicked outside
+        if (el.classList.contains('open')) {
+            setTimeout(() => {
+                const closeHandler = (e) => {
+                    if (!el.contains(e.target)) { el.classList.remove('open'); document.removeEventListener('click', closeHandler); }
+                };
+                document.addEventListener('click', closeHandler);
+            }, 10);
+        }
+    }
+
+    function exportCSV() {
+        try {
+            if (!lastFetchedLogs || !lastFetchedLogs.length) return Swal.fire({ icon: 'info', title: 'No records', text: 'Nothing to export on this page.', confirmButtonColor: '#005a32' });
+            const headers = ['Timestamp','User','Role','Module','Action','Description','Status'];
+            const rows = lastFetchedLogs.map(log => [formatDate(log.createdAt), log.userName||'', log.userRole||'', log.module||'', log.action||'', (log.description||'').replace(/\n/g,' '), log.status||'']);
+            const csvEscape = v => '"' + String(v||'').replace(/"/g,'""') + '"';
+            const csv = headers.join(',') + '\n' + rows.map(r => r.map(csvEscape).join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = `activity_logs_page_${currentPage}.csv`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+            toggleExportMenu('activityExportMenu');
+        } catch (e) { console.error(e); Swal.fire({ icon:'error', title:'Export failed', text: e.message||'Could not export CSV', confirmButtonColor:'#005a32' }); }
+    }
+
+    function exportExcel() {
+        try {
+            if (!lastFetchedLogs || !lastFetchedLogs.length) return Swal.fire({ icon: 'info', title: 'No records', text: 'Nothing to export on this page.', confirmButtonColor: '#005a32' });
+            const ws_data = [ ['Timestamp','User','Role','Module','Action','Description','Status'] ];
+            lastFetchedLogs.forEach(l => ws_data.push([formatDate(l.createdAt), l.userName||'', l.userRole||'', l.module||'', l.action||'', l.description||'', l.status||'']));
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(ws_data);
+            XLSX.utils.book_append_sheet(wb, ws, 'ActivityLogs');
+            XLSX.writeFile(wb, `activity_logs_page_${currentPage}.xlsx`);
+            toggleExportMenu('activityExportMenu');
+        } catch (e) { console.error(e); Swal.fire({ icon:'error', title:'Export failed', text: e.message||'Could not export Excel', confirmButtonColor:'#005a32' }); }
+    }
+
+    function exportPDF() {
+        try {
+            if (!lastFetchedLogs || !lastFetchedLogs.length) return Swal.fire({ icon: 'info', title: 'No records', text: 'Nothing to export on this page.', confirmButtonColor: '#005a32' });
+            const { jsPDF } = window.jspdf || window.jspdf || {};
+            const doc = new jsPDF('l', 'pt', 'a4');
+            const columns = ['Timestamp','User','Role','Module','Action','Description','Status'];
+            const data = lastFetchedLogs.map(l => [formatDate(l.createdAt), l.userName||'', l.userRole||'', l.module||'', l.action||'', (l.description||'').replace(/\n/g,' '), l.status||'']);
+            doc.setFontSize(10);
+            doc.autoTable({ head: [columns], body: data, startY: 20, theme: 'striped', styles: { fontSize: 9, cellPadding: 4, overflow: 'linebreak' }, headStyles: { fillColor: [0,90,50] } });
+            doc.save(`activity_logs_page_${currentPage}.pdf`);
+            toggleExportMenu('activityExportMenu');
+        } catch (e) { console.error(e); Swal.fire({ icon:'error', title:'Export failed', text: e.message||'Could not export PDF', confirmButtonColor:'#005a32' }); }
     }
 
     function updatePagination(pagination) {
