@@ -614,6 +614,7 @@
 
                 container.querySelectorAll('.resolve-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
+                        window.playSystemSound('notification');
                         const id = e.target.closest('.alert-card').dataset.id;
                         this.showResolveConfirmation(id);
                     });

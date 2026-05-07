@@ -609,6 +609,7 @@
         const dropdown = document.getElementById('notificationDropdown');
         if (btn && dropdown) {
             btn.addEventListener('click', (e) => {
+                window.playSystemSound('notification');
                 e.stopPropagation();
                 dropdown.classList.toggle('open');
                 if (dropdown.classList.contains('open')) refreshNotifications();

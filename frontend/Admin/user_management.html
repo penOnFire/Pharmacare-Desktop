@@ -213,6 +213,7 @@
                     <!-- Notification Bell — full version -->
                     <div class="relative">
                         <button id="notificationBtn"
+                        data-sound="notification"
                             class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                             <span class="material-icons-outlined text-2xl">notifications</span>
                             <span id="notificationBadge"
@@ -840,7 +841,8 @@ notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
                     this.showToast('User updated successfully!', 'success');
                 } else if (this.actionInProgress === 'delete') {
                     await this.apiCall('DELETE', `/api/users/${this.targetUserId}`, { adminPassword: password });
-                    this.showToast('User deleted.', 'success');
+                    window.playSystemSound('update');
+                    this.showToast('User deleted.', 'deleted'); // 'deleted' type = no extra sound
                 }
                 this.closeAllModals(); 
                 this.fetchUsers();
@@ -859,6 +861,8 @@ notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
         isSelf(id) { const u = sessionStorage.getItem('userInfo'); return u && JSON.parse(u)._id === id; }
 
         showToast(msg, type='info') {
+            if (type === 'success') window.playSystemSound('success');
+            else if (type === 'error') window.playSystemSound('error');
             const container = document.getElementById('toastContainer');
             const color = type === 'success' ? 'border-primary' : 'border-secondary';
             const icon = type === 'success' ? 'check_circle' : 'error';
@@ -888,6 +892,7 @@ notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
         const btn      = document.getElementById('notificationBtn');
         const dropdown = document.getElementById('notificationDropdown');
         btn.addEventListener('click', (e) => {
+            window.playSystemSound('notification');
             e.stopPropagation();
             dropdown.classList.toggle('open');
             if (dropdown.classList.contains('open')) refreshNotifications();
@@ -900,7 +905,7 @@ notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
     });
 </script>
 <script src="../audio/audio-system.js"></script>
-<script src="../audio/audio-manager.js"></script>
+
 <script src="../js/windowcontrollerbtn.js"></script>
 </body>
 </html>
