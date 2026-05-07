@@ -56,13 +56,7 @@ router.get('/', protect, async (req, res) => {
 
     // FIX: Populating 'supplier' instead of 'manufacturer'
     // Ensure your Medicine Schema has "ref: 'Supplier'" for this to work perfectly.
-    const inventoryItems = await Inventory.find(query).populate({
-      path: 'medicine',
-      populate: {
-        path: 'supplier', // Changed from manufacturer
-        model: 'Supplier', // Changed from Manufacturer
-      },
-    });
+    const inventoryItems = await Inventory.find(query).populate('medicine');
     
     res.json(inventoryItems);
 
@@ -77,14 +71,7 @@ router.get('/', protect, async (req, res) => {
 // @access  Private/Admin
 router.get('/archived', protect, async (req, res) => {
   try {
-    const archivedItems = await Inventory.find({ isArchived: true })
-      .populate({
-        path: 'medicine',
-        populate: {
-          path: 'supplier', // Changed
-          model: 'Supplier', // Changed
-        },
-      });
+    const archivedItems = await Inventory.find({ isArchived: true }).populate('medicine');
     res.json(archivedItems);
   } catch (err) {
     console.error(err.message);
@@ -125,16 +112,14 @@ router.post('/', protect, async (req, res) => {
       costPrice,
       sellingPrice, 
       minStockLevel,
+      supplier,
       isArchived: false,
     });
 
     await newInventoryItem.save();
 
     // 3. Return the result
-    const populatedItem = await Inventory.findById(newInventoryItem._id).populate({
-      path: 'medicine',
-      populate: { path: 'supplier' }
-    });
+    const populatedItem = await Inventory.findById(newInventoryItem._id).populate('medicine');
     
     // 🔥 LOG THE RESTOCK ACTIVITY
     await logActivity(req, {
@@ -194,10 +179,7 @@ router.put('/:id', protect, async (req, res) => {
     await inventoryItem.save();
 
     // 3. Return Populated Data
-    const populatedItem = await Inventory.findById(inventoryItem._id).populate({
-      path: 'medicine',
-      populate: { path: 'supplier' }, 
-    });
+    const populatedItem = await Inventory.findById(inventoryItem._id).populate('medicine');
     
     res.json(populatedItem);
 

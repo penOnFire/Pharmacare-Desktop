@@ -915,7 +915,9 @@ setPageSize(size) {
 
         const btn=document.getElementById('notificationBtn'), dropdown=document.getElementById('notificationDropdown');
         if (btn&&dropdown) {
-            btn.addEventListener('click',(e)=>{e.stopPropagation();dropdown.classList.toggle('open');if(dropdown.classList.contains('open'))refreshNotifications();});
+            btn.addEventListener('click',(e)=>{
+                window.playSystemSound('notification');
+                e.stopPropagation();dropdown.classList.toggle('open');if(dropdown.classList.contains('open'))refreshNotifications();});
             document.addEventListener('click',(e)=>{if(!dropdown.contains(e.target)&&e.target!==btn)dropdown.classList.remove('open');});
             dropdown.addEventListener('click',e=>e.stopPropagation());
             setTimeout(refreshNotifications,1000);

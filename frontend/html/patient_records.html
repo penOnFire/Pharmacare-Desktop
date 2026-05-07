@@ -1223,6 +1223,7 @@
             <div class="relative">
               <button
                 id="notificationBtn"
+                data-sound="notification"
                 class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 <span class="material-icons-outlined text-2xl"
@@ -1811,10 +1812,15 @@
         async init() {
           console.log("Patient Manager Initialized");
           this.setupEventListeners();
-          this.displayDispensedHistory();
+          
+          // 🔥 Load patients FIRST so we know their IDs
           if (this.getToken()) {
             await this.fetchPatients();
           }
+          
+          // 🔥 Then load the history so it can match the IDs!
+          this.displayDispensedHistory();
+          
           this.highlightCurrentPage();
           this.notificationManager.loadNotifications();
         }
@@ -2017,14 +2023,16 @@
 
               this.displayDispensedHistory();
 
+              window.playSystemSound('success');
               Swal.fire({
-                title: "Dispense Complete!",
-                text: `Sale created. Total: ₱${saleResult.sale.totalAmount.toFixed(2)}`,
-                icon: "success",
+                  title: "Dispense Complete!",
+                  text: `Sale created. Total: ₱${saleResult.sale.totalAmount.toFixed(2)}`,
+                  icon: "success",
               });
 
               await this.fetchPatients();
             } catch (error) {
+              window.playSystemSound('error');
               Swal.fire("Error!", error.message, "error");
             }
           }
@@ -2231,6 +2239,7 @@ goToPage(page) {
               (rx) => rx.status === "Pending",
             );
           } catch (error) {
+            window.playSystemSound('error');
             console.error("Could not fetch prescriptions:", error);
           }
 
@@ -2417,16 +2426,27 @@ goToPage(page) {
                   minute: "2-digit",
                 });
 
-              // Safely handle EMR patients vs Walk-in customers
-const patientName =
-  (sale.patient && sale.patient.name)
-    ? sale.patient.name
-    : (sale.patientName || "Unknown Patient");
+                // Safely handle EMR patients vs Walk-in customers
+              const patientName =
+                (sale.patient && sale.patient.name)
+                  ? sale.patient.name
+                  : (sale.patientName || "Unknown Patient");
 
-const patientId =
-  (sale.patient && sale.patient.patientId)
-    ? sale.patient.patientId
-    : (sale.patientId || "Walk-in");
+              let patientId = "Walk-In";
+              
+              // If the name does NOT contain "walk-in", it's a real patient. Let's find their ID.
+              if (!patientName.toLowerCase().includes("walk-in")) {
+                  if (sale.patient && sale.patient.patientId) {
+                      patientId = sale.patient.patientId;
+                  } else if (sale.patientId) {
+                      patientId = sale.patientId;
+                  } else {
+                      // Backend didn't populate the ID, so we look it up from our loaded patients list!
+                      const searchId = typeof sale.patient === 'string' ? sale.patient : (sale.patient ? sale.patient._id : null);
+                      const found = this.livePatients.find(p => p._id === searchId || p.name === patientName);
+                      patientId = found && found.patientId ? found.patientId : "Patient";
+                  }
+              }
 
               // Map the sold items to HTML
               const medsHtml = sale.items
@@ -2617,6 +2637,9 @@ const patientId =
         }
 
         showToast(message, type = "info") {
+          if (type === 'success') window.playSystemSound('success');
+          else if (type === 'error') window.playSystemSound('error');
+
           const container = document.getElementById("toastContainer");
           if (!container) return;
 
@@ -2740,6 +2763,7 @@ const patientId =
         const dropdown = document.getElementById("notificationDropdown");
         if (btn && dropdown) {
           btn.addEventListener("click", (e) => {
+            window.playSystemSound('notification');
             e.stopPropagation();
             dropdown.classList.toggle("open");
             if (dropdown.classList.contains("open")) refreshNotifications();

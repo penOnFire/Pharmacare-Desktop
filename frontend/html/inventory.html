@@ -3491,6 +3491,7 @@ if (statusFilter) {
         const dropdown = document.getElementById("notificationDropdown");
         if (!btn || !dropdown) return;
         btn.addEventListener("click", (e) => {
+          window.playSystemSound('notification');
           e.stopPropagation();
           dropdown.classList.toggle("open");
           if (dropdown.classList.contains("open")) refreshNotifications();

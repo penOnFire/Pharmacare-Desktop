@@ -24,6 +24,11 @@ const saleSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    paymentStatus: {
+      type: String,
+      enum: ['Pending', 'Paid', 'Failed'],
+      default: 'Pending'
+    },
     items: [ 
       {
         medicine: {
