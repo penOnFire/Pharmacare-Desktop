@@ -1590,10 +1590,11 @@
       function renderNotifications() {
         const list = document.getElementById("notifList");
         if (!list) return;
+        const readIds = getReadNotifIds();
         const filtered =
           activeNotifFilter === "all"
-            ? notifData
-            : notifData.filter((n) => n.type === activeNotifFilter);
+            ? notifData.filter((n) => !readIds.has(n.id))
+            : notifData.filter((n) => !readIds.has(n.id) && n.type === activeNotifFilter);
         if (!filtered.length) {
           list.innerHTML = `<div class="notif-empty"><span class="material-icons">notifications_none</span><p>All clear — no alerts!</p></div>`;
           updateNotifBadge();
@@ -1602,13 +1603,13 @@
         list.innerHTML = filtered
           .map(
             (n) => `
-            <div class="notif-item ${n.type} ${n.unread ? "unread" : ""}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
+            <div class="notif-item ${n.type}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
                 <div class="notif-icon-wrap ${n.iconClass}"><span class="material-icons">${n.icon}</span></div>
                 <div class="notif-body">
                     <div class="notif-title">${n.title}</div><div class="notif-desc">${n.desc}</div><div class="notif-time">${n.time}</div>
                     <div class="notif-action"><button class="notif-action-btn ${n.actionClass}" onclick="handleNotifAction(event,'${n.id}')">${n.actionLabel}</button></div>
                 </div>
-                ${n.unread ? '<div class="unread-dot"></div>' : ""}
+                <div class="unread-dot"></div>
             </div>`,
           )
           .join("");
@@ -1616,14 +1617,14 @@
       }
 
       function updateNotifBadge() {
-        const count = notifData.filter((n) => n.unread).length;
         const badge = document.getElementById("notificationBadge");
         const pill = document.getElementById("unreadPill");
+        const unreadCount = notifData.filter((n) => !getReadNotifIds().has(n.id)).length;
         if (badge) {
-          badge.textContent = count;
-          badge.style.display = count > 0 ? "flex" : "none";
+          badge.textContent = unreadCount;
+          badge.style.display = unreadCount > 0 ? "flex" : "none";
         }
-        if (pill) pill.textContent = count > 0 ? `${count} new` : "All clear";
+        if (pill) pill.textContent = unreadCount > 0 ? `${unreadCount} new` : "All clear";
       }
 
       function markNotifRead(id) {
@@ -1706,12 +1707,9 @@
           const inventory = Array.isArray(raw)
             ? raw
             : raw.medicines || raw.data || [];
-          const readIds = getReadNotifIds();
           notifData = generateAlertsFromInventory(inventory).slice(0, 15);
-          notifData.forEach((n) => {
-            if (readIds.has(n.id)) n.unread = false;
-          });
           renderNotifications();
+          updateNotifBadge();
         } catch (e) {
           console.warn("Notification fetch failed:", e);
           const list = document.getElementById("notifList");

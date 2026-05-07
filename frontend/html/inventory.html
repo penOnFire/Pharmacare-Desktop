@@ -1132,7 +1132,68 @@
               </button>
             </div>
 
-            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+              <div
+                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
+              >
+                <p
+                  class="text-sm text-subtext-light dark:text-subtext-dark font-medium"
+                >
+                  Total Items
+                </p>
+                <p
+                  id="totalItems"
+                  class="text-3xl font-bold text-text-light dark:text-text-dark mt-2"
+                >
+                  0
+                </p>
+              </div>
+              <div
+                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
+              >
+                <p
+                  class="text-sm text-subtext-light dark:text-subtext-dark font-medium"
+                >
+                  Total Value
+                </p>
+                <p
+                  id="totalValue"
+                  class="text-3xl font-bold text-text-light dark:text-text-dark mt-2"
+                >
+                  &#8369;0.00
+                </p>
+              </div>
+              <div
+                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
+              >
+                <p
+                  class="text-sm text-subtext-light dark:text-subtext-dark font-medium"
+                >
+                  Low Stock Items
+                </p>
+                <p
+                  id="lowStockCount"
+                  class="text-3xl font-bold text-accent dark:text-amber-400 mt-2"
+                >
+                  0
+                </p>
+              </div>
+              <div
+                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
+              >
+                <p
+                  class="text-sm text-subtext-light dark:text-subtext-dark font-medium"
+                >
+                  Expiring Soon
+                </p>
+                <p
+                  id="expiringCount"
+                  class="text-3xl font-bold text-secondary dark:text-red-400 mt-2"
+                >
+                  0
+                </p>
+              </div>
+            </div>
 
             <div
               id="alertsSection"
@@ -1668,68 +1729,6 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
-              <div
-                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
-              >
-                <p
-                  class="text-sm text-subtext-light dark:text-subtext-dark font-medium"
-                >
-                  Total Items
-                </p>
-                <p
-                  id="totalItems"
-                  class="text-3xl font-bold text-text-light dark:text-text-dark mt-2"
-                >
-                  0
-                </p>
-              </div>
-              <div
-                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
-              >
-                <p
-                  class="text-sm text-subtext-light dark:text-subtext-dark font-medium"
-                >
-                  Total Value
-                </p>
-                <p
-                  id="totalValue"
-                  class="text-3xl font-bold text-text-light dark:text-text-dark mt-2"
-                >
-                  &#8369;0.00
-                </p>
-              </div>
-              <div
-                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
-              >
-                <p
-                  class="text-sm text-subtext-light dark:text-subtext-dark font-medium"
-                >
-                  Low Stock Items
-                </p>
-                <p
-                  id="lowStockCount"
-                  class="text-3xl font-bold text-accent dark:text-amber-400 mt-2"
-                >
-                  0
-                </p>
-              </div>
-              <div
-                class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
-              >
-                <p
-                  class="text-sm text-subtext-light dark:text-subtext-dark font-medium"
-                >
-                  Expiring Soon
-                </p>
-                <p
-                  id="expiringCount"
-                  class="text-3xl font-bold text-secondary dark:text-red-400 mt-2"
-                >
-                  0
-                </p>
-              </div>
-            </div>
           </div>
           <!-- end #modulePanelInventory -->
 
@@ -3300,10 +3299,11 @@ if (statusFilter) {
 
       function renderNotifications() {
         const list = document.getElementById("notifList");
+        const readIds = getReadNotifIds();
         const filtered =
           activeNotifFilter === "all"
-            ? notifData
-            : notifData.filter((n) => n.type === activeNotifFilter);
+            ? notifData.filter((n) => !readIds.has(n.id))
+            : notifData.filter((n) => !readIds.has(n.id) && n.type === activeNotifFilter);
         if (!filtered.length) {
           const msg =
             activeNotifFilter === "all"
@@ -3319,7 +3319,7 @@ if (statusFilter) {
         list.innerHTML = filtered
           .map(
             (n) => `
-        <div class="notif-item ${n.type} ${n.unread ? "unread" : ""}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
+        <div class="notif-item ${n.type}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
             <div class="notif-icon-wrap ${n.iconClass}"><span class="material-icons">${n.icon}</span></div>
             <div class="notif-body">
                 <div class="notif-title">${n.title}</div>
@@ -3329,7 +3329,7 @@ if (statusFilter) {
                     <button class="notif-action-btn ${n.actionClass}" onclick="handleNotifAction(event,'${n.id}')">${n.actionLabel}</button>
                 </div>
             </div>
-            ${n.unread ? '<div class="unread-dot"></div>' : ""}
+            <div class="unread-dot"></div>
         </div>`,
           )
           .join("");
@@ -3337,35 +3337,47 @@ if (statusFilter) {
       }
 
       function updateNotifBadge() {
-        const count = notifData.filter((n) => n.unread).length;
         const badge = document.getElementById("notificationBadge");
         const pill = document.getElementById("unreadPill");
+        const unreadCount = notifData.filter((n) => !getReadNotifIds().has(n.id)).length;
         if (badge) {
-          badge.textContent = count;
-          badge.style.display = count > 0 ? "flex" : "none";
+          badge.textContent = unreadCount;
+          badge.style.display = unreadCount > 0 ? "flex" : "none";
         }
-        if (pill) pill.textContent = count > 0 ? `${count} new` : "All clear";
+        if (pill) pill.textContent = unreadCount > 0 ? `${unreadCount} new` : "All clear";
       }
 
       function markNotifRead(id) {
-        const n = notifData.find((n) => n.id === id);
-        if (n) {
-          n.unread = false;
+        const index = notifData.findIndex((n) => n.id === id);
+        if (index !== -1) {
           saveReadNotifId(id);
+          notifData.splice(index, 1);
           renderNotifications();
+          const inventoryPanel = document.getElementById("modulePanelInventory");
+          if (inventoryPanel && inventoryPanel.offsetParent !== null) {
+            if (inventoryManager && typeof inventoryManager.renderSummary === "function") {
+              inventoryManager.renderSummary();
+            }
+          }
         }
       }
 
       function markAllRead() {
-        notifData.forEach((n) => (n.unread = false));
         saveAllReadNotifIds();
+        notifData = [];
         renderNotifications();
+        const inventoryPanel = document.getElementById("modulePanelInventory");
+        if (inventoryPanel && inventoryPanel.offsetParent !== null) {
+          if (inventoryManager && typeof inventoryManager.renderSummary === "function") {
+            inventoryManager.renderSummary();
+          }
+        }
       }
 
       function handleNotifAction(event, id) {
         event.stopPropagation();
-        markNotifRead(id);
         const n = notifData.find((n) => n.id === id);
+        markNotifRead(id);
         if (!n) return;
         document
           .getElementById("notificationDropdown")
@@ -3389,6 +3401,14 @@ if (statusFilter) {
             () => highlightMedicineRow("summaryTableBody", n.medicineName),
             300,
           );
+        }
+        const inventoryPanel = document.getElementById("modulePanelInventory");
+        if (inventoryPanel && inventoryPanel.offsetParent !== null) {
+          setTimeout(() => {
+            if (inventoryManager && typeof inventoryManager.renderSummary === "function") {
+              inventoryManager.renderSummary();
+            }
+          }, 400);
         }
       }
 
@@ -3477,10 +3497,8 @@ if (statusFilter) {
             : raw.medicines || raw.data || [];
           const readIds = getReadNotifIds();
           notifData = generateAlertsFromInventory(inventory).slice(0, 15);
-          notifData.forEach((n) => {
-            if (readIds.has(n.id)) n.unread = false;
-          });
           renderNotifications();
+          updateNotifBadge();
         } catch (e) {
           console.warn("Notification fetch failed:", e);
         }
@@ -3500,7 +3518,8 @@ if (statusFilter) {
             dropdown.classList.remove("open");
         });
         dropdown.addEventListener("click", (e) => e.stopPropagation());
-        setTimeout(refreshNotifications, 1200);
+        updateNotifBadge();
+        refreshNotifications();
         setInterval(refreshNotifications, 60000);
       });
 

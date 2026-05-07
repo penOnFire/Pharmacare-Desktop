@@ -635,7 +635,7 @@
     }
 
     function updateNotifBadge() {
-        const count = notifData.filter(n => n.unread).length;
+        const count = notifData.filter((n) => !getReadNotifIds().has(n.id)).length;
         const badge = document.getElementById('notificationBadge');
         const pill  = document.getElementById('unreadPill');
         if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none'; }

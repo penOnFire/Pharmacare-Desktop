@@ -439,7 +439,10 @@
 
     function renderNotifications() {
         const list = document.getElementById('notifList');
-        const filtered = activeNotifFilter === 'all' ? notifData : notifData.filter(n => n.type === activeNotifFilter);
+        const readIds = getReadNotifIds();
+        const filtered = activeNotifFilter === 'all'
+            ? notifData.filter((n) => !readIds.has(n.id))
+            : notifData.filter((n) => !readIds.has(n.id) && n.type === activeNotifFilter);
         if (!filtered.length) { list.innerHTML = `<div class="notif-empty"><span class="material-icons">notifications_none</span><p>${activeNotifFilter==='all'?'All clear — no alerts right now!':'No notifications in this category.'}</p></div>`; updateNotifBadge(); return; }
         list.innerHTML = filtered.map(n => `
             <div class="notif-item ${n.type} ${n.unread?'unread':''}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
@@ -456,7 +459,7 @@
     }
 
     function updateNotifBadge() {
-        const count = notifData.filter(n => n.unread).length;
+        const count = notifData.filter((n) => !getReadNotifIds().has(n.id)).length;
         const badge = document.getElementById('notificationBadge'), pill = document.getElementById('unreadPill');
         if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none'; }
         if (pill)  pill.textContent = count > 0 ? `${count} new` : 'All clear';

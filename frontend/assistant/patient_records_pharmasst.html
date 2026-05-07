@@ -625,7 +625,10 @@ function generateAlertsFromInventory(inventory) {
 
 function renderNotifications() {
     const list     = document.getElementById('notifList');
-    const filtered = activeNotifFilter === 'all' ? notifData : notifData.filter(n => n.type === activeNotifFilter);
+    const readIds  = getReadNotifIds();
+    const filtered = activeNotifFilter === 'all'
+        ? notifData.filter((n) => !readIds.has(n.id))
+        : notifData.filter((n) => !readIds.has(n.id) && n.type === activeNotifFilter);
     if (!filtered.length) {
         const msg = activeNotifFilter === 'all' ? 'All clear — no alerts right now!' : 'No notifications in this category.';
         list.innerHTML = '<div class="notif-empty"><span class="material-icons">notifications_none</span><p>' + msg + '</p></div>';
@@ -647,15 +650,15 @@ function renderNotifications() {
 }
 
 function updateNotifBadge() {
-    const count = notifData.filter(n => n.unread).length;
+    const count = notifData.filter((n) => !getReadNotifIds().has(n.id)).length;
     const badge = document.getElementById('notificationBadge');
     const pill  = document.getElementById('unreadPill');
     if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none'; }
     if (pill)  pill.textContent = count > 0 ? `${count} new` : 'All clear';
 }
 
-function markNotifRead(id) { const n = notifData.find(n => n.id === id); if (n) { n.unread = false; renderNotifications(); } }
-function markAllRead() { notifData.forEach(n => n.unread = false); renderNotifications(); }
+function markNotifRead(id) { const n = notifData.find(n => n.id === id); if (n) { n.unread = false; saveReadNotifId(id); renderNotifications(); } }
+function markAllRead() { notifData.forEach(n => n.unread = false); const ids = getReadNotifIds(); notifData.forEach(n => ids.add(n.id)); sessionStorage.setItem('readNotifIds', JSON.stringify([...ids])); renderNotifications(); }
 function handleNotifAction(event, id) { event.stopPropagation(); markNotifRead(id); window.location.href = 'inventory_pharmasst.html'; }
 function filterNotifTab(btn, filter) { document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); activeNotifFilter = filter; renderNotifications(); }
 
@@ -667,9 +670,9 @@ async function refreshNotifications() {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const raw       = await res.json();
         const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
-        const previouslyRead = new Set(notifData.filter(n => !n.unread).map(n => n.id));
+        const readIds    = getReadNotifIds();
         notifData = generateAlertsFromInventory(inventory).slice(0, 15);
-        notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
+        notifData.forEach(n => { if (readIds.has(n.id)) n.unread = false; });
         renderNotifications();
     } catch (e) {
         console.warn('Notification fetch failed:', e);

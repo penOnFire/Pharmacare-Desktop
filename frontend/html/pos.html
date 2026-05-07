@@ -453,7 +453,8 @@
 
     function renderNotifications() {
         const list     = document.getElementById('notifList');
-        const filtered = activeNotifFilter === 'all' ? notifData : notifData.filter(n => n.type === activeNotifFilter);
+        const readIds = getReadNotifIds();
+        const filtered = activeNotifFilter === 'all' ? notifData.filter(n => !readIds.has(n.id)) : notifData.filter(n => !readIds.has(n.id) && n.type === activeNotifFilter);
 
         if (!filtered.length) {
             const msg = activeNotifFilter === 'all' ? 'All clear — no alerts right now!' : 'No notifications in this category.';
@@ -463,7 +464,7 @@
         }
 
         list.innerHTML = filtered.map(n => `
-            <div class="notif-item ${n.type} ${n.unread ? 'unread' : ''}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
+            <div class="notif-item ${n.type}" id="notif-${n.id}" onclick="markNotifRead('${n.id}')">
                 <div class="notif-icon-wrap ${n.iconClass}"><span class="material-icons">${n.icon}</span></div>
                 <div class="notif-body">
                     <div class="notif-title">${n.title}</div>
@@ -473,44 +474,31 @@
                         <button class="notif-action-btn ${n.actionClass}" onclick="handleNotifAction(event,'${n.id}')">${n.actionLabel}</button>
                     </div>
                 </div>
-                ${n.unread ? '<div class="unread-dot"></div>' : ''}
+                <div class="unread-dot"></div>
             </div>`).join('');
 
         updateNotifBadge();
     }
 
     function updateNotifBadge() {
-        const count = notifData.filter(n => n.unread).length;
+        const unreadCount = notifData.filter(n => !getReadNotifIds().has(n.id)).length;
         const badge = document.getElementById('notificationBadge');
         const pill  = document.getElementById('unreadPill');
-        if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none'; }
-        if (pill)  pill.textContent = count > 0 ? `${count} new` : 'All clear';
-    }
-
-    function getReadNotifIds() {
-        try { return new Set(JSON.parse(sessionStorage.getItem('readNotifIds') || '[]')); }
-        catch(e) { return new Set(); }
-    }
-
-    function saveReadNotifId(id) {
-        const ids = getReadNotifIds();
-        ids.add(id);
-        sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
-    }
-
-    function saveAllReadNotifIds() {
-        const ids = getReadNotifIds();
-        notifData.forEach(n => ids.add(n.id));
-        sessionStorage.setItem('readNotifIds', JSON.stringify([...ids]));
+        if (badge) { badge.textContent = unreadCount; badge.style.display = unreadCount > 0 ? 'flex' : 'none'; }
+        if (pill)  pill.textContent = unreadCount > 0 ? `${unreadCount} new` : 'All clear';
     }
 
     function markNotifRead(id) {
-        const n = notifData.find(n => n.id === id);
-        if (n) { n.unread = false; saveReadNotifId(id); renderNotifications(); }
+        const n = notifData.find((n) => n.id === id);
+        if (n) {
+            n.unread = false;
+            saveReadNotifId(id);
+            renderNotifications();
+        }
     }
 
     function markAllRead() {
-        notifData.forEach(n => n.unread = false);
+        notifData.forEach((n) => (n.unread = false));
         saveAllReadNotifIds();
         renderNotifications();
     }
@@ -538,10 +526,9 @@
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const raw       = await res.json();
             const inventory = Array.isArray(raw) ? raw : (raw.medicines || raw.data || []);
-            const readIds   = getReadNotifIds();
             notifData       = generateAlertsFromInventory(inventory).slice(0, 15);
-            notifData.forEach(n => { if (readIds.has(n.id)) n.unread = false; });
             renderNotifications();
+            updateNotifBadge();
         } catch (e) {
             console.warn('Notification fetch failed:', e);
             if (!notifData.length) {
@@ -650,6 +637,38 @@
         }
 
         loadInventory();
+
+        // 🔥 UPGRADED: Aggressively intercept sidebar navigation
+        document.querySelectorAll('aside nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                
+                // Check if cart has items and the link isn't pointing to the current page
+                if (Object.keys(cart).length > 0 && !this.href.includes(window.location.pathname)) {
+                    
+                    e.preventDefault(); // Stop standard HTML link behavior
+                    e.stopPropagation(); // Stop event bubbling
+                    e.stopImmediatePropagation(); // 🔥 BLOCK all other scripts from firing
+                    
+                    const targetUrl = this.href;
+                    
+                    Swal.fire({
+                        title: 'Leave page?',
+                        text: 'You have selected medicines in your order panel. If you leave now, they will be cleared.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#005a32',
+                        
+                        confirmButtonText: 'Yes, leave anyway',
+                        cancelButtonText: 'No, stay here'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // If they click yes, force the navigation manually
+                            window.location.href = targetUrl; 
+                        }
+                    });
+                }
+            }, true); // 🔥 'true' forces this listener to run BEFORE any other scripts (Capture Phase)
+        });
     });
 
     // ══════════════════════════════════════════════════════════
@@ -952,8 +971,15 @@
     }
 
     function logoutUser() {
+        // Check if there are items in the cart
+        const hasItems = Object.keys(cart).length > 0;
+        const textMsg = hasItems 
+            ? "You have unsaved medicines in your cart. They will be cleared. Are you sure you want to logout?" 
+            : "";
+
         Swal.fire({
             title: "Logout?",
+            text: textMsg,
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#005a32",
