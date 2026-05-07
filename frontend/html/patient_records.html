@@ -1223,6 +1223,7 @@
             <div class="relative">
               <button
                 id="notificationBtn"
+                data-sound="notification"
                 class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 <span class="material-icons-outlined text-2xl"
@@ -2022,14 +2023,16 @@
 
               this.displayDispensedHistory();
 
+              window.playSystemSound('success');
               Swal.fire({
-                title: "Dispense Complete!",
-                text: `Sale created. Total: ₱${saleResult.sale.totalAmount.toFixed(2)}`,
-                icon: "success",
+                  title: "Dispense Complete!",
+                  text: `Sale created. Total: ₱${saleResult.sale.totalAmount.toFixed(2)}`,
+                  icon: "success",
               });
 
               await this.fetchPatients();
             } catch (error) {
+              window.playSystemSound('error');
               Swal.fire("Error!", error.message, "error");
             }
           }
@@ -2236,6 +2239,7 @@ goToPage(page) {
               (rx) => rx.status === "Pending",
             );
           } catch (error) {
+            window.playSystemSound('error');
             console.error("Could not fetch prescriptions:", error);
           }
 
@@ -2633,6 +2637,9 @@ goToPage(page) {
         }
 
         showToast(message, type = "info") {
+          if (type === 'success') window.playSystemSound('success');
+          else if (type === 'error') window.playSystemSound('error');
+
           const container = document.getElementById("toastContainer");
           if (!container) return;
 
@@ -2756,6 +2763,7 @@ goToPage(page) {
         const dropdown = document.getElementById("notificationDropdown");
         if (btn && dropdown) {
           btn.addEventListener("click", (e) => {
+            window.playSystemSound('notification');
             e.stopPropagation();
             dropdown.classList.toggle("open");
             if (dropdown.classList.contains("open")) refreshNotifications();

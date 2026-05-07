@@ -211,6 +211,7 @@
 
                 <div class="relative">
                     <button id="notificationBtn"
+                    data-sound="notification"  
                         class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                         <span class="material-icons-outlined text-2xl">notifications</span>
                         <span id="notificationBadge"
@@ -637,6 +638,7 @@
         const dropdown = document.getElementById('notificationDropdown');
         if (btn && dropdown) {
             btn.addEventListener('click', (e) => {
+                window.playSystemSound('notification');
                 e.stopPropagation();
                 dropdown.classList.toggle('open');
                 if (dropdown.classList.contains('open')) refreshNotifications();
@@ -854,7 +856,7 @@
         const p = products.find(x => x.id === id);
         if (!p) return;
         if (!cart[id]) cart[id] = { product: p, qty: 0 };
-        if (cart[id].qty >= p.stock) { Swal.fire({ icon: 'warning', title: 'Stock Limit', text: 'Cannot exceed available active stock.' }); return; }
+        if (cart[id].qty >= p.stock) { window.playSystemSound('error'); Swal.fire({ icon: 'warning', title: 'Stock Limit', text: 'Cannot exceed available active stock.' }); return; }
         cart[id].qty++;
         updateUI();
     }
@@ -862,7 +864,8 @@
     function updateQty(id, delta) {
         if (!cart[id]) return;
         const p = cart[id].product;
-        if (delta > 0 && cart[id].qty >= p.stock) { Swal.fire({ icon: 'warning', title: 'Stock Limit', text: 'Cannot exceed available active stock.' }); return; }
+        if (delta > 0 && cart[id].qty >= p.stock) { window.playSystemSound('error');
+        Swal.fire({ icon: 'warning', title: 'Stock Limit', text: 'Cannot exceed available active stock.' }); return; }
         cart[id].qty += delta;
         if (cart[id].qty <= 0) delete cart[id];
         updateUI();
@@ -945,6 +948,7 @@
     async function processDispense() {
         const items = Object.values(cart);
         if (!items.length) {
+            window.playSystemSound('error');
             Swal.fire({ icon: 'warning', title: 'Empty Order', text: 'Please add items to dispense.' });
             return;
         }
@@ -960,6 +964,7 @@
         const res = await apiCall('/api/sales/otc', 'POST', payload);
 
         if (res) {
+            window.playSystemSound('success');
             Swal.fire({
                 icon: 'success',
                 title: 'Dispensed Successfully!',

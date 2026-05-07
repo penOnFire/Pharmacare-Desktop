@@ -1934,6 +1934,7 @@
           const notificationBtn = document.getElementById("notificationBtn");
           if (notificationBtn) {
             notificationBtn.addEventListener("click", (e) => {
+              window.playSystemSound('notification');
               e.stopPropagation();
               this.notificationManager.toggleDropdown();
             });

@@ -384,6 +384,7 @@ h1, h2, h3 {
                     <div class="nav-divider"></div>
                     <div class="relative">
                         <button id="notificationBtn"
+                        data-sound="notification"
                             class="relative text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                             <span class="material-icons-outlined text-2xl">notifications</span>
                             <span id="notificationBadge"
@@ -1050,7 +1051,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const btn      = document.getElementById('notificationBtn');
     const dropdown = document.getElementById('notificationDropdown');
     if (btn && dropdown) {
-        btn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('open'); if (dropdown.classList.contains('open')) refreshNotifications(); });
+        btn.addEventListener('click', (e) => { window.playSystemSound('notification'); e.stopPropagation(); dropdown.classList.toggle('open'); if (dropdown.classList.contains('open')) refreshNotifications(); });
         document.addEventListener('click', (e) => { if (!dropdown.contains(e.target) && e.target !== btn) dropdown.classList.remove('open'); });
         dropdown.addEventListener('click', e => e.stopPropagation());
         setTimeout(refreshNotifications, 800);

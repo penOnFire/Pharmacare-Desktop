@@ -800,7 +800,7 @@ notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
             // Wire up notification bell
             const btn      = document.getElementById('notificationBtn');
             const dropdown = document.getElementById('notificationDropdown');
-            btn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('open'); if (dropdown.classList.contains('open')) refreshNotifications(); });
+            btn.addEventListener('click', (e) => {window.playSystemSound('notification'); e.stopPropagation(); dropdown.classList.toggle('open'); if (dropdown.classList.contains('open')) refreshNotifications(); });
             document.addEventListener('click', (e) => { if (!dropdown.contains(e.target) && e.target !== btn) dropdown.classList.remove('open'); });
             dropdown.addEventListener('click', e => e.stopPropagation());
 

@@ -3280,6 +3280,7 @@ if (statusFilter) {
         const btn = document.getElementById("notificationBtn");
         const dropdown = document.getElementById("notificationDropdown");
         btn.addEventListener("click", (e) => {
+          window.playSystemSound('notification');
           e.stopPropagation();
           dropdown.classList.toggle("open");
           if (dropdown.classList.contains("open")) refreshNotifications();
