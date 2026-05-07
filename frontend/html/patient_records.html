@@ -1811,10 +1811,15 @@
         async init() {
           console.log("Patient Manager Initialized");
           this.setupEventListeners();
-          this.displayDispensedHistory();
+          
+          // 🔥 Load patients FIRST so we know their IDs
           if (this.getToken()) {
             await this.fetchPatients();
           }
+          
+          // 🔥 Then load the history so it can match the IDs!
+          this.displayDispensedHistory();
+          
           this.highlightCurrentPage();
           this.notificationManager.loadNotifications();
         }
@@ -2417,16 +2422,27 @@ goToPage(page) {
                   minute: "2-digit",
                 });
 
-              // Safely handle EMR patients vs Walk-in customers
-const patientName =
-  (sale.patient && sale.patient.name)
-    ? sale.patient.name
-    : (sale.patientName || "Unknown Patient");
+                // Safely handle EMR patients vs Walk-in customers
+              const patientName =
+                (sale.patient && sale.patient.name)
+                  ? sale.patient.name
+                  : (sale.patientName || "Unknown Patient");
 
-const patientId =
-  (sale.patient && sale.patient.patientId)
-    ? sale.patient.patientId
-    : (sale.patientId || "Walk-in");
+              let patientId = "Walk-In";
+              
+              // If the name does NOT contain "walk-in", it's a real patient. Let's find their ID.
+              if (!patientName.toLowerCase().includes("walk-in")) {
+                  if (sale.patient && sale.patient.patientId) {
+                      patientId = sale.patient.patientId;
+                  } else if (sale.patientId) {
+                      patientId = sale.patientId;
+                  } else {
+                      // Backend didn't populate the ID, so we look it up from our loaded patients list!
+                      const searchId = typeof sale.patient === 'string' ? sale.patient : (sale.patient ? sale.patient._id : null);
+                      const found = this.livePatients.find(p => p._id === searchId || p.name === patientName);
+                      patientId = found && found.patientId ? found.patientId : "Patient";
+                  }
+              }
 
               // Map the sold items to HTML
               const medsHtml = sale.items

@@ -118,7 +118,9 @@ router.post('/sync', protect, async (req, res) => {
                 // Only match if the payment in Billing was created AFTER the sale in Pharmacy
                 const paymentDate = new Date(p.createdAt || p.date);
                 const saleDate = new Date(sale.createdAt || sale.date);
-                const isRecent = paymentDate >= saleDate;
+                const isRecent = paymentDate >= new Date(saleDate.getTime() - 5 * 60000);
+
+                
 
                 if (isWalkIn) {
                     const theirAmount = Number(p.amount) || 0;
@@ -226,8 +228,18 @@ router.post('/dispense/:patientId', protect, async (req, res) => {
         }
 
         // Create Sale
+        // 🔥 FIX: Ensure patient ID is a valid 24-character MongoDB ObjectId for the Billing subsystem
+        let validPatientId;
+        if (mongoose.Types.ObjectId.isValid(patientId)) {
+            validPatientId = patientId; // It's already valid, use it
+        } else {
+            validPatientId = new mongoose.Types.ObjectId(); // It's a custom string, generate a dummy ID for Billing
+        }
+
+        // Create Sale
         const sale = await Sale.create({
-            patient: patientId,
+            patient: validPatientId, 
+            pharmacyPatientId: patientId, // Safely keep the original EMR custom ID for your own records!
             patientName: `${emrPatient.firstname} ${emrPatient.lastname}`,
             pharmacist: req.user._id,
             items: itemsSold,
@@ -251,7 +263,7 @@ router.post('/dispense/:patientId', protect, async (req, res) => {
         await logActivity(req, {
             action: 'DISPENSE_PRESCRIPTION',
             module: 'Patient Records', // 🔥 Changed from 'Counter Dispensing'
-            description: `Dispensed prescription(s) for APT patient '${emrPatient.firstname} ${emrPatient.lastname}'. Items: ${medNames}. Total: ₱${totalAmount.toFixed(2)}`,
+            description: `Dispensed prescription(s) for APR patient '${emrPatient.firstname} ${emrPatient.lastname}'. Items: ${medNames}. Total: ₱${totalAmount.toFixed(2)}`,
             targetId: sale._id.toString()
         });
 

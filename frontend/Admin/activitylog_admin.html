@@ -227,8 +227,8 @@
                         <h1 class="text-3xl font-bold text-text-light dark:text-text-dark">Activity Log</h1>
                         <p class="text-subtext-light dark:text-subtext-dark mt-1">Monitor all user and system activity across the platform</p>
                     </div>
-                    <button onclick="clearOldLogs()" class="flex items-center gap-2 px-4 py-2 border border-secondary text-secondary rounded-lg hover:bg-secondary/10 transition text-sm font-semibold">
-                        <span class="material-icons text-lg">delete_sweep</span> Clear Old Logs (90d)
+                    <button onclick="clearOldLogs()" class="flex items-center gap-2 px-4 py-2 border border-secondary text-secondary rounded-lg hover:bg-secondary/10 transition shadow-sm text-sm font-semibold">
+                        <span class="material-icons text-lg">delete_sweep</span> Clear Logs
                     </button>
                 </div>
 
@@ -262,7 +262,7 @@
                             <span class="material-icons text-primary">filter_list</span> Filters
                         </h2>
                     </div>
-                    <div class="p-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                    <div class="p-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
                         <div class="lg:col-span-2">
                             <input id="filterSearch" type="text" placeholder="Search user or description..." oninput="debouncedApplyFilters()"
                                 class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-background-light dark:bg-background-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
@@ -287,16 +287,23 @@
                             <option value="success">Success</option>
                             <option value="failed">Failed</option>
                         </select>
-                        <div class="flex gap-2 lg:col-span-1">
-                            <input id="filterStartDate" type="date" title="From date" onchange="applyFilters()"
-                                class="w-full px-2 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-background-light dark:bg-background-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
-                        </div>
                     </div>
-                    <div class="px-4 pb-4 flex gap-2 justify-end">
-                        <input id="filterEndDate" type="date" title="To date" onchange="applyFilters()"
-                            class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-background-light dark:bg-background-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
+
+                    <div class="px-4 pb-4 flex flex-wrap gap-4 items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-4 mt-1">
+                        <div class="flex items-center gap-3">
+                            <span class="text-sm font-semibold text-slate-500 dark:text-slate-400">Date Range:</span>
+                            <div class="flex items-center gap-2">
+                                <input id="filterStartDate" type="date" title="Start date" onchange="applyFilters()"
+                                    class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-background-light dark:bg-background-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
+                                
+                                <span class="material-icons text-slate-400 text-sm">arrow_forward</span>
+                                
+                                <input id="filterEndDate" type="date" title="End date" onchange="applyFilters()"
+                                    class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-background-light dark:bg-background-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
+                            </div>
+                        </div>
                         
-                        <button onclick="resetFilters()" class="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition flex items-center gap-1">
+                        <button onclick="resetFilters()" class="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition flex items-center gap-1 text-slate-700 dark:text-slate-300">
                             <span class="material-icons text-base">refresh</span> Reset Filters
                         </button>
                     </div>
@@ -311,7 +318,7 @@
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="text-xs text-subtext-light">Auto-refresh:</span>
-                            <button id="refreshBtn" onclick="fetchLogs()" class="flex items-center gap-1 px-3 py-1.5 border border-primary text-primary rounded-lg text-xs font-semibold hover:bg-primary/10 transition">
+                            <button id="refreshBtn" onclick="fetchLogs()" class="flex items-center gap-1 px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold hover:opacity-90 shadow-sm transition">
                                 <span id="refreshIcon" class="material-icons text-sm">refresh</span> Refresh
                             </button>
                         </div>
@@ -687,17 +694,71 @@ notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
     function resetFilters() {
         ['filterSearch','filterRole','filterModule','filterStatus','filterStartDate','filterEndDate'].forEach(id => document.getElementById(id).value = '');
         currentPage = 1; fetchLogs();
+
+        const today = new Date().toLocaleDateString('en-CA');
+        document.getElementById('filterStartDate').setAttribute('max', today);
+        document.getElementById('filterEndDate').removeAttribute('min');
     }
 
     async function clearOldLogs() {
-        const result = await Swal.fire({ title:'Clear Old Logs?', text:'This will permanently delete all activity logs older than 90 days.', icon:'warning', showCancelButton:true, confirmButtonColor:'#d62828', confirmButtonText:'Yes, clear them' });
-        if (!result.isConfirmed) return;
+        // 1. Ask the user for the timeframe using SweetAlert's built-in select dropdown
+        const { value: days, isConfirmed } = await Swal.fire({
+            title: 'Clear Activity Logs',
+            text: 'Select the timeframe of logs you want to permanently delete:',
+            icon: 'warning',
+            input: 'select',
+            inputOptions: {
+                '15': 'Older than 15 Days',
+                '30': 'Older than 1 Month',
+                '60': 'Older than 2 Months',
+                '90': 'Older than 3 Months',
+                '180': 'Older than 6 Months',
+                '365': 'Older than 1 Year',
+                'all': 'Clear ALL Logs'
+            },
+            inputPlaceholder: 'Select timeframe',
+            showCancelButton: true,
+            confirmButtonColor: '#d62828',
+            confirmButtonText: 'Delete Logs',
+            inputValidator: (value) => {
+                if (!value) return 'You need to choose a timeframe!';
+            }
+        });
+
+        if (!isConfirmed || !days) return;
+
+        // 2. Extra safety check if they choose to wipe everything
+        if (days === 'all') {
+            const confirmAll = await Swal.fire({
+                title: 'Are you absolutely sure?',
+                text: 'This will wipe out EVERY single activity log. This cannot be undone!',
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonColor: '#d62828',
+                confirmButtonText: 'Wipe Everything'
+            });
+            if (!confirmAll.isConfirmed) return;
+        }
+
+        // 3. Send the request to the backend with the chosen timeframe attached to the URL
         try {
-            const res  = await fetch(`${API_BASE_URL}/api/activity/clear`, { method:'DELETE', headers:{ 'Authorization':`Bearer ${getToken()}` } });
+            const res = await fetch(`${API_BASE_URL}/api/activity/clear?days=${days}`, { 
+                method: 'DELETE', 
+                headers: { 'Authorization': `Bearer ${getToken()}` } 
+            });
+            
             const data = await res.json();
-            Swal.fire({ icon:'success', title:'Cleared!', text: data.message, confirmButtonColor:'#005a32' });
-            fetchLogs(); fetchStats();
-        } catch(e) { Swal.fire({ icon:'error', title:'Error', text:'Could not clear logs.', confirmButtonColor:'#005a32' }); }
+            
+            if (res.ok) {
+                Swal.fire({ icon: 'success', title: 'Cleared!', text: data.message, confirmButtonColor: '#005a32' });
+                fetchLogs(); 
+                fetchStats();
+            } else {
+                throw new Error(data.message || 'Failed to clear logs');
+            }
+        } catch(e) { 
+            Swal.fire({ icon: 'error', title: 'Error', text: e.message || 'Could not clear logs.', confirmButtonColor: '#005a32' }); 
+        }
     }
 
     // ── INIT ──
@@ -707,6 +768,34 @@ notifData.forEach(n => { if (previouslyRead.has(n.id)) n.unread = false; });
             updateNavClock();
             setInterval(updateNavClock, 1000);
             loadNavUserInfo();
+
+            const startDateInput = document.getElementById('filterStartDate');
+            const endDateInput = document.getElementById('filterEndDate');
+            
+            // Get today's date in YYYY-MM-DD format (required by HTML5 date inputs)
+            const today = new Date().toLocaleDateString('en-CA'); // 'en-CA' outputs YYYY-MM-DD natively
+            
+            // 1. Neither date can go past today
+            startDateInput.setAttribute('max', today);
+            endDateInput.setAttribute('max', today);
+
+            // 2. Start date cannot go past End date
+            endDateInput.addEventListener('change', function() {
+                if (this.value) {
+                    startDateInput.setAttribute('max', this.value);
+                } else {
+                    startDateInput.setAttribute('max', today); // Reset if cleared
+                }
+            });
+
+            // 3. End date cannot be set before Start date
+            startDateInput.addEventListener('change', function() {
+                if (this.value) {
+                    endDateInput.setAttribute('min', this.value);
+                } else {
+                    endDateInput.removeAttribute('min'); // Reset if cleared
+                }
+            });
 
             // Wire up notification bell
             const btn      = document.getElementById('notificationBtn');
