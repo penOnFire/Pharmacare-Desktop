@@ -1917,15 +1917,10 @@
       }
 
       async function submitRestock() {
-        const quantity = parseInt(
-          document.getElementById("restockQuantity").value,
-        );
-        const unitCost = parseFloat(
-          document.getElementById("restockUnitCost").value,
-        );
+        const quantity = parseInt(document.getElementById("restockQuantity").value);
+        const unitCost = parseFloat(document.getElementById("restockUnitCost").value);
         const date = document.getElementById("restockDate").value;
         
-
         const qErr = !quantity || quantity <= 0 || isNaN(quantity);
         const ucErr = isNaN(unitCost) || unitCost < 0;
         const dErr = !date;
@@ -1937,37 +1932,24 @@
         if (qErr || ucErr || dErr) return;
 
         const supply = suppliesManager.getById(_restockingSupplyId);
-        
-        Swal.fire({
-          title: "Processing Restock...",
-          text: "Updating database...",
-          allowOutsideClick: false,
-          didOpen: () => {
-            Swal.showLoading();
-          },
-        });
+
+        Swal.fire({ title: 'Processing Restock...', text: 'Updating database...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
 
         try {
-          await suppliesManager.restock(_restockingSupplyId, {
-            quantity,
-            unitCost,
-            date,
-            supplier: supply.supplier
-          });
-          closeRestockModal();
-          Swal.fire({
-            icon: "success",
-            title: "Restocked Successfully!",
-            html: `<div class="text-left" style="font-size:14px;line-height:1.8;">
+            await suppliesManager.restock(_restockingSupplyId, { quantity, unitCost, date, supplier: supply.supplier });
+            closeRestockModal();
+            Swal.fire({
+                icon: "success", title: "Restocked Successfully!",
+                html: `<div class="text-left" style="font-size:14px;line-height:1.8;">
                     <p><strong>Medicine:</strong> ${supply.name}</p>
                     <p><strong>Quantity Added:</strong> ${quantity} units</p>
                     <p><strong>Total Cost:</strong> ₱${(quantity * unitCost).toFixed(2)}</p>
-                    ${supplier ? `<p><strong>Supplier:</strong> ${supplier}</p>` : ""}
+                    ${supply.supplier ? `<p><strong>Supplier:</strong> ${supply.supplier}</p>` : ""}
                 </div>`,
-            confirmButtonColor: "#005a32",
-          });
-        } catch (err) {
-          Swal.fire("Database Error", err.message, "error");
+                confirmButtonColor: "#005a32",
+            });
+        } catch(err) {
+            Swal.fire('Database Error', err.message, 'error');
         }
       }
 
